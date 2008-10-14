@@ -25,6 +25,8 @@ setup(name='pmr2.app',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'plone.app.content',
+          'pmr2.mercurial',
           # -*- Extra requirements: -*-
       ],
       entry_points="""
