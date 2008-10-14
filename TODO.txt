@@ -1,0 +1,40 @@
+There will need to be these objects.
+
+Root object
+
+Workspace containers
+Workspaces, i.e. Mercurial
+
+Sandbox containers
+Sandbox, allows editing
+
+Exposure container
+Exposures
+
+Root object
+- admin editing only
+- points to paths on filesystem
+
+Workspace container
+- Lists workspaces
+- List specific workspace for authors. (your workspaces?)
+- Allows searching?
+
+Workspace
+- Provides read-only access
+- Provides write access via hg push
+
+Sandbox container
+- Lists sandboxes explicit to the user
+
+Sandbox
+- Provides uploading facilities
+- Provides metadata editor and other editing capabilities
+
+Exposure container
+- Lists exposures
+- Search exposures
+
+Exposures
+- Provides curation facilities
+- Provides various views, such as citation, metadata and graphing.
