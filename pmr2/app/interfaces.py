@@ -1,5 +1,6 @@
 from zope import schema
 from zope import interface
+from Products.ATContentTypes.content.folder import ATFolder
 
 
 class IRepositoryRoot(interface.Interface):
@@ -16,11 +17,13 @@ class IRepositoryRoot(interface.Interface):
         title=u'Description',
     )
 
-    path = schema.TextLine(
+    repo_root = schema.TextLine(
         title=u'Repository Path',
         description=u'Physical path to the root of the Mercurial Repositories',
         readonly=True,
     )
+
+interface.classImplements(ATFolder, IRepositoryRoot)
 
 
 class IWorkspaceContainer(interface.Interface):

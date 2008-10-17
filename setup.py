@@ -25,7 +25,10 @@ setup(name='pmr2.app',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'z3c.form',
           'plone.app.content',
+          'plone.app.z3cform>=0.3.2',
+          'plone.z3cform>=0.5',
           'pmr2.mercurial',
           # -*- Extra requirements: -*-
       ],

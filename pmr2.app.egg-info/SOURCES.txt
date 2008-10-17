@@ -8,7 +8,11 @@ pmr2.app.egg-info/dependency_links.txt
 pmr2.app.egg-info/entry_points.txt
 pmr2.app.egg-info/namespace_packages.txt
 pmr2.app.egg-info/not-zip-safe
+pmr2.app.egg-info/paster_plugins.txt
 pmr2.app.egg-info/requires.txt
 pmr2.app.egg-info/top_level.txt
 pmr2/app/__init__.py
+pmr2/app/content.py
+pmr2/app/interfaces.py
 pmr2/app/tests.py
+pmr2/app/browser/__init__.py

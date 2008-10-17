@@ -19,17 +19,30 @@ Workspace container
 - Lists workspaces
 - List specific workspace for authors. (your workspaces?)
 - Allows searching?
+- Create workspace
+  - Site admin only
+  - Instantiate an existing Hg instance for inclusion into repository
 
 Workspace
 - Provides read-only access
 - Provides write access via hg push
+- Option to let owner pull from specific sandbox
+  - list push requests from sandboxes?
+
+* workflow states
+  - allowing push?
 
 Sandbox container
 - Lists sandboxes explicit to the user
 
+* workflow states
+  - private
+  - accepting new project
+
 Sandbox
 - Provides uploading facilities
 - Provides metadata editor and other editing capabilities
+* push and pull, much like workspace
 
 Exposure container
 - Lists exposures

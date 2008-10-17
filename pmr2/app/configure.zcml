@@ -1,7 +1,24 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:five="http://namespaces.zope.org/five"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="pmr2.app">
 
+  <include package="plone.z3cform" />
+
+  <browser:page
+      for="Products.CMFPlone.Portal.PloneSite"
+      name="repository_add_form"
+      class=".browser.RepositoryRootAddFormView"
+      permission="cmf.AddPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.RepositoryRoot"
+      name="repository_edit_form"
+      class=".browser.RepositoryRootEditFormView"
+      permission="cmf.ModifyPortalContent"
+      />
 
 </configure>
