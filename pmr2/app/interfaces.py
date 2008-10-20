@@ -3,7 +3,7 @@ from zope import interface
 from Products.ATContentTypes.content.folder import ATFolder
 
 
-class IRepositoryRoot(interface.Interface):
+class IPMR2(interface.Interface):
     """\
     Repository is the root container for the entire model repository,
     it also contains attributes on where the files are.
@@ -23,7 +23,7 @@ class IRepositoryRoot(interface.Interface):
         readonly=True,
     )
 
-interface.classImplements(ATFolder, IRepositoryRoot)
+interface.classImplements(ATFolder, IPMR2)
 
 
 class IWorkspaceContainer(interface.Interface):

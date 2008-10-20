@@ -5,19 +5,30 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="pmr2.app">
 
+  <five:registerPackage package="." initialize=".initialize" />
+
   <include package="plone.z3cform" />
+
+  <genericsetup:registerProfile
+      name="default"
+      title="Physiome Model Repository 2"
+      directory="profiles/default"
+      description="Repository software for the management of models using both Plone workflows and revision control system."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      />
 
   <browser:page
       for="Products.CMFPlone.Portal.PloneSite"
       name="repository_add_form"
-      class=".browser.RepositoryRootAddFormView"
+      class=".browser.PMR2AddFormView"
       permission="cmf.AddPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.content.RepositoryRoot"
-      name="repository_edit_form"
-      class=".browser.RepositoryRootEditFormView"
+      for="pmr2.app.content.PMR2"
+      name="edit_repository"
+      class=".browser.PMR2EditFormView"
       permission="cmf.ModifyPortalContent"
       />
 

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<object name="PMR2"
+        meta_type="Factory-based Type Information with dynamic views"
+        xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="title">Physiome Model Repository 2</property>
+ <property
+    name="description">A container for the Model Repository.</property>
+ <property name="content_icon">folder_icon.gif</property>
+ <property name="content_meta_type">PMR2</property>
+ <property name="product">pmr2.app</property>
+ <property name="factory">addPMR2</property>
+ <property name="immediate_view">folder_listing</property>
+ <property name="global_allow">False</property>
+ <property name="filter_content_types">True</property>
+ <property name="allowed_content_types">
+  <element value="Document"/>
+  <element value="Folder"/>
+ </property>
+ <property name="allow_discussion">False</property>
+ <property name="default_view">folder_listing</property>
+ <property name="view_methods">
+  <element value="folder_summary_view"/>
+  <element value="folder_tabular_view"/>
+  <element value="atct_album_view"/>
+  <element value="folder_listing"/>
+ </property>
+
+ <alias from="(Default)" to="(dynamic view)"/>
+ <alias from="edit" to="atct_edit"/>
+ <alias from="sharing" to="@@sharing"/>
+ <alias from="view" to="(selected layout)"/>
+
+ <action title="View" action_id="view" category="object" condition_expr=""
+    url_expr="string:${folder_url}/" visible="True" i18n:attributes="title">
+  <permission value="View"/>
+ </action>
+
+ <action title="Edit" action_id="edit" category="object" condition_expr="not:object/@@plone_lock_info/is_locked_for_current_user|python:True"
+    url_expr="string:${object_url}/edit" visible="True"
+    i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+
+ <action title="Edit Repository" action_id="edit_repository" category="object"
+    condition_expr="" url_expr="string:${object_url}/@@edit_repository"
+    visible="True">
+  <permission value="Manage portal"/>
+ </action>
+
+</object>

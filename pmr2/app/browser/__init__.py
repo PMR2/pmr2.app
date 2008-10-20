@@ -11,17 +11,17 @@ import z3c.form.form
 from plone.app.z3cform import layout
 
 from pmr2.app.interfaces import *
-from pmr2.app.content import RepositoryRoot
+from pmr2.app.content import PMR2
 
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 
 
-class RepositoryRootAddForm(z3c.form.form.AddForm):
+class PMR2AddForm(z3c.form.form.AddForm):
     """\
     Repository root add form.
     """
 
-    fields = z3c.form.field.Fields(IRepositoryRoot)
+    fields = z3c.form.field.Fields(IPMR2)
 
     def create(self, data):
         # Object created
@@ -30,8 +30,7 @@ class RepositoryRootAddForm(z3c.form.form.AddForm):
         self._name = id_
         self._data = data
 
-        reproot = RepositoryRoot(self._name, **data)
-        #reproot = ATFolder(self._name, **data)
+        reproot = PMR2(self._name, **data)
         return reproot
 
     def add(self, obj):
@@ -50,16 +49,16 @@ class RepositoryRootAddForm(z3c.form.form.AddForm):
     def nextURL(self):
         return "%s/%s" % (self.context.absolute_url(), self._name)
 
-RepositoryRootAddFormView = layout.wrap_form(RepositoryRootAddForm, label="Repository Add Form")
+PMR2AddFormView = layout.wrap_form(PMR2AddForm, label="Repository Add Form")
 
 
-class RepositoryRootEditForm(z3c.form.form.EditForm):
+class PMR2EditForm(z3c.form.form.EditForm):
     """\
     Repository Edit Form.
     """
 
-    fields = z3c.form.field.Fields(IRepositoryRoot)
+    fields = z3c.form.field.Fields(IPMR2)
 
 # Plone Form wrapper for the EditForm
-RepositoryRootEditFormView = layout.wrap_form(RepositoryRootEditForm, label="Repository Edit Form")
+PMR2EditFormView = layout.wrap_form(PMR2EditForm, label="Repository Edit Form")
 
