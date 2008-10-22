@@ -13,17 +13,11 @@ class IPMR2(interface.Interface):
         title=u'Title',
     )
 
-    description = schema.TextLine(
-        title=u'Description',
-    )
-
     repo_root = schema.TextLine(
         title=u'Repository Path',
         description=u'Physical path to the root of the Mercurial Repositories',
         readonly=True,
     )
-
-interface.classImplements(ATFolder, IPMR2)
 
 
 class IWorkspaceContainer(interface.Interface):
@@ -33,10 +27,6 @@ class IWorkspaceContainer(interface.Interface):
 
     title = schema.TextLine(
         title=u'Title',
-    )
-
-    description = schema.TextLine(
-        title=u'Description',
     )
 
 
@@ -49,10 +39,6 @@ class ISandboxContainer(interface.Interface):
         title=u'Title',
     )
 
-    description = schema.TextLine(
-        title=u'Description',
-    )
-
 
 class IExposureContainer(interface.Interface):
     """\
@@ -61,10 +47,6 @@ class IExposureContainer(interface.Interface):
 
     title = schema.TextLine(
         title=u'Title',
-    )
-
-    description = schema.TextLine(
-        title=u'Description',
     )
 
 

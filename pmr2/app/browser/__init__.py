@@ -37,12 +37,7 @@ class PMR2AddForm(z3c.form.form.AddForm):
         # Adding object, set fields.
         self.context[self._name] = obj
         new = self.context[self._name]
-        new.setTitle(self._data['title'])
-
-        # XXX description duplicated?
-        new.setDescription(self._data['description'])
-        new.description = self._data['description']
-
+        new.title = self._data['title']
         new.repo_root = self._data['repo_root']
         new.reindexObject()
 
