@@ -55,8 +55,11 @@ class IWorkspace(interface.Interface):
     Model workspace.
     """
 
+    # id would be the actual path on filesystem
+
     title = schema.TextLine(
         title=u'Title',
+        readonly=True,
     )
 
     description = schema.TextLine(
@@ -92,8 +95,14 @@ class IExposure(interface.Interface):
         title=u'Title',
     )
 
-    description = schema.TextLine(
-        title=u'Description',
+    workspace = schema.TextLine(
+        title=u'Workspace',
+        description=u'The model workspace this exposure encapsulates.',
+    )
+
+    commit_id = schema.TextLine(
+        title=u'Commit ID',
+        description=u'The specific commit identifier of the model.',
     )
 
     # FIXME placeholder - curation will have its own type.

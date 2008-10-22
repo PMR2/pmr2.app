@@ -22,13 +22,27 @@
       for="Products.CMFPlone.Portal.PloneSite"
       name="repository_add_form"
       class=".browser.PMR2AddFormView"
-      permission="cmf.AddPortalContent"
+      permission="cmf.ManagePortal"
       />
 
   <browser:page
       for="pmr2.app.content.PMR2"
       name="edit_repository"
       class=".browser.PMR2EditFormView"
+      permission="cmf.ManagePortal"
+      />
+
+  <browser:page
+      for="pmr2.app.content.PMR2"
+      name="exposure_add_form"
+      class=".browser.ExposureAddFormView"
+      permission="cmf.AddPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.Exposure"
+      name="edit_exposure"
+      class=".browser.ExposureEditFormView"
       permission="cmf.ModifyPortalContent"
       />
 
