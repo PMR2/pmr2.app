@@ -1,0 +1,32 @@
+<configure xmlns="http://namespaces.zope.org/browser"
+    i18n_domain="pmr2.app">
+
+  <page
+      for="Products.CMFPlone.Portal.PloneSite"
+      name="repository_add_form"
+      class=".root.PMR2AddFormView"
+      permission="cmf.ManagePortal"
+      />
+
+  <page
+      for="pmr2.app.content.PMR2"
+      name="edit_repository"
+      class=".root.PMR2EditFormView"
+      permission="cmf.ManagePortal"
+      />
+
+  <page
+      for="pmr2.app.content.ExposureContainer"
+      name="exposure_add_form"
+      class=".exposure.ExposureAddFormView"
+      permission="cmf.AddPortalContent"
+      />
+
+  <page
+      for="pmr2.app.content.Exposure"
+      name="edit_exposure"
+      class=".exposure.ExposureEditFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+</configure>
