@@ -22,8 +22,6 @@ Test out the form.
     >>> html = add_form()
     >>> 'Title' in html
     True
-    >>> 'Description' in html
-    True
     >>> 'repo_root' in html
     True
 

@@ -8,7 +8,7 @@ from Products.Five import zcml
 from Products.Five import fiveconfigure
 from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import PloneSite
-ptc.setupPloneSite()
+ptc.setupPloneSite(products=('pmr2.app',))
 
 import pmr2.app
 
@@ -27,12 +27,16 @@ class TestCase(ptc.PloneTestCase):
 
 
 def test_suite():
+    import pmr2.app.tests.test_setup
+
     return unittest.TestSuite([
 
         # Unit tests
         doctestunit.DocFileSuite(
             'README.txt', package='pmr2.app',
             setUp=testing.setUp, tearDown=testing.tearDown),
+
+        pmr2.app.tests.test_setup.test_suite(),
 
         #doctestunit.DocTestSuite(
         #    module='pmr2.app.mymodule',
