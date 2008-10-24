@@ -1,0 +1,10 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2.app">
+
+  <permission
+      id="pmr2.app.security.ManagePMR2"
+      title="Manage PMR2"
+      />
+
+</configure>

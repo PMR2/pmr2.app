@@ -6,13 +6,13 @@ class TestProductInstall(TestCase):
 
     def afterSetUp(self):
         self.types = {
-            'PMR2': None,
+            'PMR2': 'pmr2_root_workflow',
             'WorkspaceContainer': None,
             'SandboxContainer': None,
             'ExposureContainer': None,
             'Workspace': None,
             'Sandbox': None,
-            'Exposure': 'exposure_workflow',
+            'Exposure': None,
         }
 
     def testTypesInstalled(self):

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<object name="portal_workflow">
+  <object name="pmr2_root_workflow" meta_type="Workflow"/>
+  <bindings>
+    <type type_id="PMR2">
+      <bound-workflow workflow_id="pmr2_root_workflow"/>
+    </type>
+  </bindings>
+</object>
