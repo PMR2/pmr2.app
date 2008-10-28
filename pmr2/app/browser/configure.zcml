@@ -16,7 +16,6 @@
       class=".root.PMR2EditFormView"
       permission="pmr2.app.security.ManagePMR2"
       />
-  <!-- need to add condition for above -->
 
   <page
       for="pmr2.app.content.ExposureContainer"

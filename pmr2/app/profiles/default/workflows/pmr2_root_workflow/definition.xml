@@ -100,6 +100,7 @@
    <permission-role>Manager</permission-role>
    <permission-role>Owner</permission-role>
    <permission-role>Member</permission-role>
+   <permission-role>Anonymous</permission-role>
   </permission-map>
   <permission-map name="Modify portal content"
                   acquired="False">

@@ -44,7 +44,7 @@
  <action title="Edit Repository" action_id="edit_repository" category="object"
     condition_expr="" url_expr="string:${object_url}/@@edit_repository"
     visible="True">
-  <permission value="Manage portal"/>
+  <permission value="Manage PMR2"/>
  </action>
 
 </object>
