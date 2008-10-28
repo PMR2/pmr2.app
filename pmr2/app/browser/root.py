@@ -1,9 +1,4 @@
-from zope import schema
 import zope.component
-
-from zope.app.pagetemplate import viewpagetemplatefile
-
-from Products.ATContentTypes.content.folder import ATFolder
 
 import z3c.form.field
 import z3c.form.form
@@ -13,36 +8,28 @@ from plone.app.z3cform import layout
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
 
-from plone.i18n.normalizer.interfaces import IIDNormalizer
+import form
 
 
-class PMR2AddForm(z3c.form.form.AddForm):
+class PMR2AddForm(form.AddForm):
     """\
     Repository root add form.
     """
 
     fields = z3c.form.field.Fields(IPMR2)
+    clsobj = PMR2
 
-    def create(self, data):
-        # Object created
-        id_ = data['title']
-        id_ = zope.component.queryUtility(IIDNormalizer).normalize(id_)
-        self._name = id_
-        self._data = data
+    def add_data(self, ctxobj):
+        ctxobj.title = self._data['title']
+        # FIXME create root Hg dir if not exist?
+        # - validation on path need to happen somewhere
+        ctxobj.repo_root = self._data['repo_root']
 
-        reproot = PMR2(self._name, **data)
-        return reproot
+    def post_add(self, ctxobj):
+        """\
+        Create the required container objects.
+        """
 
-    def add(self, obj):
-        # Adding object, set fields.
-        self.context[self._name] = obj
-        new = self.context[self._name]
-        new.title = self._data['title']
-        new.repo_root = self._data['repo_root']
-        # XXX create dir if not exist?
-        # XXX validation for the input?
-        new.reindexObject()
-        # create required container objects
         # XXX somehow make this part of the profile like new plone site
         # will create the default contents?
         # FIXME - less magic string
@@ -52,9 +39,12 @@ class PMR2AddForm(z3c.form.form.AddForm):
         ws_c.title = 'Workspace'
         sb_c.title = 'Sandbox'
         ex_c.title = 'Exposure'
-        new['workspace'] = ws_c
-        new['sandbox'] = sb_c
-        new['exposure'] = ex_c
+        ctxobj['workspace'] = ws_c
+        ctxobj['sandbox'] = sb_c
+        ctxobj['exposure'] = ex_c
+        ws_c.notifyWorkflowCreated()
+        sb_c.notifyWorkflowCreated()
+        ex_c.notifyWorkflowCreated()
         ws_c.reindexObject()
         sb_c.reindexObject()
         ex_c.reindexObject()
@@ -65,7 +55,7 @@ class PMR2AddForm(z3c.form.form.AddForm):
 PMR2AddFormView = layout.wrap_form(PMR2AddForm, label="Repository Add Form")
 
 
-class PMR2EditForm(z3c.form.form.EditForm):
+class PMR2EditForm(form.EditForm):
     """\
     Repository Edit Form.
     """
