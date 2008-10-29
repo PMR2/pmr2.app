@@ -506,8 +506,20 @@ Also see AdvancedOptions</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
+<div title="CellML" modifier="Tommy Yu" created="200810282249" changecount="5">
+<pre>http://www.cellml.org/</pre>
+</div>
 <div title="DefaultTiddlers" modifier="Tommy Yu" created="200810272232" changecount="1">
 <pre>[[PMR2]]</pre>
+</div>
+<div title="Exposure" modifier="Tommy Yu" created="200810282259" modified="200810282321" changecount="9">
+<pre>Exposures can be considered as &quot;published models&quot; on the model repository. The term exposure was chosen to not override the terminology of publishing a paper, as these two process are not equivalent. Basically, Exposures are created from specific version of a workspace. Model files will be referenced by this exposure, and the exposure object will provide these facilities:
+* Customized views, such as:
+* Visualization of the metadata graph
+* Generation of simulation results
+* Rendering of simulation results
+* Uses Plone Workflows for access control and to show what state the model is at.
+* [[Curation Flags]] to show the quality of model, and allow [[curators|Curators]] to easily change them.</pre>
 </div>
 <div title="GettingStarted" modifier="Tommy Yu" created="200810272229" changecount="6">
 <pre>To get started with this blank TiddlyWiki, you'll need to modify the following tiddlers:
@@ -520,17 +532,45 @@ You'll also need to enter your username for signing your edits: &lt;&lt;option t
 <pre>[[GettingStarted]]
 [[PMR2]]</pre>
 </div>
-<div title="PMR2" modifier="Tommy Yu" created="200810272229" modified="200810272229" changecount="6">
+<div title="Mercurial" modifier="Tommy Yu" created="200810282250" changecount="5">
+<pre>Mecurial is a Distributed Version Control System (DVCS) written in Python.
+* http://www.selenic.com/mercurial/</pre>
+</div>
+<div title="PMR2" modifier="Tommy Yu" created="200810272229" modified="200810282321" changecount="11">
 <pre>This is the roadmap/progress map for Physiome Model Repository 2 (PMR2). The features to be implemented are listed below.
 * [[Workspace]]
 * [[Sandbox]]
-* [[Exposure]]</pre>
+* [[Exposure]]
+Other goals include:
+* Clean user interface (UI) to access the provide features
+* Searching of exposed models
+* Aliases to groups exposed models (based on search). Should also allow a page of descriptive text.
+* RSS feeds for anything applicable.</pre>
+</div>
+<div title="Sandbox" modifier="Tommy Yu" created="200810282248" modified="200810282311" changecount="8">
+<pre>Sandboxes are basically instances of workspaces that are writable through the web (TTW). Modelers, if they have read access rights to a [[workspace|Workspace]], they may clone it and they will have a writable instance of that workspace, or a sandbox.
+
+Sandbox provides these features:
+* Uploading of CellML files and related data
+* [[Metadata Editing]]
+* [[Pulling|Pull]] new changes from source (or other workspace/sandboxes)
+* [[Merging|Merge]] the new [[changesets|Changesets]] (or revisions)
+* [[Push|Push]] new changesets/revisions back up to the source workspace
+* May become a new workspace if [[curators|Curators]] approve</pre>
 </div>
 <div title="SiteSubtitle" modifier="Tommy Yu" created="200810272230" changecount="6">
 <pre>Roadmap/Progress document</pre>
 </div>
 <div title="SiteTitle" modifier="Tommy Yu" created="200810272227" modified="200810272231" changecount="6">
 <pre>PMR2</pre>
+</div>
+<div title="Workspace" modifier="Tommy Yu" created="200810282244" modified="200810282311" changecount="8">
+<pre>Workspaces, also known as model workspaces, are objects that encapsulates a model. Each of these workspace in PMR2 are also back by its respective [[Mercurial]] repository.
+
+Workspace provides these features:
+* Access to the CellML files
+* Version control (through Mercurial)
+* Permission control of read/write access</pre>
 </div>
 </div>
 <!--POST-STOREAREA-->
