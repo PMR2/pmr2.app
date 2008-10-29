@@ -28,26 +28,13 @@ class PMR2AddForm(form.AddForm):
     def post_add(self, ctxobj):
         """\
         Create the required container objects.
+
+        It may be better to move this to profile if possible.
         """
 
-        # XXX somehow make this part of the profile like new plone site
-        # will create the default contents?
-        # FIXME - less magic string
-        ws_c = WorkspaceContainer('workspace')
-        sb_c = SandboxContainer('sandbox')
-        ex_c = ExposureContainer('exposure')
-        ws_c.title = 'Workspace'
-        sb_c.title = 'Sandbox'
-        ex_c.title = 'Exposure'
-        ctxobj['workspace'] = ws_c
-        ctxobj['sandbox'] = sb_c
-        ctxobj['exposure'] = ex_c
-        ws_c.notifyWorkflowCreated()
-        sb_c.notifyWorkflowCreated()
-        ex_c.notifyWorkflowCreated()
-        ws_c.reindexObject()
-        sb_c.reindexObject()
-        ex_c.reindexObject()
+        add_container(ctxobj, WorkspaceContainer)
+        add_container(ctxobj, SandboxContainer)
+        add_container(ctxobj, ExposureContainer)
 
     def nextURL(self):
         return "%s/%s" % (self.context.absolute_url(), self._name)
@@ -64,3 +51,15 @@ class PMR2EditForm(form.EditForm):
 
 # Plone Form wrapper for the EditForm
 PMR2EditFormView = layout.wrap_form(PMR2EditForm, label="Repository Edit Form")
+
+def add_container(context, clsobj):
+    # helper method to construct the PMR2 internal containers
+    obj = clsobj()
+    context[obj.id] = obj
+    # grab object from context
+    obj = context[obj.id]
+    obj.title = obj.id.title()
+    obj.notifyWorkflowCreated()
+    obj.reindexObject()
+    return obj
+

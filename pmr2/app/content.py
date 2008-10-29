@@ -40,6 +40,9 @@ class WorkspaceContainer(ATBTreeFolder):
 
     interface.implements(IWorkspaceContainer)
 
+    def __init__(self, oid='workspace', **kwargs):
+        super(WorkspaceContainer, self).__init__(oid, **kwargs)
+
 atapi.registerType(WorkspaceContainer, 'pmr2.app')
 
 
@@ -50,6 +53,9 @@ class SandboxContainer(ATBTreeFolder):
 
     interface.implements(ISandboxContainer)
 
+    def __init__(self, oid='sandbox', **kwargs):
+        super(SandboxContainer, self).__init__(oid, **kwargs)
+
 atapi.registerType(SandboxContainer, 'pmr2.app')
 
 
@@ -59,6 +65,9 @@ class ExposureContainer(ATBTreeFolder):
     """
 
     interface.implements(IExposureContainer)
+
+    def __init__(self, oid='exposure', **kwargs):
+        super(ExposureContainer, self).__init__(oid, **kwargs)
 
 atapi.registerType(ExposureContainer, 'pmr2.app')
 

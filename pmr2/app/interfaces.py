@@ -27,6 +27,7 @@ class IWorkspaceContainer(interface.Interface):
 
     title = schema.TextLine(
         title=u'Title',
+        default=u'Workspace',
     )
 
 
@@ -37,6 +38,7 @@ class ISandboxContainer(interface.Interface):
 
     title = schema.TextLine(
         title=u'Title',
+        default=u'Sandbox',
     )
 
 
@@ -47,6 +49,7 @@ class IExposureContainer(interface.Interface):
 
     title = schema.TextLine(
         title=u'Title',
+        default=u'Exposure',
     )
 
 
