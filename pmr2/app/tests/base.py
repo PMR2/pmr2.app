@@ -1,6 +1,6 @@
 import unittest
 
-from zope.testing import doctestunit
+from zope.testing import doctestunit, doctest
 from zope.component import testing
 from Testing import ZopeTestCase as ztc
 
@@ -8,51 +8,27 @@ from Products.Five import zcml
 from Products.Five import fiveconfigure
 from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import PloneSite
+from Products.PloneTestCase.layer import onsetup
+
+@onsetup
+def setup():
+    fiveconfigure.debug_mode = True
+    import pmr2.app
+    zcml.load_config('configure.zcml', pmr2.app)
+    fiveconfigure.debug_mode = False
+    ztc.installPackage('pmr2.app')
+
+setup()
 ptc.setupPloneSite(products=('pmr2.app',))
 
-import pmr2.app
 
 class TestCase(ptc.PloneTestCase):
-    class layer(PloneSite):
-        @classmethod
-        def setUp(cls):
-            fiveconfigure.debug_mode = True
-            zcml.load_config('configure.zcml',
-                             pmr2.app)
-            fiveconfigure.debug_mode = False
-
-        @classmethod
-        def tearDown(cls):
-            pass
+    """\
+    For standard tests.
+    """
 
 
-def test_suite():
-    import pmr2.app.tests.test_setup
-
-    return unittest.TestSuite([
-
-        # Unit tests
-        doctestunit.DocFileSuite(
-            'README.txt', package='pmr2.app',
-            setUp=testing.setUp, tearDown=testing.tearDown),
-
-        pmr2.app.tests.test_setup.test_suite(),
-
-        #doctestunit.DocTestSuite(
-        #    module='pmr2.app.mymodule',
-        #    setUp=testing.setUp, tearDown=testing.tearDown),
-
-
-        # Integration tests that use PloneTestCase
-        #ztc.ZopeDocFileSuite(
-        #    'README.txt', package='pmr2.app',
-        #    test_class=TestCase),
-
-        #ztc.FunctionalDocFileSuite(
-        #    'browser.txt', package='pmr2.app',
-        #    test_class=TestCase),
-
-        ])
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+class DocTestCase(ptc.FunctionalTestCase):
+    """\
+    For doctests.
+    """

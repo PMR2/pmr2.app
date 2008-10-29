@@ -1,0 +1,46 @@
+================
+PMR2 Root Object
+================
+
+Before we get started, we need to import the required classes.
+
+    >>> from pmr2.app.browser.root import PMR2AddForm
+
+Also set up the test environment, create a request object
+
+    >>> from z3c.form import testing
+    >>> testing.setupFormDefaults()
+    >>> request = testing.TestRequest()
+
+We can have the add form.
+
+    >>> add = PMR2AddForm(self.folder, request)
+
+Once the form is filled out and the add button is clicked, ...
+
+    >>> request = testing.TestRequest(
+    ...     form={'form.widgets.title': u'test',
+    ...           'form.widgets.repo_root': u'test',
+    ...           'form.buttons.add': 1})
+
+    >>> add = PMR2AddForm(self.folder, request)
+
+Do the actual update.
+
+    >>> add.update()
+
+PMR2 is now added to the folder
+
+    >>> sorted(self.folder.keys())
+    ['test']
+    >>> self.folder[u'test']
+    <PMR2 at ...>
+
+The internal containers should also be created
+
+    >>> self.folder.test.workspace
+    <WorkspaceContainer at ...>
+    >>> self.folder.test.sandbox
+    <SandboxContainer at ...>
+    >>> self.folder.test.exposure
+    <ExposureContainer at ...>

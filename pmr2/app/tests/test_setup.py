@@ -1,5 +1,5 @@
+from unittest import TestSuite, makeSuite
 from base import TestCase
-
 from Products.CMFCore.utils import getToolByName
 
 class TestProductInstall(TestCase):
@@ -29,7 +29,6 @@ class TestProductInstall(TestCase):
 
 
 def test_suite():
-    from unittest import TestSuite, makeSuite
     suite = TestSuite()
     suite.addTest(makeSuite(TestProductInstall))
     return suite
