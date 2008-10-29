@@ -36,9 +36,6 @@ class PMR2AddForm(form.AddForm):
         add_container(ctxobj, SandboxContainer)
         add_container(ctxobj, ExposureContainer)
 
-    def nextURL(self):
-        return "%s/%s" % (self.context.absolute_url(), self._name)
-
 PMR2AddFormView = layout.wrap_form(PMR2AddForm, label="Repository Add Form")
 
 

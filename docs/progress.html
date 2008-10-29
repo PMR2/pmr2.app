@@ -521,6 +521,14 @@ Also see AdvancedOptions</pre>
 * Uses Plone Workflows for access control and to show what state the model is at.
 * [[Curation Flags]] to show the quality of model, and allow [[curators|Curators]] to easily change them.</pre>
 </div>
+<div title="Exposure Container" modifier="Tommy Yu" created="200810290226" modified="200810290226" changecount="4">
+<pre>Contains [[model exposures|Exposure]].
+* [[Curators]] can:
+** Get the list of models submitted for curation
+* Other users of the repository can:
+** Search/browse for specific models
+** Get the list of models</pre>
+</div>
 <div title="GettingStarted" modifier="Tommy Yu" created="200810272229" changecount="6">
 <pre>To get started with this blank TiddlyWiki, you'll need to modify the following tiddlers:
 * SiteTitle &amp; SiteSubtitle: The title and subtitle of the site, as shown above (after saving, they will also appear in the browser title bar)
@@ -536,11 +544,20 @@ You'll also need to enter your username for signing your edits: &lt;&lt;option t
 <pre>Mecurial is a Distributed Version Control System (DVCS) written in Python.
 * http://www.selenic.com/mercurial/</pre>
 </div>
-<div title="PMR2" modifier="Tommy Yu" created="200810272229" modified="200810282321" changecount="11">
+<div title="PMR Root Container" modifier="Tommy Yu" created="200810290220" modified="200810290221" changecount="4">
+<pre>The root of the repository. It needs to provide:
+* Clean user interface to point/direct various types of users
+* Directs users to the specific type of content that s/he is interested in</pre>
+</div>
+<div title="PMR2" modifier="Tommy Yu" created="200810272229" modified="200810290220" changecount="14">
 <pre>This is the roadmap/progress map for Physiome Model Repository 2 (PMR2). The features to be implemented are listed below.
+* [[PMR Root Container]]
 * [[Workspace]]
+** and [[container|Workspace Container]]
 * [[Sandbox]]
+** and [[container|Sandbox Container]]
 * [[Exposure]]
+** and [[container|Exposure Container]]
 Other goals include:
 * Clean user interface (UI) to access the provide features
 * Searching of exposed models
@@ -558,6 +575,14 @@ Sandbox provides these features:
 * [[Push|Push]] new changesets/revisions back up to the source workspace
 * May become a new workspace if [[curators|Curators]] approve</pre>
 </div>
+<div title="Sandbox Container" modifier="Tommy Yu" created="200810290224" changecount="4">
+<pre>This is similar to the [[Workspace Container]] for administrators.
+* Store sandboxes
+* Allows management of sandboxes
+** Lists sandboxes submitted for inclusion into the repository as a new [[model workspace|Workspace]]
+For non-administrators:
+* Listing of sandboxes the current user has created.</pre>
+</div>
 <div title="SiteSubtitle" modifier="Tommy Yu" created="200810272230" changecount="6">
 <pre>Roadmap/Progress document</pre>
 </div>
@@ -571,6 +596,15 @@ Workspace provides these features:
 * Access to the CellML files
 * Version control (through Mercurial)
 * Permission control of read/write access</pre>
+</div>
+<div title="Workspace Container" modifier="Tommy Yu" created="200810290218" modified="200810290223" changecount="4">
+<pre>This provides interface to manage the raw [[workspaces|Workspace]]. Provides:
+* Searching for specific workspaces
+* Custom views, including:
+** List of recently added/changed workspaces
+** Workspaces owned by the current/logged in user
+For administration:
+* Adding unmanaged Mercurial repositories to the listing (import)</pre>
 </div>
 </div>
 <!--POST-STOREAREA-->
