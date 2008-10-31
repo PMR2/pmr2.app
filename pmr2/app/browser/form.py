@@ -24,8 +24,13 @@ class AddForm(z3c.form.form.AddForm):
 
         if self.clsobj is None:
             raise TypeError('`clsobj` need to be defined')
-        id_ = data['title']
-        id_ = zope.component.queryUtility(IIDNormalizer).normalize(id_)
+
+        if 'id' in data:
+            id_ = data['id']
+        else:
+            id_ = data['title']
+            id_ = zope.component.queryUtility(IIDNormalizer).normalize(id_)
+
         self._name = id_
         self._data = data
         return self.clsobj(self._name, **data)

@@ -5,23 +5,34 @@ PMR2 Root Object
 Before we get started, we need to import the required classes.
 
     >>> from pmr2.app.browser.root import PMR2AddForm
+    >>> from pmr2.app.tests.base import TestRequest
 
 Also set up the test environment, create a request object
 
     >>> from z3c.form import testing
-    >>> testing.setupFormDefaults()
-    >>> request = testing.TestRequest()
+    >>> from plone.z3cform.tests import setup_defaults
+    >>> setup_defaults()
+    >>> request = TestRequest()
 
 We can have the add form.
 
     >>> add = PMR2AddForm(self.folder, request)
 
+    >>> html = add()
+    >>> 'Title' in html
+    True
+    >>> 'repo_root' in html
+    True
+
 Once the form is filled out and the add button is clicked, ...
 
     >>> request = testing.TestRequest(
-    ...     form={'form.widgets.title': u'test',
-    ...           'form.widgets.repo_root': u'test',
-    ...           'form.buttons.add': 1})
+    ...     form={
+    ...         'form.widgets.id': 'test',
+    ...         'form.widgets.title': u'Test Repository',
+    ...         'form.widgets.repo_root': u'test',
+    ...         'form.buttons.add': 1
+    ...     })
 
     >>> add = PMR2AddForm(self.folder, request)
 
@@ -35,6 +46,8 @@ PMR2 is now added to the folder
     ['test']
     >>> self.folder[u'test']
     <PMR2 at ...>
+    >>> self.folder[u'test'].title
+    u'Test Repository'
 
 The internal containers should also be created
 
@@ -44,3 +57,16 @@ The internal containers should also be created
     <SandboxContainer at ...>
     >>> self.folder.test.exposure
     <ExposureContainer at ...>
+
+Should fail if we try to add this again as the object already exists.
+
+    >>> request = testing.TestRequest(
+    ...     form={
+    ...         'form.widgets.id': 'test',
+    ...         'form.widgets.title': u'Test Repository',
+    ...         'form.widgets.repo_root': u'test',
+    ...         'form.buttons.add': 1
+    ...     })
+
+#    >>> add = PMR2AddForm(self.folder, request)
+#    >>> add.update()

@@ -16,7 +16,7 @@ class PMR2AddForm(form.AddForm):
     Repository root add form.
     """
 
-    fields = z3c.form.field.Fields(IPMR2)
+    fields = z3c.form.field.Fields(IPMR2Add)
     clsobj = PMR2
 
     def add_data(self, ctxobj):

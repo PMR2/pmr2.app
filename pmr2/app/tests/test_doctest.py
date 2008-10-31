@@ -18,16 +18,16 @@ def test_suite():
         ztc.ZopeDocFileSuite(
             'browser.txt', package='pmr2.app',
             test_class=base.DocTestCase,
-            setUp=testing.setUp, tearDown=testing.tearDown,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
+
         # Root form usage tests.
         ztc.ZopeDocFileSuite(
             'browser/root.txt', package='pmr2.app',
-            # XXX DocTestCase does NOT work here for some reason
-            test_class=base.TestCase,
+            test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
+
     ])
 
 if __name__ == '__main__':

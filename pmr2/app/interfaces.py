@@ -1,115 +1,135 @@
-from zope import schema
-from zope import interface
-from Products.ATContentTypes.content.folder import ATFolder
+import zope.schema
+import zope.interface
 
 
-class IPMR2(interface.Interface):
+class IId(zope.interface.Interface):
+    """\
+    For use by any interface that will be used by AddForm; this
+    basically gives an 'id' field for the user to input.
+    """
+
+    id = zope.schema.BytesLine(
+        title=u'Id',
+        description=u'The identifier of the object, used for URI.',
+    )
+
+
+class IPMR2(zope.interface.Interface):
     """\
     Repository is the root container for the entire model repository,
     it also contains attributes on where the files are.
     """
 
-    title = schema.TextLine(
+    title = zope.schema.TextLine(
         title=u'Title',
+        description=u'The title or name given to this repository.',
     )
 
-    repo_root = schema.TextLine(
+    repo_root = zope.schema.TextLine(
         title=u'Repository Path',
-        description=u'Physical path to the root of the Mercurial Repositories',
-        readonly=True,
+        description=u'The working directory of this repository. This '\
+                     'directory contains the Mercurial repositories of the '\
+                     'models.',
+        readonly=False,
     )
 
 
-class IWorkspaceContainer(interface.Interface):
+class IPMR2Add(IId, IPMR2):
+    """\
+    Interface for the use by PMR2AddForm.
+    """
+
+
+class IWorkspaceContainer(zope.interface.Interface):
     """\
     Container for the model workspaces.
     """
 
-    title = schema.TextLine(
+    title = zope.schema.TextLine(
         title=u'Title',
         default=u'Workspace',
     )
 
 
-class ISandboxContainer(interface.Interface):
+class ISandboxContainer(zope.interface.Interface):
     """\
     Container for the sandboxes (working copies).
     """
 
-    title = schema.TextLine(
+    title = zope.schema.TextLine(
         title=u'Title',
         default=u'Sandbox',
     )
 
 
-class IExposureContainer(interface.Interface):
+class IExposureContainer(zope.interface.Interface):
     """\
     Container for all exposure pages.
     """
 
-    title = schema.TextLine(
+    title = zope.schema.TextLine(
         title=u'Title',
         default=u'Exposure',
     )
 
 
-class IWorkspace(interface.Interface):
+class IWorkspace(zope.interface.Interface):
     """\
     Model workspace.
     """
 
     # id would be the actual path on filesystem
 
-    title = schema.TextLine(
+    title = zope.schema.TextLine(
         title=u'Title',
         readonly=True,
     )
 
-    description = schema.TextLine(
+    description = zope.schema.TextLine(
         title=u'Description',
     )
 
 
-class ISandbox(interface.Interface):
+class ISandbox(zope.interface.Interface):
     """\
     Container for the sandboxes (working copies).
     """
 
-    title = schema.TextLine(
+    title = zope.schema.TextLine(
         title=u'Title',
     )
 
-    description = schema.TextLine(
+    description = zope.schema.TextLine(
         title=u'Description',
     )
 
-    status = schema.Text(
+    status = zope.schema.Text(
         title=u'Status Messages',
         description=u'Output from Mercurial',
     )
 
 
-class IExposure(interface.Interface):
+class IExposure(zope.interface.Interface):
     """\
     Container for all exposure pages.
     """
 
-    title = schema.TextLine(
+    title = zope.schema.TextLine(
         title=u'Title',
     )
 
-    workspace = schema.TextLine(
+    workspace = zope.schema.TextLine(
         title=u'Workspace',
         description=u'The model workspace this exposure encapsulates.',
     )
 
-    commit_id = schema.TextLine(
+    commit_id = zope.schema.TextLine(
         title=u'Commit ID',
         description=u'The specific commit identifier of the model.',
     )
 
     # FIXME placeholder - curation will have its own type.
-    curation = schema.TextLine(
+    curation = zope.schema.TextLine(
         title=u'Curation',
     )
 
