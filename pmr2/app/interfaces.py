@@ -1,14 +1,16 @@
 import zope.schema
 import zope.interface
 
+from pmr2.app.schema import ObjectId
 
-class IId(zope.interface.Interface):
+
+class IObjectIdMixin(zope.interface.Interface):
     """\
     For use by any interface that will be used by AddForm; this
     basically gives an 'id' field for the user to input.
     """
 
-    id = zope.schema.BytesLine(
+    id = ObjectId(
         title=u'Id',
         description=u'The identifier of the object, used for URI.',
     )
@@ -34,7 +36,7 @@ class IPMR2(zope.interface.Interface):
     )
 
 
-class IPMR2Add(IId, IPMR2):
+class IPMR2Add(IObjectIdMixin, IPMR2):
     """\
     Interface for the use by PMR2AddForm.
     """

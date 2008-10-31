@@ -14,4 +14,4 @@ For the add form
 
     >>> from pmr2.app.interfaces import IPMR2Add
     >>> type(IPMR2Add.get('id'))
-    <class 'zope.schema._field.BytesLine'>
+    <class 'pmr2.app.schema.field.ObjectId'>
