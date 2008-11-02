@@ -1,7 +1,14 @@
 import zope.schema
 import zope.interface
 
+from zope.i18nmessageid import MessageFactory
+_ = MessageFactory("pmr2")
+
 from pmr2.app.schema import ObjectId
+
+
+class ObjectIdExistsError(zope.schema.ValidationError):
+    __doc__ = _("""The specified id is already in use.""")
 
 
 class IObjectIdMixin(zope.interface.Interface):

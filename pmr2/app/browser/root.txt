@@ -9,7 +9,6 @@ Before we get started, we need to import the required classes.
 
 Also set up the test environment, create a request object
 
-    >>> from z3c.form import testing
     >>> from plone.z3cform.tests import setup_defaults
     >>> setup_defaults()
     >>> request = TestRequest()
@@ -26,7 +25,7 @@ We can have the add form.
 
 Once the form is filled out and the add button is clicked, ...
 
-    >>> request = testing.TestRequest(
+    >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.id': 'test',
     ...         'form.widgets.title': u'Test Repository',
@@ -60,7 +59,7 @@ The internal containers should also be created
 
 Should fail if we try to add this again as the object already exists.
 
-    >>> request = testing.TestRequest(
+    >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.id': 'test',
     ...         'form.widgets.title': u'Test Repository',
@@ -68,5 +67,7 @@ Should fail if we try to add this again as the object already exists.
     ...         'form.buttons.add': 1
     ...     })
 
-#    >>> add = PMR2AddForm(self.folder, request)
-#    >>> add.update()
+    >>> add = PMR2AddForm(self.folder, request)
+    >>> html = add()
+    >>> 'The specified id is already in use.' in html
+    True

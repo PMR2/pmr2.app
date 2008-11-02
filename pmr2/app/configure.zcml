@@ -9,6 +9,7 @@
 
   <include package="plone.z3cform" />
   <include package=".browser" />
+  <include package=".validator" />
 
   <genericsetup:registerProfile
       name="default"
@@ -18,5 +19,7 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       />
+
+  <adapter factory=".validator.ObjectIdValidator"/>
 
 </configure>
