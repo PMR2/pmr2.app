@@ -20,8 +20,6 @@ We can have the add form.
     >>> html = add()
     >>> 'Title' in html
     True
-    >>> 'repo_root' in html
-    True
 
 Once the form is filled out and the add button is clicked, ...
 
@@ -29,7 +27,6 @@ Once the form is filled out and the add button is clicked, ...
     ...     form={
     ...         'form.widgets.id': 'test',
     ...         'form.widgets.title': u'Test Repository',
-    ...         'form.widgets.repo_root': u'test',
     ...         'form.buttons.add': 1
     ...     })
 
@@ -63,11 +60,11 @@ Should fail if we try to add this again as the object already exists.
     ...     form={
     ...         'form.widgets.id': 'test',
     ...         'form.widgets.title': u'Test Repository',
-    ...         'form.widgets.repo_root': u'test',
     ...         'form.buttons.add': 1
     ...     })
 
     >>> add = PMR2AddForm(self.folder, request)
     >>> html = add()
-    >>> 'The specified id is already in use.' in html
+    >>> from pmr2.app.interfaces import ObjectIdExistsError
+    >>> ObjectIdExistsError.__doc__ in html
     True

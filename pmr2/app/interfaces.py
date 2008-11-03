@@ -11,6 +11,18 @@ class ObjectIdExistsError(zope.schema.ValidationError):
     __doc__ = _("""The specified id is already in use.""")
 
 
+class InvalidPathError(zope.schema.ValidationError):
+    __doc__ = _("""The value specified is not a valid path.""")
+
+
+class RepoRootNotExistsError(zope.schema.ValidationError):
+    __doc__ = _("""The repository root at the specified path does not exist.""")
+
+
+class RepoNotExistsError(zope.schema.ValidationError):
+    __doc__ = _("""The repository at the specified path does not exist.""")
+
+
 class IObjectIdMixin(zope.interface.Interface):
     """\
     For use by any interface that will be used by AddForm; this
@@ -25,8 +37,7 @@ class IObjectIdMixin(zope.interface.Interface):
 
 class IPMR2(zope.interface.Interface):
     """\
-    Repository is the root container for the entire model repository,
-    it also contains attributes on where the files are.
+    Interface for the root container for the entire model repository.
     """
 
     title = zope.schema.TextLine(
@@ -36,11 +47,14 @@ class IPMR2(zope.interface.Interface):
 
     repo_root = zope.schema.TextLine(
         title=u'Repository Path',
-        description=u'The working directory of this repository. This '\
-                     'directory contains the Mercurial repositories of the '\
+        description=u'The working directory of this repository. This '
+                     'directory contains the Mercurial repositories of the '
                      'models.',
         readonly=False,
     )
+
+    # workspace_path is 'workspace'
+    # sandbox_path is 'sandbox'
 
 
 class IPMR2Add(IObjectIdMixin, IPMR2):

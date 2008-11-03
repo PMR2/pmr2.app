@@ -16,14 +16,14 @@ class PMR2AddForm(form.AddForm):
     Repository root add form.
     """
 
-    fields = z3c.form.field.Fields(IPMR2Add)
+    fields = z3c.form.field.Fields(IPMR2Add).select(
+        'id',
+        'title',
+    )
     clsobj = PMR2
 
     def add_data(self, ctxobj):
         ctxobj.title = self._data['title']
-        # FIXME create root Hg dir if not exist?
-        # - validation on path need to happen somewhere
-        ctxobj.repo_root = self._data['repo_root']
 
     def post_add(self, ctxobj):
         """\
@@ -41,13 +41,18 @@ PMR2AddFormView = layout.wrap_form(PMR2AddForm, label="Repository Add Form")
 
 class PMR2EditForm(form.EditForm):
     """\
-    Repository Edit Form.
+    Repository Edit/Management Form.
     """
 
-    fields = z3c.form.field.Fields(IPMR2)
+    fields = z3c.form.field.Fields(IPMR2).select(
+        'repo_root',
+    )
+
 
 # Plone Form wrapper for the EditForm
-PMR2EditFormView = layout.wrap_form(PMR2EditForm, label="Repository Edit Form")
+PMR2EditFormView = layout.wrap_form(
+    PMR2EditForm, label="Repository Management")
+
 
 def add_container(context, clsobj):
     # helper method to construct the PMR2 internal containers

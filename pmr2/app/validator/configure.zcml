@@ -3,5 +3,6 @@
     i18n_domain="pmr2.app">
 
   <adapter factory=".ObjectIdValidator"/>
+  <adapter factory=".RepoPathValidator"/>
 
 </configure>

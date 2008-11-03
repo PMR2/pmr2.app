@@ -20,6 +20,4 @@
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       />
 
-  <adapter factory=".validator.ObjectIdValidator"/>
-
 </configure>
