@@ -16,7 +16,7 @@ def test_suite():
         # Browser rendering tests, override setup to make rendering
         # more simple.
         ztc.ZopeDocFileSuite(
-            'browser.txt', package='pmr2.app',
+            'interfaces.txt', package='pmr2.app',
             test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),

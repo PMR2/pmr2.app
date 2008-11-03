@@ -68,3 +68,52 @@ Should fail if we try to add this again as the object already exists.
     >>> from pmr2.app.interfaces import ObjectIdExistsError
     >>> ObjectIdExistsError.__doc__ in html
     True
+
+Now we try to edit.
+
+    >>> from pmr2.app.browser.root import PMR2EditForm
+    >>> self.folder.test
+    <PMR2 at ...>
+    >>> self.folder.test.repo_root
+    >>> request = TestRequest()
+    >>> edit = PMR2EditForm(self.folder.test, request)
+    >>> html = edit()
+    >>> 'repo_root' in html
+    True
+
+Test out invalid value
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.repo_root': u'not a path',
+    ...         'form.buttons.apply': 1,
+    ...     })
+
+    >>> edit = PMR2EditForm(self.folder.test, request)
+    >>> html = edit()
+    >>> from pmr2.app.interfaces import InvalidPathError
+    >>> InvalidPathError.__doc__ in html
+    True
+
+Now a real path.  Create temporary directory first.
+
+    >>> import tempfile
+    >>> tmproot = tempfile.mkdtemp()
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.repo_root': tmproot,
+    ...         'form.buttons.apply': 1,
+    ...     })
+
+    >>> edit = PMR2EditForm(self.folder.test, request)
+    >>> html = edit.update()
+
+The repository root should be set
+
+    >>> self.folder.test.repo_root == tmproot
+    True
+
+Need to clean up our mess
+
+    >>> import shutil
+    >>> shutil.rmtree(tmproot)

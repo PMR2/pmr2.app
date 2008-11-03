@@ -48,7 +48,6 @@ class PMR2EditForm(form.EditForm):
         'repo_root',
     )
 
-
 # Plone Form wrapper for the EditForm
 PMR2EditFormView = layout.wrap_form(
     PMR2EditForm, label="Repository Management")

@@ -45,7 +45,7 @@ class IPMR2(zope.interface.Interface):
         description=u'The title or name given to this repository.',
     )
 
-    repo_root = zope.schema.TextLine(
+    repo_root = zope.schema.BytesLine(
         title=u'Repository Path',
         description=u'The working directory of this repository. This '
                      'directory contains the Mercurial repositories of the '

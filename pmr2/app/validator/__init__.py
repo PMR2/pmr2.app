@@ -1,3 +1,5 @@
+import os.path
+
 import zope.interface
 from  zope.schema import ValidationError
 import z3c.form.validator

@@ -8,7 +8,7 @@ This is the interface to the root repository object.
     >>> type(IPMR2.get('title'))
     <class 'zope.schema._bootstrapfields.TextLine'>
     >>> type(IPMR2.get('repo_root'))
-    <class 'zope.schema._bootstrapfields.TextLine'>
+    <class 'zope.schema._field.BytesLine'>
 
 For the add form
 
