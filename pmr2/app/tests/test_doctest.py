@@ -13,10 +13,17 @@ import base
 
 def test_suite():
     return unittest.TestSuite([
-        # Browser rendering tests, override setup to make rendering
-        # more simple.
+
+        # interfaces
         ztc.ZopeDocFileSuite(
             'interfaces.txt', package='pmr2.app',
+            test_class=base.DocTestCase,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
+        ),
+
+        # Content tests.
+        ztc.ZopeDocFileSuite(
+            'content.txt', package='pmr2.app',
             test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
@@ -28,6 +35,7 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
+        # test the fields.
         doctestunit.DocTestSuite(
             module='pmr2.app.schema.field',
             setUp=testing.setUp, tearDown=testing.tearDown

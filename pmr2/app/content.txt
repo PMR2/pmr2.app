@@ -1,0 +1,106 @@
+=======
+Content
+=======
+
+There are a number of content types that makes up PMR2.  There is the
+root container object, which holds the containers for each of the 
+different internal types.  Internal types includes:
+
+  Workspace
+    Zope object that encapsulates a repository (for the mean time, a
+    Mercurial repository) on the local filesystem.  Access to the data 
+    within the class and filesystem is provided via pmr2.mercurial.
+
+  Sandbox
+    Much like a workspace, except write access to the repository and the
+    files within are permitted through an interface.
+
+  Exposure
+    These can be considered as published models.  They are created from
+    a specific revision of a workspace.  Meaningful presentational views
+    can be constructed.
+
+There are containers for each of the above types, which provides methods
+that will aid the management of the objects within for administrators.
+
+Here below we will instantiate those objects and see what the helper
+methods of each object do.  We first import the required modules.::
+
+    >>> from pmr2.app.content import *
+    >>> self.folder['repo'] = PMR2('repo')
+    >>> self.folder.repo
+    <PMR2 at ...repo>
+
+Now we have the main repository object, we can build the subobjects 
+manually.::
+
+    >>> self.folder.repo['workspace'] = WorkspaceContainer()
+    >>> self.folder.repo.workspace
+    <WorkspaceContainer at ...repo/workspace>
+    >>> self.folder.repo['sandbox'] = SandboxContainer()
+    >>> self.folder.repo.sandbox
+    <SandboxContainer at ...repo/sandbox>
+    >>> self.folder.repo['exposure'] = ExposureContainer()
+    >>> self.folder.repo.exposure
+    <ExposureContainer at ...repo/exposure>
+
+Since the path to the repository isn't assigned yet, there should be no
+path returned here.::
+
+    >>> self.folder.repo.workspace.get_path()
+    >>> self.folder.repo.sandbox.get_path()
+
+Now we assign the path.  Use the temporary directory::
+
+    >>> self.folder.repo.repo_root = self.tmpdir
+    >>> workspace_root = self.folder.repo.workspace.get_path()
+    >>> workspace_root
+    '...workspace'
+
+Since the workspace object and the directory is empty, the repository
+listing method should return an empty list.  Do note the test directory
+is currently empty, so it will return an exception.::
+
+    >>> self.folder.repo.workspace.get_repository_list()
+    Traceback (most recent call last):
+    ...
+    WorkspaceDirNotExistsError
+
+Since the PMR2 creation process does not automatically create the 
+directory structure, we can do that here.  The repository list should
+function correctly now.::
+
+    >>> from pmr2.app.tests import utils
+    >>> utils.mkreporoot(self.folder.repo.repo_root)
+    >>> self.folder.repo.workspace.get_repository_list()
+    []
+
+Time to populate the directory with some mercurial repositories.::
+
+    >>> testdirlist = ['test%d' % i for i in xrange(3)]
+    >>> for i in testdirlist:
+    ...     utils.mkrepo(workspace_root, i)
+    >>> self.folder.repo.workspace.get_repository_list()
+    [('test0', None), ('test1', None), ('test2', None)]
+
+Now we create some Workspace objects and populate them into the 
+container to see the difference.::
+
+    >>> ws_objs = ['test%d' % i for i in xrange(2)]
+    >>> for i in ws_objs:
+    ...     self.folder.repo.workspace[i] = Workspace(i)
+    >>> self.folder.repo.workspace.get_repository_list()
+    [('test0', True), ('test1', True), ('test2', None)]
+
+If we have a workspace object without an associated repository directory
+on the filesystem, a false result will signify an inconsistency::
+
+    >>> self.folder.repo.workspace['zzz'] = Workspace('zzz')
+    >>> self.folder.repo.workspace.get_repository_list()
+    [('test0', True), ('test1', True), ('test2', None), ('zzz', False)]
+
+Wrong object type will also result in the same thing
+
+    >>> self.folder.repo.workspace['test2'] = Sandbox('test2')
+    >>> self.folder.repo.workspace.get_repository_list()
+    [('test0', True), ('test1', True), ('test2', False), ('zzz', False)]

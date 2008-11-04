@@ -23,6 +23,10 @@ class RepoNotExistsError(zope.schema.ValidationError):
     __doc__ = _("""The repository at the specified path does not exist.""")
 
 
+class WorkspaceDirNotExistsError(zope.schema.ValidationError):
+    __doc__ = _("""The workspace directory does not exist.""")
+
+
 class IObjectIdMixin(zope.interface.Interface):
     """\
     For use by any interface that will be used by AddForm; this
@@ -76,6 +80,12 @@ class IWorkspaceContainer(zope.interface.Interface):
     def get_path():
         """\
         Returns the root directory where all the workspaces are stored.
+        """
+
+    def get_repository_list():
+        """\
+        Returns the list of repositories within the repository path
+        with its associated Workspace object, if any.
         """
 
 

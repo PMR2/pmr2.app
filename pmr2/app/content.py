@@ -11,6 +11,7 @@ from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.Archetypes import atapi
 
+import pmr2.mercurial.utils
 from pmr2.app.interfaces import *
 
 __all__ = [
@@ -48,10 +49,60 @@ class WorkspaceContainer(ATBTreeFolder):
         super(WorkspaceContainer, self).__init__(oid, **kwargs)
 
     def get_path(self):
+        """See IWorkspaceContainer"""
+
         p = aq_parent(self).repo_root
         if not p:
             return None
+        # XXX magic string
         return os.path.join(p, 'workspace')
+
+    def get_repository_list(self):
+        """See IWorkspaceContainer
+        
+        Returns a list of tuples.  Format is:
+        - name of directory
+        - whether the object associated with is valid.
+
+          - True means yes
+          - None means missing
+          - False means object should not exist.  It is either the wrong
+            type, or the repository directory is missing on the file-
+            system.
+        """
+
+        reporoot = self.get_path()
+        try:
+            repodirs = pmr2.mercurial.utils.webdir(reporoot)
+        except OSError:
+            raise WorkspaceDirNotExistsError()
+
+        # code below is slightly naive, performance-wise.  if done in
+        # same loop, popping both list as a stack, compare the values
+        # that are popped might be faster.
+
+        # repository objects need to be processed
+        # True = correct type, False = incorrect type
+        items = self.items()
+        repoobjs = [
+            (i[0], isinstance(i[1], Workspace),)
+            for i in items]
+        repoobjs_d = dict(repoobjs)
+
+        # whether i is in repoobjs
+        # None = missing, True/False (from above if exists)
+        check = [(i, repoobjs_d.get(i, None)) for i in repodirs]
+
+        # failure due to non-existing objects (remaining repoobjs that
+        # were not checked
+        # False = repo missing/invalid Workspace object
+        fail = [(i[0], False) for i in repoobjs if i[0] not in repodirs]
+
+        # build the result and sort
+        result = fail + check
+        result.sort()
+
+        return result
 
 atapi.registerType(WorkspaceContainer, 'pmr2.app')
 
@@ -67,9 +118,12 @@ class SandboxContainer(ATBTreeFolder):
         super(SandboxContainer, self).__init__(oid, **kwargs)
 
     def get_path(self):
+        """See ISandboxContainer"""
+
         p = aq_parent(self).repo_root
         if not p:
             return None
+        # XXX magic string
         return os.path.join(p, 'sandbox')
 
 atapi.registerType(SandboxContainer, 'pmr2.app')
@@ -99,6 +153,8 @@ class Workspace(atapi.BaseContent):
     description = fieldproperty.FieldProperty(IWorkspace['description'])
 
     def get_path(self):
+        """See IWorkspace"""
+
         p = aq_parent(self).get_path()
         if not p:
             return None
@@ -118,6 +174,8 @@ class Sandbox(atapi.BaseContent):
     status = fieldproperty.FieldProperty(ISandbox['status'])
 
     def get_path(self):
+        """See ISandbox"""
+
         p = aq_parent(self).get_path()
         if not p:
             return None

@@ -1,3 +1,5 @@
+import tempfile
+import shutil
 import unittest
 
 from zope.testing import doctestunit, doctest
@@ -12,7 +14,7 @@ from Products.Five import zcml
 from Products.Five import fiveconfigure
 from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import PloneSite
-from Products.PloneTestCase.layer import onsetup
+from Products.PloneTestCase.layer import onsetup, onteardown
 
 
 @onsetup
@@ -23,7 +25,12 @@ def setup():
     fiveconfigure.debug_mode = False
     ztc.installPackage('pmr2.app')
 
+@onteardown
+def teardown():
+    pass
+
 setup()
+teardown()
 ptc.setupPloneSite(products=('pmr2.app',))
 
 
@@ -47,3 +54,11 @@ class DocTestCase(ptc.FunctionalTestCase):
     """\
     For doctests.
     """
+
+    def setUp(self):
+        super(DocTestCase, self).setUp()
+        self.tmpdir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        super(DocTestCase, self).tearDown()
+        shutil.rmtree(self.tmpdir, ignore_errors=True)

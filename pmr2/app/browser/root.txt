@@ -100,10 +100,9 @@ Test out invalid value
     >>> InvalidPathError.__doc__ in html
     True
 
-Now a real path.  Create temporary directory first.
+Now a real path.
 
-    >>> import tempfile
-    >>> tmproot = tempfile.mkdtemp()
+    >>> tmproot = self.tmpdir
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.repo_root': tmproot,
@@ -124,8 +123,3 @@ The workspace and sandbox containers should now have a path.
     '...workspace'
     >>> self.folder.test.sandbox.get_path()
     '...sandbox'
-
-Need to clean up the temporary files.
-
-    >>> import shutil
-    >>> shutil.rmtree(tmproot)
