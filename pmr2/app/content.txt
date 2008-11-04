@@ -1,38 +1,68 @@
-=======
-Content
-=======
+====================
+PMR2 Content Classes
+====================
 
-There are a number of content types that makes up PMR2.  There is the
-root container object, which holds the containers for each of the 
-different internal types.  Internal types includes:
+------------
+Introduction
+------------
+
+There are a number of content types that make up the PMR2 application.
+
+  PMR2
+    The root container, it contains vital attributes required for the
+    operation of the repository.  One such attribute is the repository
+    root directory on the file system; only site managers will have
+    access to the form that can manipulate this field by default.
+    
+    This container also contains other containers to group similar PMR2 
+    related objects together, and can optionally contain other Plone
+    document types for documentation purposes (e.g. an introduction page
+    for the repository instance).
+
+  WorkspaceContainer
+    Contains workspaces and provides methods that will aid site managers
+    to manage the data it contains.
 
   Workspace
-    Zope object that encapsulates a repository (for the mean time, a
-    Mercurial repository) on the local filesystem.  Access to the data 
-    within the class and filesystem is provided via pmr2.mercurial.
+    It encapsulates an instance of a Version Control System (VCS).  
+    Currently Mercurial is the only VCS supported; access to the data 
+    within is provided by pmr2.mercurial.
+
+  SandboxContainer
+    Contains sandboxes and provides methods that will aid site managers
+    to manage the data it contains.
 
   Sandbox
-    Much like a workspace, except write access to the repository and the
-    files within are permitted through an interface.
+    Identical to Workspace in terms of functions provided, it also
+    provides an environment similar to a checkout of a repository (or
+    writable clone of one).  Provides methods to manipulate files and
+    changesets.
+
+  ExposureContainer
+    Contains exposures.
 
   Exposure
     These can be considered as published models.  They are created from
     a specific revision of a workspace.  Meaningful presentational views
     can be constructed.
 
-There are containers for each of the above types, which provides methods
-that will aid the management of the objects within for administrators.
+-----
+Usage
+-----
 
-Here below we will instantiate those objects and see what the helper
-methods of each object do.  We first import the required modules.::
+Here we will test out the content type classes and check out the methods
+they provide.  We first import the required modules and create the root
+object.
+::
 
     >>> from pmr2.app.content import *
     >>> self.folder['repo'] = PMR2('repo')
     >>> self.folder.repo
     <PMR2 at ...repo>
 
-Now we have the main repository object, we can build the subobjects 
-manually.::
+Now we have the main repository object, we can add the container objects
+to it.
+::
 
     >>> self.folder.repo['workspace'] = WorkspaceContainer()
     >>> self.folder.repo.workspace
@@ -44,38 +74,51 @@ manually.::
     >>> self.folder.repo.exposure
     <ExposureContainer at ...repo/exposure>
 
-Since the path to the repository isn't assigned yet, there should be no
-path returned here.::
+Since the path to the repository isn't assigned yet, the get_path method
+of the containers will return nothing.
+::
 
     >>> self.folder.repo.workspace.get_path()
     >>> self.folder.repo.sandbox.get_path()
 
-Now we assign the path.  Use the temporary directory::
+Now we assign the path.  We will use the temporary directory for the
+root.  Once the path is assigned the get_path methods now return a
+valid path.
+::
 
     >>> self.folder.repo.repo_root = self.tmpdir
     >>> workspace_root = self.folder.repo.workspace.get_path()
     >>> workspace_root
     '...workspace'
+    >>> sandbox_root = self.folder.repo.sandbox.get_path()
+    >>> sandbox_root
+    '...sandbox'
 
-Since the workspace object and the directory is empty, the repository
-listing method should return an empty list.  Do note the test directory
-is currently empty, so it will return an exception.::
+In the workspace object, there is a method that will return a list of
+repositories within.  Since the workspace directory does not currently
+exist, it will return an exception.
+::
 
     >>> self.folder.repo.workspace.get_repository_list()
     Traceback (most recent call last):
     ...
     WorkspaceDirNotExistsError
 
-Since the PMR2 creation process does not automatically create the 
-directory structure, we can do that here.  The repository list should
-function correctly now.::
+Now we create the new directory.  The repository list should function 
+correctly now.  As there are obviously no workspaces and no related
+workspace objects, we get an empty list.
+::
 
     >>> from pmr2.app.tests import utils
     >>> utils.mkreporoot(self.folder.repo.repo_root)
     >>> self.folder.repo.workspace.get_repository_list()
     []
 
-Time to populate the directory with some mercurial repositories.::
+Time to populate the directory with some VCS instances.  The method now
+returns a list that shows the existence of the VCS instances.  However,
+the second value returns shows None, which signifies that it has no Zope
+object associated with any of them, as they have not been created.
+::
 
     >>> testdirlist = ['test%d' % i for i in xrange(3)]
     >>> for i in testdirlist:
@@ -83,8 +126,10 @@ Time to populate the directory with some mercurial repositories.::
     >>> self.folder.repo.workspace.get_repository_list()
     [('test0', None), ('test1', None), ('test2', None)]
 
-Now we create some Workspace objects and populate them into the 
-container to see the difference.::
+Now we create a couple Workspace objects with the same name to associate
+the object to the VCS instance in the workspace directory.  The second
+value is now True for them.
+::
 
     >>> ws_objs = ['test%d' % i for i in xrange(2)]
     >>> for i in ws_objs:
@@ -93,13 +138,18 @@ container to see the difference.::
     [('test0', True), ('test1', True), ('test2', None)]
 
 If we have a workspace object without an associated repository directory
-on the filesystem, a false result will signify an inconsistency::
+on the file system, a False value will signify an inconsistency.
+::
 
     >>> self.folder.repo.workspace['zzz'] = Workspace('zzz')
     >>> self.folder.repo.workspace.get_repository_list()
     [('test0', True), ('test1', True), ('test2', None), ('zzz', False)]
 
-Wrong object type will also result in the same thing
+Wrong object type will also result in a False value for an existing VCS
+instance of the same name as the object.  This should never happen in
+normal usage, because other object types have to be placed in here
+deliberately.
+::
 
     >>> self.folder.repo.workspace['test2'] = Sandbox('test2')
     >>> self.folder.repo.workspace.get_repository_list()

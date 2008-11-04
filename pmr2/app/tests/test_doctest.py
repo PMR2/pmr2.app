@@ -14,13 +14,6 @@ import base
 def test_suite():
     return unittest.TestSuite([
 
-        # interfaces
-        ztc.ZopeDocFileSuite(
-            'interfaces.txt', package='pmr2.app',
-            test_class=base.DocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
-
         # Content tests.
         ztc.ZopeDocFileSuite(
             'content.txt', package='pmr2.app',

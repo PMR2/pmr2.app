@@ -589,13 +589,16 @@ For non-administrators:
 <div title="SiteTitle" modifier="Tommy Yu" created="200810272227" modified="200810272231" changecount="6">
 <pre>PMR2</pre>
 </div>
-<div title="Workspace" modifier="Tommy Yu" created="200810282244" modified="200810282311" changecount="8">
+<div title="Workspace" modifier="Tommy Yu" created="200810282244" modified="200811042051" changecount="9">
 <pre>Workspaces, also known as model workspaces, are objects that encapsulates a model. Each of these workspace in PMR2 are also back by its respective [[Mercurial]] repository.
 
 Workspace provides these features:
 * Access to the CellML files
 * Version control (through Mercurial)
-* Permission control of read/write access</pre>
+* Permission control of read/write access
+Some thoughts:
+* Renaming
+** It is unwise to do so normally, because it will rename the URI. But, if it must be done, the repository directory on the local filesystem must be carefully moved, such that it won't move into another directory. A clone to new location is probably the sane option. Still, renaming of a repository should *really* never be done.</pre>
 </div>
 <div title="Workspace Container" modifier="Tommy Yu" created="200810290218" modified="200810290223" changecount="4">
 <pre>This provides interface to manage the raw [[workspaces|Workspace]]. Provides:

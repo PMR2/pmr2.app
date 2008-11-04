@@ -1,27 +1,31 @@
-================
-PMR2 Root Object
-================
+======================
+PMR2 Root Object Forms
+======================
 
 Before we get started, we need to import the required classes.
+::
 
     >>> from pmr2.app.browser.root import PMR2AddForm
     >>> from pmr2.app.tests.base import TestRequest
 
-Also set up the test environment, create a request object
+Also set up the test environment, create a request object.
+::
 
     >>> from plone.z3cform.tests import setup_defaults
     >>> setup_defaults()
     >>> request = TestRequest()
 
 We can have the add form.
+::
 
     >>> add = PMR2AddForm(self.folder, request)
-
     >>> html = add()
     >>> 'Title' in html
     True
 
-Once the form is filled out and the add button is clicked, ...
+Once the form is filled out and the add button is clicked, the object
+will be added.
+::
 
     >>> request = TestRequest(
     ...     form={
@@ -29,14 +33,11 @@ Once the form is filled out and the add button is clicked, ...
     ...         'form.widgets.title': u'Test Repository',
     ...         'form.buttons.add': 1
     ...     })
-
     >>> add = PMR2AddForm(self.folder, request)
-
-Do the actual update.
-
     >>> add.update()
 
-PMR2 is now added to the folder
+PMR2 is now added to the folder.
+::
 
     >>> sorted(self.folder.keys())
     ['test']
@@ -45,7 +46,8 @@ PMR2 is now added to the folder
     >>> self.folder[u'test'].title
     u'Test Repository'
 
-The internal containers should also be created
+The internal containers are automatically created.
+::
 
     >>> self.folder.test.workspace
     <WorkspaceContainer at ...>
@@ -54,12 +56,15 @@ The internal containers should also be created
     >>> self.folder.test.exposure
     <ExposureContainer at ...>
 
-These should not return anything, yet.
+These should not return anything, yet, as the repository root has not
+been defined yet.
+::
 
     >>> self.folder.test.workspace.get_path()
     >>> self.folder.test.sandbox.get_path()
 
 Should fail if we try to add this again as the object already exists.
+::
 
     >>> request = TestRequest(
     ...     form={
@@ -74,7 +79,8 @@ Should fail if we try to add this again as the object already exists.
     >>> ObjectIdExistsError.__doc__ in html
     True
 
-Now we try to edit.
+Now we try the edit form.  First we try to render it.
+::
 
     >>> from pmr2.app.browser.root import PMR2EditForm
     >>> self.folder.test
@@ -86,21 +92,23 @@ Now we try to edit.
     >>> 'repo_root' in html
     True
 
-Test out invalid value
+We now try to define the physical root, using an invalid path.  It
+should fail.
+::
 
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.repo_root': u'not a path',
     ...         'form.buttons.apply': 1,
     ...     })
-
     >>> edit = PMR2EditForm(self.folder.test, request)
     >>> html = edit()
     >>> from pmr2.app.interfaces import InvalidPathError
     >>> InvalidPathError.__doc__ in html
     True
 
-Now a real path.
+Now a real path should work.
+::
 
     >>> tmproot = self.tmpdir
     >>> request = TestRequest(
@@ -112,12 +120,14 @@ Now a real path.
     >>> edit = PMR2EditForm(self.folder.test, request)
     >>> html = edit.update()
 
-The repository root should be set
+The repository root should now be set.
+::
 
     >>> self.folder.test.repo_root == tmproot
     True
 
 The workspace and sandbox containers should now have a path.
+::
 
     >>> self.folder.test.workspace.get_path()
     '...workspace'
