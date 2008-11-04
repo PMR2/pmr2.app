@@ -1,13 +1,17 @@
+import os.path
+
 from zope import interface
 from zope.schema import fieldproperty
+
+from Acquisition import aq_parent, aq_inner
 
 from Products.CMFCore.PortalFolder import PortalFolderBase
 from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 
-from pmr2.app.interfaces import *
-
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.Archetypes import atapi
+
+from pmr2.app.interfaces import *
 
 __all__ = [
     'PMR2',
@@ -43,6 +47,12 @@ class WorkspaceContainer(ATBTreeFolder):
     def __init__(self, oid='workspace', **kwargs):
         super(WorkspaceContainer, self).__init__(oid, **kwargs)
 
+    def get_path(self):
+        p = aq_parent(self).repo_root
+        if not p:
+            return None
+        return os.path.join(p, 'workspace')
+
 atapi.registerType(WorkspaceContainer, 'pmr2.app')
 
 
@@ -55,6 +65,12 @@ class SandboxContainer(ATBTreeFolder):
 
     def __init__(self, oid='sandbox', **kwargs):
         super(SandboxContainer, self).__init__(oid, **kwargs)
+
+    def get_path(self):
+        p = aq_parent(self).repo_root
+        if not p:
+            return None
+        return os.path.join(p, 'sandbox')
 
 atapi.registerType(SandboxContainer, 'pmr2.app')
 
@@ -82,6 +98,12 @@ class Workspace(atapi.BaseContent):
 
     description = fieldproperty.FieldProperty(IWorkspace['description'])
 
+    def get_path(self):
+        p = aq_parent(self).get_path()
+        if not p:
+            return None
+        return os.path.join(p, self.id)
+
 atapi.registerType(Workspace, 'pmr2.app')
 
 
@@ -94,6 +116,12 @@ class Sandbox(atapi.BaseContent):
 
     description = fieldproperty.FieldProperty(ISandbox['description'])
     status = fieldproperty.FieldProperty(ISandbox['status'])
+
+    def get_path(self):
+        p = aq_parent(self).get_path()
+        if not p:
+            return None
+        return os.path.join(p, self.id)
 
 atapi.registerType(Sandbox, 'pmr2.app')
 

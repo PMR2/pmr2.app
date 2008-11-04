@@ -54,6 +54,11 @@ The internal containers should also be created
     >>> self.folder.test.exposure
     <ExposureContainer at ...>
 
+These should not return anything, yet.
+
+    >>> self.folder.test.workspace.get_path()
+    >>> self.folder.test.sandbox.get_path()
+
 Should fail if we try to add this again as the object already exists.
 
     >>> request = TestRequest(
@@ -113,7 +118,14 @@ The repository root should be set
     >>> self.folder.test.repo_root == tmproot
     True
 
-Need to clean up our mess
+The workspace and sandbox containers should now have a path.
+
+    >>> self.folder.test.workspace.get_path()
+    '...workspace'
+    >>> self.folder.test.sandbox.get_path()
+    '...sandbox'
+
+Need to clean up the temporary files.
 
     >>> import shutil
     >>> shutil.rmtree(tmproot)

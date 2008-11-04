@@ -73,6 +73,11 @@ class IWorkspaceContainer(zope.interface.Interface):
         default=u'Workspace',
     )
 
+    def get_path():
+        """\
+        Returns the root directory where all the workspaces are stored.
+        """
+
 
 class ISandboxContainer(zope.interface.Interface):
     """\
@@ -83,6 +88,11 @@ class ISandboxContainer(zope.interface.Interface):
         title=u'Title',
         default=u'Sandbox',
     )
+
+    def get_path():
+        """\
+        Returns the root directory where all the sandboxes are stored.
+        """
 
 
 class IExposureContainer(zope.interface.Interface):
@@ -112,6 +122,11 @@ class IWorkspace(zope.interface.Interface):
         title=u'Description',
     )
 
+    def get_path():
+        """\
+        Returns path on the filesystem to this instance of workspace.
+        """
+
 
 class ISandbox(zope.interface.Interface):
     """\
@@ -130,6 +145,11 @@ class ISandbox(zope.interface.Interface):
         title=u'Status Messages',
         description=u'Output from Mercurial',
     )
+
+    def get_path():
+        """\
+        Returns path on the filesystem to this instance of sandbox.
+        """
 
 
 class IExposure(zope.interface.Interface):

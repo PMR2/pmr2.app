@@ -10,6 +10,11 @@ from pmr2.app.schema.interfaces import IObjectId
 _isobjectid = re.compile(r'^[a-zA-Z][a-zA-Z0-9_\.]*$').match
 
 class ObjectId(zope.schema.BytesLine):
+    """\
+    This is implemented because zope.schema.Id does not work as
+    advertised.
+    """
+
     zope.interface.implements(IObjectId)
 
     def _validate(self, value):
