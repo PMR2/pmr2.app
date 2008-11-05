@@ -28,6 +28,13 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
+        # Table objects.
+        ztc.ZopeDocFileSuite(
+            'browser/table.txt', package='pmr2.app',
+            test_class=base.DocTestCase,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
+        ),
+
         # test the fields.
         doctestunit.DocTestSuite(
             module='pmr2.app.schema.field',

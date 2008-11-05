@@ -1,0 +1,46 @@
+==============
+Tables in PMR2
+==============
+
+The z3c.table module is used to generate tables.  First the modules
+needed are imported.
+::
+
+    >>> from pmr2.app.browser.table import WorkspaceStatusTable
+    >>> from zope.publisher.browser import TestRequest
+
+Then we create the objects and a list of tuple that can be returned by
+WorkspaceContainer.get_repository_list()
+::
+
+    >>> data = [('test0', True), ('test1', False), ('test2', None)]
+    >>> request = TestRequest()
+    >>> table = WorkspaceStatusTable(data, request)
+
+Now try to update and render the table.
+
+    >>> table.update()
+    >>> print table.render()
+    <table>
+      <thead>
+        <tr>
+          <th>Workspace ID</th>
+          <th>Object Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>test0</td>
+          <td>Valid</td>
+        </tr>
+        <tr>
+          <td>test1</td>
+          <td>Error</td>
+        </tr>
+        <tr>
+          <td>test2</td>
+          <td>Not Found</td>
+        </tr>
+      </tbody>
+    </table>
+
