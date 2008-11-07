@@ -18,6 +18,13 @@
       />
 
   <page
+      for="pmr2.app.content.WorkspaceContainer"
+      name="raw_list"
+      class=".workspace.WorkspaceContainerRepoListingFormView"
+      permission="pmr2.app.security.ManagePMR2"
+      />
+
+  <page
       for="pmr2.app.content.ExposureContainer"
       name="exposure_add_form"
       class=".exposure.ExposureAddFormView"

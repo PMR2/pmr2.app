@@ -45,6 +45,8 @@ class WorkspaceContainer(ATBTreeFolder):
 
     interface.implements(IWorkspaceContainer)
 
+    # title is defined by ATFolder
+
     def __init__(self, oid='workspace', **kwargs):
         super(WorkspaceContainer, self).__init__(oid, **kwargs)
 
@@ -58,7 +60,8 @@ class WorkspaceContainer(ATBTreeFolder):
         return os.path.join(p, 'workspace')
 
     def get_repository_list(self):
-        """See IWorkspaceContainer
+        """\
+        Implementation of the accessor from IWorkspaceContainer
         
         Returns a list of tuples.  Format is:
         - name of directory
@@ -67,11 +70,14 @@ class WorkspaceContainer(ATBTreeFolder):
           - True means yes
           - None means missing
           - False means object should not exist.  It is either the wrong
-            type, or the repository directory is missing on the file-
+            type, or the repository directory is missing on the file
             system.
         """
 
         reporoot = self.get_path()
+        if not reporoot:
+            raise RepoPathUndefinedError('repo path is undefined')
+
         try:
             repodirs = pmr2.mercurial.utils.webdir(reporoot)
         except OSError:
@@ -81,15 +87,15 @@ class WorkspaceContainer(ATBTreeFolder):
         # same loop, popping both list as a stack, compare the values
         # that are popped might be faster.
 
-        # repository objects need to be processed
-        # True = correct type, False = incorrect type
+        # objects need to be processed
+        # True = correct type (Workspace), False = incorrect type
         items = self.items()
         repoobjs = [
             (i[0], isinstance(i[1], Workspace),)
             for i in items]
         repoobjs_d = dict(repoobjs)
 
-        # whether i is in repoobjs
+        # check to see if a repo dir has object of same name
         # None = missing, True/False (from above if exists)
         check = [(i, repoobjs_d.get(i, None)) for i in repodirs]
 

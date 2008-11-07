@@ -40,4 +40,10 @@
   <permission value="Modify portal content"/>
  </action>
 
+ <action title="Workspace Management" action_id="raw_list" category="object"
+    condition_expr="" url_expr="string:${object_url}/@@raw_list"
+    visible="True">
+  <permission value="Manage PMR2"/>
+ </action>
+
 </object>

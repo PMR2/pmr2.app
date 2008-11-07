@@ -4,7 +4,7 @@ import zope.interface
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
-from pmr2.app.schema import ObjectId
+from pmr2.app.schema import ObjectId, WorkspaceList
 
 
 class ObjectIdExistsError(zope.schema.ValidationError):
@@ -21,6 +21,10 @@ class RepoRootNotExistsError(zope.schema.ValidationError):
 
 class RepoNotExistsError(zope.schema.ValidationError):
     __doc__ = _("""The repository at the specified path does not exist.""")
+
+
+class RepoPathUndefinedError(zope.schema.ValidationError):
+    __doc__ = _("""The repository path is undefined.""")
 
 
 class WorkspaceDirNotExistsError(zope.schema.ValidationError):
@@ -77,15 +81,14 @@ class IWorkspaceContainer(zope.interface.Interface):
         default=u'Workspace',
     )
 
+    get_repository_list, = zope.schema.accessors(WorkspaceList(
+        title=u'Repository List',
+        readonly=True,
+    ))
+
     def get_path():
         """\
         Returns the root directory where all the workspaces are stored.
-        """
-
-    def get_repository_list():
-        """\
-        Returns the list of repositories within the repository path
-        with its associated Workspace object, if any.
         """
 
 

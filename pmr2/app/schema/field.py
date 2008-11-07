@@ -4,7 +4,7 @@ import zope.interface
 import zope.schema
 
 from pmr2.app.schema.interfaces import InvalidObjectId
-from pmr2.app.schema.interfaces import IObjectId
+from pmr2.app.schema.interfaces import IObjectId, IWorkspaceList
 
 
 _isobjectid = re.compile(r'^[a-zA-Z][a-zA-Z0-9_\.]*$').match
@@ -41,3 +41,11 @@ class ObjectId(zope.schema.BytesLine):
             return
 
         raise InvalidObjectId(value)
+
+
+class WorkspaceList(zope.schema.List):
+    """\
+    Workspace listing field.
+    """
+
+    zope.interface.implements(IWorkspaceList)

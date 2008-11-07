@@ -12,3 +12,10 @@ class IObjectId(zope.schema.interfaces.IBytesLine):
     """\
     A field containing a valid Zope object id.
     """
+
+
+class IWorkspaceList(zope.schema.interfaces.IList):
+    """\
+    Workspace list field.  Meant to be used in conjunction with
+    zope.schema.accessor.
+    """

@@ -7,7 +7,7 @@ _ = MessageFactory("pmr2")
 
 class WorkspaceIdColumn(z3c.table.column.Column):
     weight = 10
-    header = u'Workspace ID'
+    header = _(u'Workspace ID')
 
     def renderCell(self, item):
         return u'%s' % item[0]
@@ -15,7 +15,7 @@ class WorkspaceIdColumn(z3c.table.column.Column):
 
 class WorkspaceStatusColumn(z3c.table.column.Column):
     weight = 20
-    header = u'Object Status'
+    header = _(u'Object Status')
     _values = {
         True: _(u'Valid'),
         False: _(u'Error'),

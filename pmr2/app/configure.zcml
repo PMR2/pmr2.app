@@ -12,6 +12,9 @@
   <include package=".browser" />
   <include package=".validator" />
 
+  <include file="vocab.zcml" />
+  <include file="converter.zcml" />
+
   <genericsetup:registerProfile
       name="default"
       title="Physiome Model Repository 2"
