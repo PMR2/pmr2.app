@@ -124,24 +124,24 @@ that we can render with WorkspaceStatusTable.
         <tr>
           <th>Workspace ID</th>
           <th>Object Status</th>
-          ...
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>test0</td>
           <td>Valid</td>
-          ...
+          <td><a ...</a></td>
         </tr>
         <tr>
           <td>test1</td>
           <td>Error</td>
-          ...
+          <td><a ...</a></td>
         </tr>
         <tr>
           <td>test2</td>
           <td>Not Found</td>
-          ...
+          <td><a ...</a></td>
         </tr>
       </tbody>
     </table>

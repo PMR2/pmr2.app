@@ -544,7 +544,7 @@ You'll also need to enter your username for signing your edits: &lt;&lt;option t
 <pre>Mecurial is a Distributed Version Control System (DVCS) written in Python.
 * http://www.selenic.com/mercurial/</pre>
 </div>
-<div title="PMR Root Container" modifier="Tommy Yu" created="200810290220" modified="200811030207" changecount="6">
+<div title="PMR Root Container" modifier="Tommy Yu" created="200810290220" modified="200810290221" changecount="4">
 <pre>The root of the repository. It needs to provide:
 * Clean user interface to point/direct various types of users
 * Directs users to the specific type of content that s/he is interested in</pre>
@@ -589,15 +589,20 @@ For non-administrators:
 <div title="SiteTitle" modifier="Tommy Yu" created="200810272227" modified="200810272231" changecount="6">
 <pre>PMR2</pre>
 </div>
-<div title="Workspace" modifier="Tommy Yu" created="200810282244" modified="200810282311" changecount="8">
+<div title="Workspace" modifier="Tommy Yu" created="200810282244" modified="200811101157" changecount="12">
 <pre>Workspaces, also known as model workspaces, are objects that encapsulates a model. Each of these workspace in PMR2 are also back by its respective [[Mercurial]] repository.
 
 Workspace provides these features:
-* Access to the CellML files
-* Version control (through Mercurial)
-* Permission control of read/write access</pre>
+* Acccess the features provided by the Version Control System (through Mercurial)
+** Browsing the revision log [currently basic views to it implemented]
+** Retrieve the files (and historical versions) contained within
+* Permission control of read/commit access
+* RSS Feed for updates
+Some thoughts:
+* Renaming
+** It is unwise to do so normally, because it will rename the URI. But, if it must be done, the repository directory on the local filesystem must be carefully moved, such that it won't move into another directory. A clone to new location is probably the sane option. Still, renaming of a repository should *really* never be done.</pre>
 </div>
-<div title="Workspace Container" modifier="Tommy Yu" created="200810290218" modified="200811092215" changecount="5">
+<div title="Workspace Container" modifier="Tommy Yu" created="200810290218" modified="200811101158" changecount="7">
 <pre>This provides interface to manage the raw [[workspaces|Workspace]]. Provides:
 * Searching for specific workspaces
 * Custom views, including:
@@ -605,7 +610,7 @@ Workspace provides these features:
 ** Workspaces owned by the current/logged in user
 For administration:
 * Adding unmanaged Mercurial repositories to the listing (import)
-** The import currently assumes the name of the Mercurial repository (hg directory) is named in a way that will also validate as an object id</pre>
+** The import currently assumes the name of the Mercurial repository (hg directory) is named in a way that will also validate as an object id, hence the name of the directory is correlated with the named object. Refer to the renaming section in [[workspace|Workspace]].</pre>
 </div>
 </div>
 <!--POST-STOREAREA-->

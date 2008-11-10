@@ -96,6 +96,15 @@ class WorkspaceActionColumn(ItemKeyReplaceColumn):
     }
     defaultValue = _(u'(unknown)')
 
+    def renderCell(self, item):
+        # create anchors to actual object if valid
+        # create anchors to workspace creation form if not found
+        # do something else if error
+        result = self.getItem(item)
+        if result:
+            result = result % item[0]
+        return result
+
 
 class WorkspaceStatusTable(z3c.table.table.SequenceTable):
 
