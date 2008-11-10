@@ -7,54 +7,94 @@ from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
 
-class WorkspaceIdColumn(z3c.table.column.Column):
-    weight = 10
-    header = _(u'Workspace ID')
+# Common
+
+class ItemKeyColumn(z3c.table.column.Column):
+    """\
+    Column for selecting an item from a list or dictionary using a key.
+    """
+
+    itemkey = None
+    errorValue = None
+
+    def getItem(self, item):
+        try:
+            return item[self.itemkey]
+        except:
+            return self.errorValue
 
     def renderCell(self, item):
-        return u'%s' % item[0]
+        return self.getItem(item)
 
 
-class WorkspaceStatusColumn(z3c.table.column.Column):
+class EscapedItemKeyColumn(ItemKeyColumn):
+    """With CGI escape."""
+
+    def renderCell(self, item):
+        result = self.getItem(item)
+        try:
+            result = unicode(result)
+        except UnicodeDecodeError:
+            result = str(result)
+        return cgi.escape(result)
+
+
+class ItemKeyReplaceColumn(ItemKeyColumn):
+    """\
+    Column for selecting an item, then replaced with replacement from a
+    lookup table.
+    """
+
+    lookupTable = {}
+    defaultValue = None
+
+    def getItem(self, item):
+        # not reusing getItem as it traps the exception on missing
+        # key.
+        try:
+            result = item[self.itemkey]
+        except:
+            return self.errorValue
+        return self.lookupTable.get(result, self.defaultValue)
+
+
+# Workspace
+
+class WorkspaceIdColumn(ItemKeyColumn):
+    weight = 10
+    header = _(u'Workspace ID')
+    itemkey = 0
+
+
+class WorkspaceStatusColumn(ItemKeyReplaceColumn):
     weight = 20
+    itemkey = 1
     header = _(u'Object Status')
-    _values = {
+    lookupTable = {
         True: _(u'Valid'),
         False: _(u'Error'),
         None: _(u'Not Found'),
     }
-
-    def renderCell(self, item):
-        # create anchors to actual object if valid
-        # create anchors to workspace creation form if not found
-        # do something else if error
-        return u'%s' % self._values.get(item[1], _(u'(unknown)'))
+    defaultValue = _(u'(unknown)')
 
 
-class WorkspaceActionColumn(z3c.table.column.Column):
+class WorkspaceActionColumn(ItemKeyReplaceColumn):
     """
     The action column.  Will contain anchors to other forms and views.
     Those links are currently hard-coded.
     """
 
     weight = 30
+    itemkey = 1
     header = _(u'Action')
     # XXX repository paths are assumed to be valid ids.
-    _values = {
+    lookupTable = {
         True: _(u'<a href="%s">[view]</a>'),
         False: _(u'<a href="@@workspace_object_info?%s">[more info]</a>'),
         None: _(u'<a href="@@workspace_object_create?form.widgets.id=%s">'
                  '[create]</a>'),
     }
-
-    def renderCell(self, item):
-        # create anchors to actual object if valid
-        # create anchors to workspace creation form if not found
-        # do something else if error
-        result = self._values.get(item[1], u'')
-        if result:
-            result = result % item[0]
-        return result
+    defaultValue = _(u'(unknown)')
 
 
 class WorkspaceStatusTable(z3c.table.table.SequenceTable):
@@ -75,37 +115,22 @@ class WorkspaceStatusTable(z3c.table.table.SequenceTable):
 
 # Workspace log table.
 
-class DictColumn(z3c.table.column.Column):
-
-    itemkey = None
-    escape = False
-
-    def renderCell(self, item):
-        value = unicode(item[self.itemkey])
-        if self.escape:
-            return cgi.escape(value)
-        else:
-            return value
-
-
-class ChangesetDateColumn(DictColumn):
+class ChangesetDateColumn(ItemKeyColumn):
     weight = 10
     header = _(u'Changeset Date')
     itemkey = 'date'
 
 
-class ChangesetAuthorColumn(DictColumn):
+class ChangesetAuthorColumn(EscapedItemKeyColumn):
     weight = 20
     header = _(u'Author')
     itemkey = 'author'
-    escape = True
 
 
-class ChangesetDescColumn(DictColumn):
+class ChangesetDescColumn(EscapedItemKeyColumn):
     weight = 30
     header = _(u'Log')
     itemkey = 'desc'
-    escape = True
 
 
 class ChangesetOptionColumn(z3c.table.column.Column):
@@ -117,6 +142,8 @@ class ChangesetOptionColumn(z3c.table.column.Column):
 
 
 class ChangelogTable(z3c.table.table.SequenceTable):
+
+    sortOn = None
 
     def setUpColumns(self):
         return [
