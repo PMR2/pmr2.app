@@ -3,6 +3,8 @@
 
   <include package="pmr2.app.security" />
 
+  <!-- PMR2 Root -->
+
   <page
       for="Products.CMFPlone.Portal.PloneSite"
       name="repository_add_form"
@@ -16,6 +18,8 @@
       class=".root.PMR2EditFormView"
       permission="pmr2.app.security.ManagePMR2"
       />
+
+  <!-- Workspace Container -->
 
   <page
       for="pmr2.app.content.WorkspaceContainer"
@@ -31,6 +35,8 @@
       permission="pmr2.app.security.ManagePMR2"
       />
 
+  <!-- Workspace -->
+
   <page
       for="pmr2.app.content.Workspace"
       name="workspace_view"
@@ -39,11 +45,43 @@
       />
 
   <page
+      for="pmr2.app.content.Workspace"
+      name="workspace_edit"
+      class=".workspace.WorkspaceEditFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <page
+      for="pmr2.app.content.Workspace"
+      name="log"
+      class=".workspace.WorkspaceLogView"
+      permission="zope2.View"
+      />
+
+  <page
+      for="pmr2.app.content.Workspace"
+      name="file"
+      class=".workspace.WorkspaceFileView"
+      permission="zope2.View"
+      />
+
+  <page
+      for="pmr2.app.content.Workspace"
+      name="rawfile"
+      class=".workspace.WorkspaceRawfileView"
+      permission="zope2.View"
+      />
+
+  <!-- Exposure Container -->
+
+  <page
       for="pmr2.app.content.ExposureContainer"
       name="exposure_add_form"
       class=".exposure.ExposureAddFormView"
       permission="cmf.AddPortalContent"
       />
+
+  <!-- Exposure -->
 
   <page
       for="pmr2.app.content.Exposure"

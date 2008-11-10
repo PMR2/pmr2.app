@@ -11,7 +11,9 @@ from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.Archetypes import atapi
 
+import pmr2.mercurial
 import pmr2.mercurial.utils
+
 from pmr2.app.interfaces import *
 
 __all__ = [
@@ -161,10 +163,18 @@ class Workspace(atapi.BaseContent):
     def get_path(self):
         """See IWorkspace"""
 
-        p = aq_parent(self).get_path()
+        # aq_inner needed to get out of form wrappers
+        p = aq_parent(aq_inner(self)).get_path()
         if not p:
             return None
         return os.path.join(p, self.id)
+
+    def get_log(self):
+        # XXX quick and dirty method, lacks interface entry
+        path = self.get_path()
+        storage = pmr2.mercurial.Storage(path)
+        log_table = storage.log().next()['entries']()
+        return log_table
 
 atapi.registerType(Workspace, 'pmr2.app')
 
@@ -182,7 +192,8 @@ class Sandbox(atapi.BaseContent):
     def get_path(self):
         """See ISandbox"""
 
-        p = aq_parent(self).get_path()
+        # aq_inner needed to get out of form wrappers
+        p = aq_parent(aq_inner(self)).get_path()
         if not p:
             return None
         return os.path.join(p, self.id)

@@ -56,7 +56,7 @@ class IPMR2(zope.interface.Interface):
     repo_root = zope.schema.BytesLine(
         title=u'Repository Path',
         description=u'The working directory of this repository. This '
-                     'directory contains the Mercurial repositories of the '
+                     'directory contains the raw VCS repositories of the '
                      'models.',
         readonly=False,
     )
@@ -132,7 +132,7 @@ class IWorkspace(zope.interface.Interface):
         required=False,
     )
 
-    description = zope.schema.TextLine(
+    description = zope.schema.Text(
         title=u'Description',
         required=False,
     )
@@ -158,13 +158,13 @@ class ISandbox(zope.interface.Interface):
         title=u'Title',
     )
 
-    description = zope.schema.TextLine(
+    description = zope.schema.Text(
         title=u'Description',
     )
 
     status = zope.schema.Text(
         title=u'Status Messages',
-        description=u'Output from Mercurial',
+        description=u'Status output from VCS',
     )
 
     def get_path():

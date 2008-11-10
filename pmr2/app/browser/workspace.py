@@ -15,6 +15,7 @@ from pmr2.app.content import *
 from widget import WorkspaceListingWidgetFactory
 import form
 import page
+import table
 
 
 # Workspace Container
@@ -73,6 +74,23 @@ class WorkspaceView(page.Simple):
         'workspace.pt')
 
 
+# XXX temporary.
+WorkspaceFileView = WorkspaceView
+WorkspaceRawfileView = WorkspaceView
+
+
+class WorkspaceLogView(page.Simple):
+
+    template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+        'workspace_log.pt')
+
+    def content(self):
+        logs = self.context.get_log()
+        t = table.ChangelogTable(logs, self.request)
+        t.update()
+        return t.render()
+
+
 class WorkspaceAddForm(form.AddForm):
     """\
     Workspace add form.
@@ -87,3 +105,14 @@ class WorkspaceAddForm(form.AddForm):
 
 WorkspaceAddFormView = layout.wrap_form(
     WorkspaceAddForm, label="Workspace Creation Form")
+
+
+class WorkspaceEditForm(form.EditForm):
+    """\
+    Workspace edit form.
+    """
+
+    fields = z3c.form.field.Fields(IWorkspace)
+
+WorkspaceEditFormView = layout.wrap_form(
+    WorkspaceEditForm, label="Workspace Edit Form")

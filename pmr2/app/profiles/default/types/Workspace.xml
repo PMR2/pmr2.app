@@ -27,11 +27,11 @@
  </property>
 
  <!--
- <alias from="edit" to="atct_edit"/>
  <alias from="view" to="(selected layout)"/>
  <alias from="(Default)" to="(dynamic view)"/>
  -->
  <alias from="(Default)" to="workspace_view"/>
+ <alias from="edit" to="workspace_edit"/>
  <alias from="sharing" to="@@sharing"/>
 
  <action title="View" action_id="workspace_view" category="object" condition_expr=""
@@ -39,10 +39,32 @@
   <permission value="View"/>
  </action>
 
+ <!--
+ Also need one for management of workspaces (e.g. setting permission for
+ push/pull).
+ -->
  <action title="Edit" action_id="edit" category="object" condition_expr="not:object/@@plone_lock_info/is_locked_for_current_user|python:True"
     url_expr="string:${object_url}/edit" visible="True"
     i18n:attributes="title">
   <permission value="Modify portal content"/>
+ </action>
+
+ <action title="Log" action_id="log" category="object" condition_expr=""
+    url_expr="string:${object_url}/@@log" visible="True"
+    i18n:attributes="title">
+  <permission value="View"/>
+ </action>
+
+ <action title="Manifest" action_id="file" category="object" condition_expr=""
+    url_expr="string:${object_url}/@@file" visible="True"
+    i18n:attributes="title">
+  <permission value="View"/>
+ </action>
+
+ <action title="Raw File" action_id="rawfile" category="object" 
+    condition_expr="" url_expr="string:${object_url}/@@rawfile" visible="False"
+    i18n:attributes="title">
+  <permission value="View"/>
  </action>
 
 </object>

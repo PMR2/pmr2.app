@@ -1,3 +1,5 @@
+import cgi
+
 import z3c.table.column
 import z3c.table.table
 
@@ -67,6 +69,65 @@ class WorkspaceStatusTable(z3c.table.table.SequenceTable):
             ),
             z3c.table.column.addColumn(
                 self, WorkspaceActionColumn, u'workspace_action'
+            ),
+        ]
+
+
+# Workspace log table.
+
+class DictColumn(z3c.table.column.Column):
+
+    itemkey = None
+    escape = False
+
+    def renderCell(self, item):
+        value = unicode(item[self.itemkey])
+        if self.escape:
+            return cgi.escape(value)
+        else:
+            return value
+
+
+class ChangesetDateColumn(DictColumn):
+    weight = 10
+    header = _(u'Changeset Date')
+    itemkey = 'date'
+
+
+class ChangesetAuthorColumn(DictColumn):
+    weight = 20
+    header = _(u'Author')
+    itemkey = 'author'
+    escape = True
+
+
+class ChangesetDescColumn(DictColumn):
+    weight = 30
+    header = _(u'Log')
+    itemkey = 'desc'
+    escape = True
+
+
+class ChangesetOptionColumn(z3c.table.column.Column):
+    weight = 40
+    header = _(u'Options')
+
+    def renderCell(self, item):
+        return u'[placeholder]'
+
+
+class ChangelogTable(z3c.table.table.SequenceTable):
+
+    def setUpColumns(self):
+        return [
+            z3c.table.column.addColumn(
+                self, ChangesetDateColumn, u'changeset_date'
+            ),
+            z3c.table.column.addColumn(
+                self, ChangesetAuthorColumn, u'changeset_author'
+            ),
+            z3c.table.column.addColumn(
+                self, ChangesetDescColumn, u'changeset_desc'
             ),
         ]
 
