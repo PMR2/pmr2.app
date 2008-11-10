@@ -46,4 +46,11 @@
   <permission value="Manage PMR2"/>
  </action>
 
+ <action title="Workspace Creation" action_id="workspace_object_create" 
+    category="object" condition_expr="" 
+    url_expr="string:${object_url}/@@workspace_object_create"
+    visible="False">
+  <permission value="Manage PMR2"/>
+ </action>
+
 </object>

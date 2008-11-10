@@ -129,16 +129,24 @@ class IWorkspace(zope.interface.Interface):
     title = zope.schema.TextLine(
         title=u'Title',
         readonly=True,
+        required=False,
     )
 
     description = zope.schema.TextLine(
         title=u'Description',
+        required=False,
     )
 
     def get_path():
         """\
         Returns path on the filesystem to this instance of workspace.
         """
+
+
+class IWorkspaceAdd(IObjectIdMixin, IWorkspace):
+    """\
+    Interface for the use by WorkspaceAddForm.
+    """
 
 
 class ISandbox(zope.interface.Interface):

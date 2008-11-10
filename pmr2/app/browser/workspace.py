@@ -1,22 +1,23 @@
+import zope.app.pagetemplate.viewpagetemplatefile
 import zope.component
+import zope.publisher.browser
 
 import z3c.form.interfaces
 import z3c.form.field
 import z3c.form.form
 import z3c.form.value
 
-from z3c.form.browser import textarea
-
-import zope.publisher.browser
 from plone.app.z3cform import layout
 
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
 
 from widget import WorkspaceListingWidgetFactory
-
 import form
+import page
 
+
+# Workspace Container
 
 class WorkspaceContainerAddForm(form.AddForm):
     """\
@@ -44,7 +45,6 @@ class WorkspaceContainerEditForm(form.EditForm):
         'title',
     )
 
-# Plone Form wrapper for the EditForm
 WorkspaceContainerEditFormView = layout.wrap_form(
     WorkspaceContainerEditForm, label="Workspace Container Management")
 
@@ -61,6 +61,29 @@ class WorkspaceContainerRepoListingForm(z3c.form.form.Form):
     )
     fields['get_repository_list'].widgetFactory = WorkspaceListingWidgetFactory
 
-# Plone Form wrapper for the EditForm
 WorkspaceContainerRepoListingFormView = layout.wrap_form(
     WorkspaceContainerRepoListingForm, label="Workspace Container Management")
+
+
+# Workspace
+
+class WorkspaceView(page.Simple):
+
+    template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+        'workspace.pt')
+
+
+class WorkspaceAddForm(form.AddForm):
+    """\
+    Workspace add form.
+    """
+
+    fields = z3c.form.field.Fields(IWorkspaceAdd)
+    clsobj = Workspace
+
+    def add_data(self, ctxobj):
+        ctxobj.title = self._data['title']
+        ctxobj.description = self._data['description']
+
+WorkspaceAddFormView = layout.wrap_form(
+    WorkspaceAddForm, label="Workspace Creation Form")

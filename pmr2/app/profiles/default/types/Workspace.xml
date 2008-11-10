@@ -14,24 +14,28 @@
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types"/>
  <property name="allow_discussion">False</property>
- <property name="default_view">folder_listing</property>
+ <property name="default_view">workspace_view</property>
 
- <!--
  <property name="view_methods">
+  <element value="workspace_view"/>
+ <!--
   <element value="folder_summary_view"/>
   <element value="folder_tabular_view"/>
   <element value="atct_album_view"/>
   <element value="folder_listing"/>
+ -->
  </property>
 
- <alias from="(Default)" to="(dynamic view)"/>
+ <!--
  <alias from="edit" to="atct_edit"/>
- <alias from="sharing" to="@@sharing"/>
  <alias from="view" to="(selected layout)"/>
+ <alias from="(Default)" to="(dynamic view)"/>
  -->
+ <alias from="(Default)" to="workspace_view"/>
+ <alias from="sharing" to="@@sharing"/>
 
- <action title="View" action_id="view" category="object" condition_expr=""
-    url_expr="string:${folder_url}/" visible="True" i18n:attributes="title">
+ <action title="View" action_id="workspace_view" category="object" condition_expr=""
+    url_expr="string:${object_url}/" visible="True" i18n:attributes="title">
   <permission value="View"/>
  </action>
 

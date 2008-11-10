@@ -26,20 +26,24 @@ Now try to update and render the table.
         <tr>
           <th>Workspace ID</th>
           <th>Object Status</th>
+          ...
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>test0</td>
           <td>Valid</td>
+          ...
         </tr>
         <tr>
           <td>test1</td>
           <td>Error</td>
+          ...
         </tr>
         <tr>
           <td>test2</td>
           <td>Not Found</td>
+          ...
         </tr>
       </tbody>
     </table>

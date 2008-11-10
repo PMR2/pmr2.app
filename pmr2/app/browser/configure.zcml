@@ -25,6 +25,20 @@
       />
 
   <page
+      for="pmr2.app.content.WorkspaceContainer"
+      name="workspace_object_create"
+      class=".workspace.WorkspaceAddFormView"
+      permission="pmr2.app.security.ManagePMR2"
+      />
+
+  <page
+      for="pmr2.app.content.Workspace"
+      name="workspace_view"
+      class=".workspace.WorkspaceView"
+      permission="zope2.View"
+      />
+
+  <page
       for="pmr2.app.content.ExposureContainer"
       name="exposure_add_form"
       class=".exposure.ExposureAddFormView"
