@@ -8,6 +8,7 @@ from Acquisition import aq_parent, aq_inner
 from Products.CMFCore.PortalFolder import PortalFolderBase
 from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 
+from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.Archetypes import atapi
 
@@ -150,7 +151,7 @@ class ExposureContainer(ATBTreeFolder):
 atapi.registerType(ExposureContainer, 'pmr2.app')
 
 
-class Workspace(atapi.BaseContent):
+class Workspace(BrowserDefaultMixin, atapi.BaseContent):
     """\
     PMR2 Workspace object is used to connect to the repository of model
     and related data.
@@ -179,7 +180,7 @@ class Workspace(atapi.BaseContent):
 atapi.registerType(Workspace, 'pmr2.app')
 
 
-class Sandbox(atapi.BaseContent):
+class Sandbox(BrowserDefaultMixin, atapi.BaseContent):
     """\
     PMR2 Sandbox object is an editable instance of the workspace.
     """

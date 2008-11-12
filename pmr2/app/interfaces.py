@@ -128,7 +128,6 @@ class IWorkspace(zope.interface.Interface):
 
     title = zope.schema.TextLine(
         title=u'Title',
-        readonly=True,
         required=False,
     )
 
