@@ -50,45 +50,53 @@ WorkspaceContainerEditFormView = layout.wrap_form(
     WorkspaceContainerEditForm, label="Workspace Container Management")
 
 
-class WorkspaceContainerRepoListingForm(z3c.form.form.Form):
-    """\
-    Workspace Container Edit form
-    """
+class WorkspaceContainerRepoListing(page.SimplePage):
 
-    mode = z3c.form.interfaces.DISPLAY_MODE
+    def content(self):
 
-    fields = z3c.form.field.Fields(IWorkspaceContainer).select(
-        'get_repository_list',
-    )
-    fields['get_repository_list'].widgetFactory = WorkspaceListingWidgetFactory
+        # XXX these messages should be stored in/gathered from the
+        # exception class/instance.
+        # XXX could use an error template to wrap these error messages.
+        try:
+            repolist = self.context.get_repository_list()
+        except RepoPathUndefinedError:
+            return u'<div class="error">Repository Path is undefined.</div>'
+        except WorkspaceDirNotExistsError:
+            return u'<div class="error">Workspace path is missing. ' \
+                    'Please notify administrator.</div>'
 
-WorkspaceContainerRepoListingFormView = layout.wrap_form(
-    WorkspaceContainerRepoListingForm, label="Workspace Container Management")
+        t = table.WorkspaceStatusTable(repolist, self.request)
+        t.update()
+        return t.render()
+
+WorkspaceContainerRepoListingView = layout.wrap_form(
+    WorkspaceContainerRepoListing, label="Raw Workspace Listing")
 
 
 # Workspace
 
-class WorkspaceView(page.Simple):
+class WorkspacePage(page.SimplePage):
 
     template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
         'workspace.pt')
 
+WorkspacePageView = layout.wrap_form(WorkspacePage)
+
 
 # XXX temporary.
-WorkspaceFileView = WorkspaceView
-WorkspaceRawfileView = WorkspaceView
+WorkspaceFileView = WorkspacePageView
+WorkspaceRawfileView = WorkspacePageView
 
 
-class WorkspaceLogView(page.Simple):
-
-    template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
-        'workspace_log.pt')
+class WorkspaceLog(page.SimplePage):
 
     def content(self):
         logs = self.context.get_log()
         t = table.ChangelogTable(logs, self.request)
         t.update()
         return t.render()
+
+WorkspaceLogView = layout.wrap_form(WorkspaceLog, label='Log Entries')
 
 
 class WorkspaceAddForm(form.AddForm):

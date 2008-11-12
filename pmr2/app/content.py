@@ -56,7 +56,7 @@ class WorkspaceContainer(ATBTreeFolder):
     def get_path(self):
         """See IWorkspaceContainer"""
 
-        p = aq_parent(self).repo_root
+        p = aq_parent(aq_inner(self)).repo_root
         if not p:
             return None
         # XXX magic string
@@ -129,7 +129,7 @@ class SandboxContainer(ATBTreeFolder):
     def get_path(self):
         """See ISandboxContainer"""
 
-        p = aq_parent(self).repo_root
+        p = aq_parent(aq_inner(self)).repo_root
         if not p:
             return None
         # XXX magic string

@@ -1,2 +1,0 @@
-<h3>Log Entries</h3>
-<p tal:content="structure view/content"/>

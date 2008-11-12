@@ -1,22 +1,27 @@
-from plone.app.z3cform import layout
+from zope.publisher.browser import BrowserPage
+from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 
 
-class Simple(layout.FormWrapper):
+class SimplePage(BrowserPage):
     """\
-    A simple view generator/page/template wrapper.  Inherited directly 
-    from layout.FormWrapper, as its default registered adapters does 
-    everything needed for basic content.
+    A simple view generator/page/template class.  This is meant to be
+    wrapped by the layout.wrap_form from plone.z3cform and its wrapper
+    class layout.FormWrapper.
     """
 
-    template = None
+    # override if necessary
+    # XXX use adapter to register this instead?
+    template = ViewPageTemplateFile('page.pt')
 
-    def contents(self):
-        if self.template:
-            return self.template()
-        # XXX use better exception type
-        raise ValueError('template need to be specified')
-
+    @property
     def label(self):
-        # override if necessary.
         return self.context.title_or_id()
 
+    def subtitle(self):
+        return None
+
+    def content(self):
+        raise NotImplementedError('need content')
+
+    def __call__(self, *a, **kw):
+        return self.template()

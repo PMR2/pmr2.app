@@ -81,3 +81,8 @@ class EditForm(z3c.form.form.EditForm):
     """\
     Standard z3c EditForm.
     """
+
+    def applyChanges(self, data):
+        changes = super(EditForm, self).applyChanges(data)
+        self.context.reindexObject()
+        return changes

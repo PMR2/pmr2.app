@@ -24,7 +24,7 @@
   <page
       for="pmr2.app.content.WorkspaceContainer"
       name="raw_list"
-      class=".workspace.WorkspaceContainerRepoListingFormView"
+      class=".workspace.WorkspaceContainerRepoListingView"
       permission="pmr2.app.security.ManagePMR2"
       />
 
@@ -40,7 +40,7 @@
   <page
       for="pmr2.app.content.Workspace"
       name="workspace_view"
-      class=".workspace.WorkspaceView"
+      class=".workspace.WorkspacePageView"
       permission="zope2.View"
       />
 
