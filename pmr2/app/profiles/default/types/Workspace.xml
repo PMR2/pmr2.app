@@ -48,6 +48,12 @@
   <permission value="View"/>
  </action>
 
+ <action title="Shortlog" action_id="shortlog" category="object" 
+    condition_expr="" url_expr="string:${object_url}/@@shortlog" visible="True"
+    i18n:attributes="title">
+  <permission value="View"/>
+ </action>
+
  <action title="Manifest" action_id="file" category="object" condition_expr=""
     url_expr="string:${object_url}/@@file" visible="True"
     i18n:attributes="title">

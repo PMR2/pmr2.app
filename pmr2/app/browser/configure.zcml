@@ -60,6 +60,13 @@
 
   <page
       for="pmr2.app.content.Workspace"
+      name="shortlog"
+      class=".workspace.WorkspaceShortlogView"
+      permission="zope2.View"
+      />
+
+  <page
+      for="pmr2.app.content.Workspace"
       name="file"
       class=".workspace.WorkspaceFileView"
       permission="zope2.View"

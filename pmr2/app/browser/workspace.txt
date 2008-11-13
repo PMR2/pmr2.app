@@ -139,3 +139,7 @@ Workspace object.
     True
     >>> 'Not Found' in html
     False
+
+The other Workspace specific forms still need to be tested, including:
+
+  - WorkspaceShortlog

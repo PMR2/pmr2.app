@@ -96,7 +96,18 @@ class WorkspaceLog(page.SimplePage):
         t.update()
         return t.render()
 
-WorkspaceLogView = layout.wrap_form(WorkspaceLog, label='Log Entries')
+WorkspaceLogView = layout.wrap_form(WorkspaceLog, label='Changelog Entries')
+
+
+class WorkspaceShortlog(page.SimplePage):
+
+    def content(self):
+        logs = self.context.get_log(shortlog=True, datefmt='rfc3339date')
+        t = table.ChangelogTable(logs, self.request)
+        t.update()
+        return t.render()
+
+WorkspaceShortlogView = layout.wrap_form(WorkspaceShortlog, label='Shortlog')
 
 
 class WorkspaceAddForm(form.AddForm):
