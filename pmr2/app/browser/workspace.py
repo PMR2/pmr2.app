@@ -1,6 +1,7 @@
 import zope.app.pagetemplate.viewpagetemplatefile
 import zope.component
 import zope.publisher.browser
+from zope.publisher.interfaces import NotFound
 
 import z3c.form.interfaces
 import z3c.form.field
@@ -88,26 +89,64 @@ WorkspaceFileView = WorkspacePageView
 WorkspaceRawfileView = WorkspacePageView
 
 
-class WorkspaceLog(page.SimplePage):
+class WorkspaceLog(page.NavPage):
+
+    # XXX no this does not work
+    # XXX need to hack context_fti or DynamicViewTypeInformation somehow
+    # to make it do what needs to be done.
+    # This value could be captured using DynamicViewTypeInformation
+    shortlog = False
+    url_expr = '@@log'
+    tbl = table.ChangelogTable
+
+    @property
+    def rev(self):
+        # getting revision here as the reassignment of traverse_subpath
+        # happens after the object is initiated by the wrapper.
+        if self.traverse_subpath:
+            return '/'.join(self.traverse_subpath)
+
+    @property
+    def log(self):
+        if not hasattr(self, '_log'):
+            try:
+                self._log = self.context.get_log(rev=self.rev,
+                                                 shortlog=self.shortlog)
+            except:  # XXX assume RevisioNotFound
+                raise NotFound(self.context, self.rev, self.request)
+        return self._log
+
+    def navlist(self):
+        nav = self.log['changenav']
+        for i in nav():
+            yield {
+                'href': i['node'],
+                'label': i['label'],
+            }
 
     def content(self):
-        logs = self.context.get_log()
-        t = table.ChangelogTable(logs, self.request)
+        entries = self.log['entries']()
+        t = self.tbl(entries, self.request)
         t.update()
         return t.render()
 
-WorkspaceLogView = layout.wrap_form(WorkspaceLog, label='Changelog Entries')
+WorkspaceLogView = layout.wrap_form(
+    WorkspaceLog, 
+    __wrapper_class=page.TraverseFormWrapper,
+    label='Changelog Entries'
+)
 
+class WorkspaceShortlog(WorkspaceLog):
 
-class WorkspaceShortlog(page.SimplePage):
+    shortlog = True
+    url_expr = '@@shortlog'
+    tbl = table.ShortlogTable
 
-    def content(self):
-        logs = self.context.get_log(shortlog=True, datefmt='rfc3339date')
-        t = table.ChangelogTable(logs, self.request)
-        t.update()
-        return t.render()
-
-WorkspaceShortlogView = layout.wrap_form(WorkspaceShortlog, label='Shortlog')
+WorkspaceShortlogView = layout.wrap_form(
+    WorkspaceShortlog,
+    __wrapper_class=page.TraverseFormWrapper,
+    label='Shortlog'
+)
 
 
 class WorkspaceAddForm(form.AddForm):

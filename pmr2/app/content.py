@@ -170,13 +170,18 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
             return None
         return os.path.join(p, self.id)
 
-    def get_log(self, shortlog=False, datefmt=None):
+    def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None):
         # XXX quick and dirty method, lacks interface entry
         # XXX valid datefmt values might need to be documented/checked
 
+        storage = self.get_storage()
+        return storage.log(rev, branch, shortlog, datefmt).next()
+
+    def get_storage(self, shortlog=False, datefmt=None):
+        # XXX quick and dirty method, lacks interface entry
+
         path = self.get_path()
-        storage = pmr2.mercurial.Storage(path)
-        return storage.log(shortlog=shortlog).next()['entries']()
+        return pmr2.mercurial.Storage(path)
 
 atapi.registerType(Workspace, 'pmr2.app')
 

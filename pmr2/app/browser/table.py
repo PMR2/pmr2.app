@@ -35,7 +35,8 @@ class EscapedItemKeyColumn(ItemKeyColumn):
         try:
             result = unicode(result)
         except UnicodeDecodeError:
-            result = str(result)
+            # XXX magic default codec
+            result = unicode(result, 'latin1')
         return cgi.escape(result)
 
 
@@ -142,7 +143,7 @@ class ChangesetDescColumn(EscapedItemKeyColumn):
     itemkey = 'desc'
 
 
-class ChangesetOptionColumn(z3c.table.column.Column):
+class ShortlogOptionColumn(z3c.table.column.Column):
     weight = 40
     header = _(u'Options')
 
@@ -164,6 +165,27 @@ class ChangelogTable(z3c.table.table.SequenceTable):
             ),
             z3c.table.column.addColumn(
                 self, ChangesetDescColumn, u'changeset_desc'
+            ),
+        ]
+
+
+class ShortlogTable(z3c.table.table.SequenceTable):
+
+    sortOn = None
+
+    def setUpColumns(self):
+        return [
+            z3c.table.column.addColumn(
+                self, ChangesetDateColumn, u'changeset_date'
+            ),
+            z3c.table.column.addColumn(
+                self, ChangesetAuthorColumn, u'changeset_author'
+            ),
+            z3c.table.column.addColumn(
+                self, ChangesetDescColumn, u'changeset_desc'
+            ),
+            z3c.table.column.addColumn(
+                self, ShortlogOptionColumn, u'shortlog_opt'
             ),
         ]
 
