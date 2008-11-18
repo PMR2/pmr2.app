@@ -59,6 +59,13 @@ class ItemKeyReplaceColumn(ItemKeyColumn):
         return self.lookupTable.get(result, self.defaultValue)
 
 
+class SequenceTable(z3c.table.table.SequenceTable):
+
+    def __init__(self, context, request, root=None):
+        z3c.table.table.SequenceTable.__init__(self, context, request)
+        self.root = root
+
+
 # Workspace
 
 class WorkspaceIdColumn(ItemKeyColumn):
@@ -107,7 +114,7 @@ class WorkspaceActionColumn(ItemKeyReplaceColumn):
         return result
 
 
-class WorkspaceStatusTable(z3c.table.table.SequenceTable):
+class WorkspaceStatusTable(SequenceTable):
 
     def setUpColumns(self):
         return [
@@ -143,15 +150,18 @@ class ChangesetDescColumn(EscapedItemKeyColumn):
     itemkey = 'desc'
 
 
-class ShortlogOptionColumn(z3c.table.column.Column):
+class ShortlogOptionColumn(ItemKeyColumn):
     weight = 40
     header = _(u'Options')
+    itemkey = 'node'
 
     def renderCell(self, item):
-        return u'[placeholder]'
+        # also could render changeset link (for diffs)
+        return u'<a href="%s/@@manifest/%s/">[manifest]</a>' % \
+            (self.table.root, self.getItem(item))
 
 
-class ChangelogTable(z3c.table.table.SequenceTable):
+class ChangelogTable(SequenceTable):
 
     sortOn = None
 
@@ -169,7 +179,7 @@ class ChangelogTable(z3c.table.table.SequenceTable):
         ]
 
 
-class ShortlogTable(z3c.table.table.SequenceTable):
+class ShortlogTable(SequenceTable):
 
     sortOn = None
 

@@ -126,7 +126,7 @@ class WorkspaceLog(page.NavPage):
 
     def content(self):
         entries = self.log['entries']()
-        t = self.tbl(entries, self.request)
+        t = self.tbl(entries, self.request, self.context.absolute_url())
         t.update()
         return t.render()
 
