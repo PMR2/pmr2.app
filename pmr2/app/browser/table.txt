@@ -152,24 +152,29 @@ that we can render with WorkspaceStatusTable.
     </table>
 
 The pmr2 storage libraries also return data in lists or generators.
-We also have tables for them which we can test output with.
+We also have tables for them which we can test output with.  Here the
+changelog table is tested, using a fake container as context.
 ::
 
     >>> data = [
     ...     {
-    ...         'date': (1, 0), 
+    ...         'date': '1970-01-01 00:00',
     ...         'author': 'user <user@example.com>', 
     ...         'desc': 'a log',
+    ...         'node': 'a12345',
     ...     },
     ...     {
-    ...         'date': (2, 0), 
+    ...         'date': '1970-01-02 00:00',
     ...         'author': 'user <user@example.com>', 
     ...         'desc': 'another log ><',
+    ...         'node': 'c0ffee',
     ...     },
     ... ]
     ...
     >>> context = FakeContainer()
     >>> context._values = data
+    >>> context.context = FakeContainer()
+    >>> context.context.absolute_url = lambda: 'urn:example:'
     >>> request = TestRequest()
     >>> t = table.ChangelogTable(context, request)
     >>> t.update()
@@ -184,14 +189,110 @@ We also have tables for them which we can test output with.
       </thead>
       <tbody>
         <tr>
-          <td>(1, 0)</td>
+          <td>1970-01-01 00:00</td>
           <td>user &lt;user@example.com&gt;</td>
           <td>a log</td>
         </tr>
         <tr>
-          <td>(2, 0)</td>
+          <td>1970-01-02 00:00</td>
           <td>user &lt;user@example.com&gt;</td>
           <td>another log &gt;&lt;</td>
         </tr>
       </tbody>
     </table>
+
+The shortlog, using the same data.  The actual data that gets sent to
+this table is likely different, however the fake (reused from above) is
+good enough.
+
+    >>> t = table.ShortlogTable(context, request)
+    >>> t.update()
+    >>> print t.render()
+    <table>
+      <thead>
+        <tr>
+          <th>Changeset Date</th>
+          <th>Author</th>
+          <th>Log</th>
+          <th>Options</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1970-01-01 00:00</td>
+          <td>user &lt;user@example.com&gt;</td>
+          <td>a log</td>
+          <td><a href="urn:example:/@@file/@a12345/">[manifest]</a></td>
+        </tr>
+        <tr>
+          <td>1970-01-02 00:00</td>
+          <td>user &lt;user@example.com&gt;</td>
+          <td>another log &gt;&lt;</td>
+          <td><a href="urn:example:/@@file/@c0ffee/">[manifest]</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+Now we test the manifest table.  Going to reuse the fake container 
+object, only change the data and add in a rev attribute.
+::
+
+    >>> data = [
+    ...     {
+    ...         'permissions': 'drwxr-xr-x',
+    ...         'basename': 'dir',
+    ...         'file': 'dir/',
+    ...     },
+    ...     {
+    ...         'permissions': '-rwxr-xr-x',
+    ...         'date': '1970-01-01 00:00',
+    ...         'size': 0,
+    ...         'basename': 'foo',
+    ...         'file': 'foo',
+    ...     },
+    ...     {
+    ...         'permissions': '-rwxr-xr-x',
+    ...         'date': '2000-01-01 00:00',
+    ...         'size': 10,
+    ...         'basename': 'bar',
+    ...         'file': 'bar',
+    ...     },
+    ... ]
+    ...
+    >>> context._values = data
+    >>> context.rev = 'c0ffee'
+    >>> request = TestRequest()
+    >>> t = table.FileManifestTable(context, request)
+    >>> t.update()
+    >>> print t.render()
+    <table>
+      <thead>
+        <tr>
+          <th>Permissions</th>
+          <th>Date</th>
+          <th>Size</th>
+          <th>Filename</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>drwxr-xr-x</td>
+          <td></td>
+          <td></td>
+          <td><a href="urn:example:/@@file/@c0ffee/dir/">dir</a></td>
+        </tr>
+        <tr>
+          <td>-rwxr-xr-x</td>
+          <td>1970-01-01 00:00</td>
+          <td>0</td>
+          <td><a href="urn:example:/@@file/@c0ffee/foo">foo</a></td>
+        </tr>
+        <tr>
+          <td>-rwxr-xr-x</td>
+          <td>2000-01-01 00:00</td>
+          <td>10</td>
+          <td><a href="urn:example:/@@file/@c0ffee/bar">bar</a></td>
+        </tr>
+      </tbody>
+    </table>
+
