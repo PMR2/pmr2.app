@@ -177,7 +177,7 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
         storage = self.get_storage()
         return storage.log(rev, branch, shortlog, datefmt).next()
 
-    def get_storage(self, shortlog=False, datefmt=None):
+    def get_storage(self):
         # XXX quick and dirty method, lacks interface entry
 
         path = self.get_path()

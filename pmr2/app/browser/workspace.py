@@ -10,6 +10,8 @@ import z3c.form.value
 
 from plone.app.z3cform import layout
 
+import pmr2.mercurial.exceptions
+
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
 
@@ -85,11 +87,10 @@ WorkspacePageView = layout.wrap_form(WorkspacePage)
 
 
 # XXX temporary.
-WorkspaceFileView = WorkspacePageView
 WorkspaceRawfileView = WorkspacePageView
 
 
-class WorkspaceLog(page.NavPage):
+class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
 
     # XXX no this does not work
     # XXX need to hack context_fti or DynamicViewTypeInformation somehow
@@ -104,7 +105,11 @@ class WorkspaceLog(page.NavPage):
         # getting revision here as the reassignment of traverse_subpath
         # happens after the object is initiated by the wrapper.
         if self.traverse_subpath:
-            return '/'.join(self.traverse_subpath)
+            rev = self.traverse_subpath[0]
+            if rev[0] != '@':
+                raise NotFound(self.context, self.context.title_or_id(), 
+                               self.request)
+            return rev[1:]
 
     @property
     def log(self):
@@ -112,21 +117,25 @@ class WorkspaceLog(page.NavPage):
             try:
                 self._log = self.context.get_log(rev=self.rev,
                                                  shortlog=self.shortlog)
-            except:  # XXX assume RevisioNotFound
-                raise NotFound(self.context, self.rev, self.request)
+            except:  # XXX assume RevisionNotFound
+                raise NotFound(self.context, self.context.title_or_id(), 
+                               self.request)
         return self._log
 
     def navlist(self):
         nav = self.log['changenav']
         for i in nav():
             yield {
-                'href': i['node'],
+                'href': '@' + i['node'],
                 'label': i['label'],
             }
 
+    @property
+    def values(self):
+        return self.log['entries']
+
     def content(self):
-        entries = self.log['entries']()
-        t = self.tbl(entries, self.request, self.context.absolute_url())
+        t = self.tbl(self, self.request)
         t.update()
         return t.render()
 
@@ -135,6 +144,7 @@ WorkspaceLogView = layout.wrap_form(
     __wrapper_class=page.TraverseFormWrapper,
     label='Changelog Entries'
 )
+
 
 class WorkspaceShortlog(WorkspaceLog):
 
@@ -174,3 +184,76 @@ class WorkspaceEditForm(form.EditForm):
 
 WorkspaceEditFormView = layout.wrap_form(
     WorkspaceEditForm, label="Workspace Edit Form")
+
+
+class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
+    """\
+    Manifest listing page.
+    """
+
+    url_expr = '@@file'
+
+    @property
+    def rev(self):
+        # getting revision here as the reassignment of traverse_subpath
+        # happens after the object is initiated by the wrapper.
+        if self.traverse_subpath:
+            rev = self.traverse_subpath[0]
+            if rev[0] != '@':
+                # redirect to latest rev
+                raise NotFound(self.context, self.context.title_or_id(), 
+                               self.request)
+            return rev[1:]
+
+    @property
+    def path(self):
+        path = ''
+        if self.traverse_subpath:
+            path = '/'.join(self.traverse_subpath[1:])
+            return path
+        # redirect
+
+    @property
+    def manifest(self):
+        rev = self.rev
+        path = self.path
+        if not rev:
+            # redirect
+            pass
+            #raise NotFound(self.context, self.context.title_or_id(), 
+            #               self.request)
+        if not hasattr(self, '_manifest'):
+            try:
+                self._storage = self.context.get_storage()
+                self._manifest = self._storage.manifest(rev, path).next()
+            except pmr2.mercurial.exceptions.PathNotFound:
+                self._manifest = None
+        return self._manifest
+
+    @property
+    def file(self):
+        return None
+
+    @property
+    def values(self):
+        return self.manifest['aentries']
+
+    def content(self):
+        if self.manifest is None and self.file is None:
+            raise NotFound(self.context, self.context.title_or_id(), 
+                           self.request)
+
+        if self.manifest:
+            t = table.FileManifestTable(self, self.request)
+            t.update()
+            return t.render()
+
+        else:
+            # XXX File rendering.
+            return u''
+
+WorkspaceFilePageView = layout.wrap_form(
+    WorkspaceFilePage,
+    __wrapper_class=page.TraverseFormWrapper,
+    label='Manifest'
+)

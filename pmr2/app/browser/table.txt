@@ -51,6 +51,11 @@ this module.  Here we demonstrate how they are typically used.
     ...             addColumn(self, Column1, 'one'),
     ...             addColumn(self, Column2, 'two'),
     ...         ]
+    ...
+    >>> class FakeContainer(object):
+    ...     def values(self):
+    ...         return self._values
+    ...
 
 Now create a list of data and render the table.  Note errorValue and
 defaultValue have different meaning, one is an actual error from missing
@@ -163,8 +168,10 @@ We also have tables for them which we can test output with.
     ...     },
     ... ]
     ...
+    >>> context = FakeContainer()
+    >>> context._values = data
     >>> request = TestRequest()
-    >>> t = table.ChangelogTable(data, request)
+    >>> t = table.ChangelogTable(context, request)
     >>> t.update()
     >>> print t.render()
     <table>

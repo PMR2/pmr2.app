@@ -68,7 +68,7 @@
   <page
       for="pmr2.app.content.Workspace"
       name="file"
-      class=".workspace.WorkspaceFileView"
+      class=".workspace.WorkspaceFilePageView"
       permission="zope2.View"
       />
 

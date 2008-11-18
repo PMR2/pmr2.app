@@ -59,13 +59,6 @@ class ItemKeyReplaceColumn(ItemKeyColumn):
         return self.lookupTable.get(result, self.defaultValue)
 
 
-class SequenceTable(z3c.table.table.SequenceTable):
-
-    def __init__(self, context, request, root=None):
-        z3c.table.table.SequenceTable.__init__(self, context, request)
-        self.root = root
-
-
 # Workspace
 
 class WorkspaceIdColumn(ItemKeyColumn):
@@ -114,7 +107,7 @@ class WorkspaceActionColumn(ItemKeyReplaceColumn):
         return result
 
 
-class WorkspaceStatusTable(SequenceTable):
+class WorkspaceStatusTable(z3c.table.table.SequenceTable):
 
     def setUpColumns(self):
         return [
@@ -157,11 +150,11 @@ class ShortlogOptionColumn(ItemKeyColumn):
 
     def renderCell(self, item):
         # also could render changeset link (for diffs)
-        return u'<a href="%s/@@manifest/%s/">[manifest]</a>' % \
-            (self.table.root, self.getItem(item))
+        return u'<a href="%s/@@file/@%s/">[manifest]</a>' % \
+            (self.context.context.absolute_url(), self.getItem(item))
 
 
-class ChangelogTable(SequenceTable):
+class ChangelogTable(z3c.table.table.Table):
 
     sortOn = None
 
@@ -179,7 +172,7 @@ class ChangelogTable(SequenceTable):
         ]
 
 
-class ShortlogTable(SequenceTable):
+class ShortlogTable(z3c.table.table.Table):
 
     sortOn = None
 
@@ -199,3 +192,73 @@ class ShortlogTable(SequenceTable):
             ),
         ]
 
+
+# Workspace manifest table.
+
+class FilePermissionColumn(EscapedItemKeyColumn):
+    weight = 10
+    header = _(u'Permissions')
+    itemkey = 'permissions'
+
+
+class FileDatetimeColumn(EscapedItemKeyColumn):
+    weight = 20
+    header = _(u'Date')
+    itemkey = 'date'
+    defaultValue = u''
+    errorValue = u''
+
+
+class FileSizeColumn(EscapedItemKeyColumn):
+    weight = 30
+    header = _(u'Size')
+    itemkey = 'size'
+    defaultValue = u''
+    errorValue = u''
+
+
+class FilenameColumn(EscapedItemKeyColumn):
+    weight = 40
+    header = _(u'Filename')
+    itemkey = 'basename'
+
+    def renderCell(self, item):
+        # also could render changeset link (for diffs)
+        return u'<a href="%s/@@file/@%s/%s">%s</a>' % (
+            self.table.context.context.absolute_url(),
+            self.table.context.rev,
+            item['file'],
+            self.getItem(item),
+        )
+
+
+class FileOptionColumn(ItemKeyColumn):
+    weight = 40
+    header = _(u'Options')
+    itemkey = 'node'
+
+    def renderCell(self, item):
+        # also could render changeset link (for diffs)
+        return u'<a href="%s/@@file/@%s/">[manifest]</a>' % \
+            (self.table.context.context.absolute_url(), self.getItem(item))
+
+
+class FileManifestTable(z3c.table.table.Table):
+
+    sortOn = None
+
+    def setUpColumns(self):
+        return [
+            z3c.table.column.addColumn(
+                self, FilePermissionColumn, u'file_perm'
+            ),
+            z3c.table.column.addColumn(
+                self, FilenameColumn, u'file_name'
+            ),
+            z3c.table.column.addColumn(
+                self, FileDatetimeColumn, u'file_datetime'
+            ),
+            z3c.table.column.addColumn(
+                self, FileSizeColumn, u'file_size'
+            ),
+        ]
