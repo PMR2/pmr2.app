@@ -102,14 +102,9 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
 
     @property
     def rev(self):
-        # getting revision here as the reassignment of traverse_subpath
-        # happens after the object is initiated by the wrapper.
-        if self.traverse_subpath:
-            rev = self.traverse_subpath[0]
-            if rev[0] != '@':
-                raise NotFound(self.context, self.context.title_or_id(), 
-                               self.request)
-            return rev[1:]
+        if not self.traverse_subpath:
+            return None
+        return self.traverse_subpath[0]
 
     @property
     def log(self):
@@ -117,7 +112,7 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
             try:
                 self._log = self.context.get_log(rev=self.rev,
                                                  shortlog=self.shortlog)
-            except:  # XXX assume RevisionNotFound
+            except pmr2.mercurial.exceptions.RevisionNotFound:
                 raise NotFound(self.context, self.context.title_or_id(), 
                                self.request)
         return self._log
@@ -126,7 +121,7 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
         nav = self.log['changenav']
         for i in nav():
             yield {
-                'href': '@' + i['node'],
+                'href': i['node'],
                 'label': i['label'],
             }
 
@@ -195,51 +190,68 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
 
     @property
     def rev(self):
-        # getting revision here as the reassignment of traverse_subpath
-        # happens after the object is initiated by the wrapper.
+        if hasattr(self, '_rev'):
+            return self._rev
+        # bootstrapping _rev for manifest, as it depends on this
+        self._rev = None
         if self.traverse_subpath:
-            rev = self.traverse_subpath[0]
-            if rev[0] != '@':
-                # redirect to latest rev
-                raise NotFound(self.context, self.context.title_or_id(), 
-                               self.request)
-            return rev[1:]
+            self._rev = self.traverse_subpath[0]
+        try:
+            self._rev = self.manifest['node']
+        except pmr2.mercurial.exceptions.RevisionNotFound:
+            # cannot resolve to valid revision
+            raise NotFound(self.context, self.context.title_or_id(), 
+                           self.request)
+        return self._rev
 
     @property
     def path(self):
         path = ''
         if self.traverse_subpath:
             path = '/'.join(self.traverse_subpath[1:])
-            return path
-        # redirect
+        return path
+
+    @property
+    def storage(self):
+        self._storage = self.context.get_storage()
+        return self._storage
 
     @property
     def manifest(self):
         rev = self.rev
         path = self.path
-        if not rev:
-            # redirect
-            pass
-            #raise NotFound(self.context, self.context.title_or_id(), 
-            #               self.request)
+        storage = self.storage
         if not hasattr(self, '_manifest'):
             try:
-                self._storage = self.context.get_storage()
-                self._manifest = self._storage.manifest(rev, path).next()
+                self._manifest = storage.manifest(rev, path).next()
             except pmr2.mercurial.exceptions.PathNotFound:
                 self._manifest = None
         return self._manifest
 
     @property
-    def file(self):
-        return None
+    def fileinfo(self):
+        rev = self.rev
+        path = self.path
+        storage = self.storage
+        if not hasattr(self, '_fileinfo'):
+            try:
+                self._fileinfo = storage.fileinfo(rev, path).next()
+            except pmr2.mercurial.exceptions.PathNotFound:
+                self._fileinfo = None
+        return self._fileinfo
 
+    # XXX rewrite this class to use adapters for specific views for 
+    # these distinct types of values
     @property
     def values(self):
-        return self.manifest['aentries']
+        if self.manifest:
+            return self.manifest['aentries']
+        elif self.fileinfo:
+            return self.fileinfo['text']
+        return []
 
     def content(self):
-        if self.manifest is None and self.file is None:
+        if self.manifest is None and self.fileinfo is None:
             raise NotFound(self.context, self.context.title_or_id(), 
                            self.request)
 
@@ -247,13 +259,23 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
             t = table.FileManifestTable(self, self.request)
             t.update()
             return t.render()
-
         else:
-            # XXX File rendering.
-            return u''
+            return u'this is a file'
+
+    @property
+    def label(self):
+        if self.manifest:
+            return u'%s / Manifest / %s' % (
+                self.context.title_or_id(), self.rev[:10],
+            )
+        elif self.fileinfo:
+            return u'%s / File / %s' % (
+                self.context.title_or_id(), self.rev[:10],
+            )
+        else:
+            return u'No Information Available'
 
 WorkspaceFilePageView = layout.wrap_form(
     WorkspaceFilePage,
     __wrapper_class=page.TraverseFormWrapper,
-    label='Manifest'
 )

@@ -150,7 +150,7 @@ class ShortlogOptionColumn(ItemKeyColumn):
 
     def renderCell(self, item):
         # also could render changeset link (for diffs)
-        return u'<a href="%s/@@file/@%s/">[manifest]</a>' % \
+        return u'<a href="%s/@@file/%s/">[manifest]</a>' % \
             (self.context.context.absolute_url(), self.getItem(item))
 
 
@@ -224,7 +224,7 @@ class FilenameColumn(EscapedItemKeyColumn):
 
     def renderCell(self, item):
         # also could render changeset link (for diffs)
-        return u'<a href="%s/@@file/@%s/%s">%s</a>' % (
+        return u'<a href="%s/@@file/%s/%s">%s</a>' % (
             self.table.context.context.absolute_url(),
             self.table.context.rev,
             item['file'],
@@ -239,7 +239,7 @@ class FileOptionColumn(ItemKeyColumn):
 
     def renderCell(self, item):
         # also could render changeset link (for diffs)
-        return u'<a href="%s/@@file/@%s/">[manifest]</a>' % \
+        return u'<a href="%s/@@file/%s/">[manifest]</a>' % \
             (self.table.context.context.absolute_url(), self.getItem(item))
 
 
