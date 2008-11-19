@@ -589,7 +589,7 @@ For non-administrators:
 <div title="SiteTitle" modifier="Tommy Yu" created="200810272227" modified="200810272231" changecount="6">
 <pre>PMR2</pre>
 </div>
-<div title="Workspace" modifier="Tommy Yu" created="200810282244" modified="200811101157" changecount="12">
+<div title="Workspace" modifier="Tommy Yu" created="200810282244" modified="200811190116" changecount="13">
 <pre>Workspaces, also known as model workspaces, are objects that encapsulates a model. Each of these workspace in PMR2 are also back by its respective [[Mercurial]] repository.
 
 Workspace provides these features:
@@ -598,6 +598,8 @@ Workspace provides these features:
 ** Retrieve the files (and historical versions) contained within
 * Permission control of read/commit access
 * RSS Feed for updates
+Should also provide these features:
+* Push access, taking advantage of the Plone permission control/workflows
 Some thoughts:
 * Renaming
 ** It is unwise to do so normally, because it will rename the URI. But, if it must be done, the repository directory on the local filesystem must be carefully moved, such that it won't move into another directory. A clone to new location is probably the sane option. Still, renaming of a repository should *really* never be done.</pre>

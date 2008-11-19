@@ -1,0 +1,31 @@
+<h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
+<tal:comment tal:condition="nothing">
+  This has to be all done in one line because of wordwrapping.
+</tal:comment>
+<!-- could use the Mercurial's i18n module to translate -->
+<dl>
+<dt>Author:</dt>
+<dd tal:content="view/fileinfo/author"/>
+<dt>Date:</dt>
+<dd tal:content="view/fileinfo/date"/>
+<dt>Desc:</dt>
+<dd tal:content="view/fileinfo/desc"/>
+<dt>Permanent Download URI:</dt>
+<dd><a tal:attributes="
+      href view/fullpath;
+    "
+    tal:content="view/fullpath"
+  />
+</dd>
+</dl>
+<pre><span tal:repeat="row view/values"
+  ><span 
+      tal:attributes="
+        href string:#${row/lineid};
+        id row/lineid;
+        class string:p${row/parity};
+      "
+      tal:content="row/linenumber"
+  /> <code 
+      tal:content="row/line"
+  /></span></pre>

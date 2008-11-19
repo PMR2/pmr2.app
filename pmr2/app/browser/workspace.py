@@ -1,3 +1,5 @@
+import mimetypes
+
 import zope.app.pagetemplate.viewpagetemplatefile
 import zope.component
 import zope.publisher.browser
@@ -11,6 +13,7 @@ import z3c.form.value
 from plone.app.z3cform import layout
 
 import pmr2.mercurial.exceptions
+import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
@@ -84,10 +87,6 @@ class WorkspacePage(page.SimplePage):
         'workspace.pt')
 
 WorkspacePageView = layout.wrap_form(WorkspacePage)
-
-
-# XXX temporary.
-WorkspaceRawfileView = WorkspacePageView
 
 
 class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
@@ -187,17 +186,23 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     """
 
     url_expr = '@@file'
+    filetemplate = \
+        zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+        'file.pt')
 
     @property
     def rev(self):
         if hasattr(self, '_rev'):
             return self._rev
-        # bootstrapping _rev for manifest, as it depends on this
+        # bootstrapping _rev for manifest or fileinfo, as it depends on this
         self._rev = None
         if self.traverse_subpath:
             self._rev = self.traverse_subpath[0]
         try:
-            self._rev = self.manifest['node']
+            if self.manifest:
+                self._rev = self.manifest['node']
+            elif self.fileinfo:
+                self._rev = self.fileinfo['node']
         except pmr2.mercurial.exceptions.RevisionNotFound:
             # cannot resolve to valid revision
             raise NotFound(self.context, self.context.title_or_id(), 
@@ -206,10 +211,12 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
 
     @property
     def path(self):
-        path = ''
+        if hasattr(self, '_path'):
+            return self._path
+        self._path = ''
         if self.traverse_subpath:
-            path = '/'.join(self.traverse_subpath[1:])
-        return path
+            self._path = '/'.join(self.traverse_subpath[1:])
+        return self._path
 
     @property
     def storage(self):
@@ -236,6 +243,8 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
         if not hasattr(self, '_fileinfo'):
             try:
                 self._fileinfo = storage.fileinfo(rev, path).next()
+                self._fileinfo['date'] = pmr2.mercurial.utils.filter(
+                    self._fileinfo['date'], 'isodate')
             except pmr2.mercurial.exceptions.PathNotFound:
                 self._fileinfo = None
         return self._fileinfo
@@ -260,22 +269,52 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
             t.update()
             return t.render()
         else:
-            return u'this is a file'
+            return self.filetemplate()
 
     @property
     def label(self):
         if self.manifest:
-            return u'%s / Manifest / %s' % (
-                self.context.title_or_id(), self.rev[:10],
-            )
+            label = 'Manifest'
         elif self.fileinfo:
-            return u'%s / File / %s' % (
-                self.context.title_or_id(), self.rev[:10],
-            )
+            label = 'Fileinfo'
         else:
             return u'No Information Available'
+        return u'%s: %s @ %s / %s' % (
+            label, self.context.title_or_id(), self.rev[:10], 
+            self.path.replace('/', ' / '),
+        )
+
+    @property
+    def fullpath(self):
+        """permanent uri."""
+        return '/'.join([
+            self.context.absolute_url(),
+            '@@rawfile',
+            self.rev,
+            self.path,
+        ])
 
 WorkspaceFilePageView = layout.wrap_form(
     WorkspaceFilePage,
     __wrapper_class=page.TraverseFormWrapper,
 )
+
+
+class WorkspaceRawfileView(WorkspaceFilePage):
+
+    def __call__(self):
+        if self.fileinfo is None:
+            raise NotFound(self.context, self.context.title_or_id(), 
+                           self.request)
+        else:
+            # not supporting resuming download
+            # XXX large files will eat RAM
+            data = self.storage.file(self.rev, self.path)
+            mt = mimetypes.guess_type(self.path)[0]
+            if mt is None or (data and '\0' in data[:4096]):
+                mt = mt or 'application/octet-stream'
+            self.request.response.setHeader('Content-Type', mt)
+            self.request.response.setHeader('Content-Length', len(data))
+            return data
+                
+
