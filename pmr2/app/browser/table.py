@@ -232,15 +232,22 @@ class FilenameColumn(EscapedItemKeyColumn):
         )
 
 
-class FileOptionColumn(ItemKeyColumn):
-    weight = 40
+class FileOptionColumn(EscapedItemKeyColumn):
+    weight = 50
     header = _(u'Options')
-    itemkey = 'node'
+    itemkey = 'basename'
 
     def renderCell(self, item):
         # also could render changeset link (for diffs)
-        return u'<a href="%s/@@file/%s/">[manifest]</a>' % \
-            (self.table.context.context.absolute_url(), self.getItem(item))
+        if item['permissions'][0] != 'd':
+            return u'<a href="%s/@@rawfile/%s/%s">[%s]</a>' % (
+                self.table.context.context.absolute_url(),
+                self.table.context.rev,
+                item['file'],
+                _(u'download'),
+            )
+        else:
+            return u''
 
 
 class FileManifestTable(z3c.table.table.Table):
@@ -260,5 +267,8 @@ class FileManifestTable(z3c.table.table.Table):
             ),
             z3c.table.column.addColumn(
                 self, FileSizeColumn, u'file_size'
+            ),
+            z3c.table.column.addColumn(
+                self, FileOptionColumn, u'file_opt'
             ),
         ]
