@@ -183,6 +183,24 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
         path = self.get_path()
         return pmr2.mercurial.Storage(path)
 
+    def get_workspace_container(self):
+        """\
+        returns the workspace container object that stores this.
+        """
+
+        # FIXME get rid of this assumption
+        result = aq_parent(aq_inner(self))
+        return result
+
+    def get_pmr2_container(self):
+        """\
+        returns the root pmr2 object that stores this.
+        """
+
+        # FIXME get rid of this assumption
+        result = aq_parent(self.get_workspace_container())
+        return result
+
 atapi.registerType(Workspace, 'pmr2.app')
 
 

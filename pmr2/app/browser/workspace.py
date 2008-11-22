@@ -325,3 +325,30 @@ class WorkspaceRawfileView(WorkspaceFilePage):
             return data
                 
 
+class CreateForm(z3c.form.form.Form):
+
+    # XXX implement the interface that will show the types that users
+    # can create from a workspace.
+
+    def __call__(self):
+        type = self.request.form.get('type', None)
+        rev = self.request.form.get('rev', None)
+        workspace = self.request.form.get('workspace', None)
+        if type == 'exposure':
+            # XXX magic creation view
+            url = '/'.join([
+                self.context.get_pmr2_container().absolute_url(),
+                'exposure',
+                '@@exposure_add_form',
+            ]) 
+            url += '?form.widgets.workspace=%s&form.widgets.commit_id=%s' % (
+                workspace,
+                rev,
+            )
+            return self.request.response.redirect(url)
+
+        # XXX call parent's __call__ to render the form
+        return u''
+
+CreateFormView = layout.wrap_form(
+    CreateForm, label="Object Creation Form")

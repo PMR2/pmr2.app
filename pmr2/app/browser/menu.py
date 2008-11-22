@@ -4,22 +4,6 @@ from plone.app.contentmenu.menu import WorkflowSubMenuItem
 from plone.app.contentmenu.view import ContentMenuProvider
 from plone.app.contentmenu.interfaces import IWorkflowSubMenuItem
 
-class WorkspaceWorkflowSubMenuItem(WorkflowSubMenuItem):
-    """
-    """
-    implements(IWorkflowSubMenuItem)
-    
-    def available(self):
-        """Show add menu only when the current language is 
-        the default language.
-        """
-
-        show = True
-        
-        if show:
-            return super(WorkspaceWorkflowSubMenuItem, self).available()
-        else:
-            return False
 
 class WorkspaceMenuProvider(ContentMenuProvider):
     """\

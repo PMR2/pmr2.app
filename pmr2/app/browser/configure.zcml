@@ -39,24 +39,13 @@
   <!-- Workspace -->
 
   <!--
-  Need to adapt the correct view (it already has correct template)
-  Generate the correct menu, probably needing to implement a new submenu
+    An override of contentactions for Workspace for the menus in the
+    file page view.
   -->
 
-  <!--
   <viewlet
       name="plone.contentactions"
       for="pmr2.app.content.Workspace"
-      view=".workspace.WorkspaceFilePageView"
-      manager="plone.app.layout.viewlets.interfaces.IContentViews"
-      class="plone.app.layout.viewlets.common.ContentActionsViewlet"
-      permission="zope2.View"
-      />
-  -->
-
-  <viewlet
-      name="plone.contentactions"
-      for="pmr2.app.interfaces.IWorkspace"
       view=".workspace.WorkspaceFilePageView"
       manager="plone.app.layout.viewlets.interfaces.IContentViews"
       class="pmr2.app.browser.viewlets.WorkspaceActionsViewlet"
@@ -64,15 +53,8 @@
       />
 
   <!--
-    This provides a custom override for content menu
+    This provides a new menu for the above override
   -->
-
-  <zope:adapter
-      for="pmr2.app.interfaces.IWorkspace *"
-      name="plone.contentmenu.workflow"
-      factory=".menu.WorkspaceWorkflowSubMenuItem"
-      provides="plone.app.contentmenu.interfaces.IContentMenuItem"
-      />
 
   <zope:adapter
       for="pmr2.app.interfaces.IWorkspace
@@ -122,6 +104,13 @@
       for="pmr2.app.content.Workspace"
       name="rawfile"
       class=".workspace.WorkspaceRawfileView"
+      permission="zope2.View"
+      />
+
+  <page
+      for="pmr2.app.content.Workspace"
+      name="create"
+      class=".workspace.CreateFormView"
       permission="zope2.View"
       />
 
