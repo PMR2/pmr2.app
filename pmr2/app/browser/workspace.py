@@ -1,5 +1,6 @@
 import mimetypes
 
+import zope.interface
 import zope.app.pagetemplate.viewpagetemplatefile
 import zope.component
 import zope.publisher.browser
@@ -17,6 +18,8 @@ import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
+
+import interfaces
 
 from widget import WorkspaceListingWidgetFactory
 import form
@@ -184,6 +187,8 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     """\
     Manifest listing page.
     """
+    
+    zope.interface.implements(interfaces.IWorkspaceFilePageView)
 
     url_expr = '@@file'
     filetemplate = \
@@ -298,6 +303,8 @@ WorkspaceFilePageView = layout.wrap_form(
     WorkspaceFilePage,
     __wrapper_class=page.TraverseFormWrapper,
 )
+# XXX WorkspaceFilePageView needs to implement
+#zope.interface.implements(interfaces.IWorkspaceFilePageView)
 
 
 class WorkspaceRawfileView(WorkspaceFilePage):

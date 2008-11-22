@@ -1,4 +1,5 @@
 <configure xmlns="http://namespaces.zope.org/browser"
+    xmlns:zope="http://namespaces.zope.org/zope"
     i18n_domain="pmr2.app">
 
   <include package="pmr2.app.security" />
@@ -36,6 +37,51 @@
       />
 
   <!-- Workspace -->
+
+  <!--
+  Need to adapt the correct view (it already has correct template)
+  Generate the correct menu, probably needing to implement a new submenu
+  -->
+
+  <!--
+  <viewlet
+      name="plone.contentactions"
+      for="pmr2.app.content.Workspace"
+      view=".workspace.WorkspaceFilePageView"
+      manager="plone.app.layout.viewlets.interfaces.IContentViews"
+      class="plone.app.layout.viewlets.common.ContentActionsViewlet"
+      permission="zope2.View"
+      />
+  -->
+
+  <viewlet
+      name="plone.contentactions"
+      for="pmr2.app.interfaces.IWorkspace"
+      view=".workspace.WorkspaceFilePageView"
+      manager="plone.app.layout.viewlets.interfaces.IContentViews"
+      class="pmr2.app.browser.viewlets.WorkspaceActionsViewlet"
+      permission="zope2.View"
+      />
+
+  <!--
+    This provides a custom override for content menu
+  -->
+
+  <zope:adapter
+      for="pmr2.app.interfaces.IWorkspace *"
+      name="plone.contentmenu.workflow"
+      factory=".menu.WorkspaceWorkflowSubMenuItem"
+      provides="plone.app.contentmenu.interfaces.IContentMenuItem"
+      />
+
+  <zope:adapter
+      for="pmr2.app.interfaces.IWorkspace
+           zope.publisher.interfaces.browser.IDefaultBrowserLayer
+           .interfaces.IWorkspaceActionsViewlet"
+      factory=".menu.WorkspaceMenuProvider"
+      name="plone.contentmenu"
+      provides="zope.contentprovider.interfaces.IContentProvider"
+      />
 
   <page
       for="pmr2.app.content.Workspace"
