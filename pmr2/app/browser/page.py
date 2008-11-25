@@ -6,6 +6,17 @@ from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from plone.z3cform import layout
 
 
+class BorderedFormWrapper(layout.FormWrapper):
+    """\
+    A customized layout wrapper that sets enable_border on request
+    to short circuit the permission checking.
+    """
+
+    def __init__(self, *a, **kw):
+        super(BorderedFormWrapper, self).__init__(*a, **kw)
+        self.request['enable_border'] = True
+
+
 class TraverseFormWrapper(layout.FormWrapper):
     """\
     A customized layout wrapper that implements traversal.
@@ -27,6 +38,13 @@ class TraverseFormWrapper(layout.FormWrapper):
     def publishTraverse(self, request, name):
         self.traverse_subpath.append(name)
         return self
+
+
+class BorderedTraverseFormWrapper(TraverseFormWrapper):
+
+    def __init__(self, *a, **kw):
+        super(BorderedTraverseFormWrapper, self).__init__(*a, **kw)
+        self.request['enable_border'] = True
 
 
 class SimplePage(BrowserPage):

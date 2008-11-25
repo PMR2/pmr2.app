@@ -89,8 +89,10 @@ class WorkspacePage(page.SimplePage):
     template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
         'workspace.pt')
 
-WorkspacePageView = layout.wrap_form(WorkspacePage)
-
+WorkspacePageView = layout.wrap_form(
+    WorkspacePage,
+    __wrapper_class=page.BorderedFormWrapper,
+)
 
 class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
 
@@ -138,7 +140,7 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
 
 WorkspaceLogView = layout.wrap_form(
     WorkspaceLog, 
-    __wrapper_class=page.TraverseFormWrapper,
+    __wrapper_class=page.BorderedTraverseFormWrapper,
     label='Changelog Entries'
 )
 
@@ -151,7 +153,7 @@ class WorkspaceShortlog(WorkspaceLog):
 
 WorkspaceShortlogView = layout.wrap_form(
     WorkspaceShortlog,
-    __wrapper_class=page.TraverseFormWrapper,
+    __wrapper_class=page.BorderedTraverseFormWrapper,
     label='Shortlog'
 )
 
@@ -301,7 +303,7 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
 
 WorkspaceFilePageView = layout.wrap_form(
     WorkspaceFilePage,
-    __wrapper_class=page.TraverseFormWrapper,
+    __wrapper_class=page.BorderedTraverseFormWrapper,
 )
 # XXX WorkspaceFilePageView needs to implement
 #zope.interface.implements(interfaces.IWorkspaceFilePageView)
