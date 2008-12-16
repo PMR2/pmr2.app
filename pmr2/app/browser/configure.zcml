@@ -127,7 +127,7 @@
 
   <page
       for="pmr2.app.content.Exposure"
-      name="edit_exposure"
+      name="exposure_edit"
       class=".exposure.ExposureEditFormView"
       permission="cmf.ModifyPortalContent"
       />

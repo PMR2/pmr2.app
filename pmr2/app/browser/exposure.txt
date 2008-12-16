@@ -1,0 +1,48 @@
+==================================
+Exposure Related Objects and Forms
+==================================
+
+Before we get started, we need to import the required classes and set up
+the test environment.  Temporary directories are needed also.
+::
+
+    >>> from pmr2.app.browser import workspace, exposure
+    >>> from pmr2.app.tests.base import TestRequest
+    >>> from plone.z3cform.tests import setup_defaults
+    >>> setup_defaults()
+    >>> request = TestRequest()
+    >>> from pmr2.app.content import *
+    >>> self.folder['repo'] = PMR2('repo')
+    >>> self.folder.repo['workspace'] = WorkspaceContainer()
+    >>> self.folder.repo.workspace['eggs'] = Workspace('eggs')
+    >>> self.folder.repo.repo_root = self.tmpdir
+    >>> from pmr2.app.tests import utils
+    >>> utils.mkreporoot(self.folder.repo.repo_root)
+    >>> utils.mkrepo(self.folder.repo.workspace.get_path(), 'eggs')
+
+Create the exposure container.
+::
+
+    >>> self.folder.repo['exposure'] = ExposureContainer()
+    >>> self.folder.repo.exposure
+    <ExposureContainer at ...repo/exposure>
+
+Exposure container creates new exposure, we test it here.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.title': u'Delicious Eggs',
+    ...         'form.widgets.workspace': u'eggs',
+    ...         'form.widgets.commit_id': u'00000000',
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = exposure.ExposureAddForm(
+    ...     self.folder.repo.exposure, request)
+    >>> testform.update()
+
+Exposure object is created with fields properly populated.
+::
+
+    >>> self.folder.repo.exposure['delicious-eggs'].title
+    u'Delicious Eggs'

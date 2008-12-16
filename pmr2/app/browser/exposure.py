@@ -16,10 +16,10 @@ class ExposureAddForm(form.AddForm):
     fields = z3c.form.field.Fields(IExposure)
     clsobj = Exposure
 
-    def add_data(self, obj):
-        new.title = self._data['title']
-        new.workspace = self._data['workspace']
-        new.commit_id = self._data['commit_id']
+    def add_data(self, ctxobj):
+        ctxobj.title = self._data['title']
+        ctxobj.workspace = self._data['workspace']
+        ctxobj.commit_id = self._data['commit_id']
 
 ExposureAddFormView = layout.wrap_form(ExposureAddForm, label="Exposure Create Form")
 

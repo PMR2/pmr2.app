@@ -194,5 +194,6 @@ class IExposure(zope.interface.Interface):
     # FIXME placeholder - curation will have its own type.
     curation = zope.schema.TextLine(
         title=u'Curation',
+        required=False,
     )
 
