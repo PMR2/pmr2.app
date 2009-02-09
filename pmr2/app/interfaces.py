@@ -141,6 +141,18 @@ class IWorkspace(zope.interface.Interface):
         Returns path on the filesystem to this instance of workspace.
         """
 
+    def get_storage():
+        """\
+        Instantiates and returns the storage object of this Workspace.
+        """
+
+    def get_log(rev=None, branch=None, shortlog=False, datefmt=None):
+        """\
+        A helper method to return an iterator to the log.
+
+        This calls get_storage
+        """
+
 
 class IWorkspaceAdd(IObjectIdMixin, IWorkspace):
     """\
@@ -196,4 +208,39 @@ class IExposure(zope.interface.Interface):
         title=u'Curation',
         required=False,
     )
+
+    def get_path():
+        """\
+        Returns path on the filesystem to this instance of workspace.
+        """
+
+    def get_storage():
+        """\
+        Instantiates and returns the storage object of this Workspace.
+        """
+
+    def get_log(rev=None, branch=None, shortlog=False, datefmt=None):
+        """\
+        A helper method to return an iterator to the log.
+        """
+
+
+class IExposureDocGen(zope.interface.Interface):
+    """\
+    Interface for the documentation generation.
+    """
+
+    filename = zope.schema.Choice(
+        title=u'Documentation File',
+        description=u'The file where the documentation resides in.',
+        vocabulary='ManifestListVocab',
+    )
+
+    transform_list = zope.schema.Choice(
+        title=u'Document Processor',
+        description=u'The method to convert the file selected into HTML for use by exposure.',
+        vocabulary='PMR2TransformsVocab',
+        required=False,
+    )
+
 

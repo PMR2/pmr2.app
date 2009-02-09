@@ -8,4 +8,16 @@
       name="WorkspaceDirObjVocab"
       />
 
+  <utility
+      provides="zope.schema.interfaces.IVocabularyFactory"
+      component="pmr2.app.vocab.PMR2TransformsVocabFactory"
+      name="PMR2TransformsVocab"
+      />
+
+  <utility
+      provides="zope.schema.interfaces.IVocabularyFactory"
+      component="pmr2.app.vocab.ManifestListVocabFactory"
+      name="ManifestListVocab"
+      />
+
 </configure>

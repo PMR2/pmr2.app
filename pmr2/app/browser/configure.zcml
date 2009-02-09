@@ -132,4 +132,11 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <page
+      for="pmr2.app.content.Exposure"
+      name="docgen"
+      class=".exposure.ExposureDocGenFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
 </configure>

@@ -148,6 +148,16 @@ class ExposureContainer(ATBTreeFolder):
     def __init__(self, oid='exposure', **kwargs):
         super(ExposureContainer, self).__init__(oid, **kwargs)
 
+    def get_path(self):
+        # XXX quickie code
+        #"""See IWorkspaceContainer"""
+
+        p = aq_parent(aq_inner(self)).repo_root
+        if not p:
+            return None
+        # XXX magic string
+        return os.path.join(p, 'workspace')
+
 atapi.registerType(ExposureContainer, 'pmr2.app')
 
 
@@ -171,14 +181,14 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
         return os.path.join(p, self.id)
 
     def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None):
-        # XXX quick and dirty method, lacks interface entry
-        # XXX valid datefmt values might need to be documented/checked
+        """See IWorkspace"""
 
+        # XXX valid datefmt values might need to be documented/checked
         storage = self.get_storage()
         return storage.log(rev, branch, shortlog, datefmt).next()
 
     def get_storage(self):
-        # XXX quick and dirty method, lacks interface entry
+        """See IWorkspace"""
 
         path = self.get_path()
         return pmr2.mercurial.Storage(path)
@@ -246,5 +256,52 @@ class Exposure(ATFolder):
     workspace = fieldproperty.FieldProperty(IExposure['workspace'])
     commit_id = fieldproperty.FieldProperty(IExposure['commit_id'])
     curation = fieldproperty.FieldProperty(IExposure['curation'])
+
+    def get_path(self):
+        """See IExposure"""
+
+        # aq_inner needed to get out of form wrappers
+        p = aq_parent(aq_inner(self)).get_path()  # XXX get_path = quickie
+        if not p:
+            return None
+        return os.path.join(p, self.workspace)
+
+    def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None):
+        """See IExposure"""
+
+        # XXX valid datefmt values might need to be documented/checked
+        storage = self.get_storage()
+        return storage.log(rev, branch, shortlog, datefmt).next()
+
+    def get_storage(self):
+        """See IExposure"""
+
+        path = self.get_path()
+        return pmr2.mercurial.Storage(path)
+
+    def get_manifest(self):
+        storage = self.get_storage()
+        return storage.raw_manifest(self.commit_id)
+
+    def get_file(self, path):
+        storage = self.get_storage()
+        return storage.file(self.commit_id, path)
+
+    def get_parent_container(self):
+        """\
+        returns the container object that stores this.
+        """
+
+        result = aq_parent(aq_inner(self))
+        return result
+
+    def get_pmr2_container(self):
+        """\
+        returns the root pmr2 object that stores this.
+        """
+
+        result = aq_parent(self.get_parent_container())
+        return result
+
 
 atapi.registerType(Exposure, 'pmr2.app')
