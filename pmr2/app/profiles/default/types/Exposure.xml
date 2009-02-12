@@ -9,7 +9,7 @@
  <property name="content_meta_type">Exposure</property>
  <property name="product">pmr2.app</property>
  <property name="factory">addExposure</property>
- <property name="immediate_view">folder_listing</property>
+ <property name="immediate_view">exposure_folder_listing</property>
  <property name="global_allow">False</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types">
@@ -17,12 +17,12 @@
   <element value="Folder"/>
  </property>
  <property name="allow_discussion">False</property>
- <property name="default_view">folder_listing</property>
+ <property name="default_view">exposure_folder_listing</property>
  <property name="view_methods">
   <element value="folder_summary_view"/>
   <element value="folder_tabular_view"/>
   <element value="atct_album_view"/>
-  <element value="folder_listing"/>
+  <element value="exposure_folder_listing"/>
   <!-- Showcase view? -->
  </property>
 

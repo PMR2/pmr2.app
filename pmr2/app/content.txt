@@ -46,6 +46,10 @@ There are a number of content types that make up the PMR2 application.
     a specific revision of a workspace.  Meaningful presentational views
     can be constructed.
 
+  ExposureDocument
+    Based on ATDocument.  Provides the safe rendering of documentation
+    in HTML format.
+
 -----
 Usage
 -----
@@ -154,3 +158,13 @@ deliberately.
     >>> self.folder.repo.workspace['test2'] = Sandbox('test2')
     >>> self.folder.repo.workspace.get_repository_list()
     [('test0', True), ('test1', True), ('test2', False), ('zzz', False)]
+
+
+----------------
+ExposureDocument
+----------------
+
+This class modifies the traversal.  On the case where the URI cannot be
+resolved, it will invoke the default view and pass on the extra URI
+fragment onto its default view (which should handle the extra fragments.
+::

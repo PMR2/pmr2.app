@@ -14,4 +14,6 @@
       meta_type="Factory-based Type Information with dynamic views" />
   <object name="Exposure"
       meta_type="Factory-based Type Information with dynamic views" />
+  <object name="ExposureDocument"
+      meta_type="Factory-based Type Information with dynamic views" />
 </object>

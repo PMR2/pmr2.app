@@ -1,21 +1,25 @@
 import os.path
 
 from zope import interface
+from zope.app.publisher.browser import queryDefaultViewName
+from zope.component import queryMultiAdapter
 from zope.schema import fieldproperty
+from zope.publisher.interfaces import IPublishTraverse
 
 from Acquisition import aq_parent, aq_inner
 
 from Products.CMFCore.PortalFolder import PortalFolderBase
 from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
-
 from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
+from Products.ATContentTypes.content.document import ATDocument
 from Products.Archetypes import atapi
 
 import pmr2.mercurial
 import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
+from pmr2.app.mixin import TraversalCatchAll
 
 __all__ = [
     'PMR2',
@@ -25,6 +29,7 @@ __all__ = [
     'Workspace',
     'Sandbox',
     'Exposure',
+    'ExposureDocument',
 ]
 
 
@@ -236,7 +241,7 @@ class Sandbox(BrowserDefaultMixin, atapi.BaseContent):
 atapi.registerType(Sandbox, 'pmr2.app')
 
 
-class Exposure(ATFolder):
+class Exposure(ATFolder, TraversalCatchAll):
     """\
     PMR Exposure object is used to encapsulate a single version of any
     given workspace and will allow more clear presentation to users of
@@ -252,16 +257,22 @@ class Exposure(ATFolder):
     """
 
     interface.implements(IExposure)
+    # XXX the get_ methods are similar to IWorkspace.
+    # best to define a common interface.
 
     workspace = fieldproperty.FieldProperty(IExposure['workspace'])
     commit_id = fieldproperty.FieldProperty(IExposure['commit_id'])
     curation = fieldproperty.FieldProperty(IExposure['curation'])
 
+    def __before_publishing_traverse__(self, ob, request):
+        TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
+        ATFolder.__before_publishing_traverse__(self, ob, request)
+
     def get_path(self):
         """See IExposure"""
 
         # aq_inner needed to get out of form wrappers
-        p = aq_parent(aq_inner(self)).get_path()  # XXX get_path = quickie
+        p = self.get_parent_container().get_path()  # XXX get_path = quickie
         if not p:
             return None
         return os.path.join(p, self.workspace)
@@ -305,3 +316,19 @@ class Exposure(ATFolder):
 
 
 atapi.registerType(Exposure, 'pmr2.app')
+
+
+class ExposureDocument(ATDocument, TraversalCatchAll):
+    """\
+    Documentation for an exposure.
+    """
+
+    # needed to make the traverse override to work as intended with
+    # relatively linked resources.
+    #isPrincipiaFolderish = 1
+
+    def __before_publishing_traverse__(self, ob, request):
+        TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
+        ATDocument.__before_publishing_traverse__(self, ob, request)
+
+atapi.registerType(ExposureDocument, 'pmr2.app')

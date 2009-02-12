@@ -127,6 +127,13 @@
 
   <page
       for="pmr2.app.content.Exposure"
+      name="exposure_folder_listing"
+      class=".exposure.ExposureFolderListing"
+      permission="zope2.View"
+      />
+
+  <page
+      for="pmr2.app.content.Exposure"
       name="exposure_edit"
       class=".exposure.ExposureEditFormView"
       permission="cmf.ModifyPortalContent"
@@ -137,6 +144,15 @@
       name="docgen"
       class=".exposure.ExposureDocGenFormView"
       permission="cmf.ModifyPortalContent"
+      />
+
+  <!-- Exposure Document -->
+
+  <page
+      for="pmr2.app.content.ExposureDocument"
+      name="exposure_document_view"
+      class=".exposure.ExposureDocumentView"
+      permission="zope2.View"
       />
 
 </configure>
