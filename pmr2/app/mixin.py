@@ -1,3 +1,5 @@
+from zope.component import queryMultiAdapter
+from zope.publisher.interfaces import IPublishTraverse
 from ZPublisher.BaseRequest import DefaultPublishTraverse
 
 class TraversalCatchAll(object):
@@ -28,9 +30,21 @@ class TraversalCatchAll(object):
 
             # XXX if we want to neuter everything, just go skip this
             # check and neuter TraversalRequestNameStack
-            pubtest = DefaultPublishTraverse(ob, request)
+            adapter = queryMultiAdapter((ob, request), IPublishTraverse)
+            if adapter is None:
+                ## Zope2 doesn't set up its own adapters in a lot of cases
+                ## so we will just use a default adapter.
+                adapter = DefaultPublishTraverse(ob, request)
+
+            adapter = DefaultPublishTraverse(ob, request)
+
+            # XXX '@@' is somehow not checked below, so we do that here.
+            # however, we are trapping all of them.
+            if key.startswith('@@'):
+                return
+
             try:
-                pubtest.publishTraverse(request, key)
+                adapter.publishTraverse(request, key)
             except:
                 # guess nothing, neuter TraversalRequestNameStack
                 request['request_subpath'] = \
