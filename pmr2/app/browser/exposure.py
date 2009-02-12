@@ -1,7 +1,7 @@
 from random import getrandbits
 
 import zope.interface
-from zope.publisher.interfaces import IPublishTraverse
+from zope.publisher.interfaces import IPublishTraverse, NotFound
 import z3c.form.field
 from plone.app.z3cform import layout
 
@@ -13,6 +13,7 @@ from pmr2.app.content import *
 
 import form
 import page
+import mixin
 
 
 class ExposureAddForm(form.AddForm):
@@ -88,7 +89,10 @@ ExposureDocGenFormView = layout.wrap_form(ExposureDocGenForm, label="Exposure Do
 
 # also need an exposure_folder_listing that mimics the one below.
 
-class ExposureFolderListing(page.TraversePage):
+class ExposureFolderListing(
+    page.TraversePage,
+    mixin.PMR2MercurialPropertyMixin,
+):
 
     def __call__(self, *args, **kwargs):
         if 'request_subpath' in self.request:
@@ -98,7 +102,17 @@ class ExposureFolderListing(page.TraversePage):
             # directly calling the intended python script.
             return self.context.folder_listing()
 
+    @property
+    def rev(self):
+        return self.context.commit_id
+
+    @property
+    def path(self):
+        return '/'.join(self.request['request_subpath'])
+
     def redirect_to_file(self, filepath):
+        if self.fileinfo is None:
+            raise NotFound(self.context, filepath, self.request)
         redir_to = '/'.join([
             self.context.get_pmr2_container().absolute_url(),
             'workspace',  # XXX magic!  should have method to return url

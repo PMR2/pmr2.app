@@ -24,6 +24,7 @@ import interfaces
 from widget import WorkspaceListingWidgetFactory
 import form
 import page
+import mixin
 import table
 
 
@@ -185,7 +186,8 @@ WorkspaceEditFormView = layout.wrap_form(
     WorkspaceEditForm, label="Workspace Edit Form")
 
 
-class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
+class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer,
+        mixin.PMR2MercurialPropertyMixin):
     """\
     Manifest listing page.
     """
@@ -224,37 +226,6 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
         if self.traverse_subpath:
             self._path = '/'.join(self.traverse_subpath[1:])
         return self._path
-
-    @property
-    def storage(self):
-        self._storage = self.context.get_storage()
-        return self._storage
-
-    @property
-    def manifest(self):
-        rev = self.rev
-        path = self.path
-        storage = self.storage
-        if not hasattr(self, '_manifest'):
-            try:
-                self._manifest = storage.manifest(rev, path).next()
-            except pmr2.mercurial.exceptions.PathNotFound:
-                self._manifest = None
-        return self._manifest
-
-    @property
-    def fileinfo(self):
-        rev = self.rev
-        path = self.path
-        storage = self.storage
-        if not hasattr(self, '_fileinfo'):
-            try:
-                self._fileinfo = storage.fileinfo(rev, path).next()
-                self._fileinfo['date'] = pmr2.mercurial.utils.filter(
-                    self._fileinfo['date'], 'isodate')
-            except pmr2.mercurial.exceptions.PathNotFound:
-                self._fileinfo = None
-        return self._fileinfo
 
     # XXX rewrite this class to use adapters for specific views for 
     # these distinct types of values

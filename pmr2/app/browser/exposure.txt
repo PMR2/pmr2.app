@@ -27,7 +27,8 @@ Create the exposure container.
     >>> self.folder.repo.exposure
     <ExposureContainer at ...repo/exposure>
 
-Exposure container creates new exposure, we test it here.
+Exposure container creates new exposure, we test it here.  It should be
+a 32 byte long hex string.
 ::
 
     >>> request = TestRequest(
@@ -40,9 +41,12 @@ Exposure container creates new exposure, we test it here.
     >>> testform = exposure.ExposureAddForm(
     ...     self.folder.repo.exposure, request)
     >>> testform.update()
+    >>> oid = self.folder.repo.exposure.objectIds()[0]
+    >>> len(oid)
+    32
 
 Exposure object is created with fields properly populated.
 ::
 
-    >>> self.folder.repo.exposure['delicious-eggs'].title
+    >>> self.folder.repo.exposure[oid].title
     u'Delicious Eggs'
