@@ -10,6 +10,7 @@ from Products.PortalTransforms.data import datastream
 
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
+from pmr2.app.util import *
 
 import form
 import page
@@ -61,27 +62,16 @@ class ExposureDocGenForm(form.AddForm):
     fields = z3c.form.field.Fields(IExposureDocGen)
 
     def create(self, data):
-        # XXX need to update the main index page most likely to point
-        # to this documentation
+        # XXX could update parent item to contain/render this info
         self._data = data
-        # there probably should be check for existence of item with the
+        # XXX there probably should be check for existence of item with the
         # same name.
-        # XXX filename extension of .html might not be desirable.
-        self._name = self._data['filename'] + '.html'
-        self._transform = self._data['transform']
-        return ExposureDocument(oid=self._name)
+        result = ExposureDocGenerator(data)
+        self._name = result.id
+        return result
 
     def add_data(self, ctxobj):
-        ctxobj.setTitle(self.context.title)
-
-        input = self.context.get_file(self._data['filename'])
-
-        pt = getToolByName(self.context, 'portal_transforms')
-        data = datastream('processor')
-        pt.convert(self._data['transform'], input, data)
-
-        ctxobj.setText(data.getData())
-        ctxobj.setContentType('text/html')
+        ctxobj.generate_content(self._data)
 
     # XXX this needs to create a Plone Document with the files.
 

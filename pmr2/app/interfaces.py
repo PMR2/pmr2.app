@@ -261,7 +261,7 @@ class IExposureDocument(zope.interface.Interface):
         required=False,
     )
 
-    def generate_content(data, input):
+    def generate_content(data):
         """\
         The method to generate/populate content from form input.
         """

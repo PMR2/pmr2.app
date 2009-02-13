@@ -8,6 +8,8 @@ from Acquisition import aq_parent, aq_inner
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.ATContentTypes.content.document import ATDocument
 from Products.Archetypes import atapi
+from Products.CMFCore.utils import getToolByName
+from Products.PortalTransforms.data import datastream
 
 import pmr2.mercurial
 import pmr2.mercurial.utils
@@ -126,7 +128,15 @@ class ExposureDocument(ATDocument, TraversalCatchAll):
     transform = fieldproperty.FieldProperty(IExposureDocument['transform'])
 
     def generate_content(self, data):
-        pass
+        pt = getToolByName(self, 'portal_transforms')
+        input = aq_parent(self).get_file(data['filename'])
+        self.setTitle(aq_parent(self).title)
+        stream = datastream('processor')
+        pt.convert(data['transform'], input, stream)
+        self.setText(stream.getData())
+        self.setContentType('text/html')
+
+    # XXX this needs to create a Plone Document with the files.
 
 atapi.registerType(ExposureDocument, 'pmr2.app')
 
