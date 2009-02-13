@@ -244,3 +244,35 @@ class IExposureDocGen(zope.interface.Interface):
     )
 
 
+class IExposureDocument(zope.interface.Interface):
+    """\
+    Interface for an exposure document.
+    """
+
+    origin = zope.schema.TextLine(
+        title=u'Origin File',
+        description=u'Name of the file that this document was generated from.',
+        required=False,
+    )
+
+    transform = zope.schema.TextLine(
+        title=u'Transform',
+        description=u'Name of the transform that this was generated from.',
+        required=False,
+    )
+
+    def generate_content(data, input):
+        """\
+        The method to generate/populate content from form input.
+        """
+
+
+class IExposureMathDocument(IExposureDocument):
+    """\
+    Exposure Document with embedded MathML.
+    """
+
+    mathml = zope.schema.Text(
+        title=u'MathML',
+        description=u'The MathML content',
+    )

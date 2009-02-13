@@ -120,12 +120,28 @@ class ExposureDocument(ATDocument, TraversalCatchAll):
     Documentation for an exposure.
     """
 
-    # needed to make the traverse override to work as intended with
-    # relatively linked resources.
-    #isPrincipiaFolderish = 1
+    interface.implements(IExposureDocument)
 
-    def __before_publishing_traverse__(self, ob, request):
-        TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
-        ATDocument.__before_publishing_traverse__(self, ob, request)
+    origin = fieldproperty.FieldProperty(IExposureDocument['origin'])
+    transform = fieldproperty.FieldProperty(IExposureDocument['transform'])
+
+    def generate_content(self, data):
+        pass
 
 atapi.registerType(ExposureDocument, 'pmr2.app')
+
+
+class ExposureMathDocument(ATDocument):
+    """\
+    Documentation for an exposure.
+    """
+
+    interface.implements(IExposureMathDocument)
+    origin = fieldproperty.FieldProperty(IExposureMathDocument['origin'])
+    transform = fieldproperty.FieldProperty(IExposureMathDocument['transform'])
+    mathml = fieldproperty.FieldProperty(IExposureMathDocument['mathml'])
+
+    def generate_content(self, data):
+        pass
+
+atapi.registerType(ExposureMathDocument, 'pmr2.app')
