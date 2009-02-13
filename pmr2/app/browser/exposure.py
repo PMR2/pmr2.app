@@ -68,6 +68,7 @@ class ExposureDocGenForm(form.AddForm):
         # same name.
         # XXX filename extension of .html might not be desirable.
         self._name = self._data['filename'] + '.html'
+        self._transform = self._data['transform']
         return ExposureDocument(oid=self._name)
 
     def add_data(self, ctxobj):
@@ -77,7 +78,7 @@ class ExposureDocGenForm(form.AddForm):
 
         pt = getToolByName(self.context, 'portal_transforms')
         data = datastream('processor')
-        pt.convert(self._data['transform_list'], input, data)
+        pt.convert(self._data['transform'], input, data)
 
         ctxobj.setText(data.getData())
         ctxobj.setContentType('text/html')

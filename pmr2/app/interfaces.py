@@ -236,7 +236,7 @@ class IExposureDocGen(zope.interface.Interface):
         vocabulary='ManifestListVocab',
     )
 
-    transform_list = zope.schema.Choice(
+    transform = zope.schema.Choice(
         title=u'Document Processor',
         description=u'The method to convert the file selected into HTML for use by exposure.',
         vocabulary='PMR2TransformsVocab',
