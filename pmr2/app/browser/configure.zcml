@@ -155,4 +155,21 @@
       permission="zope2.View"
       />
 
+  <!-- Exposure Math Document -->
+
+  <!-- Override Default View -->
+  <page
+      for="pmr2.app.content.ExposureMathDocument"
+      name="exposure_document_view"
+      class=".exposure.ExposureMathMLWrapperView"
+      permission="zope2.View"
+      />
+
+  <page
+      for="pmr2.app.content.ExposureMathDocument"
+      name="view_mathml"
+      class=".exposure.ExposureMathMLView"
+      permission="zope2.View"
+      />
+
 </configure>

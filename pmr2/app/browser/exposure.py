@@ -125,3 +125,27 @@ class ExposureDocumentView(page.TraversePage):
             # directly calling the intended python script.
             return self.context.document_view()
 
+
+class ExposureMathMLView(page.SimplePage):
+    """\
+    Returns the MathML
+    """
+
+    def __call__(self, *args, **kwargs):
+        self.request.response.setHeader('Content-Type', 'text/xml')
+        return self.context.mathml
+
+
+class ExposureMathMLWrapper(page.SimplePage):
+    """\
+    Wraps an object around the mathml view.
+    """
+
+    def __call__(self, *args, **kwargs):
+        # XXX magic string
+        return '<object style="width: 100%%;height:25em;" data="%s/@@view_mathml"></object>' % self.context.absolute_url()
+        # XXX FIXME XSS flaw!  disabled until a better way to allow
+        # editable introduction to equation is found.
+        #return self.context.getRawText()
+
+ExposureMathMLWrapperView = layout.wrap_form(ExposureMathMLWrapper)

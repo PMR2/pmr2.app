@@ -117,7 +117,7 @@ class Exposure(ATFolder, TraversalCatchAll):
 atapi.registerType(Exposure, 'pmr2.app')
 
 
-class ExposureDocument(ATDocument, TraversalCatchAll):
+class ExposureDocument(ATDocument):  #, TraversalCatchAll):
     """\
     Documentation for an exposure.
     """
@@ -128,30 +128,42 @@ class ExposureDocument(ATDocument, TraversalCatchAll):
     transform = fieldproperty.FieldProperty(IExposureDocument['transform'])
 
     def generate_content(self, data):
-        pt = getToolByName(self, 'portal_transforms')
-        input = aq_parent(self).get_file(data['filename'])
         self.setTitle(aq_parent(self).title)
+        self.setContentType('text/html')
+
+        # this grabs contents of file from workspace (hg)
+        input = aq_parent(self).get_file(data['filename'])
+        pt = getToolByName(self, 'portal_transforms')
         stream = datastream('processor')
         pt.convert(data['transform'], input, stream)
         self.setText(stream.getData())
-        self.setContentType('text/html')
 
     # XXX this needs to create a Plone Document with the files.
 
 atapi.registerType(ExposureDocument, 'pmr2.app')
 
 
-class ExposureMathDocument(ATDocument):
+class ExposureMathDocument(ExposureDocument):
     """\
-    Documentation for an exposure.
+    Documentation for an exposure for use with MathML.
     """
 
     interface.implements(IExposureMathDocument)
-    origin = fieldproperty.FieldProperty(IExposureMathDocument['origin'])
-    transform = fieldproperty.FieldProperty(IExposureMathDocument['transform'])
+    #origin = fieldproperty.FieldProperty(IExposureMathDocument['origin'])
+    #transform = fieldproperty.FieldProperty(IExposureMathDocument['transform'])
     mathml = fieldproperty.FieldProperty(IExposureMathDocument['mathml'])
 
     def generate_content(self, data):
-        pass
+        self.setTitle(u'Model Mathematics from ' + aq_parent(self).title)
+        self.setContentType('text/html')
 
-atapi.registerType(ExposureMathDocument, 'pmr2.app')
+        # this grabs contents of file from workspace (hg)
+        input = aq_parent(self).get_file(data['filename'])
+        pt = getToolByName(self, 'portal_transforms')
+        stream = datastream('processor')
+        pt.convert(data['transform'], input, stream)
+
+        self.mathml = stream.getData().decode('utf-8')
+        self.setText(u'')
+        # disabled due to XSS flaw.
+        #self.setText(u'<object style="width: 100%%;height:25em;" data="%s/@@view_mathml"></object>' % self.absolute_url())

@@ -6,3 +6,4 @@ from pmr2.app._content.sandbox import Sandbox
 from pmr2.app._content.exposure import ExposureContainer
 from pmr2.app._content.exposure import Exposure
 from pmr2.app._content.exposure import ExposureDocument
+from pmr2.app._content.exposure import ExposureMathDocument
