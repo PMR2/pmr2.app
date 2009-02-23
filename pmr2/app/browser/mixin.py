@@ -22,6 +22,10 @@ class PMR2MercurialPropertyMixin(object):
                 self._manifest = storage.manifest(rev, path).next()
             except pmr2.mercurial.exceptions.PathNotFound:
                 self._manifest = None
+            except pmr2.mercurial.exceptions.RevisionNotFound:
+                # XXX should return/redirect to an informative warning
+                # page?
+                self._manifest = None
         return self._manifest
 
     @property
@@ -35,6 +39,10 @@ class PMR2MercurialPropertyMixin(object):
                 self._fileinfo['date'] = pmr2.mercurial.utils.filter(
                     self._fileinfo['date'], 'isodate')
             except pmr2.mercurial.exceptions.PathNotFound:
+                self._fileinfo = None
+            except pmr2.mercurial.exceptions.RevisionNotFound:
+                # XXX should return/redirect to an informative warning
+                # page?
                 self._fileinfo = None
         return self._fileinfo
 

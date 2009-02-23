@@ -240,12 +240,23 @@ class FileOptionColumn(EscapedItemKeyColumn):
     def renderCell(self, item):
         # also could render changeset link (for diffs)
         if item['permissions'][0] != 'd':
-            return u'<a href="%s/@@rawfile/%s/%s">[%s]</a>' % (
+            result = [u'<a href="%s/@@rawfile/%s/%s">[%s]</a>' % (
                 self.table.context.context.absolute_url(),
                 self.table.context.rev,
                 item['file'],
                 _(u'download'),
-            )
+            )]
+
+            # *.session.xml assumption
+            if item['file'].endswith('.session.xml'):
+                result.append(u'<a href="%s/@@xmlbase/%s/%s">[%s]</a>' % (
+                    self.table.context.context.absolute_url(),
+                    self.table.context.rev,
+                    item['file'],
+                    _(u'run'),
+                ))
+
+            return ' '.join(result)
         else:
             return u''
 

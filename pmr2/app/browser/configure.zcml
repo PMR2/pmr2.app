@@ -109,6 +109,13 @@
 
   <page
       for="pmr2.app.content.Workspace"
+      name="xmlbase"
+      class=".workspace.WorkspaceRawfileXmlBaseView"
+      permission="zope2.View"
+      />
+
+  <page
+      for="pmr2.app.content.Workspace"
       name="create"
       class=".workspace.CreateFormView"
       permission="zope2.View"

@@ -31,6 +31,7 @@ setup(name='pmr2.app',
           'plone.app.z3cform>=0.3.2',
           'plone.z3cform>=0.5',
           'pmr2.mercurial',
+          'lxml>=2.1.0',
           # -*- Extra requirements: -*-
       ],
       entry_points="""

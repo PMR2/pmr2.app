@@ -18,6 +18,7 @@ import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
+from pmr2.app.util import set_xmlbase, fix_pcenv_externalurl
 
 import interfaces
 
@@ -263,6 +264,15 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer,
         )
 
     @property
+    def rooturi(self):
+        """the root uri."""
+        return '/'.join([
+            self.context.absolute_url(),
+            '@@rawfile',
+            self.rev,
+        ])
+
+    @property
     def fullpath(self):
         """permanent uri."""
         return '/'.join([
@@ -296,6 +306,36 @@ class WorkspaceRawfileView(WorkspaceFilePage):
             self.request.response.setHeader('Content-Type', mt)
             self.request.response.setHeader('Content-Length', len(data))
             return data
+
+
+class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
+
+    def find_type(self):
+        if self.path.endswith('session.xml'):
+            return 'application/x-pcenv-cellml+xml'
+
+    def __call__(self):
+        data = WorkspaceRawfileView.__call__(self)
+
+        # add the xml:base, and append '/' to complete path
+        data = set_xmlbase(data, self.rooturi + '/')
+
+        if self.path.endswith('session.xml'):
+            # See pmr2.app.util.fix_pcenv_externalurl and
+            # https://tracker.physiomeproject.org/show_bug.cgi?id=1079
+            data = fix_pcenv_externalurl(data, self.rooturi)
+
+        # all done, now set headers.
+        contentType = self.find_type()
+        filename = self.path.split('/').pop()
+        if contentType:
+            self.request.response.setHeader('Content-Type', contentType)
+        self.request.response.setHeader('Content-Disposition',
+            'attachment; filename="%s"' % filename,
+        )
+        self.request.response.setHeader('Content-Length', len(data))
+
+        return data
                 
 
 class CreateForm(z3c.form.form.Form):
