@@ -78,7 +78,8 @@ class WorkspaceContainerRepoListing(page.SimplePage):
 
         t = table.WorkspaceStatusTable(repolist, self.request)
         t.update()
-        return t.render()
+        # need styling the first, current and last class of renderBatch
+        return '\n'.join([t.render(), t.renderBatch()])
 
 WorkspaceContainerRepoListingView = layout.wrap_form(
     WorkspaceContainerRepoListing, label="Raw Workspace Listing")

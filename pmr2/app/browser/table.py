@@ -122,6 +122,9 @@ class WorkspaceStatusTable(z3c.table.table.SequenceTable):
             ),
         ]
 
+    def absolute_url(self):
+        return self.request.getURL()
+
 
 # Workspace log table.
 
