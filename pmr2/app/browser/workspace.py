@@ -1,8 +1,10 @@
 import mimetypes
 
 import zope.interface
-import zope.app.pagetemplate.viewpagetemplatefile
 import zope.component
+import zope.event
+import zope.lifecycleevent
+import zope.app.pagetemplate.viewpagetemplatefile
 import zope.publisher.browser
 from zope.publisher.interfaces import NotFound
 
@@ -22,7 +24,7 @@ from pmr2.app.util import set_xmlbase, fix_pcenv_externalurl
 
 import interfaces
 
-from widget import WorkspaceListingWidgetFactory
+import widget
 import form
 import page
 import mixin
@@ -175,6 +177,101 @@ class WorkspaceAddForm(form.AddForm):
 
 WorkspaceAddFormView = layout.wrap_form(
     WorkspaceAddForm, label="Workspace Creation Form")
+
+
+class WorkspaceBulkAddForm(z3c.form.form.AddForm):
+    """\
+    Workspace Bulk Add Form
+    """
+
+    @property
+    def fields(self):
+        fields = z3c.form.field.Fields(IWorkspaceBulkAdd)
+        fields['workspace_list'].widgetFactory[
+            z3c.form.interfaces.INPUT_MODE] = widget.TextAreaWidgetFactory
+        return fields
+
+    result_base = """\
+      <dt>%s</dt>
+      <dd>%d</dd>
+    """
+
+    failure_base = """
+      <dt>%s</dt>
+      <dd>
+      <ul>
+      %s
+      </ul>
+      </dd>
+    """
+
+    def completed(self):
+        result = ['<p>The results of the bulk import:</p>', '<dl>']
+        if self.created:
+            result.append(self.result_base % ('Success', self.created))
+        if self.existed:
+            result.append(self.result_base % ('Existed', self.existed))
+        if self.norepo:
+            result.append(self.failure_base % ('Mercurial Repo Not Found',
+            '\n'.join(['<li>%s</li>' % i for i in self.norepo]))
+        )
+        if self.failed:
+            result.append(self.failure_base % ('Other Failure',
+            '\n'.join(['<li>%s</li>' % i for i in self.failed]))
+        )
+        result.append('</dl>')
+        return '\n'.join(result)
+
+    def createAndAdd(self, data):
+        self.created = self.existed = 0
+        self.failed = []
+        self.norepo = []
+
+        workspaces = data['workspace_list'].splitlines()
+        valid_hg = [i[0] for i in self.context.get_repository_list()]
+        for id_ in workspaces:
+            # unicode encoding needed here?
+            id_ = str(id_)  # id_.encode('utf8')
+            if not id_:
+                continue
+            if id_ not in valid_hg:
+                # Only repo not found are reported as failures.
+                self.norepo.append(id_)
+                continue
+            if id_ in self.context:
+                self.existed += 1
+                continue
+
+            try:
+                obj = Workspace(id_, **data)
+                zope.event.notify(zope.lifecycleevent.ObjectCreatedEvent(obj))
+                self.context[id_] = obj
+                obj = self.context[id_]
+                obj.title = id_.replace('_', ', ').title()
+                obj.notifyWorkflowCreated()
+                obj.reindexObject()
+                self.created += 1
+            except:
+                # log stacktrace?
+                self.failed.append(id_)
+
+        # marking this as done.
+        self._finishedAdd = True
+
+    def nextURL(self):
+        """\
+        Go back to the Workspace Container
+        """
+
+        return self.context.absolute_url()
+
+    def render(self):
+        if self._finishedAdd:
+            return self.completed()
+        return super(WorkspaceBulkAddForm, self).render()
+
+WorkspaceBulkAddFormView = layout.wrap_form(
+    WorkspaceBulkAddForm, label="Workspace Bulk Creation Form")
 
 
 class WorkspaceEditForm(form.EditForm):

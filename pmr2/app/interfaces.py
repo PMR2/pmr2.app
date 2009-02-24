@@ -160,6 +160,19 @@ class IWorkspaceAdd(IObjectIdMixin, IWorkspace):
     """
 
 
+class IWorkspaceBulkAdd(zope.interface.Interface):
+    """\
+    Interface for the use by WorkspaceAddForm.
+    """
+
+    workspace_list = zope.schema.Text(
+        title=u'List of Workspaces',
+        description=u'List of Mercurial Repositories created by pmr2_mkhg ' \
+                     'that are already moved into the workspace directory.',
+        required=True,
+    )
+
+
 class ISandbox(zope.interface.Interface):
     """\
     Container for the sandboxes (working copies).

@@ -36,6 +36,13 @@
       permission="pmr2.app.security.ManagePMR2"
       />
 
+  <page
+      for="pmr2.app.content.WorkspaceContainer"
+      name="workspace_bulk_create"
+      class=".workspace.WorkspaceBulkAddFormView"
+      permission="pmr2.app.security.ManagePMR2"
+      />
+
   <!-- Workspace -->
 
   <!--
