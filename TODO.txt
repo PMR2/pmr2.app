@@ -51,3 +51,20 @@ Exposure container
 Exposures
 - Provides curation facilities
 - Provides various views, such as citation, metadata and graphing.
+
+Search Objects
+- Provides adminstrators (and curators?) the option to create custom
+searches based on the URI trailing the search object.  Search objects
+would have an id (e.g. ./biotype) which would form the base URI for the
+search (http://example.org/models/biotype/), and then the search term
+will be after that, such that we get URIs that could look like:
+
+http://example.org/models/biotype/cell_cycle
+http://example.org/models/biotype/cardiac_cell
+
+They would return a listing of models that have biotype of cell_cycle
+and cardiac_cell, respectively (assuming biotype searches in the 
+'biotype' index).
+
+Model exposure front page
+- It would contain all the data of all the objects within so it can be indexed.

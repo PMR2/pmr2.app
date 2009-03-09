@@ -172,6 +172,7 @@
   <!-- Exposure Math Document -->
 
   <!-- Override Default View -->
+
   <page
       for="pmr2.app.content.ExposureMathDocument"
       name="exposure_document_view"
@@ -183,6 +184,17 @@
       for="pmr2.app.content.ExposureMathDocument"
       name="view_mathml"
       class=".exposure.ExposureMathMLView"
+      permission="zope2.View"
+      />
+
+  <!-- Exposure CellML Metadata Document -->
+
+  <!-- Override Default View -->
+
+  <page
+      for="pmr2.app.content.ExposureCmetaDocument"
+      name="exposure_document_view"
+      class=".exposure.ExposureCmetaDocumentView"
       permission="zope2.View"
       />
 

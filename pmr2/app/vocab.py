@@ -5,6 +5,8 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
 from Products.CMFCore.utils import getToolByName
 
+from pmr2.app.util import other_processors
+
 
 class WorkspaceDirObjListVocab(SimpleVocabulary):
 
@@ -41,8 +43,15 @@ class PMR2TransformsVocab(SimpleVocabulary):
     def __init__(self, context):
         self.context = context
         pt = getToolByName(context, 'portal_transforms')
-        terms = [SimpleTerm(i, getattr(pt, i).get_documentation().strip()) \
+        transforms = [(i, getattr(pt, i).get_documentation().strip()) \
                 for i in pt.objectIds() if i.startswith('pmr2_processor_')]
+
+        # other processors
+        others = [(k, v['desc']) for k, v in other_processors.iteritems()]
+        allxform = transforms + others
+        allxform.sort()
+        terms = [SimpleTerm(*i) for i in allxform]
+        
         super(PMR2TransformsVocab, self).__init__(terms)
 
 

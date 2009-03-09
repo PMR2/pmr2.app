@@ -1,0 +1,11 @@
+<h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
+<dl>
+<dt>Authors:</dt>
+<dd tal:content="structure context/citation_authors_string"/>
+<dt>Citation Title:</dt>
+<dd tal:content="context/citation_title"/>
+<dt>Citation Source:</dt>
+<dd tal:content="context/citation_bibliographicCitation"/>
+<dt>Citation Identifier:</dt>
+<dd tal:content="structure context/citation_id_html"/>
+</dl>

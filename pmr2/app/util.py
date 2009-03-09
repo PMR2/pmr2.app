@@ -4,6 +4,9 @@ from lxml import etree
 # XXX alternately, instead of making the list of known transforms the
 # keys for the document type, reverse it and put them in the interface
 # classes.
+# XXX or the class themselves can be registered and provide the hooks
+# and list out the transforms or code required to generate the output
+# that will fill the contents.
 known_processors = {
     'pmr2_processor_legacy_tmpdoc2html': {
         'ext': '.doc.html',
@@ -14,6 +17,18 @@ known_processors = {
         'class': 'ExposureMathDocument',
     },
 }
+
+other_processors = {
+    'pmr2_cellml_metadata': {
+        'ext': '.pmr2.cmeta',
+        'class': 'ExposureCmetaDocument',
+        'desc': 'CellML Metadata Processor',
+    },
+}
+
+all_processors = {}
+all_processors.update(known_processors)
+all_processors.update(other_processors)
 
 # default, no processor
 no_processor = {
@@ -31,7 +46,7 @@ CELLML_NSMAP = {
 def ExposureDocGenerator(data):
     # XXX be dumb for now.  no default values.  auto failure
     import pmr2.app.content
-    processor = known_processors.get(data['transform'])
+    processor = all_processors.get(data['transform'])
     klass = getattr(pmr2.app.content, processor['class'])
     name = data['filename'] + processor['ext']
     return klass(oid=name)
@@ -86,3 +101,13 @@ def fix_pcenv_externalurl(xml, base):
 
     result = etree.tostring(dom, encoding='utf-8', xml_declaration=True)
     return result
+
+infouri_prefix = {
+    'info:pmid': 'http://www.ncbi.nlm.nih.gov/pubmed',
+}
+
+def infouri2http(infouri):
+    fragments = infouri.split('/', 1)
+    if fragments[0] in infouri_prefix:
+        return '/'.join([infouri_prefix[fragments[0]], fragments[1]])
+    return None

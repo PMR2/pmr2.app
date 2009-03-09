@@ -289,3 +289,40 @@ class IExposureMathDocument(IExposureDocument):
         title=u'MathML',
         description=u'The MathML content',
     )
+
+
+class IExposureCmetaDocument(IExposureDocument):
+    """\
+    Exposure Document that handles CellML Metadata.
+    """
+
+    metadata = zope.schema.Text(
+        title=u'Metadata',
+        description=u'The metadata content',
+    )
+
+    citation_authors = zope.schema.List(
+        title=u'Citation Authors',
+        description=u'List of authors of this citation',
+    )
+
+    citation_title = zope.schema.TextLine(
+        title=u'Citation Title',
+        description=u'The title of this citation (e.g. the title of a journal article)',
+    )
+
+    citation_bibliographicCitation = zope.schema.TextLine(
+        title=u'Bibliographic Citation',
+        description=u'The source of the article',
+    )
+
+    citation_id = zope.schema.TextLine(
+        title=u'Citation Id',
+        description=u'The unique identifier for this citation (such as Pubmed).',
+    )
+
+    def get_author_family_index():
+        """\
+        Returns the family name of the list of authors for the index.
+        """
+

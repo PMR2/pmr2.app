@@ -1,6 +1,7 @@
 from random import getrandbits
 
 import zope.interface
+import zope.app.pagetemplate.viewpagetemplatefile
 from zope.publisher.interfaces import IPublishTraverse, NotFound
 import z3c.form.field
 from plone.app.z3cform import layout
@@ -149,3 +150,21 @@ class ExposureMathMLWrapper(page.SimplePage):
         #return self.context.getRawText()
 
 ExposureMathMLWrapperView = layout.wrap_form(ExposureMathMLWrapper)
+
+
+class ExposureCmetaDocument(page.TraversePage):
+    """\
+    Wraps an object around the mathml view.
+    """
+
+    filetemplate = \
+        zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+        'cmeta.pt')
+
+    def __call__(self, *args, **kwargs):
+        return self.filetemplate()
+
+ExposureCmetaDocumentView = layout.wrap_form(
+    ExposureCmetaDocument,
+    __wrapper_class=page.BorderedTraverseFormWrapper,
+)

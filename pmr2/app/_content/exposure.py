@@ -1,4 +1,5 @@
 import os.path
+from cStringIO import StringIO
 
 from zope import interface
 from zope.schema import fieldproperty
@@ -16,6 +17,8 @@ import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
 from pmr2.app.mixin import TraversalCatchAll
+
+from pmr2.processor.cmeta import Cmeta
 
 
 class ExposureContainer(ATBTreeFolder):
@@ -167,3 +170,73 @@ class ExposureMathDocument(ExposureDocument):
         self.setText(u'')
         # disabled due to XSS flaw.
         #self.setText(u'<object style="width: 100%%;height:25em;" data="%s/@@view_mathml"></object>' % self.absolute_url())
+
+
+class ExposureCmetaDocument(ExposureDocument):
+    """\
+    Contains a rendering of the CellML Metadata.
+    """
+    # XXX this class should be part of the metdata, and registered into
+    # some sort of database that will automatically load this up into
+    # one of the valid document types that can be added.
+
+    interface.implements(IExposureCmetaDocument)
+
+    metadata = fieldproperty.FieldProperty(IExposureCmetaDocument['metadata'])
+    citation_authors = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_authors'])
+    citation_title = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_title'])
+    citation_bibliographicCitation = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_bibliographicCitation'])
+    citation_id = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_id'])
+
+    def generate_content(self, data):
+        self.setTitle(u'Model Metadata')
+        self.setDescription(u'Model Metadata from ' + data['filename'])
+        self.setContentType('text/html')
+        input = aq_parent(self).get_file(data['filename'])
+
+        metadata = Cmeta(StringIO(input))
+        ids = metadata.get_cmetaid()
+        if not ids:
+            return
+
+        citation = metadata.get_citation(ids[0])
+        if not citation:
+            return
+
+        self.citation_id = citation[0]['citation_id']
+        # more than just journal
+        self.citation_bibliographicCitation = citation[0]['journal']
+        self.citation_title = citation[0]['title']
+
+        authors = []
+        for c in citation[0]['creator']:
+            family = c['family']
+            given = c['given']
+            if c['other']:
+                other = ' '.join(c['other'])
+            else:
+                other = ''
+            fn = (family, given, other)
+            authors.append(fn)
+            
+        self.citation_authors = authors
+
+    def citation_authors_string(self):
+        middle = '</li>\n<li>'.join(
+            ['%s, %s %s' % i for i in self.citation_authors])
+        return '<ul>\n<li>%s</li>\n</ul>' % middle
+
+    def citation_id_html(self):
+        http = pmr2.app.util.infouri2http(self.citation_id)
+        if http:
+            return '<a href="%s">%s</a>' % (http, self.citation_id)
+        return self.citation_id
+
+    def get_authors_family_index(self):
+        if self.citation_authors:
+            return [i[0].lower() for i in self.citation_authors]
+
+    def get_citation_title_index(self):
+        if self.citation_title:
+            return self.citation_title.lower()
+
