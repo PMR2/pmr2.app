@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<object name="portal_catalog" meta_type="Plone Catalog Tool">
+
+  <index name="pmr2_authors_family_name" meta_type="KeywordIndex">
+    <indexed_attr value="get_authors_family_index"/>
+  </index>
+
+  <index name="pmr2_citation_title" meta_type="KeywordIndex">
+    <indexed_attr value="get_citation_title_index"/>
+  </index>
+
+  <index name="pmr2_curation" meta_type="KeywordIndex">
+    <indexed_attr value="get_curation_index"/>
+  </index>
+
+  <column value="pmr2_authors_family_name"/>
+  <column value="pmr2_citation_title"/>
+  <column value="pmr2_curation"/>
+
+</object>
