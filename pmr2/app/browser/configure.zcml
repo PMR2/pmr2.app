@@ -198,4 +198,50 @@
       permission="zope2.View"
       />
 
+  <!-- PMR2 Custom Search object -->
+
+  <page
+      for="pmr2.app.content.PMR2"
+      name="pmr2search_add_form"
+      class=".support.PMR2SearchAddFormView"
+      permission="pmr2.app.security.ManagePMR2"
+      />
+
+  <page
+      for="pmr2.app.content.PMR2Search"
+      name="pmr2search_edit"
+      class=".support.PMR2SearchEditFormView"
+      permission="pmr2.app.security.ManagePMR2"
+      />
+
+  <page
+      for="pmr2.app.content.PMR2Search"
+      name="pmr2search_view"
+      class=".support.PMR2SearchPageView"
+      permission="zope2.View"
+      />
+
+  <page
+      for="pmr2.app.content.PMR2Search"
+      name="atct_view"
+      class=".support.PMR2SearchPageView"
+      permission="zope2.View"
+      />
+
+  <view
+      name="+"
+      for="..interfaces.IPMR2"
+      permission="pmr2.app.security.ManagePMR2"
+      class=".adding.Adding">
+    <page name="addPMR2Search" attribute="addPMR2Search" />
+  </view>
+
+  <zope:adapter
+      for=".adding.Adding
+           *"
+      name="addPMR2Search"
+      factory=".support.PMR2SearchAddForm"
+      provides="z3c.form.interfaces.IAddForm"
+      />
+
 </configure>

@@ -326,3 +326,30 @@ class IExposureCmetaDocument(IExposureDocument):
         Returns the family name of the list of authors for the index.
         """
 
+
+class IPMR2Search(zope.interface.Interface):
+    """\
+    Interface for the search objects.
+    """
+
+    title = zope.schema.TextLine(
+        title=u'Title',
+    )
+
+    description = zope.schema.Text(
+        title=u'Description',
+        required=False,
+    )
+
+    catalog_index = zope.schema.Choice(
+        title=u'Index',
+        description=u'The index to be use by this search object.',
+        vocabulary='PMR2IndexesVocab',
+    )
+
+
+class IPMR2SearchAdd(IObjectIdMixin, IPMR2Search):
+    """\
+    Interface for the use by PMR2AddForm.
+    """
+

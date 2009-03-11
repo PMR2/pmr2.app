@@ -1,0 +1,8 @@
+<h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
+<h4>PMR2 Search page</h4>
+<p tal:condition="exists:request/request_subpath">Search term:
+<span tal:replace="request/request_subpath"/>
+</p>
+<p tal:condition="not:exists:request/request_subpath">No search term,
+listing of indexed terms below:
+</p>

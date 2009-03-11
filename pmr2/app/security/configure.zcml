@@ -7,4 +7,9 @@
       title="Manage PMR2"
       />
 
+  <permission
+      id="pmr2.app.security.CurateExposure"
+      title="Curate Exposures"
+      />
+
 </configure>

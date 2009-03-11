@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<object name="Exposure"
+        meta_type="Factory-based Type Information with dynamic views"
+        xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="title">PMR2 Search</property>
+ <property
+    name="description">Object for clean custom search URI for PMR2.</property>
+ <property name="content_icon">document_icon.gif</property>
+ <property name="content_meta_type">PMRSearch</property>
+ <property name="product">pmr2.app</property>
+ <property name="factory">addPMR2Search</property>
+ <property name="immediate_view">pmr2search_view</property>
+ <property name="global_allow">False</property>
+ <property name="filter_content_types">True</property>
+ <property name="allowed_content_types"/>
+ <property name="allow_discussion">False</property>
+ <property name="default_view">pmr2search_view</property>
+ <property name="view_methods">
+  <element value="pmr2search_view"/>
+ </property>
+
+ <!--
+ <alias from="(Default)" to="(dynamic view)"/>
+ -->
+ <alias from="(Default)" to="pmr2search_view"/>
+ <alias from="edit" to="pmr2search_edit"/>
+ <alias from="sharing" to="@@sharing"/>
+ <alias from="view" to="(selected layout)"/>
+
+ <action title="View" action_id="view" category="object" condition_expr=""
+    url_expr="string:${object_url}/" visible="True" i18n:attributes="title">
+  <permission value="View"/>
+ </action>
+
+ <action title="Edit" action_id="edit" category="object" condition_expr="not:object/@@plone_lock_info/is_locked_for_current_user|python:True"
+    url_expr="string:${object_url}/edit" visible="True"
+    i18n:attributes="title">
+  <permission value="Manage PMR2"/>
+ </action>
+
+</object>

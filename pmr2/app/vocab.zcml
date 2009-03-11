@@ -10,14 +10,20 @@
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
+      component="pmr2.app.vocab.ManifestListVocabFactory"
+      name="ManifestListVocab"
+      />
+
+  <utility
+      provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.PMR2TransformsVocabFactory"
       name="PMR2TransformsVocab"
       />
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.ManifestListVocabFactory"
-      name="ManifestListVocab"
+      component="pmr2.app.vocab.PMR2IndexesVocabFactory"
+      name="PMR2IndexesVocab"
       />
 
 </configure>

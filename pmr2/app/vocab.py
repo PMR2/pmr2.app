@@ -59,3 +59,19 @@ def PMR2TransformsVocabFactory(context):
     return PMR2TransformsVocab(context)
 
 alsoProvides(PMR2TransformsVocabFactory, IVocabularyFactory)
+
+
+class PMR2IndexesVocab(SimpleVocabulary):
+
+    def __init__(self, context):
+        self.context = context
+        pt = getToolByName(context, 'portal_catalog')
+        values = pt.indexes()
+        terms = [SimpleTerm(i) for i in values if i.startswith('pmr2_')]
+        super(PMR2IndexesVocab, self).__init__(terms)
+
+
+def PMR2IndexesVocabFactory(context):
+    return PMR2IndexesVocab(context)
+
+alsoProvides(PMR2IndexesVocabFactory, IVocabularyFactory)
