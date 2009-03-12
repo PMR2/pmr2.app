@@ -13,8 +13,13 @@
     <indexed_attr value="get_curation_index"/>
   </index>
 
+  <index name="pmr2_keyword" meta_type="KeywordIndex">
+    <indexed_attr value="get_keywords"/>
+  </index>
+
   <column value="pmr2_authors_family_name"/>
   <column value="pmr2_citation_title"/>
   <column value="pmr2_curation"/>
+  <column value="pmr2_keyword"/>
 
 </object>

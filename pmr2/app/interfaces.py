@@ -321,6 +321,11 @@ class IExposureCmetaDocument(IExposureDocument):
         description=u'The unique identifier for this citation (such as Pubmed).',
     )
 
+    keywords = zope.schema.List(
+        title=u'Keywords',
+        description=u'The keywords of this model.',
+    )
+
     def get_author_family_index():
         """\
         Returns the family name of the list of authors for the index.

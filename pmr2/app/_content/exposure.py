@@ -187,6 +187,7 @@ class ExposureCmetaDocument(ExposureDocument):
     citation_title = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_title'])
     citation_bibliographicCitation = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_bibliographicCitation'])
     citation_id = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_id'])
+    keywords = fieldproperty.FieldProperty(IExposureCmetaDocument['keywords'])
 
     def generate_content(self, data):
         self.setTitle(u'Model Metadata')
@@ -220,6 +221,7 @@ class ExposureCmetaDocument(ExposureDocument):
             authors.append(fn)
             
         self.citation_authors = authors
+        self.keywords = metadata.get_keywords()
 
     def citation_authors_string(self):
         middle = '</li>\n<li>'.join(
@@ -235,8 +237,17 @@ class ExposureCmetaDocument(ExposureDocument):
     def get_authors_family_index(self):
         if self.citation_authors:
             return [i[0].lower() for i in self.citation_authors]
+        else:
+            return []
 
     def get_citation_title_index(self):
         if self.citation_title:
             return self.citation_title.lower()
+
+    def get_keywords(self):
+        if self.keywords:
+            # XXX magical replace
+            return [i[1].replace(' ', '_') for i in self.keywords]
+        else:
+            return []
 

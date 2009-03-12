@@ -107,6 +107,11 @@ infouri_prefix = {
 }
 
 def infouri2http(infouri):
+    """\
+    Resolves an info-uri into an http link based on the lookup table 
+    above.
+    """
+
     fragments = infouri.split('/', 1)
     if fragments[0] in infouri_prefix:
         return '/'.join([infouri_prefix[fragments[0]], fragments[1]])
