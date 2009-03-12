@@ -49,4 +49,6 @@ class TraversalCatchAll(object):
                 # guess nothing, neuter TraversalRequestNameStack
                 request['request_subpath'] = \
                     request['TraversalRequestNameStack']
+                # this was reversed, reverse it back.
+                request['request_subpath'].reverse()
                 request['TraversalRequestNameStack'] = []
