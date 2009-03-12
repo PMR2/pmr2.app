@@ -32,12 +32,7 @@ class PMR2SearchAddForm(form.AddForm):
     def add_data(self, ctxobj):
         ctxobj.title = self._data['title']
         ctxobj.description = self._data['description']
-        # doing the long hand way to work around an issue where this
-        # somehow results in the unbound object being used instead of
-        # ctxobj.  No idea how the unbound object is referenced.
-        # Anyway, this explicit call works around the implicit calls
-        # as above.
-        PMR2Search.catalog_index.__set__(ctxobj, self._data['catalog_index'])
+        ctxobj.catalog_index = self._data['catalog_index']
 
 PMR2SearchAddFormView = layout.wrap_form(PMR2SearchAddForm,
     label="PMR2 Custom Search Add Form")

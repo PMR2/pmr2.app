@@ -65,10 +65,30 @@ class PMR2IndexesVocab(SimpleVocabulary):
 
     def __init__(self, context):
         self.context = context
-        pt = getToolByName(context, 'portal_catalog')
-        values = pt.indexes()
+        self.pt = None
+        try:
+            # If the context passed into here is unbounded, it won't have
+            # a catalog to valudate against.
+            self.pt = getToolByName(context, 'portal_catalog')
+            values = self.pt.indexes()
+        except:
+            values = []
         terms = [SimpleTerm(i) for i in values if i.startswith('pmr2_')]
         super(PMR2IndexesVocab, self).__init__(terms)
+
+    def getTerm(self, value):
+        if self.pt is None:
+            # no portal tool, see __init__
+            return SimpleTerm(value)
+        else:
+            return super(PMR2IndexesVocab, self).getTerm(value)
+
+    def __contains__(self, terms):
+        if self.pt is None:
+            # no portal tool, see __init__
+            return True
+        else:
+            return super(PMR2IndexesVocab, self).__contains__(terms)
 
 
 def PMR2IndexesVocabFactory(context):
