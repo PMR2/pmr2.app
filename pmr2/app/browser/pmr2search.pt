@@ -1,8 +1,50 @@
 <h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
 <h4>PMR2 Search page</h4>
-<p tal:condition="exists:request/request_subpath">Search term:
-<span tal:replace="request/request_subpath"/>
-</p>
-<p tal:condition="not:exists:request/request_subpath">No search term,
-listing of indexed terms below:
-</p>
+
+<div tal:condition="view/catalog_index">
+
+  <div tal:condition="view/searchterm">
+    <h5>Search term: <span tal:replace="view/searchterm"/></h5>
+    <tal:if tal:condition="exists:view/all_results">
+      <tal:if tal:condition="view/all_results">
+        <h6>Listing of all result:</h6>
+        <ul>
+          <li tal:repeat="i view/all_results">
+            <a tal:attributes="href string:${i/getPath}"
+               tal:content="i/Description"></a>
+          </li>
+        </ul>
+      </tal:if>
+      <tal:if tal:condition="not:view/all_results">
+        <span>No results found.</span>
+      </tal:if>
+    </tal:if>
+    <tal:if tal:condition="not:exists:view/all_results">
+      <span>Search failed.</span>
+    </tal:if>
+  </div>
+
+  <div tal:condition="not:view/searchterm">
+    <h5>No search term.</h5>
+    <tal:if tal:condition="exists:view/all_terms">
+      <h6>Listing of all terms:</h6>
+      <ul>
+        <li tal:repeat="i view/all_terms">
+          <a tal:attributes="href string:${context/absolute_url}/${i}" 
+             tal:content="i"></a>
+        </li>
+      </ul>
+    </tal:if>
+    <tal:if tal:condition="not:exists:view/all_terms">
+      <span>This search does not support listing of terms.</span>
+    </tal:if>
+  </div>
+
+</div>
+
+<div tal:condition="not:view/catalog_index">
+  <p>
+    This search is misconfigured.  Please contact the repository 
+    administrator.
+  </p>
+</div>
