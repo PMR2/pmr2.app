@@ -22,8 +22,10 @@ pmr2/app/_content/__init__.py
 pmr2/app/_content/exposure.py
 pmr2/app/_content/root.py
 pmr2/app/_content/sandbox.py
+pmr2/app/_content/support.py
 pmr2/app/_content/workspace.py
 pmr2/app/browser/__init__.py
+pmr2/app/browser/adding.py
 pmr2/app/browser/exposure.py
 pmr2/app/browser/form.py
 pmr2/app/browser/interfaces.py
@@ -31,6 +33,7 @@ pmr2/app/browser/menu.py
 pmr2/app/browser/mixin.py
 pmr2/app/browser/page.py
 pmr2/app/browser/root.py
+pmr2/app/browser/support.py
 pmr2/app/browser/table.py
 pmr2/app/browser/viewlets.py
 pmr2/app/browser/widget.py

@@ -38,10 +38,14 @@ class TraversalCatchAll(object):
 
             adapter = DefaultPublishTraverse(ob, request)
 
-            # XXX '@@' is somehow not checked below, so we do that here.
-            # however, we are trapping all of them.
-            if key.startswith('@@'):
-                return
+            # XXX
+            # There are special identifiers that are "not checked", so
+            # they must be weeded out and let the standard traversal
+            # handle all of them.
+            special = ['@@', '++resource++',]
+            for s in special:
+                if key.startswith(s):
+                    return
 
             try:
                 adapter.publishTraverse(request, key)
