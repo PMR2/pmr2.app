@@ -42,7 +42,7 @@ class TraversalCatchAll(object):
             # There are special identifiers that are "not checked", so
             # they must be weeded out and let the standard traversal
             # handle all of them.
-            special = ['@@', '++resource++',]
+            special = ['@@', '++',]
             for s in special:
                 if key.startswith(s):
                     return
