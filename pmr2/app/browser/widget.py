@@ -54,3 +54,15 @@ class TextAreaWidget(textarea.TextAreaWidget):
 def TextAreaWidgetFactory(field, request):
     """IFieldWidget factory for the above TextWidget."""
     return FieldWidget(field, TextAreaWidget(request))
+
+
+class CurationWidget(TextAreaWidget):
+    """Customize the rows/cols to something usable."""
+
+
+@zope.component.adapter(zope.schema.interfaces.IField,
+        z3c.form.interfaces.IFormLayer)
+@zope.interface.implementer(z3c.form.interfaces.IFieldWidget)
+def CurationWidgetFactory(field, request):
+    """IFieldWidget factory for the above TextWidget."""
+    return FieldWidget(field, CurationWidget(request))

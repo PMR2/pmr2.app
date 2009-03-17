@@ -19,3 +19,9 @@ class IWorkspaceList(zope.schema.interfaces.IList):
     Workspace list field.  Meant to be used in conjunction with
     zope.schema.accessor.
     """
+
+
+class ICurationDict(zope.schema.interfaces.IDict):
+    """\
+    Curation dictionary.
+    """

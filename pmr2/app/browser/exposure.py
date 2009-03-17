@@ -16,6 +16,7 @@ from pmr2.app.util import *
 import form
 import page
 import mixin
+import widget
 
 
 class ExposureAddForm(form.AddForm):
@@ -24,6 +25,7 @@ class ExposureAddForm(form.AddForm):
     """
 
     fields = z3c.form.field.Fields(IExposure)
+    fields['curation'].widgetFactory = widget.CurationWidgetFactory
     clsobj = Exposure
 
     def create(self, data):
@@ -47,7 +49,11 @@ class ExposureEditForm(z3c.form.form.EditForm):
     Exposure editing form.
     """
 
-    fields = z3c.form.field.Fields(IExposure)
+    fields = z3c.form.field.Fields(IExposure).select(
+        'title',
+        'curation',
+    )
+    fields['curation'].widgetFactory = widget.CurationWidgetFactory
 
 ExposureEditFormView = layout.wrap_form(ExposureEditForm, label="Exposure Edit Form")
 

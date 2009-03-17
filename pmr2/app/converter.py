@@ -28,3 +28,44 @@ class AccessorCallConverter(z3c.form.converter.BaseDataConverter):
         # XXX error checking
         # make sure this is callable.
         return value()
+
+
+class CurationTextAreaConverter(z3c.form.converter.BaseDataConverter):
+    """\
+    Calls an accessor as a method to get the data within.
+    """
+    zope.component.adapts(
+        interfaces.ICurationDict, z3c.form.interfaces.ITextAreaWidget
+    )
+
+    def toWidgetValue(self, value):
+        """\
+        >>> import pmr2.app.schema
+        >>> f = pmr2.app.schema.CurationDict()
+        >>> c = CurationConverter(f, None)  # no need to test widget here
+        >>> c.toWidgetValue(None)
+        u''
+        >>> c.toWidgetValue({})
+        u''
+        >>> c.toWidgetValue({u'key': [u'value']})
+        u'key:value'
+        >>> c.toWidgetValue({u'key': [u'value', u'value2']})
+        u'key:value\\nkey:value2'
+        >>> c.toWidgetValue({u'key': [u'value', u'value2'],
+        ...                  u'xyz': [u'1.2.3']})
+        u'key:value\\nkey:value2\\nxyz:1.2.3'
+        >>> c.toWidgetValue({u'middle': [u'zxy', u'abc'],
+        ...                  u'bottom': [u'hello'],
+        ...                  u'top': [u'goodbye']})
+        u'bottom:hello\\nmiddle:abc\\nmiddle:zxy\\ntop:goodbye'
+        """
+
+        if not value:
+            return u''
+
+        result = []
+        for k, v in value.iteritems():
+            for i in v:
+                result.append('%s:%s' % (k, i))
+        result.sort()
+        return u'\n'.join(result)

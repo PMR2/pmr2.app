@@ -4,7 +4,7 @@ import zope.interface
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
-from pmr2.app.schema import ObjectId, WorkspaceList
+from pmr2.app.schema import ObjectId, WorkspaceList, CurationDict
 
 
 class ObjectIdExistsError(zope.schema.ValidationError):
@@ -216,9 +216,9 @@ class IExposure(zope.interface.Interface):
         description=u'The specific commit identifier of the model.',
     )
 
-    # FIXME placeholder - curation will have its own type.
-    curation = zope.schema.TextLine(
+    curation = CurationDict(
         title=u'Curation',
+        description=u'Curation of this model.',
         required=False,
     )
 

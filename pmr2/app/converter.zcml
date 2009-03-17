@@ -3,5 +3,6 @@
     i18n_domain="pmr2">
 
   <adapter factory=".converter.AccessorCallConverter"/>
+  <adapter factory=".converter.CurationTextAreaConverter"/>
 
 </configure> 

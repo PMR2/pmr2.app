@@ -62,6 +62,12 @@ def test_suite():
             setUp=testing.setUp, tearDown=testing.tearDown
         ),
 
+        # test the converters.
+        doctestunit.DocTestSuite(
+            module='pmr2.app.converter',
+            setUp=testing.setUp, tearDown=testing.tearDown
+        ),
+
     ])
 
 if __name__ == '__main__':
