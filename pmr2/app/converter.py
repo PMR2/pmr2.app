@@ -42,7 +42,8 @@ class CurationTextAreaConverter(z3c.form.converter.BaseDataConverter):
         """\
         >>> import pmr2.app.schema
         >>> f = pmr2.app.schema.CurationDict()
-        >>> c = CurationConverter(f, None)  # no need to test widget here
+        >>> # no need to test widget here
+        >>> c = CurationTextAreaConverter(f, None)  
         >>> c.toWidgetValue(None)
         u''
         >>> c.toWidgetValue({})
