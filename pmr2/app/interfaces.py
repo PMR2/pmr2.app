@@ -291,6 +291,17 @@ class IExposureMathDocument(IExposureDocument):
     )
 
 
+class IExposureCodeDocument(IExposureDocument):
+    """\
+    Exposure Document for code.
+    """
+
+    raw_code = zope.schema.Text(
+        title=u'Raw Code',
+        description=u'The raw code',
+    )
+
+
 class IExposureCmetaDocument(IExposureDocument):
     """\
     Exposure Document that handles CellML Metadata.

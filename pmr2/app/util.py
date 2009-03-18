@@ -18,7 +18,7 @@ known_processors = {
     },
     'pmr2_processor_cellmlapi_cellml2c': {
         'ext': '.c',
-        'class': 'ExposureDocument',
+        'class': 'ExposureCodeDocument',
     },
 }
 

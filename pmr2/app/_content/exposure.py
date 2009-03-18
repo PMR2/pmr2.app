@@ -155,16 +155,18 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
     origin = fieldproperty.FieldProperty(IExposureDocument['origin'])
     transform = fieldproperty.FieldProperty(IExposureDocument['transform'])
 
-    def generate_content(self, data):
-        self.setTitle(aq_parent(self).title)
-        self.setContentType('text/html')
-
+    def _convert(self, data):
         # this grabs contents of file from workspace (hg)
         input = aq_parent(self).get_file(data['filename'])
         pt = getToolByName(self, 'portal_transforms')
         stream = datastream('processor')
         pt.convert(data['transform'], input, stream)
-        self.setText(stream.getData())
+        return stream.getData()
+
+    def generate_content(self, data):
+        self.setTitle(aq_parent(self).title)
+        self.setContentType('text/html')
+        self.setText(self._convert(data))
 
     def get_curation_index(self):
         # XXX hack to make this not indexed by curation index
@@ -186,14 +188,7 @@ class ExposureMathDocument(ExposureDocument):
     def generate_content(self, data):
         self.setTitle(u'Model Mathematics from ' + aq_parent(self).title)
         self.setContentType('text/html')
-
-        # this grabs contents of file from workspace (hg)
-        input = aq_parent(self).get_file(data['filename'])
-        pt = getToolByName(self, 'portal_transforms')
-        stream = datastream('processor')
-        pt.convert(data['transform'], input, stream)
-
-        self.mathml = stream.getData().decode('utf-8')
+        self.mathml = self._convert(data).decode('utf-8')
         self.setText(u'')
         # disabled due to XSS flaw.
         #self.setText(u'<object style="width: 100%%;height:25em;" data="%s/@@view_mathml"></object>' % self.absolute_url())
@@ -277,3 +272,24 @@ class ExposureCmetaDocument(ExposureDocument):
             return [i[1].replace(' ', '_') for i in self.keywords]
         else:
             return []
+
+
+class ExposureCodeDocument(ExposureDocument):
+    """\
+    Wrapper to display code.
+    """
+
+    interface.implements(IExposureCodeDocument)
+
+    raw_code = fieldproperty.FieldProperty(IExposureCodeDocument['raw_code'])
+
+    def generate_content(self, data):
+        self.setTitle(aq_parent(self).title)
+        self.setContentType('text/html')
+        # XXX magic encoding
+        self.raw_code = unicode(self._convert(data), encoding='latin1')
+        # could do similar thing as MathML View to save space, but not
+        # worth doing for now due to time.
+        self.setText('<pre><code>%s</code></pre>' % self.raw_code)
+
+atapi.registerType(ExposureCodeDocument, 'pmr2.app')

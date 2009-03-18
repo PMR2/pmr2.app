@@ -143,6 +143,18 @@ class ExposureMathMLView(page.SimplePage):
         return self.context.mathml
 
 
+class ExposureRawCodeView(page.SimplePage):
+    """\
+    Returns the MathML
+    """
+
+    def __call__(self, *args, **kwargs):
+        self.request.response.setHeader('Content-Type', 'text/plain')
+        self.request.response.setHeader('Content-Disposition', 
+            'attachment; filename="%s"' % self.context.getId())
+        return self.context.raw_code
+
+
 class ExposureMathMLWrapper(page.SimplePage):
     """\
     Wraps an object around the mathml view.
