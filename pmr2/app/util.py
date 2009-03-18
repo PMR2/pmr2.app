@@ -16,6 +16,10 @@ known_processors = {
         'ext': '.mathml.html',
         'class': 'ExposureMathDocument',
     },
+    'pmr2_processor_cellmlapi_cellml2c': {
+        'ext': '.c',
+        'class': 'ExposureDocument',
+    },
 }
 
 other_processors = {
@@ -33,7 +37,7 @@ all_processors.update(other_processors)
 # default, no processor
 no_processor = {
     'ext': '.html',
-    'clsobj': 'ExposureDocument',
+    'class': 'ExposureDocument',
 }
 
 CELLML_NSMAP = {
