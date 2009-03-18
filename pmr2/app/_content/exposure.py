@@ -4,12 +4,15 @@ from cStringIO import StringIO
 from zope import interface
 from zope.schema import fieldproperty
 
+from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
 
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.ATContentTypes.content.document import ATDocument
 from Products.Archetypes import atapi
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.permissions import View
+
 from Products.PortalTransforms.data import datastream
 
 import pmr2.mercurial
@@ -60,6 +63,7 @@ class Exposure(ATFolder, TraversalCatchAll):
     """
 
     interface.implements(IExposure)
+    security = ClassSecurityInfo()
     # XXX the get_ methods are similar to IWorkspace.
     # best to define a common interface.
 
@@ -71,6 +75,7 @@ class Exposure(ATFolder, TraversalCatchAll):
         TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
         ATFolder.__before_publishing_traverse__(self, ob, request)
 
+    security.declareProtected(View, 'get_path')
     def get_path(self):
         """See IExposure"""
 
@@ -80,6 +85,7 @@ class Exposure(ATFolder, TraversalCatchAll):
             return None
         return os.path.join(p, self.workspace)
 
+    security.declareProtected(View, 'get_log')
     def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None):
         """See IExposure"""
 
@@ -87,20 +93,24 @@ class Exposure(ATFolder, TraversalCatchAll):
         storage = self.get_storage()
         return storage.log(rev, branch, shortlog, datefmt).next()
 
+    security.declareProtected(View, 'get_storage')
     def get_storage(self):
         """See IExposure"""
 
         path = self.get_path()
         return pmr2.mercurial.Storage(path)
 
+    security.declareProtected(View, 'get_manifest')
     def get_manifest(self):
         storage = self.get_storage()
         return storage.raw_manifest(self.commit_id)
 
+    security.declareProtected(View, 'get_file')
     def get_file(self, path):
         storage = self.get_storage()
         return storage.file(self.commit_id, path)
 
+    security.declareProtected(View, 'get_parent_container')
     def get_parent_container(self):
         """\
         returns the container object that stores this.
@@ -109,6 +119,7 @@ class Exposure(ATFolder, TraversalCatchAll):
         result = aq_parent(aq_inner(self))
         return result
 
+    security.declareProtected(View, 'get_pmr2_container')
     def get_pmr2_container(self):
         """\
         returns the root pmr2 object that stores this.
@@ -117,10 +128,14 @@ class Exposure(ATFolder, TraversalCatchAll):
         result = aq_parent(self.get_parent_container())
         return result
 
+    security.declarePublic('get_curation_index')
     def get_curation_index(self):
         # FIXME this should really be sharing code with the converter 
         # class
         result = []
+        if not self.curation:
+            return result
+        result.extend(self.curation.keys())
         for k, v in self.curation.iteritems():
             for i in v:
                 result.append('%s:%s' % (k, i))
@@ -151,7 +166,9 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
         pt.convert(data['transform'], input, stream)
         self.setText(stream.getData())
 
-    # XXX this needs to create a Plone Document with the files.
+    def get_curation_index(self):
+        # XXX hack to make this not indexed by curation index
+        return []
 
 atapi.registerType(ExposureDocument, 'pmr2.app')
 
