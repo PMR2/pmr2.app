@@ -117,6 +117,16 @@ class Exposure(ATFolder, TraversalCatchAll):
         result = aq_parent(self.get_parent_container())
         return result
 
+    def get_curation_index(self):
+        # FIXME this should really be sharing code with the converter 
+        # class
+        result = []
+        for k, v in self.curation.iteritems():
+            for i in v:
+                result.append('%s:%s' % (k, i))
+                result.sort()
+        return result
+
 atapi.registerType(Exposure, 'pmr2.app')
 
 
@@ -250,4 +260,3 @@ class ExposureCmetaDocument(ExposureDocument):
             return [i[1].replace(' ', '_') for i in self.keywords]
         else:
             return []
-
