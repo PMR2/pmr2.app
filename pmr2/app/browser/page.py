@@ -5,6 +5,8 @@ from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 
 from plone.z3cform import layout
 
+import pmr2.mercurial.exceptions
+
 
 class BorderedFormWrapper(layout.FormWrapper):
     """\
@@ -14,6 +16,30 @@ class BorderedFormWrapper(layout.FormWrapper):
 
     def __init__(self, *a, **kw):
         super(BorderedFormWrapper, self).__init__(*a, **kw)
+        self.request['enable_border'] = True
+
+
+class StorageFormWrapper(layout.FormWrapper):
+    """\
+    If cmd is present, pass control to the storage object, let it 
+    generate the result from the request sent by client.
+    """
+
+    def __call__(self, *a, **kw):
+        storage = self.context.get_storage()
+        try:
+            return storage.process_request(self.request)
+        except pmr2.mercurial.exceptions.UnsupportedCommand:
+            return super(StorageFormWrapper, self).__call__(*a, **kw)
+
+
+class BorderedStorageFormWrapper(StorageFormWrapper):
+    """\
+    Workspace default view uses this for the menu.
+    """
+
+    def __init__(self, *a, **kw):
+        super(BorderedStorageFormWrapper, self).__init__(*a, **kw)
         self.request['enable_border'] = True
 
 

@@ -96,7 +96,7 @@ class WorkspacePage(page.SimplePage):
 
 WorkspacePageView = layout.wrap_form(
     WorkspacePage,
-    __wrapper_class=page.BorderedFormWrapper,
+    __wrapper_class=page.BorderedStorageFormWrapper,
 )
 
 class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
