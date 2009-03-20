@@ -12,4 +12,15 @@
       title="Curate Exposures"
       />
 
+  <permission
+      id="pmr2.app.security.HgPush"
+      title="Mercurial Push"
+      />
+
+  <utility
+      name="WorkspacePusher"
+      factory=".roles.WorkspacePusherRole"
+      />
+
+
 </configure>

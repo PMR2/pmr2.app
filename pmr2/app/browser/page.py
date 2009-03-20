@@ -1,11 +1,15 @@
 import zope.interface
+from zope.component import getUtilitiesFor, getMultiAdapter
 from zope.publisher.browser import BrowserPage
 from zope.publisher.interfaces import IPublishTraverse
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
+from zope.app.authentication.httpplugins import HTTPBasicAuthCredentialsPlugin
 
+from plone.app.workflow.interfaces import ISharingPageRole
 from plone.z3cform import layout
 
 import pmr2.mercurial.exceptions
+import pmr2.app.security.roles
 
 
 class BorderedFormWrapper(layout.FormWrapper):
@@ -26,6 +30,28 @@ class StorageFormWrapper(layout.FormWrapper):
     """
 
     def __call__(self, *a, **kw):
+        if self.request.REQUEST_METHOD != 'GET':
+            # if request is POST, we are changing things so we need
+            # authentication.
+
+            # authenticate the role - there must be a better way than 
+            # this and probably should be done at much higher levels 
+            # (if possible)
+
+            # XXX need to directly involve pmr2.app.security.roles
+            # somehow, eventually, to authenticate, such as:
+            #roles = dict([(i[1], i[0]) for i in 
+            #    getUtilitiesFor(ISharingPageRole)])
+
+            user_roles = self.request['AUTHENTICATED_USER'].\
+                getRolesInContext(self.context)
+
+            if u'WorkspacePusher' not in user_roles:
+                # request for authentication.
+                auth = HTTPBasicAuthCredentialsPlugin()
+                auth.challenge(self.request)
+                return False
+
         storage = self.context.get_storage()
         try:
             return storage.process_request(self.request)
