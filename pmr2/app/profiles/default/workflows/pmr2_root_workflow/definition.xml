@@ -13,6 +13,8 @@
  <permission>Add portal content</permission>
  <permission>View</permission>
  <permission>Manage PMR2</permission>
+ <permission>Curate Exposure</permission>
+ <permission>Mercurial Push</permission>
 
  <state state_id="new" title="New" i18n:attributes="title">
   <description i18n:translate="">
@@ -48,6 +50,10 @@
   <permission-map name="Manage PMR2" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
+  <permission-map name="Curate Exposure" acquired="False">
+  </permission-map>
+  <permission-map name="Mercurial Push" acquired="False">
+  </permission-map>
  </state>
 
  <state state_id="closed" title="Closed" i18n:attributes="title">
@@ -82,6 +88,10 @@
   <permission-map name="Manage PMR2" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
+  <permission-map name="Curate Exposure" acquired="False">
+  </permission-map>
+  <permission-map name="Mercurial Push" acquired="False">
+  </permission-map>
  </state>
 
  <state state_id="opened" title="Opened" i18n:attributes="title">
@@ -110,6 +120,14 @@
    <permission-role>Anonymous</permission-role>
   </permission-map>
   <permission-map name="Manage PMR2" acquired="False">
+  </permission-map>
+  <permission-map name="Curate Exposure" acquired="False">
+   <permission-role>Reviewer</permission-role>
+   <permission-role>Owner</permission-role>
+  </permission-map>
+  <permission-map name="Mercurial Push" acquired="False">
+   <permission-role>Manager</permission-role>
+   <permission-role>Owner</permission-role>
   </permission-map>
  </state>
 
