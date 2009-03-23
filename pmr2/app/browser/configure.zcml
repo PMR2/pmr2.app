@@ -1,5 +1,5 @@
-<configure xmlns="http://namespaces.zope.org/browser"
-    xmlns:zope="http://namespaces.zope.org/zope"
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="pmr2.app">
 
@@ -7,14 +7,14 @@
 
   <!-- PMR2 Root -->
 
-  <page
+  <browser:page
       for="Products.CMFPlone.Portal.PloneSite"
       name="repository_add_form"
       class=".root.PMR2AddFormView"
       permission="cmf.ManagePortal"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.PMR2"
       name="edit_repository"
       class=".root.PMR2EditFormView"
@@ -23,21 +23,21 @@
 
   <!-- Workspace Container -->
 
-  <page
+  <browser:page
       for="pmr2.app.content.WorkspaceContainer"
       name="raw_list"
       class=".workspace.WorkspaceContainerRepoListingView"
       permission="pmr2.app.security.ManagePMR2"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.WorkspaceContainer"
       name="workspace_object_create"
       class=".workspace.WorkspaceAddFormView"
       permission="pmr2.app.security.ManagePMR2"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.WorkspaceContainer"
       name="workspace_bulk_create"
       class=".workspace.WorkspaceBulkAddFormView"
@@ -46,90 +46,63 @@
 
   <!-- Workspace -->
 
-  <!--
-    An override of contentactions for Workspace for the menus in the
-    file page view.
-  -->
-
-  <viewlet
-      name="plone.contentactions"
-      for="pmr2.app.content.Workspace"
-      view=".workspace.WorkspaceFilePageView"
-      manager="plone.app.layout.viewlets.interfaces.IContentViews"
-      class="pmr2.app.browser.viewlets.WorkspaceActionsViewlet"
-      permission="zope2.View"
-      />
-
-  <!--
-    This provides a new menu for the above override
-  -->
-
-  <zope:adapter
-      for="pmr2.app.interfaces.IWorkspace
-           zope.publisher.interfaces.browser.IDefaultBrowserLayer
-           .interfaces.IWorkspaceActionsViewlet"
-      factory=".menu.WorkspaceMenuProvider"
-      name="plone.contentmenu"
-      provides="zope.contentprovider.interfaces.IContentProvider"
-      />
-
-  <page
+  <browser:page
       for="pmr2.app.content.Workspace"
       name="workspace_view"
       class=".workspace.WorkspacePageView"
       permission="zope2.View"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.Workspace"
       name="workspace_edit"
       class=".workspace.WorkspaceEditFormView"
       permission="cmf.ModifyPortalContent"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.Workspace"
       name="log"
       class=".workspace.WorkspaceLogView"
       permission="zope2.View"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.Workspace"
       name="shortlog"
       class=".workspace.WorkspaceShortlogView"
       permission="zope2.View"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.Workspace"
       name="rsslog"
       class=".workspace.WorkspaceLogRss"
       permission="zope2.View"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.Workspace"
       name="file"
       class=".workspace.WorkspaceFilePageView"
       permission="zope2.View"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.Workspace"
       name="rawfile"
       class=".workspace.WorkspaceRawfileView"
       permission="zope2.View"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.Workspace"
       name="xmlbase"
       class=".workspace.WorkspaceRawfileXmlBaseView"
       permission="zope2.View"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.Workspace"
       name="create"
       class=".workspace.CreateFormView"
@@ -138,7 +111,7 @@
 
   <!-- Exposure Container -->
 
-  <page
+  <browser:page
       for="pmr2.app.content.ExposureContainer"
       name="exposure_add_form"
       class=".exposure.ExposureAddFormView"
@@ -147,21 +120,21 @@
 
   <!-- Exposure -->
 
-  <page
+  <browser:page
       for="pmr2.app.content.Exposure"
       name="exposure_folder_listing"
       class=".exposure.ExposureFolderListing"
       permission="zope2.View"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.Exposure"
       name="exposure_edit"
       class=".exposure.ExposureEditFormView"
       permission="cmf.ModifyPortalContent"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.Exposure"
       name="docgen"
       class=".exposure.ExposureDocGenFormView"
@@ -170,7 +143,7 @@
 
   <!-- Exposure Document -->
 
-  <page
+  <browser:page
       for="pmr2.app.content.ExposureDocument"
       name="exposure_document_view"
       class=".exposure.ExposureDocumentView"
@@ -179,14 +152,14 @@
 
   <!-- Exposure Math Document -->
 
-  <page
+  <browser:page
       for="pmr2.app.content.ExposureMathDocument"
       name="exposure_document_view"
       class=".exposure.ExposureMathMLWrapperView"
       permission="zope2.View"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.ExposureMathDocument"
       name="view_mathml"
       class=".exposure.ExposureMathMLView"
@@ -195,7 +168,7 @@
 
   <!-- Exposure CellML Metadata Document -->
 
-  <page
+  <browser:page
       for="pmr2.app.content.ExposureCmetaDocument"
       name="exposure_document_view"
       class=".exposure.ExposureCmetaDocumentView"
@@ -204,7 +177,7 @@
 
   <!-- Exposure CellML Code Document -->
 
-  <page
+  <browser:page
       for="pmr2.app.content.ExposureCodeDocument"
       name="raw_code"
       class=".exposure.ExposureRawCodeView"
@@ -213,48 +186,58 @@
 
   <!-- PMR2 Custom Search object -->
 
-  <page
+  <browser:page
       for="pmr2.app.content.PMR2"
       name="pmr2search_add_form"
       class=".support.PMR2SearchAddFormView"
       permission="pmr2.app.security.ManagePMR2"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.PMR2Search"
       name="pmr2search_edit"
       class=".support.PMR2SearchEditFormView"
       permission="pmr2.app.security.ManagePMR2"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.PMR2Search"
       name="pmr2search_view"
       class=".support.PMR2SearchPageView"
       permission="zope2.View"
       />
 
-  <page
+  <browser:page
       for="pmr2.app.content.PMR2Search"
       name="atct_view"
       class=".support.PMR2SearchPageView"
       permission="zope2.View"
       />
 
-  <view
+  <!--
+    view for the adding.
+  -->
+
+  <browser:view
       name="+"
       for="..interfaces.IPMR2"
       permission="pmr2.app.security.ManagePMR2"
       class=".adding.Adding">
-    <page name="addPMR2Search" attribute="addPMR2Search" />
-  </view>
+    <browser:page name="addPMR2Search" attribute="addPMR2Search" />
+  </browser:view>
 
-  <zope:adapter
-      for=".adding.Adding
-           *"
-      name="addPMR2Search"
-      factory=".support.PMR2SearchAddForm"
-      provides="z3c.form.interfaces.IAddForm"
+  <!--
+    An override of contentactions for Workspace for the menus in the
+    file page view (sandbox/exposure add dropdown menu).
+  -->
+
+  <browser:viewlet
+      name="plone.contentactions"
+      for="pmr2.app.content.Workspace"
+      view=".workspace.WorkspaceFilePageView"
+      manager="plone.app.layout.viewlets.interfaces.IContentViews"
+      class="pmr2.app.browser.viewlets.WorkspaceActionsViewlet"
+      permission="zope2.View"
       />
 
   <browser:viewlet
@@ -263,6 +246,31 @@
       manager="plone.app.layout.viewlets.interfaces.IHtmlHeadLinks"
       class=".viewlets.WorkspaceRSSViewlet"
       permission="zope2.View"
+      />
+
+  <!--
+    This adapts the customized contentactions into the plone contentmeu
+  -->
+
+  <adapter
+      for="pmr2.app.interfaces.IWorkspace
+           zope.publisher.interfaces.browser.IDefaultBrowserLayer
+           .interfaces.IWorkspaceActionsViewlet"
+      factory=".menu.WorkspaceMenuProvider"
+      name="plone.contentmenu"
+      provides="zope.contentprovider.interfaces.IContentProvider"
+      />
+
+  <!--
+    adapter for the adding view.
+  -->
+
+  <adapter
+      for=".adding.Adding
+           *"
+      name="addPMR2Search"
+      factory=".support.PMR2SearchAddForm"
+      provides="z3c.form.interfaces.IAddForm"
       />
 
 </configure>
