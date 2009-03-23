@@ -159,3 +159,14 @@ class NavPage(TraversePage):
 
     def navlist(self):
         raise NotImplementedError('need navigation elements')
+
+
+class RssPage(SimplePage):
+    """\
+    RSS page.
+    """
+
+    template = ViewPageTemplateFile('rss.pt')
+
+    def items(self):
+        raise NotImplementedError('need items')

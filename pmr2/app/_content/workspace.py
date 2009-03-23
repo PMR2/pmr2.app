@@ -111,12 +111,13 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
             return None
         return os.path.join(p, self.id)
 
-    def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None):
+    def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None, 
+                maxchanges=None):
         """See IWorkspace"""
 
         # XXX valid datefmt values might need to be documented/checked
         storage = self.get_storage()
-        return storage.log(rev, branch, shortlog, datefmt).next()
+        return storage.log(rev, branch, shortlog, datefmt, maxchanges).next()
 
     def get_storage(self):
         """See IWorkspace"""

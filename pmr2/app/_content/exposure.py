@@ -142,6 +142,10 @@ class Exposure(ATFolder, TraversalCatchAll):
                 result.sort()
         return result
 
+    security.declarePublic('get_exposure_workspace')
+    def get_exposure_workspace(self):
+        return self.workspace
+
 atapi.registerType(Exposure, 'pmr2.app')
 
 
@@ -169,6 +173,10 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
         self.setText(self._convert(data))
 
     def get_curation_index(self):
+        # XXX hack to make this not indexed by curation index
+        return []
+
+    def get_exposure_workspace(self):
         # XXX hack to make this not indexed by curation index
         return []
 

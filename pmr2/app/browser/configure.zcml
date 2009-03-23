@@ -1,5 +1,6 @@
 <configure xmlns="http://namespaces.zope.org/browser"
     xmlns:zope="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="pmr2.app">
 
   <include package="pmr2.app.security" />
@@ -97,6 +98,13 @@
       for="pmr2.app.content.Workspace"
       name="shortlog"
       class=".workspace.WorkspaceShortlogView"
+      permission="zope2.View"
+      />
+
+  <page
+      for="pmr2.app.content.Workspace"
+      name="rsslog"
+      class=".workspace.WorkspaceLogRss"
       permission="zope2.View"
       />
 
@@ -247,6 +255,14 @@
       name="addPMR2Search"
       factory=".support.PMR2SearchAddForm"
       provides="z3c.form.interfaces.IAddForm"
+      />
+
+  <browser:viewlet
+      name="plone.links.RSS"
+      for="..content.Workspace"
+      manager="plone.app.layout.viewlets.interfaces.IHtmlHeadLinks"
+      class=".viewlets.WorkspaceRSSViewlet"
+      permission="zope2.View"
       />
 
 </configure>

@@ -14,13 +14,14 @@ import z3c.form.form
 import z3c.form.value
 
 from plone.app.z3cform import layout
+from Products.CMFCore.utils import getToolByName
 
 import pmr2.mercurial.exceptions
 import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
-from pmr2.app.util import set_xmlbase, fix_pcenv_externalurl
+from pmr2.app.util import set_xmlbase, fix_pcenv_externalurl, obfuscate
 
 import interfaces
 
@@ -90,14 +91,47 @@ WorkspaceContainerRepoListingView = layout.wrap_form(
 # Workspace
 
 class WorkspacePage(page.SimplePage):
+    """\
+    The main page view.
+    """
+    # XXX the implementation works, but is probably not best practice
+    # way to implement views based on other classes.
 
     template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
         'workspace.pt')
+
+    @property
+    def owner(self):
+        if not hasattr(self, '_owner'):
+            owner = self.context.getOwner()
+            result = '%s <%s>' % (
+                owner.getProperty('fullname', owner.getId()),
+                owner.getProperty('email', ''),
+            )
+            self._owner = obfuscate(result)
+
+        return self._owner
+
+    def shortlog(self):
+        if not hasattr(self, '_log'):
+            self._log = WorkspaceShortlog(self.context, self.request)
+            # set our requirements.
+            self._log.maxchanges = 10  # XXX magic number
+            self._log.navlist = None
+        return self._log()
+
+    def exposure_list(self):
+        pt = getToolByName(self.context, 'portal_catalog')
+        d = {}
+        d['pmr2_exposure_workspace'] = self.context.id
+        return pt(**d)
+
 
 WorkspacePageView = layout.wrap_form(
     WorkspacePage,
     __wrapper_class=page.BorderedStorageFormWrapper,
 )
+
 
 class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
 
@@ -108,6 +142,8 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
     shortlog = False
     url_expr = '@@log'
     tbl = table.ChangelogTable
+    maxchanges = None  # default value.
+    datefmt = None # default value.
 
     @property
     def rev(self):
@@ -120,7 +156,9 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
         if not hasattr(self, '_log'):
             try:
                 self._log = self.context.get_log(rev=self.rev,
-                                                 shortlog=self.shortlog)
+                                                 shortlog=self.shortlog,
+                                                 datefmt=self.datefmt,
+                                                 maxchanges=self.maxchanges)
             except pmr2.mercurial.exceptions.RevisionNotFound:
                 raise NotFound(self.context, self.context.title_or_id(), 
                                self.request)
@@ -136,6 +174,11 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
 
     @property
     def values(self):
+        """\
+        Although this is a property, it will return a method that 
+        returns a generator.
+        """
+
         return self.log['entries']
 
     def content(self):
@@ -161,6 +204,25 @@ WorkspaceShortlogView = layout.wrap_form(
     __wrapper_class=page.BorderedTraverseFormWrapper,
     label='Shortlog'
 )
+
+
+class WorkspaceLogRss(page.RssPage, WorkspaceLog):
+
+    datefmt = 'rfc822date'
+
+    def items(self):
+        for i in self.values():
+            yield {
+                'title': i['desc'].splitlines()[0],
+                # XXX magic manifest link
+                'link': '%s/@@file/%s' % (
+                    self.context.context.absolute_url(),
+                    i['node'],
+                ),
+                'description': i['desc'],
+                'author': obfuscate(i['author']),
+                'pubDate': i['date'],
+            }
 
 
 class WorkspaceAddForm(form.AddForm):

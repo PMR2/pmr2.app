@@ -24,6 +24,7 @@
  -->
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="workspace_edit"/>
+ <alias from="RSS" to="@@rsslog"/>
  <alias from="sharing" to="@@sharing"/>
  <alias from="view" to="(selected layout)"/>
 

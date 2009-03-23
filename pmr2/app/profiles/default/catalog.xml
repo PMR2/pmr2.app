@@ -17,9 +17,14 @@
     <indexed_attr value="get_keywords"/>
   </index>
 
+  <index name="pmr2_exposure_workspace" meta_type="KeywordIndex">
+    <indexed_attr value="get_exposure_workspace"/>
+  </index>
+
   <column value="pmr2_authors_family_name"/>
   <column value="pmr2_citation_title"/>
   <column value="pmr2_curation"/>
   <column value="pmr2_keyword"/>
+  <column value="pmr2_exposure_workspace"/>
 
 </object>

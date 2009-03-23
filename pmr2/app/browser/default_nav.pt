@@ -1,4 +1,4 @@
 <div tal:condition="nothing" tal:replace="structure request"/>
-<ul tal:repeat="i view/navlist">
-<li><a href="" tal:attributes="href string:${view/context/absolute_url}/${view/url_expr}/${i/href}" tal:content="i/label"/></li>
+<ul tal:condition="exists:view/navlist">
+<li tal:repeat="i view/navlist"><a href="" tal:attributes="href string:${view/context/absolute_url}/${view/url_expr}/${i/href}" tal:content="i/label"/></li>
 </ul>
