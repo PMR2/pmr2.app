@@ -257,14 +257,33 @@ class IExposureDocGen(zope.interface.Interface):
     )
 
 
+class IExposureMetadocGen(zope.interface.Interface):
+    """\
+    Interface for the generation of metadocumentation.
+    """
+
+    filename = zope.schema.Choice(
+        title=u'Documentation File',
+        description=u'The file to generate the set of exposures with.',
+        vocabulary='ManifestListVocab',
+    )
+
+    exposure_factory = zope.schema.Choice(
+        title=u'Exposure Type',
+        description=u'The type of exposure to generate.',
+        vocabulary='ExposureMetadocFactoryVocab',
+        required=False,
+    )
+
+
 class IBaseExposureDocument(zope.interface.Interface):
     """\
     Base interface for all types of exposure documents.
     """
 
-    def generate_content(data):
+    def generate_content():
         """\
-        The method to generate/populate content from form input.
+        The method to generate/populate content for an exposure document.
         """
 
 
@@ -285,10 +304,22 @@ class IExposureDocument(IBaseExposureDocument):
         required=False,
     )
 
-    def generate_content(data):
-        """\
-        The method to generate/populate content from form input.
-        """
+
+class IExposureMetadoc(IBaseExposureDocument):
+    """\
+    Interface for an exposure document that creates a set of exposure
+    documents.
+    """
+
+    origin = zope.schema.Text(
+        title=u'Origin Files',
+        description=u'Name of the files that this document was generated from. Each file occupies a new line.',
+    )
+
+    factories = zope.schema.List(
+        title=u'Factories',
+        description=u'The list of factories that will be used to generate this meta-documentation for the origin files.',
+    )
 
 
 class IExposureMathDocument(IExposureDocument):
@@ -354,9 +385,15 @@ class IExposureCmetaDocument(IExposureDocument):
         """
 
 
-class IExposureDocumentFactory(zope.interface.Interface):
+class IExposurePMR1Metadoc(IExposureMetadoc):
     """\
-    For factories that creates exposure documents.
+    Interface for the PMR1 set of exposure documents.
+    """
+
+
+class IBaseExposureDocumentFactory(zope.interface.Interface):
+    """\
+    Base interface for exposure document types factory.
     """
 
     klass = zope.schema.TextLine(
@@ -371,10 +408,22 @@ class IExposureDocumentFactory(zope.interface.Interface):
         title=u'Default suffix',
     )
 
+
+class IExposureDocumentFactory(IBaseExposureDocumentFactory):
+    """
+    For factories that creates exposure documents.
+    """
+
     transform = zope.schema.TextLine(
         title=u'Transform to use',
         required=False,
     )
+
+
+class IExposureMetadocFactory(IBaseExposureDocumentFactory):
+    """
+    Interface for meta-document factories.
+    """
 
 
 class IPMR2Search(zope.interface.Interface):

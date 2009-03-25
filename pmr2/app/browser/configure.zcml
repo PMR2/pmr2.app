@@ -141,6 +141,13 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <browser:page
+      for="pmr2.app.content.Exposure"
+      name="metadocgen"
+      class=".exposure.ExposureMetadocGenFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <!-- Exposure Document -->
 
   <browser:page
@@ -181,6 +188,15 @@
       for="pmr2.app.content.ExposureCodeDocument"
       name="raw_code"
       class=".exposure.ExposureRawCodeView"
+      permission="zope2.View"
+      />
+
+  <!-- Exposure PMR1 Metadoc -->
+
+  <browser:page
+      for="pmr2.app.content.ExposurePMR1Metadoc"
+      name="exposure_document_view"
+      class=".exposure.ExposurePMR1MetadocView"
       permission="zope2.View"
       />
 

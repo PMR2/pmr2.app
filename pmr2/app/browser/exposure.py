@@ -74,20 +74,47 @@ class ExposureDocGenForm(form.AddForm):
         self._data = data
         factory = zope.component.queryUtility(IExposureDocumentFactory,
                                               name=data['exposure_factory'])
-        result = factory(**data)
-        # XXX backward compat
-        self._data['transform'] = factory.transform
+        result = factory(data['filename'])
         # XXX there probably should be check for existence of item with the
         # same name somewhere else.
         self._name = result.id
         return result
 
     def add_data(self, ctxobj):
-        ctxobj.generate_content(self._data)
+        ctxobj.generate_content()
 
     # XXX this needs to create a Plone Document with the files.
 
 ExposureDocGenFormView = layout.wrap_form(ExposureDocGenForm, label="Exposure Documentation Generation Form")
+
+
+class ExposureMetadocGenForm(form.AddForm):
+    """\
+    Form to allow the generation of documentation.
+    """
+
+    # XXX main index page needs to have a brief overview of the RDF
+    # metadata and citation.
+
+    fields = z3c.form.field.Fields(IExposureMetadocGen)
+
+    def create(self, data):
+        # XXX could update parent item to contain/render this info
+        self._data = data
+        factory = zope.component.queryUtility(IExposureMetadocFactory,
+                                              name=data['exposure_factory'])
+        result = factory(data['filename'])
+        # XXX there probably should be check for existence of item with the
+        # same name somewhere else.
+        self._name = result.id
+        return result
+
+    def add_data(self, ctxobj):
+        ctxobj.generate_content()
+
+    # XXX this needs to create a Plone Document with the files.
+
+ExposureMetadocGenFormView = layout.wrap_form(ExposureMetadocGenForm, label="Exposure Meta Documentation Generation Form")
 
 
 # also need an exposure_folder_listing that mimics the one below.
@@ -189,5 +216,23 @@ class ExposureCmetaDocument(page.TraversePage):
 
 ExposureCmetaDocumentView = layout.wrap_form(
     ExposureCmetaDocument,
+    __wrapper_class=page.BorderedTraverseFormWrapper,
+)
+
+
+class ExposurePMR1Metadoc(page.TraversePage):
+    """\
+    Wraps an object around the mathml view.
+    """
+
+    filetemplate = \
+        zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+        'pmr1_metadoc.pt')
+
+    def __call__(self, *args, **kwargs):
+        return self.filetemplate()
+
+ExposurePMR1MetadocView = layout.wrap_form(
+    ExposurePMR1Metadoc,
     __wrapper_class=page.BorderedTraverseFormWrapper,
 )

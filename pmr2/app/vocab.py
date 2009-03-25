@@ -7,6 +7,7 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import IExposureDocumentFactory
+from pmr2.app.interfaces import IExposureMetadocFactory
 
 
 class WorkspaceDirObjListVocab(SimpleVocabulary):
@@ -111,3 +112,19 @@ def PMR2ExposureDocumentFactoryVocabFactory(context):
 alsoProvides(PMR2ExposureDocumentFactoryVocabFactory, IVocabularyFactory)
 
 
+class PMR2ExposureMetadocFactoryVocab(SimpleVocabulary):
+
+    def __init__(self, context):
+        self.context = context
+        values = [(i[0], i[1].description) for i in 
+                  getUtilitiesFor(IExposureMetadocFactory)]
+        # sort by description
+        values.sort(cmp=lambda x, y: cmp(x[1], y[1]))
+        terms = [SimpleTerm(*i) for i in values]
+        super(PMR2ExposureMetadocFactoryVocab, self).__init__(terms)
+
+# Someone please save me / I am becoming one of / those FactoryFactory
+def PMR2ExposureMetadocFactoryVocabFactory(context):
+    return PMR2ExposureMetadocFactoryVocab(context)
+
+alsoProvides(PMR2ExposureMetadocFactoryVocabFactory, IVocabularyFactory)

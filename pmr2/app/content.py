@@ -3,6 +3,7 @@ import zope.interface
 from Products.Archetypes import atapi
 
 from pmr2.app.interfaces import IExposureDocumentFactory
+from pmr2.app.interfaces import IExposureMetadocFactory
 
 from pmr2.app._content.root import PMR2
 
@@ -18,6 +19,7 @@ from pmr2.app._content.exposure import ExposureDocument
 from pmr2.app._content.exposure import ExposureMathDocument
 from pmr2.app._content.exposure import ExposureCmetaDocument
 from pmr2.app._content.exposure import ExposureCodeDocument
+from pmr2.app._content.exposure import ExposurePMR1Metadoc
 
 from pmr2.app._content.support import PMR2Search
 
@@ -29,7 +31,7 @@ atapi.registerType(ExposureDocument, 'pmr2.app')
 atapi.registerType(ExposureMathDocument, 'pmr2.app')
 atapi.registerType(ExposureCmetaDocument, 'pmr2.app')
 atapi.registerType(ExposureCodeDocument, 'pmr2.app')
-#atapi.registerType(ExposurePMR1MetaDocument, 'pmr2.app')
+atapi.registerType(ExposurePMR1Metadoc, 'pmr2.app')
 
 def catalog_content(obj, event):
     obj.reindexObject()
@@ -37,14 +39,17 @@ def catalog_content(obj, event):
 
 class BaseExposureDocumentFactory(object):
 
-    def __call__(self, *a, **kw):
+    def __call__(self, filename):
         import pmr2.app.content  # sup?
         klass = getattr(pmr2.app.content, self.klass)
-        # unsafe handling of kw
-        name = str(kw['filename'] + self.suffix)
+        # XXX identifier has to be normal str
+        name = str(filename + self.suffix)
         obj = klass(oid=name)
-        # XXX need to somehow let transform know.
-        #obj.transform = self.transform
+        # XXX unclean
+        if hasattr(self, 'transform'):
+            obj.transform = self.transform
+        # XXX filename conversion to unicode
+        obj.origin = unicode(filename)
         return obj
 
 
@@ -55,7 +60,7 @@ class ExposurePMR1DocumentFactory(BaseExposureDocumentFactory):
     zope.interface.implements(IExposureDocumentFactory)
 
     klass = u'ExposureDocument'
-    description = u'PMR1 CellML Docbook Page.'
+    description = u'PMR1 CellML Docbook Page'
     suffix = u'.pmr1.html'
     transform = u'pmr2_processor_legacy_tmpdoc2html'
 
@@ -65,7 +70,7 @@ class ExposureMathDocumentFactory(BaseExposureDocumentFactory):
     zope.interface.implements(IExposureDocumentFactory)
 
     klass = u'ExposureMathDocument'
-    description = u'PMR1 MathML Page.'
+    description = u'PMR1 MathML Page'
     suffix = u'.mathml.html'
     transform = u'pmr2_processor_legacy_cellml2html_mathml'
 
@@ -75,7 +80,7 @@ class ExposureCmetaDocumentFactory(BaseExposureDocumentFactory):
     zope.interface.implements(IExposureDocumentFactory)
 
     klass = u'ExposureCmetaDocument'
-    description = u'CellML Metadata Page.'
+    description = u'CellML Metadata Page'
     suffix = u'.pmr2.cmeta'
     transform = u'pmr2_cellml_metadata'  # this needed?
 
@@ -85,6 +90,15 @@ class ExposureCodeDocumentFactory(BaseExposureDocumentFactory):
     zope.interface.implements(IExposureDocumentFactory)
 
     klass = u'ExposureCodeDocument'
-    description = u'CellML Code Generation Page.'
+    description = u'CellML Code Generation Page'
     suffix = u'.code.html'
     transform = u'pmr2_processor_cellmlapi_cellml2c'
+
+
+class ExposurePMR1MetadocFactory(BaseExposureDocumentFactory):
+
+    zope.interface.implements(IExposureMetadocFactory)
+
+    klass = u'ExposurePMR1Metadoc'
+    description = u'PMR1 Style Exposure'
+    suffix = u'.index.html'

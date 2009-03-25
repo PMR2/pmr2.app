@@ -21,4 +21,9 @@
       factory=".content.ExposureCodeDocumentFactory"
       />
 
+  <utility
+      name="ExposurePMR1MetadocFactory"
+      factory=".content.ExposurePMR1MetadocFactory"
+      />
+
 </configure>

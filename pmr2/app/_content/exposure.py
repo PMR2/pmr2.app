@@ -154,18 +154,18 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
     origin = fieldproperty.FieldProperty(IExposureDocument['origin'])
     transform = fieldproperty.FieldProperty(IExposureDocument['transform'])
 
-    def _convert(self, data):
+    def _convert(self):
         # this grabs contents of file from workspace (hg)
-        input = aq_parent(self).get_file(data['filename'])
+        input = aq_parent(self).get_file(self.origin)
         pt = getToolByName(self, 'portal_transforms')
         stream = datastream('processor')
-        pt.convert(data['transform'], input, stream)
+        pt.convert(self.transform, input, stream)
         return stream.getData()
 
-    def generate_content(self, data):
+    def generate_content(self):
         self.setTitle(aq_parent(self).title)
         self.setContentType('text/html')
-        self.setText(self._convert(data))
+        self.setText(self._convert())
 
     def get_curation_index(self):
         # XXX hack to make this not indexed by curation index
@@ -186,10 +186,10 @@ class ExposureMathDocument(ExposureDocument):
     #transform = fieldproperty.FieldProperty(IExposureMathDocument['transform'])
     mathml = fieldproperty.FieldProperty(IExposureMathDocument['mathml'])
 
-    def generate_content(self, data):
+    def generate_content(self):
         self.setTitle(u'Model Mathematics from ' + aq_parent(self).title)
         self.setContentType('text/html')
-        self.mathml = self._convert(data).decode('utf-8')
+        self.mathml = self._convert().decode('utf-8')
         self.setText(u'')
         # disabled due to XSS flaw.
         #self.setText(u'<object style="width: 100%%;height:25em;" data="%s/@@view_mathml"></object>' % self.absolute_url())
@@ -212,11 +212,11 @@ class ExposureCmetaDocument(ExposureDocument):
     citation_id = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_id'])
     keywords = fieldproperty.FieldProperty(IExposureCmetaDocument['keywords'])
 
-    def generate_content(self, data):
+    def generate_content(self):
         self.setTitle(u'Model Metadata')
-        self.setDescription(u'Model Metadata from ' + data['filename'])
+        self.setDescription(u'Model Metadata from ' + self.origin)
         self.setContentType('text/html')
-        input = aq_parent(self).get_file(data['filename'])
+        input = aq_parent(self).get_file(self.origin)
 
         metadata = Cmeta(StringIO(input))
         ids = metadata.get_cmetaid()
@@ -284,11 +284,44 @@ class ExposureCodeDocument(ExposureDocument):
 
     raw_code = fieldproperty.FieldProperty(IExposureCodeDocument['raw_code'])
 
-    def generate_content(self, data):
+    def generate_content(self):
         self.setTitle(aq_parent(self).title)
         self.setContentType('text/html')
         # XXX magic encoding
-        self.raw_code = unicode(self._convert(data), encoding='latin1')
+        self.raw_code = unicode(self._convert(), encoding='latin1')
         # could do similar thing as MathML View to save space, but not
         # worth doing for now due to time.
         self.setText('<pre><code>%s</code></pre>' % self.raw_code)
+
+
+class ExposurePMR1Metadoc(BrowserDefaultMixin, BaseContent):
+    """\
+    Exposure meta document that will generate all related PMR1 views
+    for an exposure.
+    """
+
+    interface.implements(IExposurePMR1Metadoc)
+
+    origin = fieldproperty.FieldProperty(IExposurePMR1Metadoc['origin'])
+    factories = [
+        u'ExposurePMR1DocumentFactory',
+        u'ExposureMathDocumentFactory',
+        u'ExposureCmetaDocumentFactory',
+        u'ExposureCodeDocumentFactory',
+    ]
+
+    def generate_content(self):
+
+        parent = self.aq_parent
+        # XXX pmr1_processors control what documents are generated.
+        for i in self.factories:
+            factory = zope.component.queryUtility(IExposureDocumentFactory, i)
+            obj = factory(self.origin)
+            parent[obj.id] = obj
+            obj = parent[obj.id]
+            obj.generate_content()
+            obj.notifyWorkflowCreated()
+            obj.reindexObject()
+
+        # XXX the title will need to be from the metadata document
+        self.title = 'Exposure:%s' % self.origin
