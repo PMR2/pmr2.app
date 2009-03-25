@@ -13,6 +13,7 @@
   <include package=".validator" />
 
   <include file="vocab.zcml" />
+  <include file="content.zcml" />
   <include file="converter.zcml" />
   <include file="subscriber.zcml" />
 

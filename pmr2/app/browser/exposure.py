@@ -1,6 +1,7 @@
 from random import getrandbits
 
 import zope.interface
+import zope.component
 import zope.app.pagetemplate.viewpagetemplatefile
 from zope.publisher.interfaces import IPublishTraverse, NotFound
 import z3c.form.field
@@ -71,9 +72,13 @@ class ExposureDocGenForm(form.AddForm):
     def create(self, data):
         # XXX could update parent item to contain/render this info
         self._data = data
+        factory = zope.component.queryUtility(IExposureDocumentFactory,
+                                              name=data['exposure_factory'])
+        result = factory(**data)
+        # XXX backward compat
+        self._data['transform'] = factory.transform
         # XXX there probably should be check for existence of item with the
-        # same name.
-        result = ExposureDocGenerator(data)
+        # same name somewhere else.
         self._name = result.id
         return result
 

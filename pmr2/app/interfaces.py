@@ -249,15 +249,26 @@ class IExposureDocGen(zope.interface.Interface):
         vocabulary='ManifestListVocab',
     )
 
-    transform = zope.schema.Choice(
-        title=u'Document Processor',
+    exposure_factory = zope.schema.Choice(
+        title=u'Exposure Type',
         description=u'The method to convert the file selected into HTML for use by exposure.',
-        vocabulary='PMR2TransformsVocab',
+        vocabulary='ExposureDocumentFactoryVocab',
         required=False,
     )
 
 
-class IExposureDocument(zope.interface.Interface):
+class IBaseExposureDocument(zope.interface.Interface):
+    """\
+    Base interface for all types of exposure documents.
+    """
+
+    def generate_content(data):
+        """\
+        The method to generate/populate content from form input.
+        """
+
+
+class IExposureDocument(IBaseExposureDocument):
     """\
     Interface for an exposure document.
     """
@@ -341,6 +352,29 @@ class IExposureCmetaDocument(IExposureDocument):
         """\
         Returns the family name of the list of authors for the index.
         """
+
+
+class IExposureDocumentFactory(zope.interface.Interface):
+    """\
+    For factories that creates exposure documents.
+    """
+
+    klass = zope.schema.TextLine(
+        title=u'Name of the ExposureDocument class.',
+    )
+
+    description = zope.schema.Text(
+        title=u'Description.',
+    )
+
+    suffix = zope.schema.TextLine(
+        title=u'Default suffix',
+    )
+
+    transform = zope.schema.TextLine(
+        title=u'Transform to use',
+        required=False,
+    )
 
 
 class IPMR2Search(zope.interface.Interface):

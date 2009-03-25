@@ -1,59 +1,10 @@
 from lxml import etree
 
-# a list of known processor and the content type to use.
-# XXX alternately, instead of making the list of known transforms the
-# keys for the document type, reverse it and put them in the interface
-# classes.
-# XXX or the class themselves can be registered and provide the hooks
-# and list out the transforms or code required to generate the output
-# that will fill the contents.
-known_processors = {
-    'pmr2_processor_legacy_tmpdoc2html': {
-        'ext': '.doc.html',
-        'class': 'ExposureDocument',
-    },
-    'pmr2_processor_legacy_cellml2html_mathml': {
-        'ext': '.mathml.html',
-        'class': 'ExposureMathDocument',
-    },
-    'pmr2_processor_cellmlapi_cellml2c': {
-        'ext': '.c',
-        'class': 'ExposureCodeDocument',
-    },
-}
-
-other_processors = {
-    'pmr2_cellml_metadata': {
-        'ext': '.pmr2.cmeta',
-        'class': 'ExposureCmetaDocument',
-        'desc': 'CellML Metadata Processor',
-    },
-}
-
-all_processors = {}
-all_processors.update(known_processors)
-all_processors.update(other_processors)
-
-# default, no processor
-no_processor = {
-    'ext': '.html',
-    'class': 'ExposureDocument',
-}
-
 CELLML_NSMAP = {
     'tmpdoc': 'http://cellml.org/tmp-documentation',
     'pcenv': 'http://www.cellml.org/tools/pcenv/',
     'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
 }
-
-
-def ExposureDocGenerator(data):
-    # XXX be dumb for now.  no default values.  auto failure
-    import pmr2.app.content
-    processor = all_processors.get(data['transform'])
-    klass = getattr(pmr2.app.content, processor['class'])
-    name = data['filename'] + processor['ext']
-    return klass(oid=name)
 
 def set_xmlbase(xml, base):
     try:
