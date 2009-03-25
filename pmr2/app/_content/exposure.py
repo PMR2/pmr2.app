@@ -6,22 +6,21 @@ from zope.schema import fieldproperty
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
-
+from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.ATContentTypes.content.document import ATDocument
-from Products.Archetypes import atapi
+from Products.Archetypes.atapi import BaseContent
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import View
-
 from Products.PortalTransforms.data import datastream
 
 import pmr2.mercurial
 import pmr2.mercurial.utils
 
+from pmr2.processor.cmeta import Cmeta
+
 from pmr2.app.interfaces import *
 from pmr2.app.mixin import TraversalCatchAll
-
-from pmr2.processor.cmeta import Cmeta
 
 
 class ExposureContainer(ATBTreeFolder):
@@ -43,8 +42,6 @@ class ExposureContainer(ATBTreeFolder):
             return None
         # XXX magic string
         return os.path.join(p, 'workspace')
-
-atapi.registerType(ExposureContainer, 'pmr2.app')
 
 
 class Exposure(ATFolder, TraversalCatchAll):
@@ -146,8 +143,6 @@ class Exposure(ATFolder, TraversalCatchAll):
     def get_exposure_workspace(self):
         return self.workspace
 
-atapi.registerType(Exposure, 'pmr2.app')
-
 
 class ExposureDocument(ATDocument):  #, TraversalCatchAll):
     """\
@@ -179,8 +174,6 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
     def get_exposure_workspace(self):
         # XXX hack to make this not indexed by curation index
         return []
-
-atapi.registerType(ExposureDocument, 'pmr2.app')
 
 
 class ExposureMathDocument(ExposureDocument):
@@ -299,5 +292,3 @@ class ExposureCodeDocument(ExposureDocument):
         # could do similar thing as MathML View to save space, but not
         # worth doing for now due to time.
         self.setText('<pre><code>%s</code></pre>' % self.raw_code)
-
-atapi.registerType(ExposureCodeDocument, 'pmr2.app')
