@@ -304,6 +304,12 @@ class IExposureDocument(IBaseExposureDocument):
         required=False,
     )
 
+    metadoc = zope.schema.TextLine(
+        title=u'Metadoc',
+        description=u'The meta-documentation page that this exposure subpage is part of.',
+        required=False,
+    )
+
 
 class IExposureMetadoc(IBaseExposureDocument):
     """\
@@ -313,12 +319,17 @@ class IExposureMetadoc(IBaseExposureDocument):
 
     origin = zope.schema.Text(
         title=u'Origin Files',
-        description=u'Name of the files that this document was generated from. Each file occupies a new line.',
+        description=u'Name of the file that this document was generated from.',
     )
 
     factories = zope.schema.List(
         title=u'Factories',
-        description=u'The list of factories that will be used to generate this meta-documentation for the origin files.',
+        description=u'The list of factories that was used to generate this meta-documentation from origin.',
+    )
+
+    subdocuments = zope.schema.List(
+        title=u'Sub documents',
+        description=u'The sub-documents that were created during document generation.',
     )
 
 
@@ -424,6 +435,11 @@ class IExposureMetadocFactory(IBaseExposureDocumentFactory):
     """
     Interface for meta-document factories.
     """
+
+    factories = zope.schema.List(
+        title=u'Factories',
+        description=u'The list of factories that will be used to generate this meta-documentation for the origin files.',
+    )
 
 
 class IPMR2Search(zope.interface.Interface):

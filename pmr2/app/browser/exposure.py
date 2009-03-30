@@ -41,6 +41,7 @@ class ExposureAddForm(form.AddForm):
         ctxobj.title = self._data['title']
         ctxobj.workspace = self._data['workspace']
         ctxobj.commit_id = self._data['commit_id']
+        ctxobj.curation = self._data['curation']
 
 ExposureAddFormView = layout.wrap_form(ExposureAddForm, label="Exposure Create Form")
 
@@ -175,18 +176,6 @@ class ExposureMathMLView(page.SimplePage):
         return self.context.mathml
 
 
-class ExposureRawCodeView(page.SimplePage):
-    """\
-    Returns the MathML
-    """
-
-    def __call__(self, *args, **kwargs):
-        self.request.response.setHeader('Content-Type', 'text/plain')
-        self.request.response.setHeader('Content-Disposition', 
-            'attachment; filename="%s"' % self.context.getId())
-        return self.context.raw_code
-
-
 class ExposureMathMLWrapper(page.SimplePage):
     """\
     Wraps an object around the mathml view.
@@ -200,6 +189,30 @@ class ExposureMathMLWrapper(page.SimplePage):
         #return self.context.getRawText()
 
 ExposureMathMLWrapperView = layout.wrap_form(ExposureMathMLWrapper)
+
+
+class ExposureRawCodeView(page.SimplePage):
+    """\
+    Returns the raw code.
+    """
+
+    def __call__(self, *args, **kwargs):
+        self.request.response.setHeader('Content-Type', 'text/plain')
+        self.request.response.setHeader('Content-Disposition', 
+            'attachment; filename="%s"' % self.context.getId())
+        return self.context.raw_code
+
+
+class ExposureCodeWrapper(page.SimplePage):
+    """\
+    Renders code.  Can't have wicked mangle the double brackets into
+    links.
+    """
+
+    template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+        'code.pt')
+
+ExposureCodeWrapperView = layout.wrap_form(ExposureCodeWrapper)
 
 
 class ExposureCmetaDocument(page.TraversePage):

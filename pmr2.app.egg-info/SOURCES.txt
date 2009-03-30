@@ -42,6 +42,9 @@ pmr2/app/schema/__init__.py
 pmr2/app/schema/field.py
 pmr2/app/schema/interfaces.py
 pmr2/app/security/__init__.py
+pmr2/app/security/interfaces.py
+pmr2/app/security/permissions.py
+pmr2/app/security/roles.py
 pmr2/app/tests/__init__.py
 pmr2/app/tests/base.py
 pmr2/app/tests/test_doctest.py

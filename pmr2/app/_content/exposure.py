@@ -125,7 +125,7 @@ class Exposure(ATFolder, TraversalCatchAll):
         result = aq_parent(self.get_parent_container())
         return result
 
-    security.declarePublic('get_curation_index')
+    security.declareProtected(View, 'get_curation_index')
     def get_curation_index(self):
         # FIXME this should really be sharing code with the converter 
         # class
@@ -163,7 +163,8 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
         return stream.getData()
 
     def generate_content(self):
-        self.setTitle(aq_parent(self).title)
+        self.setTitle(u'Documentation')
+        self.setDescription(u'Generated from %s' % self.origin)
         self.setContentType('text/html')
         self.setText(self._convert())
 
@@ -187,7 +188,8 @@ class ExposureMathDocument(ExposureDocument):
     mathml = fieldproperty.FieldProperty(IExposureMathDocument['mathml'])
 
     def generate_content(self):
-        self.setTitle(u'Model Mathematics from ' + aq_parent(self).title)
+        self.setTitle(u'Mathematics')
+        self.setDescription(u'Generated from %s' % self.origin)
         self.setContentType('text/html')
         self.mathml = self._convert().decode('utf-8')
         self.setText(u'')
@@ -214,7 +216,7 @@ class ExposureCmetaDocument(ExposureDocument):
 
     def generate_content(self):
         self.setTitle(u'Model Metadata')
-        self.setDescription(u'Model Metadata from ' + self.origin)
+        self.setDescription(u'Generated from %s' % self.origin)
         self.setContentType('text/html')
         input = aq_parent(self).get_file(self.origin)
 
@@ -285,7 +287,8 @@ class ExposureCodeDocument(ExposureDocument):
     raw_code = fieldproperty.FieldProperty(IExposureCodeDocument['raw_code'])
 
     def generate_content(self):
-        self.setTitle(aq_parent(self).title)
+        self.setTitle(u'Procedural Code')
+        self.setDescription(u'Generated from %s' % self.origin)
         self.setContentType('text/html')
         # XXX magic encoding
         self.raw_code = unicode(self._convert(), encoding='latin1')
@@ -303,17 +306,12 @@ class ExposurePMR1Metadoc(BrowserDefaultMixin, BaseContent):
     interface.implements(IExposurePMR1Metadoc)
 
     origin = fieldproperty.FieldProperty(IExposurePMR1Metadoc['origin'])
-    factories = [
-        u'ExposurePMR1DocumentFactory',
-        u'ExposureMathDocumentFactory',
-        u'ExposureCmetaDocumentFactory',
-        u'ExposureCodeDocumentFactory',
-    ]
+    factories = fieldproperty.FieldProperty(IExposurePMR1Metadoc['factories'])
 
     def generate_content(self):
-
         parent = self.aq_parent
-        # XXX pmr1_processors control what documents are generated.
+        subdoc = []
+        self.title = 'Overview of %s' % self.origin
         for i in self.factories:
             factory = zope.component.queryUtility(IExposureDocumentFactory, i)
             obj = factory(self.origin)
@@ -322,6 +320,10 @@ class ExposurePMR1Metadoc(BrowserDefaultMixin, BaseContent):
             obj.generate_content()
             obj.notifyWorkflowCreated()
             obj.reindexObject()
+            subdoc.append(obj.id)
 
-        # XXX the title will need to be from the metadata document
-        self.title = 'Exposure:%s' % self.origin
+            # XXX
+            if i == u'ExposureCmetaDocumentFactory' and obj.citation_title:
+                self.title = obj.citation_title
+
+        self.subdocument = subdoc

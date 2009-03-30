@@ -9,6 +9,8 @@ from pmr2.app.interfaces import *
 from pmr2.app.content import *
 
 import form
+import exposure
+import widget
 
 
 class PMR2AddForm(form.AddForm):
@@ -63,4 +65,3 @@ def add_container(context, clsobj):
     obj.notifyWorkflowCreated()
     obj.reindexObject()
     return obj
-

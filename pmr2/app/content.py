@@ -37,7 +37,10 @@ def catalog_content(obj, event):
     obj.reindexObject()
 
 
-class BaseExposureDocumentFactory(object):
+class BaseDocumentFactory(object):
+    """\
+    The base document factory for exposure.
+    """
 
     def __call__(self, filename):
         import pmr2.app.content  # sup?
@@ -45,15 +48,32 @@ class BaseExposureDocumentFactory(object):
         # XXX identifier has to be normal str
         name = str(filename + self.suffix)
         obj = klass(oid=name)
-        # XXX unclean
-        if hasattr(self, 'transform'):
-            obj.transform = self.transform
         # XXX filename conversion to unicode
         obj.origin = unicode(filename)
         return obj
 
 
-# ExposureDocumentFactory is the default type, it does nothing for now.
+class BaseExposureDocumentFactory(BaseDocumentFactory):
+    """\
+    The base ExposureDocument factory.
+    """
+
+    def __call__(self, filename):
+        obj = super(BaseExposureDocumentFactory, self).__call__(filename)
+        obj.transform = self.transform
+        return obj
+
+
+class BaseExposureMetadocFactory(BaseDocumentFactory):
+    """\
+    The base ExposureMetadoc factory.
+    """
+
+    def __call__(self, filename):
+        obj = super(BaseExposureMetadocFactory, self).__call__(filename)
+        obj.factories = self.factories
+        return obj
+
 
 class ExposurePMR1DocumentFactory(BaseExposureDocumentFactory):
 
@@ -95,10 +115,16 @@ class ExposureCodeDocumentFactory(BaseExposureDocumentFactory):
     transform = u'pmr2_processor_cellmlapi_cellml2c'
 
 
-class ExposurePMR1MetadocFactory(BaseExposureDocumentFactory):
+class ExposurePMR1MetadocFactory(BaseExposureMetadocFactory):
 
     zope.interface.implements(IExposureMetadocFactory)
 
     klass = u'ExposurePMR1Metadoc'
     description = u'PMR1 Style Exposure'
     suffix = u'.index.html'
+    factories = [
+        u'ExposurePMR1DocumentFactory',
+        u'ExposureMathDocumentFactory',
+        u'ExposureCmetaDocumentFactory',
+        u'ExposureCodeDocumentFactory',
+    ]

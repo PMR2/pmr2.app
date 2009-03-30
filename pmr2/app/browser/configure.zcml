@@ -186,6 +186,13 @@
 
   <browser:page
       for="pmr2.app.content.ExposureCodeDocument"
+      name="exposure_document_view"
+      class=".exposure.ExposureCodeWrapperView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureCodeDocument"
       name="raw_code"
       class=".exposure.ExposureRawCodeView"
       permission="zope2.View"
