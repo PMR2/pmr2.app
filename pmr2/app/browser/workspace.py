@@ -496,7 +496,15 @@ class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
         self.request.response.setHeader('Content-Length', len(data))
 
         return data
-                
+
+
+class WorkspaceRawfileXmlBasePCEnvView(WorkspaceRawfileXmlBaseView):
+
+    def find_type(self):
+        # XXX we are not doing this for every single type, alternate
+        # solution will be done.
+        return 'application/x-pcenv-cellml+xml'
+
 
 class CreateForm(z3c.form.form.Form):
 

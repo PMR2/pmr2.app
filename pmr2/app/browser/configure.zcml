@@ -7,6 +7,37 @@
 
   <!-- PMR2 Root -->
 
+  <!-- PMR2 specific Zope 3 browser layer -->
+
+  <!-- 
+    Ideally we want to limit the scope of our styles and images, but
+    Either I am doing something wrong, missing something somewhere, or
+    the documentation to make this work was incomplete.  I spent more
+    than enough hours on this, and in the interest of sanity and time
+    I will comment this out.
+
+    When this is fixed, <browser:resourceDirectory/> will need this
+    attribute:
+
+      layer=".interfaces.IThemeSpecific"
+
+  <interface
+      interface=".interfaces.IThemeSpecific"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
+      name="Physiome Model Repository 2"
+      />
+
+  <browser:layer name="pmr2.app.layer" />
+
+  <browser:skin
+      name="PMR2Layer"
+      layers=".interfaces.IThemeSpecific"
+      />
+
+  -->
+
+  <!-- pages -->
+
   <browser:page
       for="Products.CMFPlone.Portal.PloneSite"
       name="repository_add_form"
@@ -99,6 +130,14 @@
       for="pmr2.app.content.Workspace"
       name="xmlbase"
       class=".workspace.WorkspaceRawfileXmlBaseView"
+      permission="zope2.View"
+      />
+
+  <!-- XXX we are not doing this for every single custom mime type -->
+  <browser:page
+      for="pmr2.app.content.Workspace"
+      name="pcenv"
+      class=".workspace.WorkspaceRawfileXmlBasePCEnvView"
       permission="zope2.View"
       />
 
@@ -294,6 +333,20 @@
       name="addPMR2Search"
       factory=".support.PMR2SearchAddForm"
       provides="z3c.form.interfaces.IAddForm"
+      />
+
+  <!-- 
+    Resource declarations.
+  -->
+
+  <browser:resourceDirectory
+      name="pmr2.app.images"
+      directory="images"
+      />
+
+  <browser:resourceDirectory
+      name="pmr2.app.stylesheets"
+      directory="stylesheets"
       />
 
 </configure>

@@ -143,6 +143,29 @@ class Exposure(ATFolder, TraversalCatchAll):
     def get_exposure_workspace(self):
         return self.workspace
 
+    security.declareProtected(View, 'resolve_path')
+    def resolve_path(self, filepath, view=None, validate=True):
+        if not view:
+            # XXX magic?
+            view = '@@rawfile'
+
+        if validate:
+            storage = self.get_storage()
+            try:
+                test = storage.fileinfo(self.commit_id, filepath).next()
+            except:  # PathNotFound
+                return None
+
+        result = '/'.join([
+            self.get_pmr2_container().absolute_url(),
+            'workspace',  # XXX magic!  should have method to return url
+            self.workspace,
+            view,
+            self.commit_id,
+            filepath,
+        ])
+        return result
+
 
 class ExposureDocument(ATDocument):  #, TraversalCatchAll):
     """\
@@ -249,11 +272,15 @@ class ExposureCmetaDocument(ExposureDocument):
         self.keywords = metadata.get_keywords()
 
     def citation_authors_string(self):
-        middle = '</li>\n<li>'.join(
+        if not self.citation_authors:
+            return u''
+        middle = u'</li>\n<li>'.join(
             ['%s, %s %s' % i for i in self.citation_authors])
-        return '<ul>\n<li>%s</li>\n</ul>' % middle
+        return u'<ul>\n<li>%s</li>\n</ul>' % middle
 
     def citation_id_html(self):
+        if not self.citation_id:
+            return u''
         http = pmr2.app.util.infouri2http(self.citation_id)
         if http:
             return '<a href="%s">%s</a>' % (http, self.citation_id)
@@ -327,3 +354,46 @@ class ExposurePMR1Metadoc(BrowserDefaultMixin, BaseContent):
                 self.title = obj.citation_title
 
         self.subdocument = subdoc
+
+    def get_documentation(self):
+        lookup = dict(zip(self.factories, self.subdocument))
+        id = lookup[u'ExposurePMR1DocumentFactory']
+        return self.aq_parent[id].getText()
+
+    def get_pmr1_curation(self):
+        pairs = (
+            ('pmr_curation_star', u'Curation Status:'),
+            ('pmr_pcenv_star', u'PCEnv:'),
+            ('pmr_jsim_star', u'JSim:'),
+            ('pmr_cor_star', u'COR:'),
+        )
+        curation = self.aq_parent.curation
+        result = []
+        for key, label in pairs:
+            if key not in curation:
+                continue
+            result.append({
+                'label': label,
+                'stars': curation[key],
+            })
+        return result
+
+    def get_file_access_uris(self):
+        result = []
+        download_uri = self.aq_parent.resolve_path(self.origin)
+        if download_uri:
+            result.append({'label': u'Download', 'href': download_uri})
+
+        run_uri = self.aq_parent.resolve_path(
+            self.origin, '@@pcenv', False)  # validated above.
+        result.append({'label': u'Solve using PCEnv', 'href': run_uri})
+
+        # since session files were renamed into predictable patterns, we 
+        # can guess here.
+        session_path = os.path.splitext(self.origin)[0] + '.session.xml'
+
+        manifest = self.aq_parent.get_manifest()
+        s_uri = self.aq_parent.resolve_path(session_path, '@@pcenv')
+        if s_uri:
+            result.append({'label': u'Solve using Session File', 'href': s_uri})
+        return result

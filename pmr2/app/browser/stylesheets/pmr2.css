@@ -1,0 +1,36 @@
+/* some basic styles for PMR2 */
+#pmr1_ex_header dl {
+  width: 48%
+}
+
+#pmr1_ex_header ul {
+  margin: 0;
+  padding: 0;
+}
+
+#pmr1_ex_header li {
+  display: block;
+  clear: both;
+}
+
+#pmr1_curation {
+  float: left; 
+}
+
+#pmr1_curation span {
+  clear: both;
+  display: block;
+  float: left;
+  line-height: 20px;
+  width: 150px;
+}
+
+#pmr1_curation img {
+  vertical-align: middle;
+  float: left;
+}
+
+#pmr1_download {
+  float: right; 
+  line-height: 20px;
+}

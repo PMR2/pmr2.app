@@ -43,7 +43,9 @@ class BaseDocumentFactory(object):
     """
 
     def __call__(self, filename):
-        import pmr2.app.content  # sup?
+        # XXX this needs to use adapters and such to load the class
+
+        import pmr2.app.content
         klass = getattr(pmr2.app.content, self.klass)
         # XXX identifier has to be normal str
         name = str(filename + self.suffix)

@@ -142,17 +142,10 @@ class ExposureFolderListing(
         return '/'.join(self.request['request_subpath'])
 
     def redirect_to_file(self, filepath):
-        if self.fileinfo is None:
+        redir_uri = self.context.resolve_path(filepath)
+        if redir_uri is None:
             raise NotFound(self.context, filepath, self.request)
-        redir_to = '/'.join([
-            self.context.get_pmr2_container().absolute_url(),
-            'workspace',  # XXX magic!  should have method to return url
-            self.context.workspace,
-            '@@rawfile',
-            self.context.commit_id,
-            filepath,
-        ])
-        return self.request.response.redirect(redir_to)
+        return self.request.response.redirect(redir_uri)
 
 
 class ExposureDocumentView(page.TraversePage):
@@ -227,10 +220,7 @@ class ExposureCmetaDocument(page.TraversePage):
     def __call__(self, *args, **kwargs):
         return self.filetemplate()
 
-ExposureCmetaDocumentView = layout.wrap_form(
-    ExposureCmetaDocument,
-    __wrapper_class=page.BorderedTraverseFormWrapper,
-)
+ExposureCmetaDocumentView = layout.wrap_form(ExposureCmetaDocument)
 
 
 class ExposurePMR1Metadoc(page.TraversePage):
@@ -245,7 +235,8 @@ class ExposurePMR1Metadoc(page.TraversePage):
     def __call__(self, *args, **kwargs):
         return self.filetemplate()
 
-ExposurePMR1MetadocView = layout.wrap_form(
-    ExposurePMR1Metadoc,
-    __wrapper_class=page.BorderedTraverseFormWrapper,
-)
+    def portal_url(self):
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        return portal.absolute_url()
+
+ExposurePMR1MetadocView = layout.wrap_form(ExposurePMR1Metadoc)
