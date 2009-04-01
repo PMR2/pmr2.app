@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="pmr2.app">
+
+  <genericsetup:registerProfile
+      name="default"
+      title="Physiome Model Repository 2"
+      directory="profiles/default"
+      description="Repository software for the management of models using both Plone workflows and revision control system."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      />
+
+</configure>

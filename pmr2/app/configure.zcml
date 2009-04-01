@@ -2,7 +2,6 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:five="http://namespaces.zope.org/five"
-    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="pmr2.app">
 
   <five:registerPackage package="." initialize=".initialize" />
@@ -16,14 +15,6 @@
   <include file="content.zcml" />
   <include file="converter.zcml" />
   <include file="subscriber.zcml" />
-
-  <genericsetup:registerProfile
-      name="default"
-      title="Physiome Model Repository 2"
-      directory="profiles/default"
-      description="Repository software for the management of models using both Plone workflows and revision control system."
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      />
+  <include file="profiles.zcml" />
 
 </configure>
