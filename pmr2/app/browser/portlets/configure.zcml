@@ -1,0 +1,26 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="pmr2.app">
+
+  <include package="plone.app.portlets" />
+
+  <plone:portlet
+      name="portlets.SubPMR1"
+      interface=".subpmr1.ISubPMR1Portlet"
+      assignment=".subpmr1.Assignment"
+      renderer=".subpmr1.Renderer"
+      addview=".subpmr1.AddForm"
+      editview=".subpmr1.EditForm"
+      />
+
+  <!--
+  <plone:portletRenderer
+      portlet=".subpmr1.ISubPMR1Portlet"
+      layer=".interfaces.IThemeSpecific"
+      for="pmr2.app.interfaces.IExposurePMR1Metadoc"
+      />
+  -->
+
+</configure>

@@ -30,7 +30,7 @@
           ><a 
             tal:attributes="href i/href"
             tal:content="i/label"
-          /></li>
+          ></a></li>
       </ul>
     </dd>
   </dl>
@@ -41,5 +41,5 @@
 
 <h4>Documentation</h4>
 <div>
-<div tal:replace="structure context/get_documentation"/>
+  <div tal:replace="structure context/get_documentation"/>
 </div>

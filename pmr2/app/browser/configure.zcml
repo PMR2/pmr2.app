@@ -4,6 +4,7 @@
     i18n_domain="pmr2.app">
 
   <include package="pmr2.app.security" />
+  <include package=".portlets" />
 
   <!-- PMR2 Root -->
 

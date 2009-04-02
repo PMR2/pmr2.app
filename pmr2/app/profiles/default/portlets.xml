@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<portlets>
+
+ <portlet 
+   addview="portlets.SubPMR1"
+   title="PMR1 Metadoc Subdocuments"
+   description="A portlet which renders a listing subdocuments for a PMR1 document.">
+   <for interface="plone.app.portlets.interfaces.IColumn" />
+   <for interface="pmr2.app.interfaces.IExposurePMR1Metadoc" />
+ </portlet>
+
+</portlets>
