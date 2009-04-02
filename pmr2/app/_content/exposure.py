@@ -176,6 +176,7 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
 
     origin = fieldproperty.FieldProperty(IExposureDocument['origin'])
     transform = fieldproperty.FieldProperty(IExposureDocument['transform'])
+    metadoc = fieldproperty.FieldProperty(IExposureDocument['metadoc'])
 
     def _convert(self):
         # this grabs contents of file from workspace (hg)
@@ -198,6 +199,41 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
     def get_exposure_workspace(self):
         # XXX hack to make this not indexed by curation index
         return []
+
+    def get_subdocument_structure(self):
+        parent = self.aq_inner.aq_parent
+        if self.metadoc and self.metadoc in parent:
+            metadoc = parent[self.metadoc]
+            docstruct = metadoc.get_subdocument_structure()
+            return docstruct
+
+
+class ExposureMetadoc(BrowserDefaultMixin, BaseContent):
+
+    interface.implements(IExposureMetadoc)
+
+    origin = fieldproperty.FieldProperty(IExposureMetadoc['origin'])
+    factories = fieldproperty.FieldProperty(IExposureMetadoc['factories'])
+
+    def get_subdocument_structure(self):
+        result = {}
+        subdocs = []
+        # XXX following is naive code
+        parent = self.aq_inner.aq_parent
+        for id_ in self.subdocument:
+            if id_ not in parent:
+                # Something wrong.
+                continue
+            subdocs.append({
+                'id': id_,
+                'label': parent[id_].title,
+                'href': parent[id_].absolute_url(),
+            })
+        result['id'] = self.id
+        result['title'] = self.title
+        result['subdocs'] = subdocs
+        return result
+
 
 
 class ExposureMathDocument(ExposureDocument):
@@ -324,16 +360,11 @@ class ExposureCodeDocument(ExposureDocument):
         self.setText('<pre><code>%s</code></pre>' % self.raw_code)
 
 
-class ExposurePMR1Metadoc(BrowserDefaultMixin, BaseContent):
+class ExposurePMR1Metadoc(ExposureMetadoc):
     """\
     Exposure meta document that will generate all related PMR1 views
     for an exposure.
     """
-
-    interface.implements(IExposurePMR1Metadoc)
-
-    origin = fieldproperty.FieldProperty(IExposurePMR1Metadoc['origin'])
-    factories = fieldproperty.FieldProperty(IExposurePMR1Metadoc['factories'])
 
     def generate_content(self):
         parent = self.aq_parent
@@ -345,6 +376,10 @@ class ExposurePMR1Metadoc(BrowserDefaultMixin, BaseContent):
             parent[obj.id] = obj
             obj = parent[obj.id]
             obj.generate_content()
+
+            # give object reference to this metadoc
+            obj.metadoc = unicode(self.id)
+
             obj.notifyWorkflowCreated()
             obj.reindexObject()
             subdoc.append(obj.id)
