@@ -45,6 +45,7 @@ class Renderer(base.Renderer):
 
         if self.available:
             struct = self.context.get_subdocument_structure()
+            self.root_url = struct['root_url']
             self._title = struct['title']
             self._subdocs = struct['subdocs']
         

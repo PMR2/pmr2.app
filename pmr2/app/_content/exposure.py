@@ -231,6 +231,7 @@ class ExposureMetadoc(BrowserDefaultMixin, BaseContent):
             })
         result['id'] = self.id
         result['title'] = self.title
+        result['root_url'] = self.absolute_url()
         result['subdocs'] = subdocs
         return result
 

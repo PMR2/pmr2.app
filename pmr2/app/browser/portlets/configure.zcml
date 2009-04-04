@@ -15,6 +15,24 @@
       editview=".subpmr1.EditForm"
       />
 
+  <plone:portlet
+      name="portlets.ExposureNav"
+      interface=".ExposureNav.IExposureNavPortlet"
+      assignment=".ExposureNav.Assignment"
+      renderer=".ExposureNav.Renderer"
+      addview=".ExposureNav.AddForm"
+      editview=".ExposureNav.EditForm"
+      />
+
+  <plone:portlet
+      name="portlets.ExposureMetadocNav"
+      interface=".ExposureMetadocNav.IExposureMetadocNavPortlet"
+      assignment=".ExposureMetadocNav.Assignment"
+      renderer=".ExposureMetadocNav.Renderer"
+      addview=".ExposureMetadocNav.AddForm"
+      editview=".ExposureMetadocNav.EditForm"
+      />
+
   <!--
   <plone:portletRenderer
       portlet=".subpmr1.ISubPMR1Portlet"

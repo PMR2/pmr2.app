@@ -34,3 +34,8 @@
   float: right; 
   line-height: 20px;
 }
+
+.exposure-nav {
+  max-height: 25em;
+  overflow: auto;
+}

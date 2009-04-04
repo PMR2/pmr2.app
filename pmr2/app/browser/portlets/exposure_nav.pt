@@ -4,19 +4,19 @@
     <dt class="portletHeader">
         <span class="portletTopLeft"></span>
        <a href="#" 
-           class="tile"
+           class="title"
            tal:condition="view/title"
            tal:attributes="href string:${view/root_url}"
            tal:content="view/title">Navigation</a>
         <span class="portletTopRight"></span>
     </dt>
 
-    <dd class="portletItem lastItem">
+    <dd class="exposure-nav portletItem lastItem">
         <ul class="navTree navTreeLevel0">
-            <li tal:repeat="i view/subdocument"
+            <li tal:repeat="i view/results"
               ><a 
-                tal:attributes="href i/href"
-                tal:content="i/label"
+                tal:attributes="href i/getURL"
+                tal:content="i/Title"
             ></a></li>
         </ul>
         <span class="portletBottomLeft"></span>
