@@ -410,7 +410,7 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
                 continue
             result.append({
                 'label': label,
-                'stars': curation[key],
+                'stars': curation[key][0],  # first item or character
             })
         return result
 
@@ -433,3 +433,6 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
         if s_uri:
             result.append({'label': u'Solve using Session File', 'href': s_uri})
         return result
+
+    def workspace_uri(self):
+        return self.aq_parent.resolve_path('', '@@file', False)

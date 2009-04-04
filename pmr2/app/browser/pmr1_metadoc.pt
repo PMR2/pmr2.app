@@ -1,7 +1,6 @@
-<h4>Curation Information</h4>
+<h4>General Information</h4>
 
 <div id="pmr1_ex_header">
-
   <dl id="pmr1_curation">
     <dt>PMR1 Curation</dt>
     <dd>
@@ -34,10 +33,20 @@
       </ul>
     </dd>
   </dl>
-  
+
 </div>
 
 <div class="visualClear"><!-- --></div>
+  
+<div>
+  <dl>
+    <dt>Derived from:</dt>
+    <dd><a 
+      tal:attributes="href context/workspace_uri"
+      tal:content="context/workspace_uri"
+    >test</a>
+  </dl>
+</div>
 
 <h4>Documentation</h4>
 <div>
