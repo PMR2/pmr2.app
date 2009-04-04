@@ -42,9 +42,10 @@
   <permission value="Modify portal content"/>
  </action>
 
- <action title="Generate Documentation" action_id="docgen" category="object" 
+ <action title="Generate Documentation" action_id="metadocgen" 
+    category="object" 
     condition_expr="python:'index_html' not in object"
-    url_expr="string:${object_url}/@@docgen" visible="True"
+    url_expr="string:${object_url}/@@metadocgen" visible="True"
     i18n:attributes="title">
   <permission value="Modify portal content"/>
  </action>

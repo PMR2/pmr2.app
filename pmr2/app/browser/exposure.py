@@ -98,6 +98,8 @@ class ExposureMetadocGenForm(form.AddForm):
     # metadata and citation.
 
     fields = z3c.form.field.Fields(IExposureMetadocGen)
+    notice = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+        'metadoc_notice.pt')
 
     def create(self, data):
         # XXX could update parent item to contain/render this info
@@ -112,6 +114,9 @@ class ExposureMetadocGenForm(form.AddForm):
 
     def add_data(self, ctxobj):
         ctxobj.generate_content()
+
+    def __call__(self):
+        return self.notice() + super(ExposureMetadocGenForm, self).__call__()
 
     # XXX this needs to create a Plone Document with the files.
 

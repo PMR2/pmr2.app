@@ -1,0 +1,5 @@
+<p>
+  If you need to generate individual exposure pages, please use <a href=""
+      tal:attributes="href string:${context/absolute_url}/@@docgen"
+      tal:content="string:this form"></a>.
+</p>

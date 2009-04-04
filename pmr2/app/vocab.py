@@ -29,7 +29,8 @@ class ManifestListVocab(SimpleVocabulary):
 
     def __init__(self, context):
         self.context = context
-        values = self.context.get_manifest()
+        values = self.context.get_manifest().keys()
+        values.sort()
         terms = [SimpleTerm(i, i) for i in values]
         super(ManifestListVocab, self).__init__(terms)
 
