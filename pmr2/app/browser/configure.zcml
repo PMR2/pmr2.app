@@ -53,6 +53,13 @@
       permission="pmr2.app.security.ManagePMR2"
       />
 
+  <browser:page
+      for="pmr2.app.content.PMR2"
+      name="root_folder_listing"
+      class=".root.RootFolderListing"
+      permission="zope2.View"
+      />
+
   <!-- Workspace Container -->
 
   <browser:page

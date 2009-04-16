@@ -1,15 +1,22 @@
+import re
+
 import zope.component
+from zope.publisher.interfaces import NotFound
+import zope.app.pagetemplate.viewpagetemplatefile
 
 import z3c.form.field
 import z3c.form.form
 
-from plone.app.z3cform import layout
+from plone.z3cform import layout
+
+from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
 
 import form
 import exposure
+import page
 import widget
 
 
@@ -65,3 +72,67 @@ def add_container(context, clsobj):
     obj.notifyWorkflowCreated()
     obj.reindexObject()
     return obj
+
+re_clean_name = re.compile('_version[0-9]{2}(.*)$')
+
+# also need an exposure_folder_listing that mimics the one below.
+
+
+class RootFolderListing(layout.FormWrapper):
+    """
+    A hook for handling PMR1 uris.
+    """
+
+    form_instance = \
+        zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+            'migrated.pt')
+
+    def __call__(self):
+
+        if 'request_subpath' not in self.request:
+            # since path is empty, we do default things.
+            return self.context.folder_listing()
+
+        oid = self.request['request_subpath'][0]
+        trail = self.request['request_subpath'][1:]
+        o = zope.component.queryAdapter(self.context, name='PMRImportMap')
+        if not o or oid not in o.pmrimport_map:
+            # adapter has no import map, or id requested is not in
+            # the import map we don't know what to do with the extra 
+            # bit, so not found is raised.
+            raise NotFound(self.context, filepath, self.request)
+        
+        info = o.pmrimport_map[oid]
+        self.workspace = info[0]
+        self.rev = info[1]
+        self.oid = oid
+
+        if trail and trail[0] in ['download', 'pmr_model']:
+            # we redirect to the original CellML file that should now
+            # be in a workspace.
+            fn = re_clean_name.sub('\\1.cellml', oid)
+            uri = '/'.join([
+                self.context.absolute_url(), 
+                'workspace', 
+                self.workspace,
+                '@@rawfile',
+                self.rev,
+                fn,
+            ])
+            return self.request.response.redirect(uri)
+        else:
+            self.workspace_uri = '/'.join([
+                self.context.absolute_url(), 
+                'workspace', 
+                self.workspace,
+                '@@file',
+                self.rev,
+            ])
+            # search
+            catalog = getToolByName(self.context, 'portal_catalog')
+            self.related_exposures = catalog(
+                pmr2_exposure_workspace=self.workspace)
+            return super(RootFolderListing, self).__call__()
+
+    def label(self):
+        return u'Model has been moved.'

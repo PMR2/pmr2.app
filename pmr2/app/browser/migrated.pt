@@ -1,0 +1,35 @@
+<p>
+  The requested URI was part of the former model repository, but due to
+  software upgrade, the data has been moved.
+</p>
+
+<p>
+  The requested model is: <span tal:replace="view/oid"/>.  You may find
+  the original model with associated diagrams and data at: <a href="" 
+    tal:attributes="href view/workspace_uri" 
+    tal:content="view/workspace_uri"></a>.
+</p>
+
+<tal:if tal:condition="view/related_exposures">
+  <p>
+    If you were interested in a presentational page (called Exposure page 
+    in this repository software), below is a list of generated pages 
+    related to this model.  Please select one.
+  </p>
+
+  <ul>
+    <li tal:repeat="i view/related_exposures">
+      <a tal:attributes="href i/getPath"
+         tal:content="i/Title"></a>
+    </li>
+  </ul>
+</tal:if>
+
+<tal:if tal:condition="not:view/related_exposures">
+  <p>
+    If you were looking for a presentational page much like the ones
+    seen in the previous repository, unfortunately one has not been
+    re-generated for this model, or it cannot be found.  Please check
+    by later.
+  </p>
+</tal:if>
