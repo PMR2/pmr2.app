@@ -103,7 +103,9 @@ class RootFolderListing(layout.FormWrapper):
             raise NotFound(self.context, oid, self.request)
         
         info = o.pmrimport_map[oid]
-        self.workspace = info[0]
+        # have to compute value of workspace from requested id as it is
+        # not saved.
+        self.workspace = oid[:oid.find('_version')]
         self.rev = info[1]
         self.oid = oid
 
