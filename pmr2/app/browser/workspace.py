@@ -13,7 +13,7 @@ import z3c.form.field
 import z3c.form.form
 import z3c.form.value
 
-from plone.app.z3cform import layout
+from plone.z3cform import layout
 from Products.CMFCore.utils import getToolByName
 
 import pmr2.mercurial.exceptions

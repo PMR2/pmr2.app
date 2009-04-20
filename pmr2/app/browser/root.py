@@ -100,7 +100,7 @@ class RootFolderListing(layout.FormWrapper):
             # adapter has no import map, or id requested is not in
             # the import map we don't know what to do with the extra 
             # bit, so not found is raised.
-            raise NotFound(self.context, filepath, self.request)
+            raise NotFound(self.context, oid, self.request)
         
         info = o.pmrimport_map[oid]
         self.workspace = info[0]
@@ -132,6 +132,8 @@ class RootFolderListing(layout.FormWrapper):
             catalog = getToolByName(self.context, 'portal_catalog')
             self.related_exposures = catalog(
                 pmr2_exposure_workspace=self.workspace)
+            # no border in this case.
+            self.request['disable_border'] = True
             return super(RootFolderListing, self).__call__()
 
     def label(self):

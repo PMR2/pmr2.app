@@ -4,7 +4,7 @@ from zope.publisher.interfaces import NotFound
 import z3c.form.field
 import z3c.form.form
 
-from plone.app.z3cform import layout
+from plone.z3cform import layout
 
 from pmr2.app.interfaces import IPMR2Search, IPMR2SearchAdd
 from pmr2.app.content import PMR2Search

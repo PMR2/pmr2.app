@@ -109,6 +109,8 @@
   </permission-map>
   <permission-map name="Modify portal content"
                   acquired="False">
+   <permission-role>Manager</permission-role>
+   <permission-role>Owner</permission-role>
   </permission-map>
   <permission-map name="Add portal content"
                   acquired="False">
@@ -120,6 +122,8 @@
    <permission-role>Anonymous</permission-role>
   </permission-map>
   <permission-map name="Manage PMR2" acquired="False">
+   <permission-role>Manager</permission-role>
+   <permission-role>Owner</permission-role>
   </permission-map>
   <permission-map name="Curate Exposure" acquired="False">
    <permission-role>Reviewer</permission-role>

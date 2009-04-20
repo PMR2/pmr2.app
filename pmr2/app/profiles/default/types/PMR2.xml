@@ -36,12 +36,6 @@
   <permission value="View"/>
  </action>
 
- <action title="Contents" action_id="root_folder_listing" category="object" 
-    condition_expr=""
-    url_expr="string:${folder_url}/" visible="True" i18n:attributes="title">
-  <permission value="View"/>
- </action>
-
  <action title="Edit" action_id="edit" category="object" condition_expr="not:object/@@plone_lock_info/is_locked_for_current_user|python:True"
     url_expr="string:${object_url}/edit" visible="True"
     i18n:attributes="title">

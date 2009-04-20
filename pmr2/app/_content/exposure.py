@@ -404,6 +404,8 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
             ('pmr_cor_star', u'COR:'),
         )
         curation = self.aq_parent.curation
+        if not curation:
+            return []
         result = []
         for key, label in pairs:
             if key not in curation:

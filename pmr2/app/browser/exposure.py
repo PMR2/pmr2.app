@@ -5,7 +5,7 @@ import zope.component
 import zope.app.pagetemplate.viewpagetemplatefile
 from zope.publisher.interfaces import IPublishTraverse, NotFound
 import z3c.form.field
-from plone.app.z3cform import layout
+from plone.z3cform import layout
 
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
@@ -113,6 +113,8 @@ class ExposureMetadocGenForm(form.AddForm):
         return result
 
     def add_data(self, ctxobj):
+        if self.context.getDefaultPage() is None:
+            self.context.setDefaultPage(self._name)
         ctxobj.generate_content()
 
     def __call__(self):
