@@ -127,18 +127,14 @@ ExposureMetadocGenFormView = layout.wrap_form(ExposureMetadocGenForm, label="Exp
 
 # also need an exposure_folder_listing that mimics the one below.
 
-class ExposureFolderListing(
+class ExposureTraversalPage(
     page.TraversePage,
     mixin.PMR2MercurialPropertyMixin,
 ):
-
-    def __call__(self, *args, **kwargs):
-        if 'request_subpath' in self.request:
-            filepath = '/'.join(self.request['request_subpath'])
-            return self.redirect_to_file(filepath)
-        else:
-            # directly calling the intended python script.
-            return self.context.folder_listing()
+    """\
+    Since any exposure page can become the root for whatever reason, we
+    need to implement this in all methods.
+    """
 
     @property
     def rev(self):
@@ -154,34 +150,45 @@ class ExposureFolderListing(
             raise NotFound(self.context, filepath, self.request)
         return self.request.response.redirect(redir_uri)
 
-
-class ExposureDocumentView(page.TraversePage):
+    def render(self):
+        raise NotImplementedError
 
     def __call__(self, *args, **kwargs):
         if 'request_subpath' in self.request:
-            print 'doc: %s' % self.request['request_subpath']
-            #import pdb;pdb.set_trace()
-        else:
-            # directly calling the intended python script.
-            return self.context.document_view()
+            filepath = '/'.join(self.request['request_subpath'])
+            return self.redirect_to_file(filepath)
+        return self.render()
 
 
-class ExposureMathMLView(page.SimplePage):
+class ExposureFolderListing(ExposureTraversalPage):
+
+    def render(self):
+        # directly calling the intended python script.
+        return self.context.folder_listing()
+
+
+class ExposureDocumentView(ExposureTraversalPage):
+
+    def render(self):
+        return self.context.document_view()
+
+
+class ExposureMathMLView(ExposureTraversalPage):
     """\
     Returns the MathML
     """
 
-    def __call__(self, *args, **kwargs):
+    def render(self):
         self.request.response.setHeader('Content-Type', 'text/xml')
         return self.context.mathml
 
 
-class ExposureMathMLWrapper(page.SimplePage):
+class ExposureMathMLWrapper(ExposureTraversalPage):
     """\
     Wraps an object around the mathml view.
     """
 
-    def __call__(self, *args, **kwargs):
+    def render(self):
         # XXX magic string
         return '<object style="width: 100%%;height:25em;" data="%s/@@view_mathml"></object>' % self.context.absolute_url()
         # XXX FIXME XSS flaw!  disabled until a better way to allow
@@ -191,56 +198,48 @@ class ExposureMathMLWrapper(page.SimplePage):
 ExposureMathMLWrapperView = layout.wrap_form(ExposureMathMLWrapper)
 
 
-class ExposureRawCodeView(page.SimplePage):
+class ExposureRawCodeView(ExposureTraversalPage):
     """\
     Returns the raw code.
     """
 
-    def __call__(self, *args, **kwargs):
+    def render(self):
         self.request.response.setHeader('Content-Type', 'text/plain')
         self.request.response.setHeader('Content-Disposition', 
             'attachment; filename="%s"' % self.context.getId())
         return self.context.raw_code
 
 
-class ExposureCodeWrapper(page.SimplePage):
+class ExposureCodeWrapper(ExposureTraversalPage):
     """\
     Renders code.  Can't have wicked mangle the double brackets into
     links.
     """
 
-    template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+    render = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
         'code.pt')
 
 ExposureCodeWrapperView = layout.wrap_form(ExposureCodeWrapper)
 
 
-class ExposureCmetaDocument(page.TraversePage):
+class ExposureCmetaDocument(ExposureTraversalPage):
     """\
     Wraps an object around the mathml view.
     """
 
-    filetemplate = \
-        zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+    render = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
         'cmeta.pt')
-
-    def __call__(self, *args, **kwargs):
-        return self.filetemplate()
 
 ExposureCmetaDocumentView = layout.wrap_form(ExposureCmetaDocument)
 
 
-class ExposurePMR1Metadoc(page.TraversePage):
+class ExposurePMR1Metadoc(ExposureTraversalPage):
     """\
     Wraps an object around the mathml view.
     """
 
-    filetemplate = \
-        zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+    render = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
         'pmr1_metadoc.pt')
-
-    def __call__(self, *args, **kwargs):
-        return self.filetemplate()
 
     def portal_url(self):
         portal = getToolByName(self.context, 'portal_url').getPortalObject()

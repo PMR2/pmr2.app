@@ -6,12 +6,14 @@ Before we get started, we need to import the required classes and set up
 the test environment.  Temporary directories are needed also.
 ::
 
+    >>> from zope import interface
+    >>> from plone.z3cform.tests import setup_defaults
     >>> from pmr2.app.browser import workspace, exposure
     >>> from pmr2.app.tests.base import TestRequest
-    >>> from plone.z3cform.tests import setup_defaults
+    >>> from pmr2.app.content import *
+    >>> from pmr2.app.interfaces import *
     >>> setup_defaults()
     >>> request = TestRequest()
-    >>> from pmr2.app.content import *
     >>> self.folder['repo'] = PMR2('repo')
     >>> self.folder.repo['workspace'] = WorkspaceContainer()
     >>> self.folder.repo.workspace['eggs'] = Workspace('eggs')
@@ -50,3 +52,81 @@ Exposure object is created with fields properly populated.
 
     >>> self.folder.repo.exposure[oid].title
     u'Delicious Eggs'
+
+=======================
+Exposure Traversal Page
+=======================
+
+Files within the workspace may link to other resources within it using 
+relative links, with those links being incorporated into the resulting 
+exposure pages, those links will become broken within Plone as they will
+not exist in there.  Since creating every object within Plone is not
+practical as they can be found from the workspace object, we redirect
+requests to those relative links using the path fragments captured using
+the pre-traversal hook in the exposure container object.
+
+Here is an example of how it may work.  We have to mock up some objects
+as we are only demonstrating how this view can work.  This first example
+is the default view, with no request_subpath fragments.
+::
+
+    >>> testpaths = [
+    ...     'test.cellml',
+    ...     'test.png',
+    ...     'folder/testcomp.cellml',
+    ... ]
+    ...
+    >>> class TestExposure(object):
+    ...     interface.implements(IExposure)
+    ...
+    ...     def resolve_path(self, filepath, view=None, validate=True):
+    ...         if filepath not in testpaths:
+    ...             return None
+    ...         return 'workspace/' + filepath
+    ...
+    >>> class TestPage(exposure.ExposureTraversalPage):
+    ...     def render(self):
+    ...         return u'render'
+    ...
+    >>> context = TestExposure()
+    >>> request = TestRequest()
+    >>> view = TestPage(context, request)
+    >>> view()
+    u'render'
+
+Now if the ExposureContainer object has trapped a request_subpath
+fragment, it should do a redirect.
+::
+
+    >>> request = TestRequest(request_subpath=['test.png'])
+    >>> view = TestPage(context, request)
+    >>> view()
+    'workspace/test.png'
+    >>> request.response.getHeader('Location')
+    'workspace/test.png'
+
+If a request_subpath does not resolve to a valid resource, HTTP 404 is
+raised.
+::
+
+    >>> request = TestRequest(request_subpath=['fail.path'])
+    >>> view = TestPage(context, request)
+    >>> view()
+    Traceback (most recent call last):
+    ...
+    NotFound: ...
+
+There are some caveats, it has to do with existing objects:
+
+- Resolved views (@@, ++resource++) and existing objects in Plone have 
+  priority, so those relative links will actually point to those views
+  (note: traversal path is resolved not here, but in context; see
+  pmr2.app.mixin).  This can cause security issues if those views are 
+  not built with security in mind (they should be built to resist CSRF 
+  anyway).
+
+- Folders in Plone will definitely break the subpath resolution as they 
+  prevent ExposureContainer (which implements the mixin class mentioned
+  above) from doing its job.  A customized Folder class will need to be
+  implemented to use that mixin and do its own resolution (or pass that
+  job the ExposureContainer parent).
