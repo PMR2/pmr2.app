@@ -4,6 +4,7 @@ from zope import interface
 from zope.schema import fieldproperty
 from zope.publisher.interfaces import IPublishTraverse
 
+from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
 from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
@@ -21,10 +22,12 @@ class SandboxContainer(ATBTreeFolder):
     """
 
     interface.implements(ISandboxContainer)
+    security = ClassSecurityInfo()
 
     def __init__(self, oid='sandbox', **kwargs):
         super(SandboxContainer, self).__init__(oid, **kwargs)
 
+    security.declareProtected(View, 'get_path')
     def get_path(self):
         """See ISandboxContainer"""
 
@@ -43,10 +46,12 @@ class Sandbox(BrowserDefaultMixin, atapi.BaseContent):
     """
 
     interface.implements(ISandbox)
+    security = ClassSecurityInfo()
 
     description = fieldproperty.FieldProperty(ISandbox['description'])
     status = fieldproperty.FieldProperty(ISandbox['status'])
 
+    security.declareProtected(View, 'get_path')
     def get_path(self):
         """See ISandbox"""
 

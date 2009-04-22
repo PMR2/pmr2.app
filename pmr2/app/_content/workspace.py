@@ -3,8 +3,9 @@ import os.path
 from zope import interface
 from zope.schema import fieldproperty
 
+from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
-
+from Products.CMFCore.permissions import View
 from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.ATContentTypes.content.document import ATDocument
@@ -23,12 +24,14 @@ class WorkspaceContainer(ATBTreeFolder):
     """
 
     interface.implements(IWorkspaceContainer)
+    security = ClassSecurityInfo()
 
     # title is defined by ATFolder
 
     def __init__(self, oid='workspace', **kwargs):
         super(WorkspaceContainer, self).__init__(oid, **kwargs)
 
+    security.declareProtected(View, 'get_path')
     def get_path(self):
         """See IWorkspaceContainer"""
 
@@ -38,6 +41,7 @@ class WorkspaceContainer(ATBTreeFolder):
         # XXX magic string
         return os.path.join(p, 'workspace')
 
+    security.declareProtected(View, 'get_repository_list')
     def get_repository_list(self):
         """\
         Implementation of the accessor from IWorkspaceContainer
@@ -99,9 +103,11 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
     """
 
     interface.implements(IWorkspace)
+    security = ClassSecurityInfo()
 
     description = fieldproperty.FieldProperty(IWorkspace['description'])
 
+    security.declareProtected(View, 'get_path')
     def get_path(self):
         """See IWorkspace"""
 
@@ -111,6 +117,7 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
             return None
         return os.path.join(p, self.id)
 
+    security.declareProtected(View, 'get_log')
     def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None, 
                 maxchanges=None):
         """See IWorkspace"""
@@ -119,12 +126,14 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
         storage = self.get_storage()
         return storage.log(rev, branch, shortlog, datefmt, maxchanges).next()
 
+    security.declareProtected(View, 'get_storage')
     def get_storage(self):
         """See IWorkspace"""
 
         path = self.get_path()
         return pmr2.mercurial.Storage(path)
 
+    security.declareProtected(View, 'get_workspace_container')
     def get_workspace_container(self):
         """\
         returns the workspace container object that stores this.
@@ -134,6 +143,7 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
         result = aq_parent(aq_inner(self))
         return result
 
+    security.declareProtected(View, 'get_pmr2_container')
     def get_pmr2_container(self):
         """\
         returns the root pmr2 object that stores this.

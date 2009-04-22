@@ -11,7 +11,7 @@ from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.ATContentTypes.content.document import ATDocument
 from Products.Archetypes.atapi import BaseContent
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.permissions import View
+from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.PortalTransforms.data import datastream
 
 import pmr2.mercurial
@@ -29,10 +29,12 @@ class ExposureContainer(ATBTreeFolder):
     """
 
     interface.implements(IExposureContainer)
+    security = ClassSecurityInfo()
 
     def __init__(self, oid='exposure', **kwargs):
         super(ExposureContainer, self).__init__(oid, **kwargs)
 
+    security.declareProtected(View, 'get_path')
     def get_path(self):
         # XXX quickie code
         #"""See IWorkspaceContainer"""
@@ -216,6 +218,7 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
     """
 
     interface.implements(IExposureDocument)
+    security = ClassSecurityInfo()
 
     origin = fieldproperty.FieldProperty(IExposureDocument['origin'])
     transform = fieldproperty.FieldProperty(IExposureDocument['transform'])
@@ -229,20 +232,24 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
         pt.convert(self.transform, input, stream)
         return stream.getData()
 
+    security.declareProtected(ModifyPortalContent, 'generate_content')
     def generate_content(self):
         self.setTitle(u'Documentation')
         self.setDescription(u'Generated from %s' % self.origin)
         self.setContentType('text/html')
         self.setText(self._convert())
 
+    security.declareProtected(View, 'get_curation_index')
     def get_curation_index(self):
         # XXX hack to make this not indexed by curation index
         return []
 
+    security.declareProtected(View, 'get_exposure_workspace')
     def get_exposure_workspace(self):
         # XXX hack to make this not indexed by curation index
         return []
 
+    security.declareProtected(View, 'get_subdocument_structure')
     def get_subdocument_structure(self):
         parent = self.aq_inner.aq_parent
         if self.metadoc and self.metadoc in parent:
@@ -254,10 +261,12 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
 class ExposureMetadoc(BrowserDefaultMixin, BaseContent):
 
     interface.implements(IExposureMetadoc)
+    security = ClassSecurityInfo()
 
     origin = fieldproperty.FieldProperty(IExposureMetadoc['origin'])
     factories = fieldproperty.FieldProperty(IExposureMetadoc['factories'])
 
+    security.declareProtected(View, 'get_subdocument_structure')
     def get_subdocument_structure(self):
         result = {}
         subdocs = []
@@ -289,7 +298,9 @@ class ExposureMathDocument(ExposureDocument):
     #origin = fieldproperty.FieldProperty(IExposureMathDocument['origin'])
     #transform = fieldproperty.FieldProperty(IExposureMathDocument['transform'])
     mathml = fieldproperty.FieldProperty(IExposureMathDocument['mathml'])
+    security = ClassSecurityInfo()
 
+    security.declareProtected(ModifyPortalContent, 'generate_content')
     def generate_content(self):
         self.setTitle(u'Mathematics')
         self.setDescription(u'Generated from %s' % self.origin)
@@ -309,6 +320,7 @@ class ExposureCmetaDocument(ExposureDocument):
     # one of the valid document types that can be added.
 
     interface.implements(IExposureCmetaDocument)
+    security = ClassSecurityInfo()
 
     metadata = fieldproperty.FieldProperty(IExposureCmetaDocument['metadata'])
     citation_authors = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_authors'])
@@ -317,6 +329,7 @@ class ExposureCmetaDocument(ExposureDocument):
     citation_id = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_id'])
     keywords = fieldproperty.FieldProperty(IExposureCmetaDocument['keywords'])
 
+    security.declareProtected(ModifyPortalContent, 'generate_content')
     def generate_content(self):
         self.setTitle(u'Model Metadata')
         self.setDescription(u'Generated from %s' % self.origin)
@@ -351,6 +364,7 @@ class ExposureCmetaDocument(ExposureDocument):
         self.citation_authors = authors
         self.keywords = metadata.get_keywords()
 
+    security.declareProtected(View, 'citation_authors_string')
     def citation_authors_string(self):
         if not self.citation_authors:
             return u''
@@ -358,6 +372,7 @@ class ExposureCmetaDocument(ExposureDocument):
             ['%s, %s %s' % i for i in self.citation_authors])
         return u'<ul>\n<li>%s</li>\n</ul>' % middle
 
+    security.declareProtected(View, 'citation_id_html')
     def citation_id_html(self):
         if not self.citation_id:
             return u''
@@ -366,16 +381,19 @@ class ExposureCmetaDocument(ExposureDocument):
             return '<a href="%s">%s</a>' % (http, self.citation_id)
         return self.citation_id
 
+    security.declareProtected(View, 'get_authors_family_index')
     def get_authors_family_index(self):
         if self.citation_authors:
             return [i[0].lower() for i in self.citation_authors]
         else:
             return []
 
+    security.declareProtected(View, 'get_citation_title_index')
     def get_citation_title_index(self):
         if self.citation_title:
             return self.citation_title.lower()
 
+    security.declareProtected(View, 'get_keywords')
     def get_keywords(self):
         if self.keywords:
             # XXX magical replace
@@ -390,9 +408,11 @@ class ExposureCodeDocument(ExposureDocument):
     """
 
     interface.implements(IExposureCodeDocument)
+    security = ClassSecurityInfo()
 
     raw_code = fieldproperty.FieldProperty(IExposureCodeDocument['raw_code'])
 
+    security.declareProtected(ModifyPortalContent, 'generate_content')
     def generate_content(self):
         self.setTitle(u'Procedural Code')
         self.setDescription(u'Generated from %s' % self.origin)
@@ -410,6 +430,9 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
     for an exposure.
     """
 
+    security = ClassSecurityInfo()
+
+    security.declareProtected(ModifyPortalContent, 'generate_content')
     def generate_content(self):
         parent = self.aq_parent
         subdoc = []
@@ -434,11 +457,14 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
 
         self.subdocument = subdoc
 
+    security.declareProtected(View, 'get_documentation')
     def get_documentation(self):
+        # XXX use catalog?
         lookup = dict(zip(self.factories, self.subdocument))
         id = lookup[u'ExposurePMR1DocumentFactory']
         return self.aq_parent[id].getText()
 
+    security.declareProtected(View, 'get_pmr1_curation')
     def get_pmr1_curation(self):
         pairs = (
             ('pmr_curation_star', u'Curation Status:'),
@@ -457,6 +483,7 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
             })
         return result
 
+    security.declareProtected(View, 'get_file_access_uris')
     def get_file_access_uris(self):
         result = []
         download_uri = self.aq_parent.resolve_uri(self.origin)
@@ -477,8 +504,10 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
             result.append({'label': u'Solve using Session File', 'href': s_uri})
         return result
 
+    security.declareProtected(View, 'workspace_manifest_uri')
     def workspace_manifest_uri(self):
         return aq_parent(self).resolve_uri('', '@@file', False)
 
+    security.declareProtected(View, 'workspace_home_uri')
     def workspace_home_uri(self):
         return aq_parent(self).resolve_uri(None)
