@@ -40,11 +40,14 @@
   
 <div>
   <dl>
-    <dt>Derived from:</dt>
-    <dd><a 
-      tal:attributes="href context/workspace_uri"
-      tal:content="context/workspace_uri"
-    >test</a>
+    <dt>Source:</dt>
+    <dd>Derived from workspace <a 
+      tal:attributes="href context/workspace_home_uri"
+      tal:content="context/workspace"
+    >workspace</a> at revision <a 
+      tal:attributes="href context/workspace_manifest_uri"
+      tal:content="context/short_commit_id"
+    >workspace</a>.
   </dl>
 </div>
 

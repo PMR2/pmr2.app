@@ -79,7 +79,7 @@ is the default view, with no request_subpath fragments.
     >>> class TestExposure(object):
     ...     interface.implements(IExposure)
     ...
-    ...     def resolve_path(self, filepath, view=None, validate=True):
+    ...     def resolve_uri(self, filepath, view=None, validate=True):
     ...         if filepath not in testpaths:
     ...             return None
     ...         return 'workspace/' + filepath

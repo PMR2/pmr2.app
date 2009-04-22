@@ -76,7 +76,6 @@ class Exposure(ATFolder, TraversalCatchAll):
     def get_path(self):
         """See IExposure"""
 
-        # aq_inner needed to get out of form wrappers
         p = self.get_parent_container().get_path()  # XXX get_path = quickie
         if not p:
             return None
@@ -113,6 +112,7 @@ class Exposure(ATFolder, TraversalCatchAll):
         returns the container object that stores this.
         """
 
+        # aq_inner needed to get out of form wrappers
         result = aq_parent(aq_inner(self))
         return result
 
@@ -139,32 +139,75 @@ class Exposure(ATFolder, TraversalCatchAll):
                 result.sort()
         return result
 
-    security.declarePublic('get_exposure_workspace')
+    security.declareProtected(View, 'get_exposure_workspace')
     def get_exposure_workspace(self):
         return self.workspace
 
-    security.declareProtected(View, 'resolve_path')
-    def resolve_path(self, filepath, view=None, validate=True):
-        if not view:
-            # XXX magic?
-            view = '@@rawfile'
+    security.declareProtected(View, 'resolve_uri')
+    def resolve_uri(self, filepath=None, view=None, validate=True):
+        """
+        Returns URI to a location within the workspace this exposure is
+        derived from.
 
-        if validate:
-            storage = self.get_storage()
-            try:
-                test = storage.fileinfo(self.commit_id, filepath).next()
-            except:  # PathNotFound
-                return None
+        Parameters:
 
-        result = '/'.join([
+        filepath
+            The path fragment to the desired file.  Examples:
+
+            - 'dir/file' - Link to the file
+                e.g. http://.../workspace/name/@@view/rev/dir/file
+            - '' - Link to the root of the manifest
+                e.g. http://.../workspace/name/@@view/rev/
+            - None - The workspace "homepage"
+
+            Default: None
+
+        view
+            The view to use.  @@file for the file listing, @@rawfile for
+            the raw file (download link).  See browser/configure.zcml 
+            for a listing of views registered for this object.
+
+            Default: None (@@rawfile)
+
+        validate
+            Whether to validate whether filepath exists.
+
+            Default: True
+        """
+
+        # XXX magic!  should have method to return the uri of the 
+        # workspace container.
+        frag = [
             self.get_pmr2_container().absolute_url(),
-            'workspace',  # XXX magic!  should have method to return url
+            'workspace',  
             self.workspace,
-            view,
-            self.commit_id,
-            filepath,
-        ])
+        ]
+
+        if filepath is not None:
+            # we only need to resolve the rest of the path here.
+            if not view:
+                # XXX magic?
+                view = '@@rawfile'
+
+            if validate:
+                storage = self.get_storage()
+                try:
+                    test = storage.fileinfo(self.commit_id, filepath).next()
+                except:  # PathNotFound
+                    return None
+
+            frag.extend([
+                view,
+                self.commit_id,
+                filepath,
+            ])
+
+        result = '/'.join(frag)
         return result
+
+    security.declareProtected(View, 'short_commit_id')
+    def short_commit_id(self):
+        return pmr2.mercurial.utils.filter(self.commit_id, 'short')
 
 
 class ExposureDocument(ATDocument):  #, TraversalCatchAll):
@@ -403,26 +446,24 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
             ('pmr_jsim_star', u'JSim:'),
             ('pmr_cor_star', u'COR:'),
         )
-        curation = self.aq_parent.curation
-        if not curation:
-            return []
+        curation = aq_parent(self).curation or {}
         result = []
         for key, label in pairs:
-            if key not in curation:
-                continue
+            # first item or character
+            stars = key in curation and curation[key][0] or u'0'
             result.append({
                 'label': label,
-                'stars': curation[key][0],  # first item or character
+                'stars': stars,
             })
         return result
 
     def get_file_access_uris(self):
         result = []
-        download_uri = self.aq_parent.resolve_path(self.origin)
+        download_uri = self.aq_parent.resolve_uri(self.origin)
         if download_uri:
             result.append({'label': u'Download', 'href': download_uri})
 
-        run_uri = self.aq_parent.resolve_path(
+        run_uri = self.aq_parent.resolve_uri(
             self.origin, '@@pcenv', False)  # validated above.
         result.append({'label': u'Solve using PCEnv', 'href': run_uri})
 
@@ -431,10 +472,13 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
         session_path = os.path.splitext(self.origin)[0] + '.session.xml'
 
         manifest = self.aq_parent.get_manifest()
-        s_uri = self.aq_parent.resolve_path(session_path, '@@pcenv')
+        s_uri = self.aq_parent.resolve_uri(session_path, '@@pcenv')
         if s_uri:
             result.append({'label': u'Solve using Session File', 'href': s_uri})
         return result
 
-    def workspace_uri(self):
-        return self.aq_parent.resolve_path('', '@@file', False)
+    def workspace_manifest_uri(self):
+        return aq_parent(self).resolve_uri('', '@@file', False)
+
+    def workspace_home_uri(self):
+        return aq_parent(self).resolve_uri(None)

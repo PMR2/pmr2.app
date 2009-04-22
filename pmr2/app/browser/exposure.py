@@ -144,8 +144,8 @@ class ExposureTraversalPage(
     def path(self):
         return '/'.join(self.request['request_subpath'])
 
-    def redirect_to_file(self, filepath):
-        redir_uri = self.context.resolve_path(filepath)
+    def redirect_to_uri(self, filepath):
+        redir_uri = self.context.resolve_uri(filepath)
         if redir_uri is None:
             raise NotFound(self.context, filepath, self.request)
         return self.request.response.redirect(redir_uri)
@@ -156,7 +156,7 @@ class ExposureTraversalPage(
     def __call__(self, *args, **kwargs):
         if 'request_subpath' in self.request:
             filepath = '/'.join(self.request['request_subpath'])
-            return self.redirect_to_file(filepath)
+            return self.redirect_to_uri(filepath)
         return self.render()
 
 
