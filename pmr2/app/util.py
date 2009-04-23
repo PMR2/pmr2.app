@@ -1,5 +1,7 @@
 from lxml import etree
 
+import pmr2.mercurial.utils
+
 CELLML_NSMAP = {
     'tmpdoc': 'http://cellml.org/tmp-documentation',
     'pcenv': 'http://www.cellml.org/tools/pcenv/',
@@ -59,6 +61,7 @@ def fix_pcenv_externalurl(xml, base):
 
 infouri_prefix = {
     'info:pmid': 'http://www.ncbi.nlm.nih.gov/pubmed',
+    'urn:miriam:pubmed': 'http://www.ncbi.nlm.nih.gov/pubmed',
 }
 
 def infouri2http(infouri):
@@ -78,3 +81,7 @@ def obfuscate(input):
     except UnicodeDecodeError:
         text = input
     return ''.join(['&#%d;' % ord(c) for c in text])
+
+def short(input):
+    return pmr2.mercurial.utils.filter(input, 'short')
+
