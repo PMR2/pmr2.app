@@ -6,6 +6,7 @@ from zope.publisher.interfaces import IPublishTraverse
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
+from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.Archetypes import atapi
