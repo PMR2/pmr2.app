@@ -34,7 +34,7 @@ class ExposureContainer(ATBTreeFolder):
     def __init__(self, oid='exposure', **kwargs):
         super(ExposureContainer, self).__init__(oid, **kwargs)
 
-    security.declareProtected(View, 'get_path')
+    security.declarePrivate('get_path')
     def get_path(self):
         # XXX quickie code
         #"""See IWorkspaceContainer"""
@@ -139,19 +139,19 @@ class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
         if result:
             return result[0]
 
-    security.declareProtected(View, 'get_path')
+    security.declarePrivate('get_path')
     def get_path(self):
         """See IExposure"""
 
         return self.get_workspace().get_path()
 
-    security.declareProtected(View, 'get_storage')
+    security.declarePrivate('get_storage')
     def get_storage(self):
         """See IExposure"""
 
         return self.get_workspace().get_storage()
 
-    security.declareProtected(View, 'get_log')
+    security.declarePrivate('get_log')
     def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None):
         """See IExposure"""
 
@@ -163,13 +163,13 @@ class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
         storage = self.get_storage()
         return storage.log(rev, branch, shortlog, datefmt).next()
 
-    security.declareProtected(View, 'get_manifest')
+    security.declarePrivate('get_manifest')
     def get_manifest(self):
         # XXX see above
         storage = self.get_storage()
         return storage.raw_manifest(self.commit_id)
 
-    security.declareProtected(View, 'get_file')
+    security.declarePrivate('get_file')
     def get_file(self, path):
         # XXX see above
         storage = self.get_storage()

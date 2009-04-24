@@ -31,7 +31,7 @@ class WorkspaceContainer(ATBTreeFolder):
     def __init__(self, oid='workspace', **kwargs):
         super(WorkspaceContainer, self).__init__(oid, **kwargs)
 
-    security.declareProtected(View, 'get_path')
+    security.declarePrivate('get_path')
     def get_path(self):
         """See IWorkspaceContainer"""
 
@@ -107,7 +107,7 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
 
     description = fieldproperty.FieldProperty(IWorkspace['description'])
 
-    security.declareProtected(View, 'get_path')
+    security.declarePrivate('get_path')
     def get_path(self):
         """See IWorkspace"""
 
@@ -117,7 +117,7 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
             return None
         return os.path.join(p, self.id)
 
-    security.declareProtected(View, 'get_log')
+    security.declarePrivate('get_log')
     def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None, 
                 maxchanges=None):
         """See IWorkspace"""
@@ -126,7 +126,7 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
         storage = self.get_storage()
         return storage.log(rev, branch, shortlog, datefmt, maxchanges).next()
 
-    security.declareProtected(View, 'get_storage')
+    security.declarePrivate('get_storage')
     def get_storage(self):
         """See IWorkspace"""
 
