@@ -85,3 +85,10 @@ def obfuscate(input):
 def short(input):
     return pmr2.mercurial.utils.filter(input, 'short')
 
+def normal_kw(input):
+    """\
+    Method to normalize keywords so we don't have to deal with cases
+    when searching and allow the usage of spaces to delimit terms.
+    """
+
+    return input.strip().replace(' ', '_').lower()

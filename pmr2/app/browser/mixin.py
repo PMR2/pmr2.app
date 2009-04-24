@@ -45,5 +45,3 @@ class PMR2MercurialPropertyMixin(object):
                 # page?
                 self._fileinfo = None
         return self._fileinfo
-
-

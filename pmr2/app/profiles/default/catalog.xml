@@ -14,11 +14,11 @@
   </index>
 
   <index name="pmr2_keyword" meta_type="KeywordIndex">
-    <indexed_attr value="get_keywords"/>
+    <indexed_attr value="get_keywords_index"/>
   </index>
 
   <index name="pmr2_exposure_workspace" meta_type="KeywordIndex">
-    <indexed_attr value="get_exposure_workspace"/>
+    <indexed_attr value="get_exposure_workspace_index"/>
   </index>
 
   <column value="pmr2_authors_family_name"/>

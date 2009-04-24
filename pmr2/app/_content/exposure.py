@@ -15,12 +15,12 @@ from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.PortalTransforms.data import datastream
 
 import pmr2.mercurial
-import pmr2.mercurial.utils
 
 from pmr2.processor.cmeta import Cmeta
 
 from pmr2.app.interfaces import *
 from pmr2.app.mixin import TraversalCatchAll
+import pmr2.app.util
 
 
 class ExposureContainer(ATBTreeFolder):
@@ -46,7 +46,30 @@ class ExposureContainer(ATBTreeFolder):
         return os.path.join(p, 'workspace')
 
 
-class Exposure(ATFolder, TraversalCatchAll):
+class ExposureContentIndexBase(object):
+    """\
+    Provides default values for the indexes we use for plone catalog.
+    """
+
+    interface.implements(IExposureContentIndex)
+
+    def get_authors_family_index(self):
+        return ()
+
+    def get_citation_title_index(self):
+        return ()
+
+    def get_curation_index(self):
+        return ()
+
+    def get_keywords_index(self):
+        return ()
+
+    def get_exposure_workspace_index(self):
+        return ()
+
+
+class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
     """\
     PMR Exposure object is used to encapsulate a single version of any
     given workspace and will allow more clear presentation to users of
@@ -74,37 +97,81 @@ class Exposure(ATFolder, TraversalCatchAll):
         TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
         ATFolder.__before_publishing_traverse__(self, ob, request)
 
+    security.declareProtected(View, 'get_workspace')
+    def get_workspace(self):
+        """
+        Returns the workspace object this Exposure represents.
+        """
+
+        o = self.query_workspace()
+        if not o:
+            # try manually
+            p = self.get_pmr2_container()
+            if 'workspace' not in p:
+                # XXX this really should be some sort of internal error.
+                raise WorkspaceObjNotFoundError()
+            ws = p['workspace']
+            if self.workspace not in ws:
+                raise WorkspaceObjNotFoundError()
+            return ws['self.workspace']
+        return o.getObject()
+
+    security.declareProtected(View, 'query_workspace')
+    def query_workspace(self):
+        """\
+        Query for the workspace object this Exposure represents using
+        catalog.
+        """
+
+        catalog = getToolByName(self, 'portal_catalog')
+        # XXX path assumption.
+        path = '/'.join(self.getPhysicalPath()[0:-2] + ('workspace',))
+        q = {
+            'id': self.workspace,
+            'path': {
+                'query': path,
+                'depth': 1,
+            }
+        }
+        result = catalog(**q)
+        # there should be only one such id in the workspace for this
+        # unique result.
+        if result:
+            return result[0]
+
     security.declareProtected(View, 'get_path')
     def get_path(self):
         """See IExposure"""
 
-        p = self.get_parent_container().get_path()  # XXX get_path = quickie
-        if not p:
-            return None
-        return os.path.join(p, self.workspace)
+        return self.get_workspace().get_path()
+
+    security.declareProtected(View, 'get_storage')
+    def get_storage(self):
+        """See IExposure"""
+
+        return self.get_workspace().get_storage()
 
     security.declareProtected(View, 'get_log')
     def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None):
         """See IExposure"""
 
         # XXX valid datefmt values might need to be documented/checked
+        # XXX should really reuse workspace value, but we want to cache
+        # value.  We should use adapters so these two classes can share
+        # the adapter we don't have to worry about assigning self.values
+        # in this class.
         storage = self.get_storage()
         return storage.log(rev, branch, shortlog, datefmt).next()
 
-    security.declareProtected(View, 'get_storage')
-    def get_storage(self):
-        """See IExposure"""
-
-        path = self.get_path()
-        return pmr2.mercurial.Storage(path)
-
     security.declareProtected(View, 'get_manifest')
     def get_manifest(self):
+        # XXX see above
         storage = self.get_storage()
         return storage.raw_manifest(self.commit_id)
 
     security.declareProtected(View, 'get_file')
     def get_file(self, path):
+        # XXX see above
         storage = self.get_storage()
         return storage.file(self.commit_id, path)
 
@@ -126,24 +193,6 @@ class Exposure(ATFolder, TraversalCatchAll):
 
         result = aq_parent(self.get_parent_container())
         return result
-
-    security.declareProtected(View, 'get_curation_index')
-    def get_curation_index(self):
-        # FIXME this should really be sharing code with the converter 
-        # class
-        result = []
-        if not self.curation:
-            return result
-        result.extend(self.curation.keys())
-        for k, v in self.curation.iteritems():
-            for i in v:
-                result.append('%s:%s' % (k, i))
-                result.sort()
-        return result
-
-    security.declareProtected(View, 'get_exposure_workspace')
-    def get_exposure_workspace(self):
-        return self.workspace
 
     security.declareProtected(View, 'resolve_uri')
     def resolve_uri(self, filepath=None, view=None, validate=True):
@@ -209,10 +258,44 @@ class Exposure(ATFolder, TraversalCatchAll):
 
     security.declareProtected(View, 'short_commit_id')
     def short_commit_id(self):
-        return pmr2.mercurial.utils.filter(self.commit_id, 'short')
+        return pmr2.app.util.short(self.commit_id)
+
+    security.declareProtected(View, 'get_authors_family_index')
+    def get_authors_family_index(self):
+        # XXX stub, do not know if we should get values from children
+        # or how should we implement this.
+        return ()
+
+    security.declareProtected(View, 'get_citation_title_index')
+    def get_citation_title_index(self):
+        # XXX stub, see get_authors_family_index
+        return ()
+
+    security.declareProtected(View, 'get_curation_index')
+    def get_curation_index(self):
+        # FIXME this should really be sharing code with the converter 
+        # class
+        result = []
+        if not self.curation:
+            return result
+        result.extend(self.curation.keys())
+        for k, v in self.curation.iteritems():
+            for i in v:
+                result.append('%s:%s' % (k, i))
+                result.sort()
+        return result
+
+    security.declareProtected(View, 'get_keywords_index')
+    def get_keywords_index(self):
+        # XXX stub, see get_authors_family_index
+        return ()
+
+    security.declareProtected(View, 'get_exposure_workspace_index')
+    def get_exposure_workspace_index(self):
+        return self.workspace
 
 
-class ExposureDocument(ATDocument):  #, TraversalCatchAll):
+class ExposureDocument(ATDocument, ExposureContentIndexBase):  #, TraversalCatchAll):
     """\
     Documentation for an exposure.
     """
@@ -239,16 +322,6 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
         self.setContentType('text/html')
         self.setText(self._convert())
 
-    security.declareProtected(View, 'get_curation_index')
-    def get_curation_index(self):
-        # XXX hack to make this not indexed by curation index
-        return []
-
-    security.declareProtected(View, 'get_exposure_workspace')
-    def get_exposure_workspace(self):
-        # XXX hack to make this not indexed by curation index
-        return []
-
     security.declareProtected(View, 'get_subdocument_structure')
     def get_subdocument_structure(self):
         parent = self.aq_inner.aq_parent
@@ -258,7 +331,11 @@ class ExposureDocument(ATDocument):  #, TraversalCatchAll):
             return docstruct
 
 
-class ExposureMetadoc(BrowserDefaultMixin, BaseContent):
+class ExposureMetadoc(
+    BrowserDefaultMixin, 
+    BaseContent, 
+    ExposureContentIndexBase,
+):
 
     interface.implements(IExposureMetadoc)
     security = ClassSecurityInfo()
@@ -384,20 +461,21 @@ class ExposureCmetaDocument(ExposureDocument):
     security.declareProtected(View, 'get_authors_family_index')
     def get_authors_family_index(self):
         if self.citation_authors:
-            return [i[0].lower() for i in self.citation_authors]
+            return [pmr2.app.util.normal_kw(i[0]) 
+                    for i in self.citation_authors]
         else:
             return []
 
     security.declareProtected(View, 'get_citation_title_index')
     def get_citation_title_index(self):
         if self.citation_title:
-            return self.citation_title.lower()
+            return pmr2.app.util.normal_kw(self.citation_title)
 
-    security.declareProtected(View, 'get_keywords')
-    def get_keywords(self):
+    security.declareProtected(View, 'get_keywords_index')
+    def get_keywords_index(self):
         if self.keywords:
             # XXX magical replace
-            return [i[1].replace(' ', '_') for i in self.keywords]
+            return [pmr2.app.util.normal_kw(i[1]) for i in self.keywords]
         else:
             return []
 

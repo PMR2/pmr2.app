@@ -44,7 +44,7 @@
     <dd>Derived from workspace <a 
       tal:attributes="href context/workspace_home_uri"
       tal:content="context/workspace"
-    >workspace</a> at revision <a 
+    >workspace</a> at changeset <a 
       tal:attributes="href context/workspace_manifest_uri"
       tal:content="context/short_commit_id"
     >workspace</a>.
