@@ -14,7 +14,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.PortalTransforms.data import datastream
 
-import pmr2.mercurial
+import pmr2.mercurial.interfaces
 
 from pmr2.processor.cmeta import Cmeta
 
@@ -97,169 +97,6 @@ class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
         TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
         ATFolder.__before_publishing_traverse__(self, ob, request)
 
-    security.declareProtected(View, 'get_workspace')
-    def get_workspace(self):
-        """
-        Returns the workspace object this Exposure represents.
-        """
-
-        o = self.query_workspace()
-        if not o:
-            # try manually
-            p = self.get_pmr2_container()
-            if 'workspace' not in p:
-                # XXX this really should be some sort of internal error.
-                raise WorkspaceObjNotFoundError()
-            ws = p['workspace']
-            if self.workspace not in ws:
-                raise WorkspaceObjNotFoundError()
-            return ws['self.workspace']
-        return o.getObject()
-
-    security.declareProtected(View, 'query_workspace')
-    def query_workspace(self):
-        """\
-        Query for the workspace object this Exposure represents using
-        catalog.
-        """
-
-        catalog = getToolByName(self, 'portal_catalog')
-        # XXX path assumption.
-        path = '/'.join(self.getPhysicalPath()[0:-2] + ('workspace',))
-        q = {
-            'id': self.workspace,
-            'path': {
-                'query': path,
-                'depth': 1,
-            }
-        }
-        result = catalog(**q)
-        # there should be only one such id in the workspace for this
-        # unique result.
-        if result:
-            return result[0]
-
-    security.declarePrivate('get_path')
-    def get_path(self):
-        """See IExposure"""
-
-        return self.get_workspace().get_path()
-
-    security.declarePrivate('get_storage')
-    def get_storage(self):
-        """See IExposure"""
-
-        return self.get_workspace().get_storage()
-
-    security.declarePrivate('get_log')
-    def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None):
-        """See IExposure"""
-
-        # XXX valid datefmt values might need to be documented/checked
-        # XXX should really reuse workspace value, but we want to cache
-        # value.  We should use adapters so these two classes can share
-        # the adapter we don't have to worry about assigning self.values
-        # in this class.
-        storage = self.get_storage()
-        return storage.log(rev, branch, shortlog, datefmt).next()
-
-    security.declarePrivate('get_manifest')
-    def get_manifest(self):
-        # XXX see above
-        storage = self.get_storage()
-        return storage.raw_manifest(self.commit_id)
-
-    security.declarePrivate('get_file')
-    def get_file(self, path):
-        # XXX see above
-        storage = self.get_storage()
-        return storage.file(self.commit_id, path)
-
-    security.declareProtected(View, 'get_parent_container')
-    def get_parent_container(self):
-        """\
-        returns the container object that stores this.
-        """
-
-        # aq_inner needed to get out of form wrappers
-        result = aq_parent(aq_inner(self))
-        return result
-
-    security.declareProtected(View, 'get_pmr2_container')
-    def get_pmr2_container(self):
-        """\
-        returns the root pmr2 object that stores this.
-        """
-
-        result = aq_parent(self.get_parent_container())
-        return result
-
-    security.declareProtected(View, 'resolve_uri')
-    def resolve_uri(self, filepath=None, view=None, validate=True):
-        """
-        Returns URI to a location within the workspace this exposure is
-        derived from.
-
-        Parameters:
-
-        filepath
-            The path fragment to the desired file.  Examples:
-
-            - 'dir/file' - Link to the file
-                e.g. http://.../workspace/name/@@view/rev/dir/file
-            - '' - Link to the root of the manifest
-                e.g. http://.../workspace/name/@@view/rev/
-            - None - The workspace "homepage"
-
-            Default: None
-
-        view
-            The view to use.  @@file for the file listing, @@rawfile for
-            the raw file (download link).  See browser/configure.zcml 
-            for a listing of views registered for this object.
-
-            Default: None (@@rawfile)
-
-        validate
-            Whether to validate whether filepath exists.
-
-            Default: True
-        """
-
-        # XXX magic!  should have method to return the uri of the 
-        # workspace container.
-        frag = [
-            self.get_pmr2_container().absolute_url(),
-            'workspace',  
-            self.workspace,
-        ]
-
-        if filepath is not None:
-            # we only need to resolve the rest of the path here.
-            if not view:
-                # XXX magic?
-                view = '@@rawfile'
-
-            if validate:
-                storage = self.get_storage()
-                try:
-                    test = storage.fileinfo(self.commit_id, filepath).next()
-                except:  # PathNotFound
-                    return None
-
-            frag.extend([
-                view,
-                self.commit_id,
-                filepath,
-            ])
-
-        result = '/'.join(frag)
-        return result
-
-    security.declareProtected(View, 'short_commit_id')
-    def short_commit_id(self):
-        return pmr2.app.util.short(self.commit_id)
-
     security.declareProtected(View, 'get_authors_family_index')
     def get_authors_family_index(self):
         # XXX stub, do not know if we should get values from children
@@ -309,7 +146,13 @@ class ExposureDocument(ATDocument, ExposureContentIndexBase):  #, TraversalCatch
 
     def _convert(self):
         # this grabs contents of file from workspace (hg)
-        input = aq_parent(self).get_file(self.origin)
+
+        storage = zope.component.queryMultiAdapter(
+            (self,),
+            name='PMR2ExposureDocStorageAdapter',
+        )
+        input = storage.file
+
         pt = getToolByName(self, 'portal_transforms')
         stream = datastream('processor')
         pt.convert(self.transform, input, stream)
@@ -324,7 +167,7 @@ class ExposureDocument(ATDocument, ExposureContentIndexBase):  #, TraversalCatch
 
     security.declareProtected(View, 'get_subdocument_structure')
     def get_subdocument_structure(self):
-        parent = self.aq_inner.aq_parent
+        parent = aq_parent(aq_inner(self))
         if self.metadoc and self.metadoc in parent:
             metadoc = parent[self.metadoc]
             docstruct = metadoc.get_subdocument_structure()
@@ -348,7 +191,7 @@ class ExposureMetadoc(
         result = {}
         subdocs = []
         # XXX following is naive code
-        parent = self.aq_inner.aq_parent
+        parent = aq_parent(aq_inner(self))
         for id_ in self.subdocument:
             if id_ not in parent:
                 # Something wrong.
@@ -363,7 +206,6 @@ class ExposureMetadoc(
         result['root_url'] = self.absolute_url()
         result['subdocs'] = subdocs
         return result
-
 
 
 class ExposureMathDocument(ExposureDocument):
@@ -411,7 +253,12 @@ class ExposureCmetaDocument(ExposureDocument):
         self.setTitle(u'Model Metadata')
         self.setDescription(u'Generated from %s' % self.origin)
         self.setContentType('text/html')
-        input = aq_parent(self).get_file(self.origin)
+
+        storage = zope.component.queryMultiAdapter(
+            (self,),
+            name='PMR2ExposureDocStorageAdapter',
+        )
+        input = storage.file
 
         metadata = Cmeta(StringIO(input))
         ids = metadata.get_cmetaid()
@@ -512,7 +359,7 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
 
     security.declareProtected(ModifyPortalContent, 'generate_content')
     def generate_content(self):
-        parent = self.aq_parent
+        parent = aq_parent(aq_inner(self))
         subdoc = []
         self.title = 'Overview of %s' % self.origin
         for i in self.factories:
@@ -535,6 +382,8 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
 
         self.subdocument = subdoc
 
+    # XXX use adapter adapt this class to the required classes to get
+    # the data for the next two methods.
     security.declareProtected(View, 'get_documentation')
     def get_documentation(self):
         # XXX use catalog?
@@ -560,32 +409,3 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
                 'stars': stars,
             })
         return result
-
-    security.declareProtected(View, 'get_file_access_uris')
-    def get_file_access_uris(self):
-        result = []
-        download_uri = self.aq_parent.resolve_uri(self.origin)
-        if download_uri:
-            result.append({'label': u'Download', 'href': download_uri})
-
-        run_uri = self.aq_parent.resolve_uri(
-            self.origin, '@@pcenv', False)  # validated above.
-        result.append({'label': u'Solve using PCEnv', 'href': run_uri})
-
-        # since session files were renamed into predictable patterns, we 
-        # can guess here.
-        session_path = os.path.splitext(self.origin)[0] + '.session.xml'
-
-        manifest = self.aq_parent.get_manifest()
-        s_uri = self.aq_parent.resolve_uri(session_path, '@@pcenv')
-        if s_uri:
-            result.append({'label': u'Solve using Session File', 'href': s_uri})
-        return result
-
-    security.declareProtected(View, 'workspace_manifest_uri')
-    def workspace_manifest_uri(self):
-        return aq_parent(self).resolve_uri('', '@@file', False)
-
-    security.declareProtected(View, 'workspace_home_uri')
-    def workspace_home_uri(self):
-        return aq_parent(self).resolve_uri(None)

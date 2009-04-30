@@ -11,7 +11,7 @@ from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.ATContentTypes.content.document import ATDocument
 from Products.Archetypes import atapi
 
-import pmr2.mercurial
+import pmr2.mercurial.interfaces
 import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
@@ -102,7 +102,8 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
     and related data.
     """
 
-    interface.implements(IWorkspace)
+    interface.implements(IWorkspace, 
+        pmr2.mercurial.interfaces.IPMR2StorageBase)
     security = ClassSecurityInfo()
 
     description = fieldproperty.FieldProperty(IWorkspace['description'])
@@ -116,41 +117,5 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
         if not p:
             return None
         return os.path.join(p, self.id)
-
-    security.declarePrivate('get_log')
-    def get_log(self, rev=None, branch=None, shortlog=False, datefmt=None, 
-                maxchanges=None):
-        """See IWorkspace"""
-
-        # XXX valid datefmt values might need to be documented/checked
-        storage = self.get_storage()
-        return storage.log(rev, branch, shortlog, datefmt, maxchanges).next()
-
-    security.declarePrivate('get_storage')
-    def get_storage(self):
-        """See IWorkspace"""
-
-        path = self.get_path()
-        return pmr2.mercurial.Storage(path)
-
-    security.declareProtected(View, 'get_workspace_container')
-    def get_workspace_container(self):
-        """\
-        returns the workspace container object that stores this.
-        """
-
-        # FIXME get rid of this assumption
-        result = aq_parent(aq_inner(self))
-        return result
-
-    security.declareProtected(View, 'get_pmr2_container')
-    def get_pmr2_container(self):
-        """\
-        returns the root pmr2 object that stores this.
-        """
-
-        # FIXME get rid of this assumption
-        result = aq_parent(self.get_workspace_container())
-        return result
 
 atapi.registerType(Workspace, 'pmr2.app')

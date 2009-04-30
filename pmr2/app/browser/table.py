@@ -229,7 +229,7 @@ class FilenameColumn(EscapedItemKeyColumn):
         # also could render changeset link (for diffs)
         return u'<a href="%s/@@file/%s/%s">%s</a>' % (
             self.table.context.context.absolute_url(),
-            self.table.context.rev,
+            self.table.context.storage.rev,
             item['file'],
             self.getItem(item),
         )
@@ -245,7 +245,7 @@ class FileOptionColumn(EscapedItemKeyColumn):
         if item['permissions'][0] != 'd':
             result = [u'<a href="%s/@@rawfile/%s/%s">[%s]</a>' % (
                 self.table.context.context.absolute_url(),
-                self.table.context.rev,
+                self.table.context.storage.rev,
                 item['file'],
                 _(u'download'),
             )]
@@ -254,7 +254,7 @@ class FileOptionColumn(EscapedItemKeyColumn):
             if item['file'].endswith('.session.xml'):
                 result.append(u'<a href="%s/@@xmlbase/%s/%s">[%s]</a>' % (
                     self.table.context.context.absolute_url(),
-                    self.table.context.rev,
+                    self.table.context.storage.rev,
                     item['file'],
                     _(u'run'),
                 ))

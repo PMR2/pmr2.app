@@ -145,18 +145,6 @@ class IWorkspace(zope.interface.Interface):
         Returns path on the filesystem to this instance of workspace.
         """
 
-    def get_storage():
-        """\
-        Instantiates and returns the storage object of this Workspace.
-        """
-
-    def get_log(rev=None, branch=None, shortlog=False, datefmt=None):
-        """\
-        A helper method to return an iterator to the log.
-
-        This calls get_storage
-        """
-
 
 class IWorkspaceAdd(IObjectIdMixin, IWorkspace):
     """\
@@ -229,16 +217,6 @@ class IExposure(zope.interface.Interface):
     def get_path():
         """\
         Returns path on the filesystem to this instance of workspace.
-        """
-
-    def get_storage():
-        """\
-        Instantiates and returns the storage object of this Workspace.
-        """
-
-    def get_log(rev=None, branch=None, shortlog=False, datefmt=None):
-        """\
-        A helper method to return an iterator to the log.
         """
 
 

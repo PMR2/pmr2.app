@@ -22,16 +22,24 @@
   </dl>
 
   <dl id="pmr1_download">
+  <tal:if tal:condition="view/file_access_uris">
     <dt>Access model via:</dt>
     <dd>
       <ul>
-        <li tal:repeat="i context/get_file_access_uris"
+        <li tal:repeat="i view/file_access_uris"
           ><a 
             tal:attributes="href i/href"
             tal:content="i/label"
           ></a></li>
       </ul>
     </dd>
+  </tal:if>
+  <tal:if tal:condition="not:view/file_access_uris">
+    <dt>Source not found</dt>
+    <dd>
+      The file referenced by this exposure document cannot be found.
+    </dd>
+  </tal:if>
   </dl>
 
 </div>
@@ -39,14 +47,14 @@
 <div class="visualClear"><!-- --></div>
   
 <div>
-  <dl>
+  <dl tal:define="source view/derive_from_uri">
     <dt>Source:</dt>
     <dd>Derived from workspace <a 
-      tal:attributes="href context/workspace_home_uri"
-      tal:content="context/workspace"
+      tal:attributes="href source/workspace/href"
+      tal:content="source/workspace/label"
     >workspace</a> at changeset <a 
-      tal:attributes="href context/workspace_manifest_uri"
-      tal:content="context/short_commit_id"
+      tal:attributes="href source/manifest/href"
+      tal:content="source/manifest/label"
     >workspace</a>.
   </dl>
 </div>

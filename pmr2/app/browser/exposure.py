@@ -1,3 +1,4 @@
+from os.path import splitext
 from random import getrandbits
 
 import zope.interface
@@ -5,8 +6,10 @@ import zope.component
 import zope.app.pagetemplate.viewpagetemplatefile
 from zope.publisher.interfaces import IPublishTraverse, NotFound
 import z3c.form.field
+from plone.memoize.view import memoize
 from plone.z3cform import layout
 
+from Acquisition import aq_parent, aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 
@@ -16,7 +19,6 @@ from pmr2.app.util import *
 
 import form
 import page
-import mixin
 import widget
 
 
@@ -106,6 +108,7 @@ class ExposureMetadocGenForm(form.AddForm):
         self._data = data
         factory = zope.component.queryUtility(IExposureMetadocFactory,
                                               name=data['exposure_factory'])
+        # XXX error check make sure factory is created
         result = factory(data['filename'])
         # XXX there probably should be check for existence of item with the
         # same name somewhere else.
@@ -127,25 +130,49 @@ ExposureMetadocGenFormView = layout.wrap_form(ExposureMetadocGenForm, label="Exp
 
 # also need an exposure_folder_listing that mimics the one below.
 
-class ExposureTraversalPage(
-    page.TraversePage,
-    mixin.PMR2MercurialPropertyMixin,
-):
+class ExposureTraversalPage(page.TraversePage):
     """\
     Since any exposure page can become the root for whatever reason, we
     need to implement this in all methods.
     """
 
     @property
-    def rev(self):
-        return self.context.commit_id
+    def workspace(self):
+        context = aq_inner(self.context)
+        while context is not None:
+            obj = zope.component.queryMultiAdapter(
+                (context,), 
+                name='ExposureToWorkspace',
+            )
+            if obj is not None:
+                return obj
+            context = aq_parent(context)
 
     @property
-    def path(self):
-        return '/'.join(self.request['request_subpath'])
+    def storage(self):
+        """
+        Updates the local values.
+        """
+
+        if not hasattr(self, '_storage'):
+            self._storage = zope.component.queryMultiAdapter(
+                (self.workspace, self.request, self),
+                name="PMR2StorageRequestView"
+            )
+        return self._storage
+
+    @property
+    def uri_resolver(self):
+        if not hasattr(self, '_uri_resolver'):
+            self._uri_resolver = zope.component.queryMultiAdapter(
+                (self.workspace,),
+                name="PMR2StorageURIResolver"
+            )
+        return self._uri_resolver
 
     def redirect_to_uri(self, filepath):
-        redir_uri = self.context.resolve_uri(filepath)
+        redir_uri = self.uri_resolver.path_to_uri(
+            self.context.commit_id, filepath)
         if redir_uri is None:
             raise NotFound(self.context, filepath, self.request)
         return self.request.response.redirect(redir_uri)
@@ -154,6 +181,7 @@ class ExposureTraversalPage(
         raise NotImplementedError
 
     def __call__(self, *args, **kwargs):
+
         if 'request_subpath' in self.request:
             filepath = '/'.join(self.request['request_subpath'])
             return self.redirect_to_uri(filepath)
@@ -244,5 +272,45 @@ class ExposurePMR1Metadoc(ExposureTraversalPage):
     def portal_url(self):
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         return portal.absolute_url()
+
+    @memoize
+    def file_access_uris(self):
+        result = []
+        resolver = self.uri_resolver
+
+        download_uri = resolver.path_to_uri(
+            self.context.commit_id, self.context.origin)
+        if download_uri:
+            result.append({'label': u'Download', 'href': download_uri})
+            run_uri = resolver.path_to_uri(
+                self.context.commit_id, self.context.origin, '@@pcenv', False)
+            result.append({'label': u'Solve using PCEnv', 'href': run_uri})
+
+        # since session files were renamed into predictable patterns, we
+        # can guess here.
+        session_path = splitext(self.context.origin)[0] + '.session.xml'
+        s_uri = resolver.path_to_uri(
+            self.context.commit_id, session_path, '@@pcenv')
+        if s_uri:
+            result.append({'label': u'Solve using Session File', 'href': s_uri})
+        return result
+
+    @memoize
+    def derive_from_uri(self):
+        resolver = self.uri_resolver
+        workspace_uri = resolver.path_to_uri(self.context.commit_id)
+        manifest_uri = resolver.path_to_uri(
+            self.context.commit_id, '', '@@file', False)
+        result = {
+            'workspace': {
+                'label': self.workspace.Title,
+                'href': workspace_uri,
+            },
+            'manifest': {
+                'label': short(self.context.commit_id),
+                'href': manifest_uri,
+            },
+        }
+        return result
 
 ExposurePMR1MetadocView = layout.wrap_form(ExposurePMR1Metadoc)

@@ -1,3 +1,4 @@
+import warnings
 import mimetypes
 
 import zope.interface
@@ -28,7 +29,6 @@ import interfaces
 import widget
 import form
 import page
-import mixin
 import table
 
 
@@ -139,6 +139,7 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
     # XXX need to hack context_fti or DynamicViewTypeInformation somehow
     # to make it do what needs to be done.
     # This value could be captured using DynamicViewTypeInformation
+    # XXX this needs to be fixed to take advantage of shared adapted result.
     shortlog = False
     url_expr = '@@log'
     tbl = table.ChangelogTable
@@ -146,19 +147,16 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
     datefmt = None # default value.
 
     @property
-    def rev(self):
-        if not self.traverse_subpath:
-            return None
-        return self.traverse_subpath[0]
-
-    @property
     def log(self):
         if not hasattr(self, '_log'):
             try:
-                self._log = self.context.get_log(rev=self.rev,
-                                                 shortlog=self.shortlog,
-                                                 datefmt=self.datefmt,
-                                                 maxchanges=self.maxchanges)
+                storage = zope.component.queryMultiAdapter(
+                    (self.context, self.request, self), 
+                    name="PMR2StorageRequestView",
+                )
+                self._log = storage.get_log(shortlog=self.shortlog,
+                                            datefmt=self.datefmt,
+                                            maxchanges=self.maxchanges)
             except pmr2.mercurial.exceptions.RevisionNotFound:
                 raise NotFound(self.context, self.context.title_or_id(), 
                                self.request)
@@ -347,8 +345,7 @@ WorkspaceEditFormView = layout.wrap_form(
     WorkspaceEditForm, label="Workspace Edit Form")
 
 
-class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer,
-        mixin.PMR2MercurialPropertyMixin):
+class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     """\
     Manifest listing page.
     """
@@ -361,49 +358,33 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer,
         'file.pt')
 
     @property
-    def rev(self):
-        if hasattr(self, '_rev'):
-            return self._rev
-        # bootstrapping _rev for manifest or fileinfo, as it depends on this
-        self._rev = None
-        if self.traverse_subpath:
-            self._rev = self.traverse_subpath[0]
-        try:
-            if self.manifest:
-                self._rev = self.manifest['node']
-            elif self.fileinfo:
-                self._rev = self.fileinfo['node']
-        except pmr2.mercurial.exceptions.RevisionNotFound:
-            # cannot resolve to valid revision
-            raise NotFound(self.context, self.context.title_or_id(), 
-                           self.request)
-        return self._rev
-
-    @property
-    def path(self):
-        if hasattr(self, '_path'):
-            return self._path
-        self._path = ''
-        if self.traverse_subpath:
-            self._path = '/'.join(self.traverse_subpath[1:])
-        return self._path
+    def storage(self):
+        if not hasattr(self, '_storage'):
+            self._storage = zope.component.queryMultiAdapter(
+                (self.context, self.request, self),
+                name="PMR2StorageRequestView"
+            )
+        return self._storage
 
     # XXX rewrite this class to use adapters for specific views for 
     # these distinct types of values
     @property
     def values(self):
-        if self.manifest:
-            return self.manifest['aentries']
-        elif self.fileinfo:
-            return self.fileinfo['text']
+        """
+        provides values for the table.
+        """
+        if self.storage.manifest:
+            return self.storage.manifest['aentries']
+        elif self.storage.fileinfo:
+            return self.storage.fileinfo['text']
         return []
 
     def content(self):
-        if self.manifest is None and self.fileinfo is None:
+        if self.storage.manifest is None and self.storage.fileinfo is None:
             raise NotFound(self.context, self.context.title_or_id(), 
                            self.request)
 
-        if self.manifest:
+        if self.storage.manifest:
             t = table.FileManifestTable(self, self.request)
             t.update()
             return t.render()
@@ -412,15 +393,18 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer,
 
     @property
     def label(self):
-        if self.manifest:
+        """
+        provides values for the form.
+        """
+        if self.storage.manifest:
             label = 'Manifest'
-        elif self.fileinfo:
+        elif self.storage.fileinfo:
             label = 'Fileinfo'
         else:
             return u'No Information Available'
         return u'%s: %s @ %s / %s' % (
-            label, self.context.title_or_id(), self.rev[:10], 
-            self.path.replace('/', ' / '),
+            label, self.context.title_or_id(), self.storage.rev[:10], 
+            self.storage.path.replace('/', ' / '),
         )
 
     @property
@@ -429,7 +413,7 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer,
         return '/'.join([
             self.context.absolute_url(),
             '@@rawfile',
-            self.rev,
+            self.storage.rev,
         ])
 
     @property
@@ -438,8 +422,8 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer,
         return '/'.join([
             self.context.absolute_url(),
             '@@rawfile',
-            self.rev,
-            self.path,
+            self.storage.rev,
+            self.storage.path,
         ])
 
 WorkspaceFilePageView = layout.wrap_form(
@@ -453,14 +437,14 @@ WorkspaceFilePageView = layout.wrap_form(
 class WorkspaceRawfileView(WorkspaceFilePage):
 
     def __call__(self):
-        if self.fileinfo is None:
+        if self.storage.fileinfo is None:
             raise NotFound(self.context, self.context.title_or_id(), 
                            self.request)
         else:
             # not supporting resuming download
             # XXX large files will eat RAM
-            data = self.storage.file(self.rev, self.path)
-            mt = mimetypes.guess_type(self.path)[0]
+            data = self.storage.file
+            mt = mimetypes.guess_type(self.storage.path)[0]
             if mt is None or (data and '\0' in data[:4096]):
                 mt = mt or 'application/octet-stream'
             self.request.response.setHeader('Content-Type', mt)
@@ -471,7 +455,7 @@ class WorkspaceRawfileView(WorkspaceFilePage):
 class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
 
     def find_type(self):
-        if self.path.endswith('session.xml'):
+        if self.storage.path.endswith('session.xml'):
             return 'application/x-pcenv-cellml+xml'
 
     def __call__(self):
@@ -480,14 +464,14 @@ class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
         # add the xml:base, and append '/' to complete path
         data = set_xmlbase(data, self.rooturi + '/')
 
-        if self.path.endswith('session.xml'):
+        if self.storage.path.endswith('session.xml'):
             # See pmr2.app.util.fix_pcenv_externalurl and
             # https://tracker.physiomeproject.org/show_bug.cgi?id=1079
             data = fix_pcenv_externalurl(data, self.rooturi)
 
         # all done, now set headers.
         contentType = self.find_type()
-        filename = self.path.split('/').pop()
+        filename = self.storage.path.split('/').pop()
         if contentType:
             self.request.response.setHeader('Content-Type', contentType)
         self.request.response.setHeader('Content-Disposition',
@@ -517,11 +501,8 @@ class CreateForm(z3c.form.form.Form):
         workspace = self.request.form.get('workspace', None)
         if type == 'exposure':
             # XXX magic creation view
-            url = '/'.join([
-                self.context.get_pmr2_container().absolute_url(),
-                'exposure',
-                '@@exposure_add_form',
-            ]) 
+            subfrag = ('exposure', '@@exposure_add_form',)
+            url = '/'.join(self.context.getPhysicalPath()[0:-2] + subfrag)
             url += '?form.widgets.workspace=%s&form.widgets.commit_id=%s' % (
                 workspace,
                 rev,

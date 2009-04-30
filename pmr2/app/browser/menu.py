@@ -1,4 +1,4 @@
-from zope.interface import implements
+from zope.component import queryMultiAdapter
 
 from plone.app.contentmenu.menu import WorkflowSubMenuItem
 from plone.app.contentmenu.view import ContentMenuProvider
@@ -17,12 +17,17 @@ class WorkspaceMenuProvider(ContentMenuProvider):
     def menu(self):
         """\
         This is a method with magic values.  The entire menu is rather
-        hard coded, values assumed.  These basically need to be
-        built from querying adapters or what not.
+        hard coded, values assumed.  The values basically need to be
+        built from querying adapters to gather what is available.
         """
 
-        rev = self.view.view.form_instance.rev
+        # adapt a storage object.
+        storage = queryMultiAdapter(
+            (self.context, self.request, self.view.view), 
+            name="PMR2StorageRequestView")
+        rev = storage.rev
         workspace = self.context.id
+
         queryStr = '%s/@@create?type=%s&workspace=%s&rev=%s'
 
         actionRootUri = self.context.absolute_url()

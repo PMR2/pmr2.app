@@ -1,5 +1,5 @@
 from zope.interface import alsoProvides
-from zope.component import getUtilitiesFor
+from zope.component import getUtilitiesFor, queryMultiAdapter
 
 from zope.schema.interfaces import IVocabularyFactory, ISource
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
@@ -29,7 +29,14 @@ class ManifestListVocab(SimpleVocabulary):
 
     def __init__(self, context):
         self.context = context
-        values = self.context.get_manifest().keys()
+
+        storage = queryMultiAdapter(
+            (context,),
+            name='PMR2ExposureStorageAdapter',
+        )
+
+        manifest = storage.get_full_manifest()
+        values = manifest.keys()
         values.sort()
         terms = [SimpleTerm(i, i) for i in values]
         super(ManifestListVocab, self).__init__(terms)

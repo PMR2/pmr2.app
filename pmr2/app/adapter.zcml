@@ -1,0 +1,42 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <adapter
+      for="pmr2.mercurial.interfaces.IPMR2StorageBase
+           zope.publisher.interfaces.IPublisherRequest
+           zope.publisher.interfaces.IPublishTraverse"
+      factory=".adapter.PMR2StorageRequestViewAdapter"
+      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
+      name="PMR2StorageRequestView"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposure"
+      factory=".adapter.PMR2ExposureStorageAdapter"
+      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
+      name="PMR2ExposureStorageAdapter"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposureDocument"
+      factory=".adapter.PMR2ExposureDocStorageAdapter"
+      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
+      name="PMR2ExposureDocStorageAdapter"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IWorkspace"
+      factory=".adapter.PMR2StorageURIResolver"
+      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
+      name="PMR2StorageURIResolver"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposure"
+      factory=".adapter.ExposureToWorkspaceAdapter"
+      provides="pmr2.app.interfaces.IWorkspace"
+      name="ExposureToWorkspace"
+      />
+
+</configure> 

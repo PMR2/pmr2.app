@@ -29,6 +29,8 @@ class StorageFormWrapper(layout.FormWrapper):
     generate the result from the request sent by client.
     """
 
+    # XXX how to unit test this?
+
     def __call__(self, *a, **kw):
         if self.request.REQUEST_METHOD != 'GET':
             # if request is POST, we are changing things so we need
@@ -52,7 +54,7 @@ class StorageFormWrapper(layout.FormWrapper):
                 auth.challenge(self.request)
                 return False
 
-        storage = self.context.get_storage()
+        storage = getMultiAdapter((self.context,), name='PMR2Storage')
         try:
             return storage.process_request(self.request)
         except pmr2.mercurial.exceptions.UnsupportedCommand:

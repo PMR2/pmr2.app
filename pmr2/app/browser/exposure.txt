@@ -79,12 +79,19 @@ is the default view, with no request_subpath fragments.
     >>> class TestExposure(object):
     ...     interface.implements(IExposure)
     ...
-    ...     def resolve_uri(self, filepath, view=None, validate=True):
+    ...     commit_id = '000000000'
+    ...
+    >>> class Resolver(object):
+    ...     def path_to_uri(self, 
+    ...             rev=None, filepath=None, view=None, validate=True):
     ...         if filepath not in testpaths:
     ...             return None
-    ...         return 'workspace/' + filepath
+    ...         return 'workspace/%s/%s' % (rev, filepath)
     ...
     >>> class TestPage(exposure.ExposureTraversalPage):
+    ...     @property
+    ...     def uri_resolver(self):
+    ...         return Resolver()
     ...     def render(self):
     ...         return u'render'
     ...
@@ -101,9 +108,9 @@ fragment, it should do a redirect.
     >>> request = TestRequest(request_subpath=['test.png'])
     >>> view = TestPage(context, request)
     >>> view()
-    'workspace/test.png'
+    'workspace/000000000/test.png'
     >>> request.response.getHeader('Location')
-    'workspace/test.png'
+    'workspace/000000000/test.png'
 
 If a request_subpath does not resolve to a valid resource, HTTP 404 is
 raised.

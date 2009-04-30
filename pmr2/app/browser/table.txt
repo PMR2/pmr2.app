@@ -234,7 +234,7 @@ good enough.
     </table>
 
 Now we test the manifest table.  Going to reuse the fake container 
-object, only change the data and add in a rev attribute.
+object, only change the data and add in a fake storage rev attribute.
 ::
 
     >>> data = [
@@ -259,8 +259,10 @@ object, only change the data and add in a rev attribute.
     ...     },
     ... ]
     ...
+    >>> storage = FakeContainer()
+    >>> storage.rev = 'c0ffee'
     >>> context._values = data
-    >>> context.rev = 'c0ffee'
+    >>> context.storage = storage
     >>> request = TestRequest()
     >>> t = table.FileManifestTable(context, request)
     >>> t.update()
