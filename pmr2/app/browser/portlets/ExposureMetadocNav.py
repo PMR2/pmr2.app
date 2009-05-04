@@ -63,7 +63,7 @@ class Renderer(base.Renderer):
 
     def findExposure(self):
         o = aq_inner(self.context)
-        while o:
+        while o is not None:
             if isinstance(o, Exposure):
                 return o
             o = aq_parent(o)
