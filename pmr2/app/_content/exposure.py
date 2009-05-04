@@ -49,6 +49,8 @@ class ExposureContainer(ATBTreeFolder):
 class ExposureContentIndexBase(object):
     """\
     Provides default values for the indexes we use for plone catalog.
+
+    Also ZCatalog compatibility, see below.
     """
 
     interface.implements(IExposureContentIndex)
@@ -67,6 +69,34 @@ class ExposureContentIndexBase(object):
 
     def get_exposure_workspace_index(self):
         return ()
+
+    # ZCatalog compatibility hack to make mybrains objects returned from
+    # a catalog search to contain values we want indexed.  The method,
+    # Products.ZCatalog.Catalog.recordify, does not support index_attr, 
+    # so the # above methods will not be called and the index name 
+    # listed in the catalog.xml we defined in our default profile will 
+    # be used as the attribute instead, which will not exist unless they
+    # are defined in the objects.  So we have to do the deed here.
+
+    @property
+    def pmr2_authors_family_name(self):
+        return self.get_authors_family_index()
+
+    @property
+    def pmr2_citation_title(self):
+        return self.get_citation_title_index()
+
+    @property
+    def pmr2_curation(self):
+        return self.get_curation_index()
+
+    @property
+    def pmr2_keyword(self):
+        return self.get_keywords_index()
+
+    @property
+    def pmr2_exposure_workspace(self):
+        return self.get_exposure_workspace_index()
 
 
 class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
