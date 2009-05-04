@@ -26,8 +26,17 @@
 
   <div tal:condition="not:view/searchterm">
     <h5>No search term.</h5>
+    <tal:if tal:condition="view/saved_searches">
+      <h6>Listing of terms with descriptive text:</h6>
+      <ul>
+        <li tal:repeat="i view/saved_searches">
+          <a tal:attributes="href i/getPath"
+             tal:content="i/Title"></a>
+        </li>
+      </ul>
+    </tal:if>
     <tal:if tal:condition="exists:view/all_terms">
-      <h6>Listing of all terms:</h6>
+      <h6>Listing of other terms:</h6>
       <ul>
         <li tal:repeat="i view/all_terms">
           <a tal:attributes="href string:${context/absolute_url}/${i}" 
@@ -36,7 +45,7 @@
       </ul>
     </tal:if>
     <tal:if tal:condition="not:exists:view/all_terms">
-      <span>This search does not support listing of terms.</span>
+      <span>This search does not support listing of search terms.</span>
     </tal:if>
   </div>
 

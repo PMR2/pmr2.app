@@ -70,6 +70,15 @@ class ExposureContentIndexBase(object):
     def get_exposure_workspace_index(self):
         return ()
 
+    def get_exposure_root_title(self):
+        return ''
+
+    def get_exposure_root_path(self):
+        return ''
+
+    def get_exposure_root_id(self):
+        return ''
+
     # ZCatalog compatibility hack to make mybrains objects returned from
     # a catalog search to contain values we want indexed.  The method,
     # Products.ZCatalog.Catalog.recordify, does not support index_attr, 
@@ -97,6 +106,18 @@ class ExposureContentIndexBase(object):
     @property
     def pmr2_exposure_workspace(self):
         return self.get_exposure_workspace_index()
+
+    @property
+    def pmr2_exposure_root_title(self):
+        return self.get_exposure_root_title()
+
+    @property
+    def pmr2_exposure_root_path(self):
+        return self.get_exposure_root_path()
+
+    @property
+    def pmr2_exposure_root_id(self):
+        return self.get_exposure_root_id()
 
 
 class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
@@ -161,6 +182,18 @@ class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
     def get_exposure_workspace_index(self):
         return self.workspace
 
+    security.declareProtected(View, 'get_exposure_root_title')
+    def get_exposure_root_title(self):
+        return self.Title()
+
+    security.declareProtected(View, 'get_exposure_root_path')
+    def get_exposure_root_path(self):
+        return self.absolute_url_path()
+
+    security.declareProtected(View, 'get_exposure_root_id')
+    def get_exposure_root_id(self):
+        return self.id
+
 
 class ExposureDocument(ATDocument, ExposureContentIndexBase):  #, TraversalCatchAll):
     """\
@@ -195,13 +228,51 @@ class ExposureDocument(ATDocument, ExposureContentIndexBase):  #, TraversalCatch
         self.setContentType('text/html')
         self.setText(self._convert())
 
+    def _getmetadoc(self):
+        """
+        Quick way to access metadoc object, assuming nothing is broken.
+        """
+        # XXX adapter to deal with this and methods below
+        parent = aq_parent(aq_inner(self))
+        if parent is None:
+            # XXX catalog calls aq_base to untangle object, so we need
+            # another way to get to the parent object (to get it into
+            # the catalog for quick access in searches.
+            return None
+        if self.metadoc and self.metadoc in parent:
+            try:
+                metadoc = parent[self.metadoc]
+            except:
+                return None
+            return metadoc
+
     security.declareProtected(View, 'get_subdocument_structure')
     def get_subdocument_structure(self):
-        parent = aq_parent(aq_inner(self))
-        if self.metadoc and self.metadoc in parent:
-            metadoc = parent[self.metadoc]
+        metadoc = self._getmetadoc()
+        if metadoc:
             docstruct = metadoc.get_subdocument_structure()
             return docstruct
+
+    security.declareProtected(View, 'get_exposure_root_title')
+    def get_exposure_root_title(self):
+        metadoc = self._getmetadoc()
+        if metadoc:
+            return metadoc.Title()
+        return self.Title()
+
+    security.declareProtected(View, 'get_exposure_root_path')
+    def get_exposure_root_path(self):
+        metadoc = self._getmetadoc()
+        if metadoc:
+            return metadoc.absolute_url_path()
+        return self.absolute_url_path()
+
+    security.declareProtected(View, 'get_exposure_root_id')
+    def get_exposure_root_id(self):
+        metadoc = self._getmetadoc()
+        if metadoc:
+            return metadoc.id
+        return self.id
 
 
 class ExposureMetadoc(
@@ -236,6 +307,18 @@ class ExposureMetadoc(
         result['root_url'] = self.absolute_url()
         result['subdocs'] = subdocs
         return result
+
+    security.declareProtected(View, 'get_exposure_root_title')
+    def get_exposure_root_title(self):
+        return self.Title()
+
+    security.declareProtected(View, 'get_exposure_root_path')
+    def get_exposure_root_path(self):
+        return self.absolute_url_path()
+
+    security.declareProtected(View, 'get_exposure_root_id')
+    def get_exposure_root_id(self):
+        return self.id
 
 
 class ExposureMathDocument(ExposureDocument):
@@ -352,7 +435,9 @@ class ExposureCmetaDocument(ExposureDocument):
     def get_keywords_index(self):
         if self.keywords:
             # XXX magical replace
-            return [pmr2.app.util.normal_kw(i[1]) for i in self.keywords]
+            results = [pmr2.app.util.normal_kw(i[1]) for i in self.keywords]
+            results.sort()
+            return results
         else:
             return []
 

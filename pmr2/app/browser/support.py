@@ -65,9 +65,18 @@ class PMR2SearchPage(page.TraversePage):
 
         def clean_searchterm():
             if not hasattr(self, 'searchterm') or self.searchterm is None:
+                self.searchterm = None
                 return False
             self.searchterm = self.searchterm.replace(' ', '_')
             return True
+
+        def build_saved_searches():
+            q = {
+                'query': self.context.absolute_url_path(),
+                'navtree': 0,
+                'depth': 1,
+            }
+            self.saved_searches = pt(path=q)
 
         def build_results():
             d = {}
@@ -98,6 +107,8 @@ class PMR2SearchPage(page.TraversePage):
         if clean_searchterm():
             build_results()
         else:
+            build_saved_searches()
+            # XXX remove items that are saved?
             build_terms()
         return self.filetemplate()
 

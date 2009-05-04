@@ -21,10 +21,25 @@
     <indexed_attr value="get_exposure_workspace_index"/>
   </index>
 
+  <index name="pmr2_exposure_root_title" meta_type="FieldIndex">
+    <indexed_attr value="get_exposure_root_title"/>
+  </index>
+
+  <index name="pmr2_exposure_root_path" meta_type="FieldIndex">
+    <indexed_attr value="get_exposure_root_path"/>
+  </index>
+
+  <index name="pmr2_exposure_root_id" meta_type="FieldIndex">
+    <indexed_attr value="get_exposure_root_id"/>
+  </index>
+
   <column value="pmr2_authors_family_name"/>
   <column value="pmr2_citation_title"/>
   <column value="pmr2_curation"/>
   <column value="pmr2_keyword"/>
   <column value="pmr2_exposure_workspace"/>
+  <column value="pmr2_exposure_root_title"/>
+  <column value="pmr2_exposure_root_path"/>
+  <column value="pmr2_exposure_root_id"/>
 
 </object>
