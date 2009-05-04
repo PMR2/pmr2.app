@@ -8,4 +8,6 @@
 <dd tal:content="context/citation_bibliographicCitation"/>
 <dt>Citation Identifier:</dt>
 <dd tal:content="structure context/citation_id_html"/>
+<dt>Model Keywords:</dt>
+<dd tal:content="python: ', '.join(context.get_keywords_index())"/>
 </dl>
