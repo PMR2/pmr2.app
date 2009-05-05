@@ -33,7 +33,7 @@ class PMR2SearchAddForm(form.AddForm):
     # see: plone.app.contentmenu/plone/app/contentmenu/menu.py:709
 
     def add_data(self, ctxobj):
-        ctxobj.title = self._data['title']
+        #ctxobj.title = self._data['title']
         ctxobj.description = self._data['description']
         ctxobj.catalog_index = self._data['catalog_index']
 

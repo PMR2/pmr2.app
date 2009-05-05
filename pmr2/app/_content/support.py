@@ -15,7 +15,7 @@ class PMR2Search(atct.ATBTreeFolder, TraversalCatchAll):
 
     interface.implements(IPMR2Search)
 
-    title = fieldproperty.FieldProperty(IPMR2Search['title'])
+    #title = fieldproperty.FieldProperty(IPMR2Search['title'])
     description = fieldproperty.FieldProperty(IPMR2Search['description'])
     catalog_index = fieldproperty.FieldProperty(IPMR2Search['catalog_index'])
 
