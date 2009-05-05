@@ -19,6 +19,7 @@ from Products.CMFCore.utils import getToolByName
 
 import pmr2.mercurial.exceptions
 import pmr2.mercurial.utils
+from pmr2.mercurial import Storage
 
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
@@ -234,6 +235,10 @@ class WorkspaceAddForm(form.AddForm):
     def add_data(self, ctxobj):
         ctxobj.title = self._data['title']
         ctxobj.description = self._data['description']
+
+        # XXX creating mercurial repository here.
+        rp = ctxobj.get_path()
+        Storage.create(rp, ffa=True)
 
 WorkspaceAddFormView = layout.wrap_form(
     WorkspaceAddForm, label="Workspace Creation Form")

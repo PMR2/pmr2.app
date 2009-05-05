@@ -296,6 +296,14 @@
     <browser:page name="addPMR2Search" attribute="addPMR2Search" />
   </browser:view>
 
+  <browser:view
+      name="+"
+      for="..interfaces.IWorkspaceContainer"
+      permission="cmf.ModifyPortalContent"
+      class=".adding.Adding">
+    <browser:page name="addWorkspace" attribute="addWorkspace" />
+  </browser:view>
+
   <!--
     An override of contentactions for Workspace for the menus in the
     file page view (sandbox/exposure add dropdown menu).
@@ -340,6 +348,14 @@
            *"
       name="addPMR2Search"
       factory=".support.PMR2SearchAddForm"
+      provides="z3c.form.interfaces.IAddForm"
+      />
+
+  <adapter
+      for=".adding.Adding
+           *"
+      name="addWorkspace"
+      factory=".workspace.WorkspaceAddForm"
       provides="z3c.form.interfaces.IAddForm"
       />
 

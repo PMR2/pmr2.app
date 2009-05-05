@@ -9,3 +9,8 @@ class Adding(Products.Five.browser.adding.Adding):
         redir = zapi.absoluteURL(self.context, self.request
                                 ) + '/@@pmr2search_add_form'
         self.request.response.redirect(redir)
+
+    def addWorkspace(self):
+        redir = zapi.absoluteURL(self.context, self.request
+                                ) + '/@@workspace_object_create'
+        self.request.response.redirect(redir)
