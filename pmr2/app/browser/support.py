@@ -34,7 +34,7 @@ class PMR2SearchAddForm(form.AddForm):
 
     def add_data(self, ctxobj):
         #ctxobj.title = self._data['title']
-        ctxobj.description = self._data['description']
+        #ctxobj.description = self._data['description']
         ctxobj.catalog_index = self._data['catalog_index']
 
 PMR2SearchAddFormView = layout.wrap_form(PMR2SearchAddForm,
