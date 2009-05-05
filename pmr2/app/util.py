@@ -71,8 +71,12 @@ def infouri2http(infouri):
     """
 
     fragments = infouri.split('/', 1)
-    if fragments[0] in infouri_prefix:
-        return '/'.join([infouri_prefix[fragments[0]], fragments[1]])
+    try:
+        key = str(fragments[0])
+    except:
+        key = fragments[0].decode('utf8', 'replace')
+    if key in infouri_prefix:
+        return '/'.join([infouri_prefix[key], fragments[1]])
     return None
 
 def obfuscate(input):
