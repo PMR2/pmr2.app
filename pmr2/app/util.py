@@ -59,24 +59,26 @@ def fix_pcenv_externalurl(xml, base):
     result = etree.tostring(dom, encoding='utf-8', xml_declaration=True)
     return result
 
-infouri_prefix = {
-    'info:pmid': 'http://www.ncbi.nlm.nih.gov/pubmed',
-    'urn:miriam:pubmed': 'http://www.ncbi.nlm.nih.gov/pubmed',
+uri_prefix = {
+    'info:pmid/': 'http://www.ncbi.nlm.nih.gov/pubmed/%s',
+    'urn:miriam:pubmed:': 'http://www.ncbi.nlm.nih.gov/pubmed/%s',
 }
 
-def infouri2http(infouri):
+def uri2http(uri):
     """\
     Resolves an info-uri into an http link based on the lookup table 
     above.
     """
 
-    fragments = infouri.split('/', 1)
+    # XXX need a way to normalize these uris into string
     try:
-        key = str(fragments[0])
+        uri = str(uri)
     except:
-        key = fragments[0].decode('utf8', 'replace')
-    if key in infouri_prefix:
-        return '/'.join([infouri_prefix[key], fragments[1]])
+        uri = uri.decode('utf8', 'replace')
+
+    for k, v in uri_prefix.iteritems():
+        if uri.startswith(k):
+            return v % uri[len(k):]
     return None
 
 def obfuscate(input):

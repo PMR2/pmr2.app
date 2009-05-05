@@ -413,7 +413,7 @@ class ExposureCmetaDocument(ExposureDocument):
     def citation_id_html(self):
         if not self.citation_id:
             return u''
-        http = pmr2.app.util.infouri2http(self.citation_id)
+        http = pmr2.app.util.uri2http(self.citation_id)
         if http:
             return '<a href="%s">%s</a>' % (http, self.citation_id)
         return self.citation_id
