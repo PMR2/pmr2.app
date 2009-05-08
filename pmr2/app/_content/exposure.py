@@ -1,3 +1,4 @@
+import re
 import os.path
 from cStringIO import StringIO
 
@@ -476,6 +477,7 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
     def generate_content(self):
         parent = aq_parent(aq_inner(self))
         subdoc = []
+        citation_title = None
         self.title = 'Overview of %s' % self.origin
         for i in self.factories:
             factory = zope.component.queryUtility(IExposureDocumentFactory, i)
@@ -491,11 +493,55 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
             obj.reindexObject()
             subdoc.append(obj.id)
 
-            # XXX
+            # XXX cheap way to get citation title
             if i == u'ExposureCmetaDocumentFactory' and obj.citation_title:
+                citation_title = obj.citation_title
                 self.title = obj.citation_title
 
         self.subdocument = subdoc
+
+        # XXX this is a big hack that was requested because the metadata
+        # of the models in the original PMR uses paper title for title
+        # of the model, and variants were just numbers.  Now that they
+        # are grouped together in a single exposure, there needs to be
+        # some way to give them meaningful pointers in the title to show
+        # which model is what.  Since there is no metadata field for
+        # this purpose (i.e. model title should not use citation but
+        # perhaps a dc:title in node about model), we use the file name.
+        # 
+        # However, this may or may not work, since these tags and names
+        # can arbitrarily choosen as there will no longer be an
+        # automated naming scheme in place, Here are some sanity checks.
+
+        workspace = parent.workspace
+        filename = self.origin
+
+        if citation_title is not None and \
+                re.search('_[0-9]{4}$', workspace) and \
+                filename.startswith(workspace):
+            # If we have a proper citation title (not based on name of
+            # file), workspace name matches the PMR1 naming convention
+            # and filename includes that fragment, check for the 
+            # fragment.  Derive fragment from filename if we have a
+            # match.
+            fragment = filename[len(workspace):]
+            if fragment.startswith('_'):
+                fragment = fragment[1:]
+            fragment = fragment.rsplit('.', 1)[0]
+            if fragment:
+                self.title = u'%s (%s)' % (self.title, fragment)
+
+        # Add citation title into description of subobjects if it was
+        # found.
+        if citation_title is not None:
+            for id_ in self.subdocument:
+                if id_ not in parent:
+                    # Something wrong.
+                    continue
+                ctx = parent[id_]
+                ctx.setDescription(u'Citation Title: %s, %s' % 
+                    (citation_title, ctx.Description()))
+                ctx.reindexObject()
 
     # XXX use adapter adapt this class to the required classes to get
     # the data for the next two methods.
