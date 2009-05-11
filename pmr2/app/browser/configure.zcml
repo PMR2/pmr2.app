@@ -82,7 +82,7 @@
       for="pmr2.app.content.WorkspaceContainer"
       name="workspace_create"
       class=".workspace.WorkspaceStorageCreateFormView"
-      permission="cmf.ModifyPortalContent"
+      permission="cmf.AddPortalContent"
       />
 
   <browser:page
