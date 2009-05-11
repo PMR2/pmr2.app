@@ -12,5 +12,5 @@ class Adding(Products.Five.browser.adding.Adding):
 
     def addWorkspace(self):
         redir = zapi.absoluteURL(self.context, self.request
-                                ) + '/@@workspace_object_create'
+                                ) + '/@@workspace_create'
         self.request.response.redirect(redir)

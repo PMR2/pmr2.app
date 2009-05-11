@@ -69,11 +69,20 @@
       permission="pmr2.app.security.ManagePMR2"
       />
 
+  <!-- this creates the object, only admins can use -->
   <browser:page
       for="pmr2.app.content.WorkspaceContainer"
       name="workspace_object_create"
       class=".workspace.WorkspaceAddFormView"
       permission="pmr2.app.security.ManagePMR2"
+      />
+
+  <!-- this creates the object and the storage, fails if storage exists -->
+  <browser:page
+      for="pmr2.app.content.WorkspaceContainer"
+      name="workspace_create"
+      class=".workspace.WorkspaceStorageCreateFormView"
+      permission="cmf.ModifyPortalContent"
       />
 
   <browser:page

@@ -1,5 +1,5 @@
 import os
-from os.path import join
+from os.path import join, isdir
 
 def mkreporoot(path):
     # creates the directory in repository root

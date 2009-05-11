@@ -236,12 +236,24 @@ class WorkspaceAddForm(form.AddForm):
         ctxobj.title = self._data['title']
         ctxobj.description = self._data['description']
 
-        # XXX creating mercurial repository here.
+WorkspaceAddFormView = layout.wrap_form(
+    WorkspaceAddForm, label="Workspace Object Creation Form")
+
+
+class WorkspaceStorageCreateForm(WorkspaceAddForm):
+    """\
+    Workspace add form.  This also creates the storage object.
+    """
+
+    def add_data(self, ctxobj):
+        WorkspaceAddForm.add_data(self, ctxobj)
+        # This creates the mercurial workspace, and will fail if storage
+        # already exists.
         rp = ctxobj.get_path()
         Storage.create(rp, ffa=True)
 
-WorkspaceAddFormView = layout.wrap_form(
-    WorkspaceAddForm, label="Workspace Creation Form")
+WorkspaceStorageCreateFormView = layout.wrap_form(
+    WorkspaceStorageCreateForm, label="Create a New Workspace")
 
 
 class WorkspaceBulkAddForm(z3c.form.form.AddForm):

@@ -116,7 +116,9 @@ broken.
     >>> 'Valid' in html
     True
 
-Now we create the ham workspace object using the WorkspaceAddForm.
+Now we if try to create the ham workspace object using the 
+WorkspaceStorageCreateForm, it will fail because the ham Storage object
+already exists.
 ::
 
     >>> request = TestRequest(
@@ -126,6 +128,17 @@ Now we create the ham workspace object using the WorkspaceAddForm.
     ...         'form.buttons.add': 1,
     ...     })
     ... 
+    >>> testform = workspace.WorkspaceStorageCreateForm(
+    ...     self.folder.repo.workspace, request)
+    >>> testform.update()
+    Traceback (most recent call last):
+    ...
+    PathExists: directory already exist...
+
+In this case, we need to use the standard add form which only creates
+the workspace object and not the storage.
+::
+
     >>> testform = workspace.WorkspaceAddForm(
     ...     self.folder.repo.workspace, request)
     >>> testform.update()
@@ -139,6 +152,27 @@ Workspace object.
     True
     >>> 'Not Found' in html
     False
+
+We can create a completely new workspace using the form we failed to use
+earlier.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.id': u'cake',
+    ...         'form.widgets.name': u'Delicious Cake',
+    ...         'form.buttons.add': 1,
+    ...     })
+    ... 
+    >>> testform = workspace.WorkspaceStorageCreateForm(
+    ...     self.folder.repo.workspace, request)
+    >>> testform.update()
+    >>> p = utils.join(self.folder.repo.workspace.get_path(), 'cake')
+    >>> utils.isdir(p)
+    True
+    >>> p = utils.join(self.folder.repo.workspace.get_path(), 'cake', '.hg')
+    >>> utils.isdir(p)
+    True
 
 The other Workspace specific forms still need to be tested, including:
 
