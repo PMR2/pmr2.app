@@ -4,5 +4,6 @@
 
   <adapter factory=".ObjectIdValidator"/>
   <adapter factory=".RepoPathValidator"/>
+  <adapter factory=".StorageExistsValidator"/>
 
 </configure>

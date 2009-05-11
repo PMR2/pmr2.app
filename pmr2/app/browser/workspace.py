@@ -245,6 +245,9 @@ class WorkspaceStorageCreateForm(WorkspaceAddForm):
     Workspace add form.  This also creates the storage object.
     """
 
+    fields = z3c.form.field.Fields(IWorkspaceStorageCreate).select(
+        'id', 'title', 'description',)
+
     def add_data(self, ctxobj):
         WorkspaceAddForm.add_data(self, ctxobj)
         # This creates the mercurial workspace, and will fail if storage

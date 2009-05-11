@@ -11,6 +11,10 @@ class ObjectIdExistsError(zope.schema.ValidationError):
     __doc__ = _("""The specified id is already in use.""")
 
 
+class StorageExistsError(zope.schema.ValidationError):
+    __doc__ = _("""A previous workspace may have used this id but is not fully removed from the system.  Please use another id.""")
+
+
 class InvalidPathError(zope.schema.ValidationError):
     __doc__ = _("""The value specified is not a valid path.""")
 
@@ -150,6 +154,20 @@ class IWorkspaceAdd(IObjectIdMixin, IWorkspace):
     """\
     Interface for the use by WorkspaceAddForm.
     """
+
+
+class IWorkspaceStorageCreate(IWorkspaceAdd):
+    """\
+    Interface for the use by WorkspaceStorageCreateForm.
+    """
+
+    # We customized the id so validator can discrimate this against
+    # the generate mixin id field.
+    id = ObjectId(
+        title=u'Id',
+        description=u'The identifier of the object, used for URI.',
+    )
+
 
 
 class IWorkspaceBulkAdd(zope.interface.Interface):

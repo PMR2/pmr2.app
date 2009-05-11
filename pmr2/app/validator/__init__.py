@@ -20,6 +20,21 @@ z3c.form.validator.WidgetValidatorDiscriminators(
 )
 
 
+class StorageExistsValidator(ObjectIdValidator):
+
+    def validate(self, value):
+        super(StorageExistsValidator, self).validate(value)
+        # context assumed to be WorkspaceContainer
+        p = os.path.join(self.context.get_path(), value)
+        if os.path.exists(p):
+            raise interfaces.StorageExistsError()
+
+z3c.form.validator.WidgetValidatorDiscriminators(
+    StorageExistsValidator, 
+    field=interfaces.IWorkspaceStorageCreate['id'],
+)
+
+
 class RepoPathValidator(z3c.form.validator.SimpleFieldValidator):
 
     def validate(self, value):
