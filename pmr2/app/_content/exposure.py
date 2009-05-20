@@ -556,7 +556,7 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
     def get_pmr1_curation(self):
         pairs = (
             ('pmr_curation_star', u'Curation Status:'),
-            ('pmr_pcenv_star', u'PCEnv:'),
+            ('pmr_pcenv_star', u'OpenCell:'),
             ('pmr_jsim_star', u'JSim:'),
             ('pmr_cor_star', u'COR:'),
         )
