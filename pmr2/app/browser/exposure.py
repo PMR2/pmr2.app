@@ -284,7 +284,7 @@ class ExposurePMR1Metadoc(ExposureTraversalPage):
             result.append({'label': u'Download', 'href': download_uri})
             run_uri = resolver.path_to_uri(
                 self.context.commit_id, self.context.origin, '@@pcenv', False)
-            result.append({'label': u'Solve using PCEnv', 'href': run_uri})
+            result.append({'label': u'Solve using OpenCell', 'href': run_uri})
 
         # since session files were renamed into predictable patterns, we
         # can guess here.
