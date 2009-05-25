@@ -16,6 +16,7 @@
   <element value="Document"/>
   <element value="Folder"/>
   <element value="PMR2Search"/>
+  <element value="Topic"/>
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">root_folder_listing</property>
