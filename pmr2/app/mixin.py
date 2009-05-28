@@ -4,11 +4,16 @@ from ZPublisher.BaseRequest import DefaultPublishTraverse
 
 class TraversalCatchAll(object):
 
-    def __before_publishing_traverse__(self, ob, request):
+    def __before_publishing_traverse__(self, ob, request, view=None):
         """\
         This captures any unknown path and pass control to the default
         view via request_subpath variable.  Known paths will continue 
         through without issues.
+
+        ob - object that is being traversed
+        request - the request object
+        view - optional, if specified this view will be used, it should
+            handle the request_subpath.
         """
 
         # XXX Complications can happen if a content class inherits this!
@@ -56,3 +61,5 @@ class TraversalCatchAll(object):
                 # this was reversed, reverse it back.
                 request['request_subpath'].reverse()
                 request['TraversalRequestNameStack'] = []
+                if view:
+                    request['TraversalRequestNameStack'].append(view)

@@ -28,7 +28,8 @@ class PMR2(ATFolder, TraversalCatchAll):
         # one.
         o = queryAdapter(self, name='PMRImportMap')
         if o is not None:
-            TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
+            TraversalCatchAll.__before_publishing_traverse__(
+                self, ob, request, '@@root_folder_listing')
         ATFolder.__before_publishing_traverse__(self, ob, request)
 
 atapi.registerType(PMR2, 'pmr2.app')
