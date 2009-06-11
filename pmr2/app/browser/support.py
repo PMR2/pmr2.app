@@ -72,7 +72,7 @@ class PMR2SearchPage(page.TraversePage):
 
         def build_saved_searches():
             q = {
-                'query': self.context.absolute_url_path(),
+                'query': '/'.join(self.context.getPhysicalPath()),
                 'navtree': 0,
                 'depth': 1,
             }

@@ -50,7 +50,7 @@ class Renderer(base.Renderer):
             self._available = False
             self.results = []
         else:
-            path = container.absolute_url_path()
+            path = '/'.join(container.getPhysicalPath())
             self.root_url = container.absolute_url()
             self.results = self.catalog(
                 # XXX really should go for implemented interface
