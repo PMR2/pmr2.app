@@ -13,6 +13,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 
 from pmr2.app.content import ExposureContainer
 
+# XXX this could be replaced with a standard collection.
 
 class IExposureNavPortlet(IPortletDataProvider):
     """\
@@ -28,7 +29,8 @@ class Assignment(base.Assignment):
 
     @property
     def title(self):
-        return _(u"Exposure Navigation")
+        # name of the portlet in the manager
+        return _(u"Exposure Listing")
 
 
 class Renderer(base.Renderer):
@@ -58,6 +60,7 @@ class Renderer(base.Renderer):
                 sort_on='sortable_title',
             )
 
+        # portlet title for users
         self.title = 'Exposure Listing'
 
     def findExposureContainer(self):

@@ -26,7 +26,7 @@ class Assignment(base.Assignment):
 
     @property
     def title(self):
-        return _(u"Sub pages")
+        return _(u"PMR1 Exposure Sub pages")
 
 
 class Renderer(base.Renderer):
