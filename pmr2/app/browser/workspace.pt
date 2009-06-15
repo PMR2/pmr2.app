@@ -19,7 +19,7 @@
     <dd>
       <ul>
         <li tal:repeat="i view/exposure_list"><a href="" 
-            tal:attributes="href i/getPath">
+            tal:attributes="href i/getURL">
             <span tal:content="i/Title"></span> @ <span tal:content="python:i.getObject().commit_id"/></a></li>
       </ul>
     </dd>

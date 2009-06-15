@@ -28,7 +28,7 @@ class Assignment(base.Assignment):
 
     @property
     def title(self):
-        return _(u"Exposure Subpages")
+        return _(u"Exposure Metadoc Navigation")
 
 
 class Renderer(base.Renderer):
