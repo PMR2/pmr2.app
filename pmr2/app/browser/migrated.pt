@@ -19,7 +19,7 @@
 
   <ul>
     <li tal:repeat="i view/related_exposures">
-      <a tal:attributes="href i/getPath"
+      <a tal:attributes="href i/getURL"
          tal:content="i/Title"></a>
     </li>
   </ul>
