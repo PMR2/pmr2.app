@@ -224,6 +224,31 @@ class ExposureDocument(ATDocument, ExposureContentIndexBase):  #, TraversalCatch
 
     security.declareProtected(ModifyPortalContent, 'generate_content')
     def generate_content(self):
+        # XXX-1
+        #
+        # There has been confusion as to why we set the Title like so.
+        # Originally, I was going to have these title generated from the
+        # object type, such that i18n can be supported.  I supposed I
+        # could override getTitle to achieve that, but due to time
+        # constraints I set title like so.
+        #
+        # Anyway, the intention is that the Plone rendering elements
+        # (such as breadcrumbs, navigation) will look fine, example:
+        # Models > Exposure > (model) > Model Metadata  
+        #
+        # However, this raised the question of search results - this
+        # "flaw" is visibly manifested especially for 'Model Metadata',
+        # where the indexed object would be that (by default), and so
+        # search results would return a long list of documents with
+        # that text as the title, which is non-sensical.
+        #
+        # One of the proposed workaround to do that is to do something
+        # like:
+        # self.setTitle(u'Documentation - %s' % self.origin)
+        # or the title of the citation found in the meta object.  This
+        # however will break breadcrumbs so it is not advisable.
+        #
+        # tl;dr: we are stuck with the following lines of code.
         self.setTitle(u'Documentation')
         self.setDescription(u'Generated from %s' % self.origin)
         self.setContentType('text/html')
@@ -335,6 +360,7 @@ class ExposureMathDocument(ExposureDocument):
 
     security.declareProtected(ModifyPortalContent, 'generate_content')
     def generate_content(self):
+        # See: XXX-1
         self.setTitle(u'Mathematics')
         self.setDescription(u'Generated from %s' % self.origin)
         self.setContentType('text/html')
@@ -348,7 +374,7 @@ class ExposureCmetaDocument(ExposureDocument):
     """\
     Contains a rendering of the CellML Metadata.
     """
-    # XXX this class should be part of the metdata, and registered into
+    # XXX this class should be part of the metadata, and registered into
     # some sort of database that will automatically load this up into
     # one of the valid document types that can be added.
 
@@ -364,6 +390,7 @@ class ExposureCmetaDocument(ExposureDocument):
 
     security.declareProtected(ModifyPortalContent, 'generate_content')
     def generate_content(self):
+        # See: XXX-1
         self.setTitle(u'Model Metadata')
         self.setDescription(u'Generated from %s' % self.origin)
         self.setContentType('text/html')
@@ -419,21 +446,18 @@ class ExposureCmetaDocument(ExposureDocument):
             return '<a href="%s">%s</a>' % (http, self.citation_id)
         return self.citation_id
 
-    security.declareProtected(View, 'get_authors_family_index')
-    def get_authors_family_index(self):
+    def _get_authors_family_index(self):
         if self.citation_authors:
             return [pmr2.app.util.normal_kw(i[0]) 
                     for i in self.citation_authors]
         else:
             return []
 
-    security.declareProtected(View, 'get_citation_title_index')
-    def get_citation_title_index(self):
+    def _get_citation_title_index(self):
         if self.citation_title:
             return pmr2.app.util.normal_kw(self.citation_title)
 
-    security.declareProtected(View, 'get_keywords_index')
-    def get_keywords_index(self):
+    def _get_keywords_index(self):
         if self.keywords:
             # XXX magical replace
             results = [pmr2.app.util.normal_kw(i[1]) for i in self.keywords]
@@ -455,6 +479,7 @@ class ExposureCodeDocument(ExposureDocument):
 
     security.declareProtected(ModifyPortalContent, 'generate_content')
     def generate_content(self):
+        # See: XXX-1
         self.setTitle(u'Procedural Code')
         self.setDescription(u'Generated from %s' % self.origin)
         self.setContentType('text/html')
@@ -545,12 +570,18 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
 
     # XXX use adapter adapt this class to the required classes to get
     # the data for the next two methods.
+    def _get_subdoc_obj(self, factory):
+        # XXX use catalog?
+        try:
+            lookup = dict(zip(self.factories, self.subdocument))
+            id = lookup[factory]
+            return self.aq_parent[id]
+        except:
+            return None
+
     security.declareProtected(View, 'get_documentation')
     def get_documentation(self):
-        # XXX use catalog?
-        lookup = dict(zip(self.factories, self.subdocument))
-        id = lookup[u'ExposurePMR1DocumentFactory']
-        return self.aq_parent[id].getText()
+        return self._get_subdoc_obj(u'ExposurePMR1DocumentFactory').getText()
 
     security.declareProtected(View, 'get_pmr1_curation')
     def get_pmr1_curation(self):
@@ -570,3 +601,22 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
                 'stars': stars,
             })
         return result
+
+    # To generate prettier search results, we will need to do grab the
+    # data from the metadata object and return it in here, too.
+    # See: XXX-1
+
+    def get_authors_family_index(self):
+        obj = self._get_subdoc_obj(u'ExposureCmetaDocumentFactory')
+        if obj:
+            return obj._get_authors_family_index()
+
+    def get_citation_title_index(self):
+        obj = self._get_subdoc_obj(u'ExposureCmetaDocumentFactory')
+        if obj:
+            return obj._get_citation_title_index()
+
+    def get_keywords_index(self):
+        obj = self._get_subdoc_obj(u'ExposureCmetaDocumentFactory')
+        if obj:
+            return obj._get_keywords_index()
