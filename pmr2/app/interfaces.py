@@ -385,6 +385,11 @@ class IExposureCmetaDocument(IExposureDocument):
         description=u'The unique identifier for this citation (such as Pubmed).',
     )
 
+    citation_issued = zope.schema.TextLine(
+        title=u'Citation Datetime',
+        description=u'Taken from dcterms:issued.  Since the datetime format can be unpredictable, plain text is used.',
+    )
+
     keywords = zope.schema.List(
         title=u'Keywords',
         description=u'The keywords of this model.',

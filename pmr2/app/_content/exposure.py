@@ -378,6 +378,7 @@ class ExposureCmetaDocument(ExposureDocument):
     citation_title = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_title'])
     citation_bibliographicCitation = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_bibliographicCitation'])
     citation_id = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_id'])
+    citation_issued = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_issued'])
     keywords = fieldproperty.FieldProperty(IExposureCmetaDocument['keywords'])
 
     security.declareProtected(ModifyPortalContent, 'generate_content')
@@ -406,6 +407,16 @@ class ExposureCmetaDocument(ExposureDocument):
         # more than just journal
         self.citation_bibliographicCitation = citation[0]['journal']
         self.citation_title = citation[0]['title']
+
+        # XXX ad-hoc sanity checking
+        issued = citation[0]['issued']
+        if pmr2.app.util.simple_valid_date(issued):
+            self.citation_issued = issued
+        else:
+            # XXX could attempt to derive from workspace id, because
+            # pmr1 export was done so that the date is retained
+            # however this will hide issues in metadata...
+            self.citation_issued = u''
 
         authors = []
         for c in citation[0]['creator']:

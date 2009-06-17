@@ -1,3 +1,4 @@
+import re
 from lxml import etree
 
 import pmr2.mercurial.utils
@@ -98,3 +99,11 @@ def normal_kw(input):
     """
 
     return input.strip().replace(' ', '_').lower()
+
+re_simple_date = re.compile('^[0-9]{4}(-[0-9]{2}){0,2}')
+def simple_valid_date(input):
+    try:
+        return re_simple_date.search(input)
+    except:
+        return False
+
