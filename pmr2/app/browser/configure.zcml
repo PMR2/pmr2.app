@@ -368,6 +368,8 @@
       provides="z3c.form.interfaces.IAddForm"
       />
 
+  <adapter factory=".templates.plain_layout_factory" />
+
   <!-- 
     Resource declarations.
   -->
