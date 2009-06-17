@@ -88,35 +88,27 @@ class ExposureContentIndexBase(object):
     # be used as the attribute instead, which will not exist unless they
     # are defined in the objects.  So we have to do the deed here.
 
-    @property
     def pmr2_authors_family_name(self):
         return self.get_authors_family_index()
 
-    @property
     def pmr2_citation_title(self):
         return self.get_citation_title_index()
 
-    @property
     def pmr2_curation(self):
         return self.get_curation_index()
 
-    @property
     def pmr2_keyword(self):
         return self.get_keywords_index()
 
-    @property
     def pmr2_exposure_workspace(self):
         return self.get_exposure_workspace_index()
 
-    @property
     def pmr2_exposure_root_title(self):
         return self.get_exposure_root_title()
 
-    @property
     def pmr2_exposure_root_path(self):
         return self.get_exposure_root_path()
 
-    @property
     def pmr2_exposure_root_id(self):
         return self.get_exposure_root_id()
 
