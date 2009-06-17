@@ -294,6 +294,17 @@
       />
 
   <!--
+    PMR1 Compatibility View
+  -->
+
+  <browser:page
+      for="Products.CMFCore.interfaces.IFolderish"
+      name="pmr1_folder_listing"
+      template="pmr1_folder_listing.pt"
+      permission="zope2.View"
+      />
+
+  <!--
     view for the adding.
   -->
 

@@ -56,5 +56,9 @@
       friendlyName="PMR2 Root Path"/>
   <metadata name="pmr2_exposure_root_id" enabled="False" description=""
       friendlyName="PMR2 Root ID"/>
+  <metadata name="pmr1_citation_authors" enabled="True" description=""
+      friendlyName="PMR1 Citation Authors"/>
+  <metadata name="pmr1_citation_title" enabled="True" description=""
+      friendlyName="PMR1 Citation Title"/>
  </topic_metadata>
 </atcttool>

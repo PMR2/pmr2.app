@@ -112,6 +112,13 @@ class ExposureContentIndexBase(object):
     def pmr2_exposure_root_id(self):
         return self.get_exposure_root_id()
 
+    # XXX PMR1 display mode compatibility hack
+    def pmr1_citation_authors(self):
+        return ''
+
+    def pmr1_citation_title(self):
+        return ''
+
 
 class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
     """\
@@ -186,6 +193,15 @@ class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
     security.declareProtected(View, 'get_exposure_root_id')
     def get_exposure_root_id(self):
         return self.id
+
+    # XXX PMR1 display mode compatibility hack
+    security.declareProtected(View, 'pmr1_citation_authors')
+    def pmr1_citation_authors(self):
+        return self.Title()
+
+    security.declareProtected(View, 'pmr1_citation_title')
+    def pmr1_citation_title(self):
+        return self.Description()
 
 
 class ExposureDocument(ATDocument, ExposureContentIndexBase):  #, TraversalCatchAll):
@@ -469,6 +485,21 @@ class ExposureCmetaDocument(ExposureDocument):
         else:
             return []
 
+    # XXX PMR1 display mode compatibility hack
+    def _pmr1_citation_authors(self):
+        if self.citation_authors and self.citation_issued:
+            authors = u', '.join([i[0] for i in self.citation_authors])
+            return u'%s, %s' % (authors, self.citation_issued[:4])
+        else:
+            # XXX just the prettified workspace id
+            return aq_parent(self).workspace.replace('_', ', ').title()
+
+    def _pmr1_citation_title(self):
+        if self.citation_title:
+            return self.citation_title
+        else:
+            return u''
+
 
 class ExposureCodeDocument(ExposureDocument):
     """\
@@ -559,6 +590,31 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
             if fragment:
                 self.title = u'%s (%s)' % (self.title, fragment)
 
+        # There was a demand requiring the list of authors to be 
+        # displayed somehow.  We first test whether pmr1 citation title
+        # can be retrieved (which is from the Cmeta sibling).  If not, 
+        # we assume the parent will have the proper title set (which is
+        # generated (guessed) by PMR1 migration from the file name).
+
+        # Since the parent object may have the wrong title generated,
+        # we set that title with our description, and then the 
+        # description would be the title of this object.
+
+        # citation authors list first
+        cite_authors = self.pmr1_citation_authors()
+        if cite_authors:
+            # update title in parent here since we have it
+            parent.setTitle(cite_authors)
+        if not cite_authors:
+            cite_authors = parent.Title()
+        self.setDescription(cite_authors)
+
+        # now we do citation title for the parent
+        cite_title = self.pmr1_citation_title()
+        if cite_title:
+            parent.setDescription(cite_title)
+            parent.reindexObject()
+
         # Add citation title into description of subobjects if it was
         # found.
         if citation_title is not None:
@@ -623,3 +679,18 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
         obj = self._get_subdoc_obj(u'ExposureCmetaDocumentFactory')
         if obj:
             return obj._get_keywords_index()
+
+    # XXX PMR1 display mode compatibility hack
+    def pmr1_citation_authors(self):
+        obj = self._get_subdoc_obj(u'ExposureCmetaDocumentFactory')
+        if obj:
+            return obj._pmr1_citation_authors()
+        else:
+            return self.workspace.replace('_', ', ').title()
+
+    def pmr1_citation_title(self):
+        obj = self._get_subdoc_obj(u'ExposureCmetaDocumentFactory')
+        if obj:
+            return obj._pmr1_citation_title()
+        else:
+            return u''
