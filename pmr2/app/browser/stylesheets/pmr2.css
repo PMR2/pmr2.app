@@ -39,3 +39,12 @@
   max-height: 25em;
   overflow: auto;
 }
+
+.pmr1-folder-listing img {
+    vertical-align: bottom;
+}
+
+.pmr1-folder-listing dt {
+    margin: 0;
+    margin-top: 0.4em;
+}
