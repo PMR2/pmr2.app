@@ -627,20 +627,35 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
                     (citation_title, ctx.Description()))
                 ctx.reindexObject()
 
-    # XXX use adapter adapt this class to the required classes to get
-    # the data for the next two methods.
-    def _get_subdoc_obj(self, factory):
-        # XXX use catalog?
+    def _get_subdoc_obj(self, factory, attr, default=None):
+        # XXX this method cannot use catalog as this is used to return
+        # the subobjects themselves during indexing.  Please do not use 
+        # this method as the current implementation is clearly not
+        # optimized, and avoid using the methods that depend on this
+        # for the same reason.  Use the catalog to retrieve the desired
+        # results as it will be much faster.
         try:
+            # should create/use adapter adapt self to the desired
+            # object through standardized set of names instead of 
+            # creating the dictionary here as always.
             lookup = dict(zip(self.factories, self.subdocument))
             id = lookup[factory]
-            return self.aq_parent[id]
+            o = self.aq_parent[id]
+            result = getattr(o, attr)
         except:
-            return None
+            # we failed to get the value we want
+            return default
+
+        if hasattr(result, '__call__'):
+            return result()
+        else:
+            return result
 
     security.declareProtected(View, 'get_documentation')
     def get_documentation(self):
-        return self._get_subdoc_obj(u'ExposurePMR1DocumentFactory').getText()
+        # XXX since we do not want to keep two copies of the text, we
+        # will have to wake up the documentation object to get the text.
+        return self.getText()
 
     security.declareProtected(View, 'get_pmr1_curation')
     def get_pmr1_curation(self):
@@ -661,36 +676,44 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
             })
         return result
 
+    # Let catalog index the documentation since this object provide it
+    # by proxy.
+    security.declareProtected(View, 'getText')
+    def getText(self):
+        return self._get_subdoc_obj(u'ExposurePMR1DocumentFactory',
+            'getText', u'')
+
+    security.declareProtected(View, 'SearchableText')
+    def SearchableText(self):
+        return self._get_subdoc_obj(u'ExposurePMR1DocumentFactory',
+            'SearchableText', u'')
+
     # To generate prettier search results, we will need to do grab the
     # data from the metadata object and return it in here, too.
     # See: XXX-1
 
+    security.declareProtected(View, 'get_authors_family_index')
     def get_authors_family_index(self):
-        obj = self._get_subdoc_obj(u'ExposureCmetaDocumentFactory')
-        if obj:
-            return obj._get_authors_family_index()
+        return self._get_subdoc_obj(u'ExposureCmetaDocumentFactory',
+            '_get_authors_family_index', ())
 
+    security.declareProtected(View, 'get_citation_title_index')
     def get_citation_title_index(self):
-        obj = self._get_subdoc_obj(u'ExposureCmetaDocumentFactory')
-        if obj:
-            return obj._get_citation_title_index()
+        return self._get_subdoc_obj(u'ExposureCmetaDocumentFactory',
+            '_get_citation_title_index', ())
 
+    security.declareProtected(View, 'get_keywords_index')
     def get_keywords_index(self):
-        obj = self._get_subdoc_obj(u'ExposureCmetaDocumentFactory')
-        if obj:
-            return obj._get_keywords_index()
+        return self._get_subdoc_obj(u'ExposureCmetaDocumentFactory',
+            '_get_keywords_index', ())
 
+    security.declareProtected(View, 'pmr1_citation_authors')
     # XXX PMR1 display mode compatibility hack
     def pmr1_citation_authors(self):
-        obj = self._get_subdoc_obj(u'ExposureCmetaDocumentFactory')
-        if obj:
-            return obj._pmr1_citation_authors()
-        else:
-            return self.workspace.replace('_', ', ').title()
+        return self._get_subdoc_obj(u'ExposureCmetaDocumentFactory',
+            '_pmr1_citation_authors', u'')
 
+    security.declareProtected(View, 'pmr1_citation_title')
     def pmr1_citation_title(self):
-        obj = self._get_subdoc_obj(u'ExposureCmetaDocumentFactory')
-        if obj:
-            return obj._pmr1_citation_title()
-        else:
-            return u''
+        return self._get_subdoc_obj(u'ExposureCmetaDocumentFactory',
+            '_pmr1_citation_title', u'')

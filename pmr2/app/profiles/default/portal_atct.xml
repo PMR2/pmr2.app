@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <atcttool
     xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <!-- 
+  This section defines all indexes for search criteria and sort order.
+ -->
  <topic_indexes i18n:domain="pmr2.app">
   <index enabled="True" 
       name="pmr2_authors_family_name" 
@@ -37,6 +40,18 @@
       friendlyName="PMR2 Exposure Workspace"
       description="Name of the workspace this exposure is derived from.">
    <criteria>ATSelectionCriterion</criteria>
+  </index>
+  <index enabled="True" 
+      name="pmr1_citation_authors" 
+      friendlyName="PMR1 Citation Authors"
+      description="">
+   <criteria>ATSimpleStringCriterion</criteria>
+  </index>
+  <index enabled="True" 
+      name="pmr1_citation_title" 
+      friendlyName="PMR1 Citation Title"
+      description="">
+   <criteria>ATSimpleStringCriterion</criteria>
   </index>
  </topic_indexes>
  <topic_metadata i18n:domain="pmr2.app">
