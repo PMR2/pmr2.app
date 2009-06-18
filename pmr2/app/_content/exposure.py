@@ -715,5 +715,8 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
 
     security.declareProtected(View, 'pmr1_citation_title')
     def pmr1_citation_title(self):
-        return self._get_subdoc_obj(u'ExposureCmetaDocumentFactory',
-            '_pmr1_citation_title', u'')
+        # Since this is normally processed from metadata to include the
+        # variant fragment text. 
+        return self.title
+        #return self._get_subdoc_obj(u'ExposureCmetaDocumentFactory', 
+        #    '_pmr1_citation_title', u'')

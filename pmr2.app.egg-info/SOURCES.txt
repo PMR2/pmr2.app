@@ -54,6 +54,7 @@ pmr2/app/browser/page.pt
 pmr2/app/browser/page.py
 pmr2/app/browser/page_nav.pt
 pmr2/app/browser/plain_layout.pt
+pmr2/app/browser/pmr1_folder_listing.pt
 pmr2/app/browser/pmr1_metadoc.pt
 pmr2/app/browser/pmr2search.pt
 pmr2/app/browser/root.py
@@ -62,6 +63,7 @@ pmr2/app/browser/rss.pt
 pmr2/app/browser/support.py
 pmr2/app/browser/table.py
 pmr2/app/browser/table.txt
+pmr2/app/browser/templates.py
 pmr2/app/browser/viewlets.py
 pmr2/app/browser/widget.py
 pmr2/app/browser/workspace.pt

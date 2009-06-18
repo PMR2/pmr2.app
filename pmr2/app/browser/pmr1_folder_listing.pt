@@ -50,7 +50,7 @@
                             show_about python:not isAnon or site_properties.allowAnonymousViewAbout;">
         <tal:listing condition="folderContents">
 
-            <dl>
+            <dl class="pmr1-folder-listing">
                 <tal:entry tal:repeat="item folderContents">
                 <tal:block tal:define="item_url item/getURL|item/absolute_url;
                                        item_id item/getId|item/id;
