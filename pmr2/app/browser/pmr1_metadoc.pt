@@ -1,3 +1,4 @@
+<h1 tal:content="context/title">Title</h1>
 <h4>General Information</h4>
 
 <div id="pmr1_ex_header">

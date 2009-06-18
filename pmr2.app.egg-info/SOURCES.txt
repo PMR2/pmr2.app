@@ -53,6 +53,7 @@ pmr2/app/browser/migrated.pt
 pmr2/app/browser/page.pt
 pmr2/app/browser/page.py
 pmr2/app/browser/page_nav.pt
+pmr2/app/browser/plain_layout.pt
 pmr2/app/browser/pmr1_metadoc.pt
 pmr2/app/browser/pmr2search.pt
 pmr2/app/browser/root.py

@@ -14,6 +14,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 
 from pmr2.app.interfaces import *
+from pmr2.app.browser.interfaces import IPlainLayoutWrapper
 from pmr2.app.content import *
 from pmr2.app.util import *
 
@@ -313,4 +314,14 @@ class ExposurePMR1Metadoc(ExposureTraversalPage):
         }
         return result
 
-ExposurePMR1MetadocView = layout.wrap_form(ExposurePMR1Metadoc)
+
+class PlainLayoutWrapper(layout.FormWrapper):
+    """\
+    A customized layout wrapper that removes the header.
+    """
+
+    zope.interface.implements(IPlainLayoutWrapper)
+
+
+ExposurePMR1MetadocView = layout.wrap_form(ExposurePMR1Metadoc,
+    __wrapper_class=PlainLayoutWrapper)

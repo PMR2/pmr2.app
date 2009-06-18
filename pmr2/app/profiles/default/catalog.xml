@@ -33,6 +33,14 @@
     <indexed_attr value="get_exposure_root_id"/>
   </index>
 
+  <index name="pmr1_citation_authors" meta_type="FieldIndex">
+    <indexed_attr value="pmr1_citation_authors"/>
+  </index>
+
+  <index name="pmr1_citation_title" meta_type="FieldIndex">
+    <indexed_attr value="pmr1_citation_title"/>
+  </index>
+
   <column value="pmr2_authors_family_name"/>
   <column value="pmr2_citation_title"/>
   <column value="pmr2_curation"/>
@@ -41,5 +49,7 @@
   <column value="pmr2_exposure_root_title"/>
   <column value="pmr2_exposure_root_path"/>
   <column value="pmr2_exposure_root_id"/>
+  <column value="pmr1_citation_authors"/>
+  <column value="pmr1_citation_title"/>
 
 </object>

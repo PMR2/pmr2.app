@@ -10,6 +10,7 @@ from plone.z3cform import layout
 
 import pmr2.mercurial.exceptions
 import pmr2.app.security.roles
+from pmr2.app.browser.interfaces import IPlainLayoutWrapper
 
 
 class BorderedFormWrapper(layout.FormWrapper):
@@ -99,6 +100,14 @@ class BorderedTraverseFormWrapper(TraverseFormWrapper):
     def __init__(self, *a, **kw):
         super(BorderedTraverseFormWrapper, self).__init__(*a, **kw)
         self.request['enable_border'] = True
+
+
+class PlainLayoutWrapper(layout.FormWrapper):
+    """\
+    A customized layout wrapper that removes the header.
+    """
+
+    zope.interface.implements(IPlainLayoutWrapper)
 
 
 class SimplePage(BrowserPage):
