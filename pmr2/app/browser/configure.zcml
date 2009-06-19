@@ -222,13 +222,6 @@
       permission="zope2.View"
       />
 
-  <browser:page
-      for="pmr2.app.content.ExposureMathDocument"
-      name="view_mathml"
-      class=".exposure.ExposureMathMLView"
-      permission="zope2.View"
-      />
-
   <!-- Exposure CellML Metadata Document -->
 
   <browser:page
@@ -380,6 +373,7 @@
       />
 
   <adapter factory=".templates.plain_layout_factory" />
+  <adapter factory=".templates.mathml_layout_factory" />
 
   <!-- 
     Resource declarations.

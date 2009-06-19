@@ -48,3 +48,18 @@
     margin: 0;
     margin-top: 0.4em;
 }
+
+#cellml-mathml {
+    overflow: auto;
+    max-height: 400px;
+}
+
+math > mrow {
+    display: block !important;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 1em;
+    /* firefox bug - it doesn't know the width so it doesn't wrap. */
+    width: 0;  
+    font-size: 100%;
+}

@@ -47,6 +47,7 @@ pmr2/app/browser/exposure.txt
 pmr2/app/browser/file.pt
 pmr2/app/browser/form.py
 pmr2/app/browser/interfaces.py
+pmr2/app/browser/mathml_layout.pt
 pmr2/app/browser/menu.py
 pmr2/app/browser/metadoc_notice.pt
 pmr2/app/browser/migrated.pt

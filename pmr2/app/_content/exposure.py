@@ -372,10 +372,15 @@ class ExposureMathDocument(ExposureDocument):
         self.setTitle(u'Mathematics')
         self.setDescription(u'Generated from %s' % self.origin)
         self.setContentType('text/html')
-        self.mathml = self._convert().decode('utf-8')
         self.setText(u'')
-        # disabled due to XSS flaw.
-        #self.setText(u'<object style="width: 100%%;height:25em;" data="%s/@@view_mathml"></object>' % self.absolute_url())
+
+        # XXX we have to do some post processing here as the output from
+        # the CellML to MathML XSLT includes the html headers.  Since 
+        # the output is simple and predictable, we take substring.
+        mathml = self._convert().decode('utf-8')
+        start = mathml.find('<body>') + 6  # XXX len('<body>') == 6
+        end = mathml.find('</body>')
+        self.mathml = mathml[start:end]
 
 
 class ExposureCmetaDocument(ExposureDocument):
