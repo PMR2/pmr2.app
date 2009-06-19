@@ -15,7 +15,7 @@
   <h1>Mathematics</h1>
   <p class="discreet">You will need a MathML capable web browser (such as Mozilla Firefox 3, Opera 9.5 or through a MathML browser plugin) to view the following equations.</p>
   <div id="layout-contents">
-    <div id="cellml-mathml">
+    <div id="cellml-mathml" xmlns:mml="http://www.w3.org/1998/Math/MathML">
       <span tal:replace="structure view/contents" />
     </div>
   </div>
