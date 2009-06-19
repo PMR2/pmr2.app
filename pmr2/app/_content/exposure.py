@@ -610,9 +610,8 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
         self.setDescription(cite_authors)
 
         # now we do citation title for the parent
-        cite_title = self.pmr1_citation_title()
-        if cite_title:
-            parent.setDescription(cite_title)
+        if citation_title is not None:
+            parent.setDescription(citation_title)
             parent.reindexObject()
 
         # Add citation title into description of subobjects if it was
