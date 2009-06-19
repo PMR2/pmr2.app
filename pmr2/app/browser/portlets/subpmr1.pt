@@ -1,4 +1,4 @@
-<tal:block i18n:domain="plone">
+<tal:block i18n:domain="pmr2">
 <dl class="portlet portletNavigationTree">
 
     <dt class="portletHeader">
@@ -7,7 +7,7 @@
            class="tile"
            tal:condition="view/title"
            tal:attributes="href string:${view/root_url}"
-           tal:content="view/title">Navigation</a>
+           >Navigation</a>
         <span class="portletTopRight"></span>
     </dt>
 

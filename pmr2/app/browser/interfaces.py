@@ -29,3 +29,9 @@ class IPlainLayoutWrapper(IFormWrapper):
     """\
     Interface for the plain layout wrapper.
     """
+
+
+class IMathMLLayoutWrapper(IFormWrapper):
+    """\
+    Interface for the MathML layout wrapper.
+    """

@@ -9,12 +9,15 @@ import z3c.form.field
 from plone.memoize.view import memoize
 from plone.z3cform import layout
 
+from Products.PythonScripts.standard import url_quote  # For MathML view
 from Acquisition import aq_parent, aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 
 from pmr2.app.interfaces import *
+# XXX move theses layout wrappers out.
 from pmr2.app.browser.interfaces import IPlainLayoutWrapper
+from pmr2.app.browser.interfaces import IMathMLLayoutWrapper
 from pmr2.app.content import *
 from pmr2.app.util import *
 
@@ -202,14 +205,31 @@ class ExposureDocumentView(ExposureTraversalPage):
         return self.context.document_view()
 
 
-class ExposureMathMLView(ExposureTraversalPage):
+class MathMLLayoutWrapper(layout.FormWrapper):
     """\
-    Returns the MathML
+    A customized layout wrapper that removes the header.
     """
 
-    def render(self):
-        self.request.response.setHeader('Content-Type', 'text/xml')
-        return self.context.mathml
+    zope.interface.implements(IMathMLLayoutWrapper)
+
+    def xml_stylesheet(self):
+        """Returns a stylesheet with all content styles"""
+
+        registry = getToolByName(aq_inner(self.context), 'portal_css')
+        registry_url = registry.absolute_url()
+        context = aq_inner(self.context)
+
+        styles = registry.getEvaluatedResources(context)
+        skinname = url_quote(aq_inner(self.context).getCurrentSkinName())
+        result = []
+
+        for style in styles:
+            if style.getMedia() not in ('print', 'projection') \
+                    and style.getRel()=='stylesheet':
+                src = '<?xml-stylesheet href="%s/%s/%s" type="text/css"?>' % \
+                    (registry_url, skinname, style.getId())
+                result.append(src)
+        return "\n".join(result)
 
 
 class ExposureMathMLWrapper(ExposureTraversalPage):
@@ -218,13 +238,11 @@ class ExposureMathMLWrapper(ExposureTraversalPage):
     """
 
     def render(self):
-        # XXX magic string
-        return '<object style="width: 100%%;height:25em;" data="%s/@@view_mathml"></object>' % self.context.absolute_url()
-        # XXX FIXME XSS flaw!  disabled until a better way to allow
-        # editable introduction to equation is found.
-        #return self.context.getRawText()
+        self.request.response.setHeader('Content-Type', 'application/xhtml+xml')
+        return self.context.mathml
 
-ExposureMathMLWrapperView = layout.wrap_form(ExposureMathMLWrapper)
+ExposureMathMLWrapperView = layout.wrap_form(ExposureMathMLWrapper,
+    __wrapper_class=MathMLLayoutWrapper)
 
 
 class ExposureRawCodeView(ExposureTraversalPage):
