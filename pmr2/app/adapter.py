@@ -116,7 +116,7 @@ class PMR2StorageURIResolver(PMR2StorageAdapter):
             Default: True
         """
 
-        frag = self.context.getPhysicalPath()
+        frag = self.context.absolute_url(),
 
         if filepath is not None:
             # we only need to resolve the rest of the path here.
