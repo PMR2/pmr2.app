@@ -311,7 +311,8 @@ class ExposurePMR1Metadoc(ExposureTraversalPage):
         s_uri = resolver.path_to_uri(
             self.context.commit_id, session_path, '@@pcenv')
         if s_uri:
-            result.append({'label': u'Solve using Session File', 'href': s_uri})
+            result.append({'label': u'Solve using OpenCell Session File', 
+                           'href': s_uri})
         return result
 
     @memoize
