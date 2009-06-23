@@ -1,70 +1,82 @@
-There will need to be these objects.
+The original Sandbox plan was to implement these functionalities.
 
-Root object
-
-Workspace containers
-Workspaces, i.e. Mercurial
-
-Sandbox containers
-Sandbox, allows editing
-
-Exposure container
-Exposures
-
-Root object
-- admin editing only
-- points to paths on filesystem
-
-Workspace container
-- Lists workspaces
-- List specific workspace for authors. (your workspaces?)
-- Allows searching?
-- Create workspace
-  - Site admin only
-  - Instantiate an existing Hg instance for inclusion into repository
-
-Workspace
-- Provides read-only access
-- Provides write access via hg push
-- Option to let owner pull from specific sandbox
-  - list push requests from sandboxes?
-
-* workflow states
-  - allowing push?
-
-Sandbox container
-- Lists sandboxes explicit to the user
-
-* workflow states
-  - private
-  - accepting new project
-
-Sandbox
-- Provides uploading facilities
+- Provides http upload function
 - Provides metadata editor and other editing capabilities
 * push and pull, much like workspace
 
-Exposure container
-- Lists exposures
-- Search exposures
+However, there are talks to rethink this idea.
 
-Exposures
-- Provides curation facilities
-- Provides various views, such as citation, metadata and graphing.
+v0.2 wishlist
+=============
 
-Search Objects
-- Provides adminstrators (and curators?) the option to create custom
-searches based on the URI trailing the search object.  Search objects
-would have an id (e.g. ./biotype) which would form the base URI for the
-search (http://example.org/models/biotype/), and then the search term
-will be after that, such that we get URIs that could look like:
+General:
+--------
 
-http://example.org/models/biotype/cell_cycle
-http://example.org/models/biotype/cardiac_cell
+- better workflow for managing exposures (mostly for deprecation)
+  - also single-click workflow change for all subobjects
+- cloning/pushing to private workspaces
+  - maybe even "private" OpenCell execution links that are active for
+    just long enough for users to test a private model, as it does not
+    support login via http.
+- complete implementation of custom search object to fit better into
+  the look-and-feel of the default views.
 
-They would return a listing of models that have biotype of cell_cycle
-and cardiac_cell, respectively (assuming biotype searches in the 
-'biotype' index).
 
-Model exposure front page
-- It would contain all the data of all the objects within so it can be indexed.
+Curation Manifest:
+------------------
+
+At the core, it is just a file (probably RDF based) that lists the
+checksums (both MD5 and SHA1) of the curated files, and the curation
+"flags" assigned to this model.  
+
+This file could be extended to include the titles for the objects that
+will be created by PMR2, i.e. rules to create the exposure.
+
+A user then can have an offline copy of the curation information, and
+when s/he goes online can verify the contents of their copy against the
+one stored in PMR2.  They can calculate the link, possibly something
+like:
+
+http://models.cellml.org/verify/sha1/[sha1 of their manifest file].
+
+If an exposure was created using that manifest file, it will return the
+file, giving a list of all checksums which should match the checksums in
+the file the user has.
+
+The goal of this file is to enable one-click exposure creation as the
+settings used to generate the exposure pages can be saved to such a 
+file.
+
+A modeler can choose to create an exposure based on this curation file
+if it supports exposure type (for each file(s) s/he wishes to create an
+exposure page for), title(s) of the resulting object(s), and other
+presentation related fields.
+
+
+Exposure Workflow
+-----------------
+
+Exposures should really only have one single workflow state for the
+entire container to simplify control.  Also, curation flags should apply
+to each file, not the entire container.
+
+
+
+Metadata Editing:
+-----------------
+
+PMR1 had an online metadata editing.  This was originally slated to be
+part of the Sandbox, but if we ditch the sandbox there will be no way
+to safely edit metadata online.  However, we can still have an offline
+metadata editor, and it should be able to present and allow editing of
+any arbitrary metadata.  It should also save metadata back to where it
+was originally found in the XML document.
+
+This RDF metadata could also be used to edit the curation manifest file.
+
+
+Listing of models:
+------------------
+
+More versatile index page that can do listing by alphabetical order and
+the like.
