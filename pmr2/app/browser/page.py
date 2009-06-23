@@ -1,113 +1,16 @@
+from os.path import join
+
 import zope.interface
 from zope.component import getUtilitiesFor, getMultiAdapter
 from zope.publisher.browser import BrowserPage
 from zope.publisher.interfaces import IPublishTraverse
-from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.app.authentication.httpplugins import HTTPBasicAuthCredentialsPlugin
 
-from plone.app.workflow.interfaces import ISharingPageRole
+from zope.app.pagetemplate.viewpagetemplatefile \
+    import ViewPageTemplateFile as VPTF
+ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
+
 from plone.z3cform import layout
-
-import pmr2.mercurial.exceptions
-import pmr2.app.security.roles
-from pmr2.app.browser.interfaces import IPlainLayoutWrapper
-
-
-class BorderedFormWrapper(layout.FormWrapper):
-    """\
-    A customized layout wrapper that sets enable_border on request
-    to short circuit the permission checking.
-    """
-
-    def __init__(self, *a, **kw):
-        super(BorderedFormWrapper, self).__init__(*a, **kw)
-        self.request['enable_border'] = True
-
-
-class StorageFormWrapper(layout.FormWrapper):
-    """\
-    If cmd is present, pass control to the storage object, let it 
-    generate the result from the request sent by client.
-    """
-
-    # XXX how to unit test this?
-
-    def __call__(self, *a, **kw):
-        if self.request.REQUEST_METHOD != 'GET':
-            # if request is POST, we are changing things so we need
-            # authentication.
-
-            # authenticate the role - there must be a better way than 
-            # this and probably should be done at much higher levels 
-            # (if possible)
-
-            # XXX need to directly involve pmr2.app.security.roles
-            # somehow, eventually, to authenticate, such as:
-            #roles = dict([(i[1], i[0]) for i in 
-            #    getUtilitiesFor(ISharingPageRole)])
-
-            user_roles = self.request['AUTHENTICATED_USER'].\
-                getRolesInContext(self.context)
-
-            if u'WorkspacePusher' not in user_roles:
-                # request for authentication.
-                auth = HTTPBasicAuthCredentialsPlugin()
-                auth.challenge(self.request)
-                return False
-
-        storage = getMultiAdapter((self.context,), name='PMR2Storage')
-        try:
-            return storage.process_request(self.request)
-        except pmr2.mercurial.exceptions.UnsupportedCommand:
-            return super(StorageFormWrapper, self).__call__(*a, **kw)
-
-
-class BorderedStorageFormWrapper(StorageFormWrapper):
-    """\
-    Workspace default view uses this for the menu.
-    """
-
-    def __init__(self, *a, **kw):
-        super(BorderedStorageFormWrapper, self).__init__(*a, **kw)
-        self.request['enable_border'] = True
-
-
-class TraverseFormWrapper(layout.FormWrapper):
-    """\
-    A customized layout wrapper that implements traversal.
-
-    This also passes in the subpath into the subform.
-    """
-
-    zope.interface.implements(IPublishTraverse)
-
-    def __init__(self, *a, **kw):
-        super(TraverseFormWrapper, self).__init__(*a, **kw)
-        self.traverse_subpath = []
-        if self.form is not None:
-            # XXX should probably check whether self.form implements
-            # IPublishTraverse
-            # sharing subpath list with instance of form.
-            self.form_instance.traverse_subpath = self.traverse_subpath
-
-    def publishTraverse(self, request, name):
-        self.traverse_subpath.append(name)
-        return self
-
-
-class BorderedTraverseFormWrapper(TraverseFormWrapper):
-
-    def __init__(self, *a, **kw):
-        super(BorderedTraverseFormWrapper, self).__init__(*a, **kw)
-        self.request['enable_border'] = True
-
-
-class PlainLayoutWrapper(layout.FormWrapper):
-    """\
-    A customized layout wrapper that removes the header.
-    """
-
-    zope.interface.implements(IPlainLayoutWrapper)
 
 
 class SimplePage(BrowserPage):

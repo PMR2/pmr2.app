@@ -11,8 +11,9 @@ from pmr2.app.content import PMR2Search
 
 from Products.CMFCore.utils import getToolByName
 
-import form
-import page
+from pmr2.app.browser import form
+from pmr2.app.browser import page
+from pmr2.app.browser.layout import BorderedTraverseFormWrapper
 
 
 class PMR2SearchAddForm(form.AddForm):
@@ -57,9 +58,7 @@ class PMR2SearchPage(page.TraversePage):
     Wraps an object around the mathml view.
     """
 
-    filetemplate = \
-        zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
-        'pmr2search.pt')
+    filetemplate = page.ViewPageTemplateFile('pmr2search.pt')
 
     def __call__(self, *args, **kwargs):
 
@@ -114,5 +113,5 @@ class PMR2SearchPage(page.TraversePage):
 
 PMR2SearchPageView = layout.wrap_form(
     PMR2SearchPage,
-    __wrapper_class=page.BorderedTraverseFormWrapper,
+    __wrapper_class=BorderedTraverseFormWrapper,
 )

@@ -5,7 +5,6 @@ import zope.interface
 import zope.component
 import zope.event
 import zope.lifecycleevent
-import zope.app.pagetemplate.viewpagetemplatefile
 import zope.publisher.browser
 from zope.publisher.interfaces import NotFound
 
@@ -25,12 +24,15 @@ from pmr2.app.interfaces import *
 from pmr2.app.content import *
 from pmr2.app.util import set_xmlbase, fix_pcenv_externalurl, obfuscate
 
-import interfaces
+from pmr2.app.browser import interfaces
+from pmr2.app.browser import widget
+from pmr2.app.browser import form
+from pmr2.app.browser import page
+from pmr2.app.browser.page import ViewPageTemplateFile
+from pmr2.app.browser import table
 
-import widget
-import form
-import page
-import table
+from pmr2.app.browser.layout import BorderedStorageFormWrapper
+from pmr2.app.browser.layout import BorderedTraverseFormWrapper
 
 
 # Workspace Container
@@ -98,8 +100,7 @@ class WorkspacePage(page.SimplePage):
     # XXX the implementation works, but is probably not best practice
     # way to implement views based on other classes.
 
-    template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
-        'workspace.pt')
+    template = ViewPageTemplateFile('workspace.pt')
 
     @property
     def owner(self):
@@ -130,7 +131,7 @@ class WorkspacePage(page.SimplePage):
 
 WorkspacePageView = layout.wrap_form(
     WorkspacePage,
-    __wrapper_class=page.BorderedStorageFormWrapper,
+    __wrapper_class=BorderedStorageFormWrapper,
 )
 
 
@@ -187,7 +188,7 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
 
 WorkspaceLogView = layout.wrap_form(
     WorkspaceLog, 
-    __wrapper_class=page.BorderedTraverseFormWrapper,
+    __wrapper_class=BorderedTraverseFormWrapper,
     label='Changelog Entries'
 )
 
@@ -200,7 +201,7 @@ class WorkspaceShortlog(WorkspaceLog):
 
 WorkspaceShortlogView = layout.wrap_form(
     WorkspaceShortlog,
-    __wrapper_class=page.BorderedTraverseFormWrapper,
+    __wrapper_class=BorderedTraverseFormWrapper,
     label='Shortlog'
 )
 
@@ -373,9 +374,7 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     zope.interface.implements(interfaces.IWorkspaceFilePageView)
 
     url_expr = '@@file'
-    filetemplate = \
-        zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
-        'file.pt')
+    filetemplate = ViewPageTemplateFile('file.pt')
 
     @property
     def storage(self):
@@ -448,7 +447,7 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
 
 WorkspaceFilePageView = layout.wrap_form(
     WorkspaceFilePage,
-    __wrapper_class=page.BorderedTraverseFormWrapper,
+    __wrapper_class=BorderedTraverseFormWrapper,
 )
 # XXX WorkspaceFilePageView needs to implement
 #zope.interface.implements(interfaces.IWorkspaceFilePageView)

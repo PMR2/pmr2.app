@@ -2,7 +2,6 @@ import re
 
 import zope.component
 from zope.publisher.interfaces import NotFound
-import zope.app.pagetemplate.viewpagetemplatefile
 
 import z3c.form.field
 import z3c.form.form
@@ -14,10 +13,11 @@ from Products.CMFCore.utils import getToolByName
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
 
-import form
-import exposure
-import page
-import widget
+from pmr2.app.browser import form
+from pmr2.app.browser import exposure
+from pmr2.app.browser import page
+from pmr2.app.browser.page import ViewPageTemplateFile
+from pmr2.app.browser import widget
 
 
 class PMR2AddForm(form.AddForm):
@@ -83,9 +83,7 @@ class RootFolderListing(layout.FormWrapper):
     A hook for handling PMR1 uris.
     """
 
-    form_instance = \
-        zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
-            'migrated.pt')
+    form_instance = ViewPageTemplateFile('migrated.pt')
 
     def __call__(self):
 

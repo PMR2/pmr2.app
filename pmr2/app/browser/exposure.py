@@ -3,27 +3,24 @@ from random import getrandbits
 
 import zope.interface
 import zope.component
-import zope.app.pagetemplate.viewpagetemplatefile
 from zope.publisher.interfaces import IPublishTraverse, NotFound
 import z3c.form.field
 from plone.memoize.view import memoize
 from plone.z3cform import layout
 
-from Products.PythonScripts.standard import url_quote  # For MathML view
 from Acquisition import aq_parent, aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 
 from pmr2.app.interfaces import *
-# XXX move theses layout wrappers out.
-from pmr2.app.browser.interfaces import IPlainLayoutWrapper
-from pmr2.app.browser.interfaces import IMathMLLayoutWrapper
 from pmr2.app.content import *
 from pmr2.app.util import *
 
-import form
-import page
-import widget
+from pmr2.app.browser import form
+from pmr2.app.browser import page
+from pmr2.app.browser.page import ViewPageTemplateFile
+from pmr2.app.browser import widget
+from pmr2.app.browser.layout import PlainLayoutWrapper, MathMLLayoutWrapper
 
 
 class ExposureAddForm(form.AddForm):
@@ -104,8 +101,7 @@ class ExposureMetadocGenForm(form.AddForm):
     # metadata and citation.
 
     fields = z3c.form.field.Fields(IExposureMetadocGen)
-    notice = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
-        'metadoc_notice.pt')
+    notice = ViewPageTemplateFile('metadoc_notice.pt')
 
     def create(self, data):
         # XXX could update parent item to contain/render this info
@@ -205,33 +201,6 @@ class ExposureDocumentView(ExposureTraversalPage):
         return self.context.document_view()
 
 
-class MathMLLayoutWrapper(layout.FormWrapper):
-    """\
-    A customized layout wrapper that removes the header.
-    """
-
-    zope.interface.implements(IMathMLLayoutWrapper)
-
-    def xml_stylesheet(self):
-        """Returns a stylesheet with all content styles"""
-
-        registry = getToolByName(aq_inner(self.context), 'portal_css')
-        registry_url = registry.absolute_url()
-        context = aq_inner(self.context)
-
-        styles = registry.getEvaluatedResources(context)
-        skinname = url_quote(aq_inner(self.context).getCurrentSkinName())
-        result = []
-
-        for style in styles:
-            if style.getMedia() not in ('print', 'projection') \
-                    and style.getRel()=='stylesheet':
-                src = '<?xml-stylesheet href="%s/%s/%s" type="text/css"?>' % \
-                    (registry_url, skinname, style.getId())
-                result.append(src)
-        return "\n".join(result)
-
-
 class ExposureMathMLWrapper(ExposureTraversalPage):
     """\
     Wraps an object around the mathml view.
@@ -263,8 +232,7 @@ class ExposureCodeWrapper(ExposureTraversalPage):
     links.
     """
 
-    render = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
-        'code.pt')
+    render = ViewPageTemplateFile('code.pt')
 
 ExposureCodeWrapperView = layout.wrap_form(ExposureCodeWrapper)
 
@@ -274,8 +242,7 @@ class ExposureCmetaDocument(ExposureTraversalPage):
     Wraps an object around the mathml view.
     """
 
-    render = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
-        'cmeta.pt')
+    render = ViewPageTemplateFile('cmeta.pt')
 
 ExposureCmetaDocumentView = layout.wrap_form(ExposureCmetaDocument)
 
@@ -285,8 +252,7 @@ class ExposurePMR1Metadoc(ExposureTraversalPage):
     Wraps an object around the mathml view.
     """
 
-    render = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
-        'pmr1_metadoc.pt')
+    render = ViewPageTemplateFile('pmr1_metadoc.pt')
 
     def portal_url(self):
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
@@ -332,14 +298,6 @@ class ExposurePMR1Metadoc(ExposureTraversalPage):
             },
         }
         return result
-
-
-class PlainLayoutWrapper(layout.FormWrapper):
-    """\
-    A customized layout wrapper that removes the header.
-    """
-
-    zope.interface.implements(IPlainLayoutWrapper)
 
 
 ExposurePMR1MetadocView = layout.wrap_form(ExposurePMR1Metadoc,

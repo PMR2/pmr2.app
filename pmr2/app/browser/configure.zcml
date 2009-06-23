@@ -293,7 +293,7 @@
   <browser:page
       for="Products.CMFCore.interfaces.IFolderish"
       name="pmr1_folder_listing"
-      template="pmr1_folder_listing.pt"
+      template="templates/pmr1_folder_listing.pt"
       permission="zope2.View"
       />
 
@@ -372,8 +372,8 @@
       provides="z3c.form.interfaces.IAddForm"
       />
 
-  <adapter factory=".templates.plain_layout_factory" />
-  <adapter factory=".templates.mathml_layout_factory" />
+  <adapter factory=".layout.plain_layout_factory" />
+  <adapter factory=".layout.mathml_layout_factory" />
 
   <!-- 
     Resource declarations.
