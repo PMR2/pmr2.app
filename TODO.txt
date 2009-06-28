@@ -80,3 +80,10 @@ Listing of models:
 
 More versatile index page that can do listing by alphabetical order and
 the like.
+
+
+Searching/Catalog:
+------------------
+
+ZCatalog is legacy, not versatile and pollutes objects with unneeded
+methods.  See if we can integrate the newer catalogs.
