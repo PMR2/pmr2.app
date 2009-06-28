@@ -14,12 +14,16 @@ General:
 
 - better workflow for managing exposures (mostly for deprecation)
   - also single-click workflow change for all subobjects
-- cloning/pushing to private workspaces
+  - (?)
+- cloning/pushing to private workspaces 
   - maybe even "private" OpenCell execution links that are active for
     just long enough for users to test a private model, as it does not
     support login via http.
+  - (*****)
 - complete implementation of custom search object to fit better into
   the look-and-feel of the default views.
+- Metadata editing.
+- Hg Forest
 
 
 Curation Manifest:
@@ -52,6 +56,188 @@ if it supports exposure type (for each file(s) s/he wishes to create an
 exposure page for), title(s) of the resulting object(s), and other
 presentation related fields.
 
+Here is a sample, work in progress.  The namespace URI defined for this
+will be changed if and when we standardize and make this generic enough
+for the usage of all model types.
+::
+
+    <?xml version="1.0"?>
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+             xmlns:cmeta="http://www.cellml.org/metadata/1.0#"
+             xmlns:pmr2="http://www.cellml.org/tools/pmr2/"
+             xmlns:dc="http://purl.org/dc/elements/1.1/">
+
+      <rdf:Description rdf:about="">
+        <dc:title>Smith, Jones, 2008</dc:title> 
+        <dc:description>The Paper Title of a Citation of Model</dc:description> 
+        <pmr2:method>Exposure</pmr2:method>
+
+        <pmr2:manifest>
+          <rdf:Seq>
+            <rdf:li rdf:resource="imports"/>
+            <rdf:li rdf:resource="smith_jones_2008_main.cellml"/>
+            <rdf:li rdf:resource="smith_jones_2008_simulation1.cellml"/>
+            <rdf:li rdf:resource="smith_jones_2008_simulation2.cellml"/>
+          </rdf:Seq>
+        </pmr2:manifest>
+
+        <pmr2:defaultpage rdf:resource="smith_jones_2008_main.cellml"/>
+
+        <pmr2:curation>
+          <rdf:Seq>
+            <rdf:li rdf:resource="urn:pmr2:curation:units_checked:matched"/>
+            <rdf:li rdf:resource="urn:pmr2:curation:expert_checked:false"/>
+            <rdf:li rdf:resource="urn:pmr2:curation:opencell:0.7"/>
+            <rdf:li rdf:resource="urn:pmr2:curation:pcenv:0.6"/>
+            <rdf:li rdf:resource="urn:pmr2:curation:pcenv:0.5"/>
+            <rdf:li rdf:resource="urn:pmr2:curation:cor:0.9"/>
+          </rdf:Seq>
+        </pmr2:curation>
+
+      </rdf:Description>
+
+      <rdf:Description rdf:about="imports">
+        <dc:title>Modules</dc:title>
+        <pmr2:method>Folder</pmr2:method>
+        <pmr2:manifest>
+          <rdf:Seq>
+            <rdf:li rdf:resource="imports/mod1.cellml"/>
+            <rdf:li rdf:resource="imports/mod2.cellml"/>
+          </rdf:Seq>
+        </pmr2:manifest>
+      </rdf:Description>
+
+      <rdf:Description rdf:about="imports/mod1.cellml">
+        <dc:title>Overview of Module 1</dc:title>
+        <pmr2:checksum rdf:parseType="Resource">
+          <pmr2:md5>67a533bb34bfbdf2a88bf4b02c69db5e</pmr2:md5>
+          <pmr2:sha1>6ad972d2839d0f8224b5156bb039d5389c24c774</pmr2:sha1>
+        </pmr2:checksum>
+        <pmr2:method>Module Overview Exposure</pmr2:method>
+
+        <pmr2:curation_remove>
+          <rdf:Seq>
+            <rdf:li rdf:resource="urn:pmr2:curation:expert_checked:false"/>
+          </rdf:Seq>
+        </pmr2:curation_remove>
+
+        <pmr2:curation_insert>
+          <rdf:Seq>
+            <rdf:li rdf:resource="urn:pmr2:curation:expert_checked:true"/>
+          </rdf:Seq>
+        </pmr2:curation_insert>
+
+      </rdf:Description>
+
+      <rdf:Description rdf:about="imports/mod2.cellml">
+        <dc:title>Overview of Module 2</dc:title>
+        <pmr2:checksum rdf:parseType="Resource">
+          <pmr2:md5>07628e76b5b61165ee6170df435aca9a</pmr2:md5>
+          <pmr2:sha1>c66b6af43f2efcc15413e602d008cf9fd701c29b</pmr2:sha1>
+        </pmr2:checksum>
+        <pmr2:method>Module Overview Exposure</pmr2:method>
+
+        <pmr2:curation_remove>
+          <rdf:Seq>
+            <rdf:li rdf:resource="urn:pmr2:curation:expert_checked:false"/>
+          </rdf:Seq>
+        </pmr2:curation_remove>
+
+        <pmr2:curation_insert>
+          <rdf:Seq>
+            <rdf:li rdf:resource="urn:pmr2:curation:expert_checked:true"/>
+          </rdf:Seq>
+        </pmr2:curation_insert>
+
+      </rdf:Description>
+
+      <rdf:Description rdf:about="smith_jones_2008_main.cellml">
+        <dc:title>Smith, Jones, 2008</dc:title> 
+        <dc:description>
+          The Paper Title of a Citation of Model (Main Model)
+        </dc:description>
+        <pmr2:checksum rdf:parseType="Resource">
+          <pmr2:md5>f6a1c5ac3b58a26fff7cdcc4a44030bd</pmr2:md5>
+          <pmr2:sha1>250ec366f6dc0ad8620f04c474f330e19d6b4a0e</pmr2:sha1>
+        </pmr2:checksum>
+        <pmr2:method>PMR2 Style Exposure</pmr2:method>
+      </rdf:Description>
+
+      <rdf:Description rdf:about="smith_jones_2008_simulation1.cellml">
+        <dc:title>Smith, Jones, 2008</dc:title> 
+        <dc:description>
+          The Paper Title of a Citation of Model (Simulation 1)
+        </dc:description>
+        <pmr2:checksum rdf:parseType="Resource">
+          <pmr2:md5>802c35f3327306d47198cc40217dc64d</pmr2:md5>
+          <pmr2:sha1>a506625616003a705ecca9bc19c5f981441e3569</pmr2:sha1>
+        </pmr2:checksum>
+        <pmr2:method>PMR1 Style Exposure</pmr2:method>
+      </rdf:Description>
+
+      <rdf:Description rdf:about="smith_jones_2008_simulation2.cellml">
+        <dc:title>Smith, Jones, 2008</dc:title> 
+        <dc:description>
+          The Paper Title of a Citation of Model (Simulation 2)
+        </dc:description>
+        <pmr2:checksum rdf:parseType="Resource">
+          <pmr2:md5>f5a32cae906b59f3ef5f1fe5c552a68a</pmr2:md5>
+          <pmr2:sha1>b2f90f4f71f6885d36f6c7c99b9d54c7f8cf6bb0</pmr2:sha1>
+        </pmr2:checksum>
+        <pmr2:method>PMR1 Style Exposure</pmr2:method>
+      </rdf:Description>
+
+    </rdf:RDF>
+
+A few notes:
+
+    - We are using a "temporary" namespace URI to identify the manifest:
+      http://www.cellml.org/tools/pmr2/
+    - The node with rdf:about="" is the root container for all the
+      subobjects defined.
+    - Each manifest within a node can only define paths within its own
+      directory.  Note how imports directory has a separate definition
+
+      - Manifest must be in a Seq so order can be defined for the
+        navigational elements of PMR2.
+
+    - Each entry should have a title and description, or one will be
+      generated by PMR2.
+
+      - One can also reference another snippet of RDF within another
+        RDF file through this::
+        
+            <dc:title rdf:resource="main.cellml#title">
+
+        Which the main.cellml will be parsed for RDF content, and the
+        literal with the id 'title' will be used.
+
+    - The folder type objects (Exposure, Folder) will need to define
+      a defaultpage, or a bare minimum index page is generated.
+    - Curation at the root object applies to every single files under
+      it, but each files can override it using pmr2:curation_remove or
+      pmr2:curation_insert.  Or perhaps even override by redefining the
+      tag.  [XXX: this will need much further discussion]
+    - Curation is defined using URN, to aid in future migration towards
+      using standardized curation ontologies.
+    - Checksums are to aid curators in determining whether the contents
+      of the curated files have changed since the last time the flags
+      were put into place.
+    
+      - Checksums were put into place as a crutch for "offline" 
+        verification of the curated model content.  Providing a revision
+        identifier might probably do the trick, since it will contain
+        the real checksums of the files the user want to check against,
+        and this may be somewhat simpler.
+
+    - This file is only "recipe" to create the final, curated exposure
+      pages for use within PMR2.  All curation values, checksums, and
+      other information exists for convenience and are not authoritative
+      in determining the validity of the curation flags against the
+      content.  While the checksums and the like can be checked against
+      this manifest, users will still need to verify that this manifest
+      file was used to create an exposure that has been validated by a
+      curator.
 
 Exposure Workflow
 -----------------
@@ -60,6 +246,12 @@ Exposures should really only have one single workflow state for the
 entire container to simplify control.  Also, curation flags should apply
 to each file, not the entire container.
 
+
+Exposure Type
+-------------
+
+We need our expousures to look better, include related models, other
+curation status flags.
 
 
 Metadata Editing:
