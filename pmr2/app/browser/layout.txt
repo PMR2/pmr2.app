@@ -1,0 +1,85 @@
+Layout
+======
+
+We are using plone.z3cform to wrap our forms here primarily due to the
+nice separation of concern it provides (i.e. keeping Acquistion, Plone
+functions and other things away from the core of the content we intend
+to render).  Since the default layout.pt provided is very basic, there
+are extension added default layout module.
+
+To test our extensions, we borrowed some preparation code from
+plone.z3cform.
+::
+
+    >>> from zope.interface import alsoProvides
+    >>> from zope.interface import Interface, implements
+    >>> from zope.publisher.browser import TestRequest
+    >>> from zope.annotation.interfaces import IAttributeAnnotatable
+    >>> from z3c.form.interfaces import IFormLayer
+    >>> 
+    >>> def make_request(form={}):
+    ...     request = TestRequest()
+    ...     request.form.update(form)
+    ...     alsoProvides(request, IFormLayer)
+    ...     alsoProvides(request, IAttributeAnnotatable)
+    ...     return request
+    ...
+    >>> class dummyUser(object):
+    ...     def getRolesInContext(self, context):
+    ...         return []
+    ...
+
+Now we build our adapters.
+::
+
+    >>> from zope.component import provideAdapter
+    >>> from zope.publisher.interfaces.browser import IBrowserRequest
+    >>> from zope.interface import Interface
+    >>> from pmr2.app.browser.layout import StorageFormWrapper
+    >>> from pmr2.app.browser.layout import PlainLayoutWrapper
+    >>> from pmr2.app.browser.layout import MathMLLayoutWrapper
+    >>> from pmr2.app.content import Workspace
+    >>> 
+    >>> provideAdapter(adapts=(Interface, IBrowserRequest),
+    ...                provides=Interface,
+    ...                factory=StorageFormWrapper,
+    ...                name=u"storage-form")
+    ... 
+    >>> provideAdapter(adapts=(Interface, IBrowserRequest),
+    ...                provides=Interface,
+    ...                factory=PlainLayoutWrapper,
+    ...                name=u"plain-layout")
+    ... 
+    >>> provideAdapter(adapts=(Interface, IBrowserRequest),
+    ...                provides=Interface,
+    ...                factory=MathMLLayoutWrapper,
+    ...                name=u"mathml-layout")
+    ... 
+
+We need to emulate some of the fields that gets set and used by our
+wrapper class, namely the user and authentication fields and the like.
+::
+
+    >>> from zope.component import getMultiAdapter
+    >>> context = Workspace('test')
+    >>> request = make_request({'AUTHENTICATED_USER': dummyUser()})
+    >>> request.REQUEST_METHOD = 'POST'
+    >>> form = getMultiAdapter((context, request), name=u"storage-form")
+    >>> form
+    <pmr2.app.browser.layout.StorageFormWrapper object ...>
+    >>> form()
+    False
+    >>> request.response.getHeader('WWW-Authenticate', literal=True)
+    'basic realm=...'
+
+Here are the two other wrapper types:
+::
+
+    >>> plain = getMultiAdapter((context, request), name=u"plain-layout")
+    >>> plain
+    <pmr2.app.browser.layout.PlainLayoutWrapper object ...>
+    >>> mathml = getMultiAdapter((context, request), name=u"mathml-layout")
+    >>> mathml
+    <pmr2.app.browser.layout.MathMLLayoutWrapper object ...>
+
+We need to figure out how to test the rendering of the above.

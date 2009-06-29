@@ -1,6 +1,7 @@
 import os.path
 
 import zope.interface
+from zope.app.authentication.httpplugins import HTTPBasicAuthCredentialsPlugin
 from zope.publisher.interfaces import IPublishTraverse
 from zope.component import getUtilitiesFor, getMultiAdapter
 from plone.app.workflow.interfaces import ISharingPageRole
