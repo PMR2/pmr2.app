@@ -1,0 +1,3 @@
+recursive-include pmr2 *
+global-exclude *pyc
+global-exclude .*swp
