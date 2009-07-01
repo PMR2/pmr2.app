@@ -20,7 +20,8 @@ from pmr2.app.browser import form
 from pmr2.app.browser import page
 from pmr2.app.browser.page import ViewPageTemplateFile
 from pmr2.app.browser import widget
-from pmr2.app.browser.layout import PlainLayoutWrapper, MathMLLayoutWrapper
+from pmr2.app.browser.layout import PlainLayoutWrapper, MathMLLayoutWrapper, \
+    BorderedTraverseFormWrapper
 
 
 class ExposureAddForm(form.AddForm):
@@ -234,7 +235,10 @@ class ExposureCodeWrapper(ExposureTraversalPage):
 
     render = ViewPageTemplateFile('code.pt')
 
-ExposureCodeWrapperView = layout.wrap_form(ExposureCodeWrapper)
+ExposureCodeWrapperView = layout.wrap_form(
+    ExposureCodeWrapper,
+    __wrapper_class=BorderedTraverseFormWrapper,
+)
 
 
 class ExposureCmetaDocument(ExposureTraversalPage):
