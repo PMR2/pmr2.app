@@ -407,8 +407,8 @@ class IBaseExposureDocumentFactory(zope.interface.Interface):
     Base interface for exposure document types factory.
     """
 
-    klass = zope.schema.TextLine(
-        title=u'Name of the ExposureDocument class.',
+    klass = zope.schema.InterfaceField(
+        title=u'ExposureDocument class object.',
     )
 
     description = zope.schema.Text(

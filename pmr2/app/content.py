@@ -43,13 +43,8 @@ class BaseDocumentFactory(object):
     """
 
     def __call__(self, filename):
-        # XXX this needs to use adapters and such to load the class
-
-        import pmr2.app.content
-        klass = getattr(pmr2.app.content, self.klass)
-        # XXX identifier has to be normal str
         name = str(filename + self.suffix)
-        obj = klass(oid=name)
+        obj = self.klass(oid=name)
         # XXX filename conversion to unicode
         obj.origin = unicode(filename)
         return obj
@@ -81,7 +76,7 @@ class ExposurePMR1DocumentFactory(BaseExposureDocumentFactory):
 
     zope.interface.implements(IExposureDocumentFactory)
 
-    klass = u'ExposureDocument'
+    klass = ExposureDocument
     description = u'PMR1 CellML Docbook Page'
     suffix = u'.pmr1.html'
     transform = u'pmr2_processor_legacy_tmpdoc2html'
@@ -91,7 +86,7 @@ class ExposureMathDocumentFactory(BaseExposureDocumentFactory):
 
     zope.interface.implements(IExposureDocumentFactory)
 
-    klass = u'ExposureMathDocument'
+    klass = ExposureMathDocument
     description = u'PMR1 MathML Page'
     suffix = u'.mathml.html'
     transform = u'pmr2_processor_legacy_cellml2html_mathml'
@@ -101,7 +96,7 @@ class ExposureCmetaDocumentFactory(BaseExposureDocumentFactory):
 
     zope.interface.implements(IExposureDocumentFactory)
 
-    klass = u'ExposureCmetaDocument'
+    klass = ExposureCmetaDocument
     description = u'CellML Metadata Page'
     suffix = u'.pmr2.cmeta'
     transform = u'pmr2_cellml_metadata'  # this needed?
@@ -111,7 +106,7 @@ class ExposureCodeDocumentFactory(BaseExposureDocumentFactory):
 
     zope.interface.implements(IExposureDocumentFactory)
 
-    klass = u'ExposureCodeDocument'
+    klass = ExposureCodeDocument
     description = u'CellML Code Generation Page'
     suffix = u'.code.html'
     transform = u'pmr2_processor_cellmlapi_cellml2c'
@@ -121,7 +116,7 @@ class ExposurePMR1MetadocFactory(BaseExposureMetadocFactory):
 
     zope.interface.implements(IExposureMetadocFactory)
 
-    klass = u'ExposurePMR1Metadoc'
+    klass = ExposurePMR1Metadoc
     description = u'PMR1 Style Exposure'
     suffix = u'.index.html'
     factories = [
