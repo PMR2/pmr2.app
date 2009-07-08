@@ -4,6 +4,7 @@ from zope.publisher.interfaces import IPublishTraverse, IPublisherRequest
 from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 
+from pmr2.mercurial import Storage  # XXX remove later [1]
 from pmr2.mercurial.interfaces import IPMR2StorageBase, IPMR2HgWorkspaceAdapter
 from pmr2.mercurial.adapter import PMR2StorageAdapter
 from pmr2.mercurial.adapter import PMR2StorageRequestAdapter
@@ -39,7 +40,7 @@ class PMR2StorageRequestViewAdapter(PMR2StorageRequestAdapter):
         PMR2StorageRequestAdapter.__init__(self, context, request)
 
 
-class PMR2ExposureStorageAdapter(PMR2StorageRequestAdapter):
+class PMR2ExposureStorageAdapter(PMR2StorageAdapter):
 
     def __init__(self, context):
 
@@ -51,6 +52,16 @@ class PMR2ExposureStorageAdapter(PMR2StorageRequestAdapter):
         self._rev = context.commit_id
         self._path = ()
         PMR2StorageAdapter.__init__(self, self.workspace, self._rev)
+
+    # XXX [1] this method was in the wrong place in parent.  When it is
+    # finally moved (next version of pmr2.mercurial) remove this and the
+    # above import.
+    def get_full_manifest(self):
+        """\
+        Returns full manifest listing.
+        """
+
+        return Storage.raw_manifest(self, self._rev)
 
 
 class PMR2ExposureDocStorageAdapter(PMR2StorageRequestAdapter):
