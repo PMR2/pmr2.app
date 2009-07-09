@@ -35,7 +35,7 @@ class ManifestListVocab(SimpleVocabulary):
             name='PMR2ExposureStorageAdapter',
         )
 
-        manifest = storage.get_full_manifest()
+        manifest = storage.raw_manifest()
         values = manifest.keys()
         values.sort()
         terms = [SimpleTerm(i, i) for i in values]

@@ -5,11 +5,11 @@
 <!-- could use the Mercurial's i18n module to translate -->
 <dl>
 <dt>Author:</dt>
-<dd tal:content="view/storage/fileinfo/author"/>
+<dd tal:content="view/fileinfo/author"/>
 <dt>Date:</dt>
-<dd tal:content="view/storage/fileinfo/date"/>
+<dd tal:content="view/fileinfo/date"/>
 <dt>Desc:</dt>
-<dd tal:content="view/storage/fileinfo/desc"/>
+<dd tal:content="view/fileinfo/desc"/>
 <dt>Permanent Download URI:</dt>
 <dd><a tal:attributes="
       href view/fullpath;

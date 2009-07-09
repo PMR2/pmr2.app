@@ -223,7 +223,7 @@ class ExposureDocument(ATDocument, ExposureContentIndexBase):  #, TraversalCatch
             (self,),
             name='PMR2ExposureDocStorageAdapter',
         )
-        input = storage.file
+        input = storage.rawfile
 
         pt = getToolByName(self, 'portal_transforms')
         stream = datastream('processor')
@@ -413,7 +413,7 @@ class ExposureCmetaDocument(ExposureDocument):
             (self,),
             name='PMR2ExposureDocStorageAdapter',
         )
-        input = storage.file
+        input = storage.rawfile
 
         metadata = Cmeta(StringIO(input))
         ids = metadata.get_cmetaid()

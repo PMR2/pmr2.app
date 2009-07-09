@@ -376,14 +376,35 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     url_expr = '@@file'
     filetemplate = ViewPageTemplateFile('file.pt')
 
+    def __init__(self, *a, **kw):
+        super(WorkspaceFilePage, self).__init__(*a, **kw)
+        self.manifest = self.fileinfo = None
+
     @property
     def storage(self):
+        # XXX placeholder
+        self.request.form['cmd'] = ['file']
         if not hasattr(self, '_storage'):
             self._storage = zope.component.queryMultiAdapter(
                 (self.context, self.request, self),
                 name="PMR2StorageRequestView"
             )
         return self._storage
+
+    @property
+    def structure(self):
+        # XXX this caching should be done at the storage object
+        if not hasattr(self, '_structure'):
+            self._structure = self.storage.structure
+            if not self._structure:
+                return
+
+            if self._structure[''] == 'filerevision':
+                self.fileinfo = self._structure
+            elif self._structure[''] == 'manifest':
+                self.manifest = self._structure
+
+        return self._structure
 
     # XXX rewrite this class to use adapters for specific views for 
     # these distinct types of values
@@ -392,18 +413,20 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
         """
         provides values for the table.
         """
-        if self.storage.manifest:
-            return self.storage.manifest['aentries']
-        elif self.storage.fileinfo:
-            return self.storage.fileinfo['text']
+
+        if self.structure[''] == 'filerevision':
+            return self.fileinfo['text']
+        elif self.structure[''] == 'manifest':
+            return self.manifest['aentries']
         return []
 
     def content(self):
-        if self.storage.manifest is None and self.storage.fileinfo is None:
+
+        if self.structure is None:
             raise NotFound(self.context, self.context.title_or_id(), 
                            self.request)
 
-        if self.storage.manifest:
+        if self._structure[''] == 'manifest':
             t = table.FileManifestTable(self, self.request)
             t.update()
             return t.render()
@@ -415,10 +438,10 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
         """
         provides values for the form.
         """
-        if self.storage.manifest:
-            label = 'Manifest'
-        elif self.storage.fileinfo:
+        if self.structure[''] == 'filerevision':
             label = 'Fileinfo'
+        elif self.structure[''] == 'manifest':
+            label = 'Manifest'
         else:
             return u'No Information Available'
         return u'%s: %s @ %s / %s' % (
@@ -462,7 +485,7 @@ class WorkspaceRawfileView(WorkspaceFilePage):
         else:
             # not supporting resuming download
             # XXX large files will eat RAM
-            data = self.storage.file
+            data = self.storage.rawfile
             mt = mimetypes.guess_type(self.storage.path)[0]
             if mt is None or (data and '\0' in data[:4096]):
                 mt = mt or 'application/octet-stream'
