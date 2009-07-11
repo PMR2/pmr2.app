@@ -1,4 +1,4 @@
-rom Products.CMFCore.permissions import setDefaultRoles
+from Products.CMFCore.permissions import setDefaultRoles
 from AccessControl import ModuleSecurityInfo
 
 security = ModuleSecurityInfo("pmr2.app.security.permissions")
