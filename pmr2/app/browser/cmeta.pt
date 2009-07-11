@@ -9,5 +9,5 @@
 <dt>Citation Identifier:</dt>
 <dd tal:content="structure context/citation_id_html"/>
 <dt>Model Keywords:</dt>
-<dd tal:content="python: ', '.join(context.get_keywords_index())"/>
+<dd tal:content="python: ', '.join([i[1] for i in context.keywords])"/>
 </dl>
