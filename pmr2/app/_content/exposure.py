@@ -119,6 +119,12 @@ class ExposureContentIndexBase(object):
     def pmr1_citation_title(self):
         return ''
 
+    def pmr1_citation_authors_sortable(self):
+        s = self.pmr1_citation_authors()
+        if isinstance(s, basestring):
+            return s.lower()
+        return ''
+
 
 class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
     """\
@@ -378,9 +384,13 @@ class ExposureMathDocument(ExposureDocument):
         # the CellML to MathML XSLT includes the html headers.  Since 
         # the output is simple and predictable, we take substring.
         mathml = self._convert().decode('utf-8')
-        start = mathml.find('<body>') + 6  # XXX len('<body>') == 6
+        start = mathml.find('<body>')
         end = mathml.find('</body>')
-        self.mathml = mathml[start:end]
+        if start < 0 or end < 0:
+            self.mathml = u''
+        else:
+            # XXX len('<body>') == 6
+            self.mathml = mathml[start + 6:end]
 
 
 class ExposureCmetaDocument(ExposureDocument):
@@ -483,12 +493,14 @@ class ExposureCmetaDocument(ExposureDocument):
 
     def _get_keywords_index(self):
         if self.keywords:
-            # XXX magical replace
             results = [pmr2.app.util.normal_kw(i[1]) for i in self.keywords]
             results.sort()
             return results
         else:
             return []
+
+    def keywords_string(self):
+        return ', '.join(self._get_keywords_index())
 
     # XXX PMR1 display mode compatibility hack
     def _pmr1_citation_authors(self):

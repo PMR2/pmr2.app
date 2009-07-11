@@ -48,6 +48,11 @@
    <criteria>ATSimpleStringCriterion</criteria>
   </index>
   <index enabled="True" 
+      name="pmr1_citation_authors_sortable" 
+      friendlyName="PMR1 Citation Authors (Sortable)"
+      description="">
+  </index>
+  <index enabled="True" 
       name="pmr1_citation_title" 
       friendlyName="PMR1 Citation Title"
       description="">
