@@ -37,6 +37,10 @@
     <indexed_attr value="pmr1_citation_authors"/>
   </index>
 
+  <index name="pmr1_citation_authors_sortable" meta_type="FieldIndex">
+    <indexed_attr value="pmr1_citation_authors_sortable"/>
+  </index>
+
   <index name="pmr1_citation_title" meta_type="FieldIndex">
     <indexed_attr value="pmr1_citation_title"/>
   </index>
@@ -50,6 +54,7 @@
   <column value="pmr2_exposure_root_path"/>
   <column value="pmr2_exposure_root_id"/>
   <column value="pmr1_citation_authors"/>
+  <column value="pmr1_citation_authors_sortable"/>
   <column value="pmr1_citation_title"/>
 
 </object>

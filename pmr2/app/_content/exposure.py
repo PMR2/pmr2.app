@@ -119,6 +119,12 @@ class ExposureContentIndexBase(object):
     def pmr1_citation_title(self):
         return ''
 
+    def pmr1_citation_authors_sortable(self):
+        s = self.pmr1_citation_authors()
+        if isinstance(s, basestring):
+            return s.lower()
+        return ''
+
 
 class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
     """\
