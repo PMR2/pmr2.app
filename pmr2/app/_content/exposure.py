@@ -487,12 +487,14 @@ class ExposureCmetaDocument(ExposureDocument):
 
     def _get_keywords_index(self):
         if self.keywords:
-            # XXX magical replace
             results = [pmr2.app.util.normal_kw(i[1]) for i in self.keywords]
             results.sort()
             return results
         else:
             return []
+
+    def keywords_string(self):
+        return ', '.join(self._get_keywords_index())
 
     # XXX PMR1 display mode compatibility hack
     def _pmr1_citation_authors(self):
