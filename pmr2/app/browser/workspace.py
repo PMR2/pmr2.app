@@ -444,8 +444,14 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
             label = 'Manifest'
         else:
             return u'No Information Available'
+        rev = self.storage.rev
+        if rev:
+            rev = rev[:10]
+        else:
+            # emulating null ID.
+            rev = '0' * 10
         return u'%s: %s @ %s / %s' % (
-            label, self.context.title_or_id(), self.storage.rev[:10], 
+            label, self.context.title_or_id(), rev,
             self.storage.path.replace('/', ' / '),
         )
 
