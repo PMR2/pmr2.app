@@ -202,6 +202,35 @@ See if the page renders with expected output.
     >>> testpage.label
     u'Manifest: cake @ 0000000000 / '
 
-The other Workspace specific forms still need to be tested, including:
+The log page should render, too.
+::
 
-  - WorkspaceShortlog
+    >>> request = TestRequest()
+    >>> testpage = workspace.WorkspaceLog(
+    ...     self.folder.repo.workspace.cake, request)
+    >>> result = testpage()
+    >>> '<th>Log</th>' in result
+    True
+
+Now the short log page should render, too.
+::
+
+    >>> request = TestRequest()
+    >>> testpage = workspace.WorkspaceShortlog(
+    ...     self.folder.repo.workspace.cake, request)
+    >>> result = testpage()
+    >>> '<th>Log</th>' in result
+    True
+
+Main page should render fine, too.
+::
+
+    >>> request = TestRequest()
+    >>> testpage = workspace.WorkspacePage(
+    ...     self.folder.repo.workspace.cake, request)
+    >>> result = testpage()
+    >>> '<th>Log</th>' in result
+    True
+
+More tests to be done when I figure out how to test push so we have 
+data.
