@@ -1,3 +1,4 @@
+from sys import maxint
 import cgi
 
 import z3c.table.column
@@ -267,6 +268,7 @@ class FileOptionColumn(EscapedItemKeyColumn):
 class FileManifestTable(z3c.table.table.Table):
 
     sortOn = None
+    startBatchingAt = maxint
 
     def setUpColumns(self):
         return [
