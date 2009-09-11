@@ -7,13 +7,25 @@ from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
 
+class IUpdatablePageView(zope.interface.Interface):
+    """\
+    Interface for the Workspace action menu.
+    """
+
+    def update():
+        """
+        Method call to update the internal structure before the view
+        is rendered.
+        """
+
+
 class IWorkspaceActionsViewlet(zope.interface.Interface):
     """\
     Interface for the Workspace action menu.
     """
 
 
-class IWorkspaceFilePageView(zope.interface.Interface):
+class IWorkspaceFilePageView(IUpdatablePageView):
     """\
     Interface for the Workspace action menu.
     """

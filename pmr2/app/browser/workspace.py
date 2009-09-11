@@ -380,6 +380,32 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
         super(WorkspaceFilePage, self).__init__(*a, **kw)
         self.manifest = self.fileinfo = None
 
+    def update(self):
+        """
+        Populate internal data structures.
+        """
+
+        # it may be desirable if the 404 pages return something more
+        # meaningful.
+        try:
+            self._structure = self.storage.structure
+        except pmr2.mercurial.exceptions.RevisionNotFoundError:
+            raise HTTPNotFound(self.context.title_or_id())
+        except pmr2.mercurial.exceptions.PathNotFoundError:
+            raise HTTPNotFound(self.context.title_or_id())
+        except pmr2.mercurial.exceptions.RepoEmptyError:
+            # Since repository empty, we return an empty structure.
+            self._structure = {}
+            return
+
+        if self._structure[''] == 'filerevision':
+            self.fileinfo = self._structure
+        elif self._structure[''] == 'manifest':
+            self.manifest = self._structure
+        else:
+            # not sure what to do
+            raise Exception("unknown storage response structure")
+
     @property
     def storage(self):
         # XXX placeholder
@@ -393,29 +419,8 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
 
     @property
     def structure(self):
-        # XXX this caching should be done at the storage object
-        if not hasattr(self, '_structure'):
-            try:
-                self._structure = self.storage.structure
-            except pmr2.mercurial.exceptions.PathNotFoundError:
-                # It's not found.
-                # XXX the recommendation is not going to work.
-                raise HTTPNotFound(self.context.title_or_id())
-            except pmr2.mercurial.exceptions.RepoEmptyError:
-                # We really have nothing.
-                self._structure = {}
-
-            if not self._structure:
-                return
-            # XXX assuming a string is a redirect URI.
-            #if instanceof(self._structure, basestring):
-
-            if self._structure[''] == 'filerevision':
-                self.fileinfo = self._structure
-            elif self._structure[''] == 'manifest':
-                self.manifest = self._structure
-
-        return self._structure
+        if hasattr(self, '_structure'):
+            return self._structure
 
     # XXX rewrite this class to use adapters for specific views for 
     # these distinct types of values
@@ -448,6 +453,9 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
         """
         provides values for the form.
         """
+
+        if not self.structure:
+            return u''
 
         if self.structure[''] == 'filerevision':
             label = 'Fileinfo'
@@ -496,9 +504,8 @@ WorkspaceFilePageView = layout.wrap_form(
 class WorkspaceRawfileView(WorkspaceFilePage):
 
     def __call__(self):
-        if self.storage.fileinfo is None:
-            raise HTTPNotFound(self.context.title_or_id())
-        else:
+        self.update()
+        if self.structure:
             # not supporting resuming download
             # XXX large files will eat RAM
             data = self.storage.rawfile
@@ -508,6 +515,8 @@ class WorkspaceRawfileView(WorkspaceFilePage):
             self.request.response.setHeader('Content-Type', mt)
             self.request.response.setHeader('Content-Length', len(data))
             return data
+        else:
+            raise HTTPNotFound(self.context.title_or_id())
 
 
 class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):

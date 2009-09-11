@@ -16,6 +16,7 @@ from Products.PythonScripts.standard import url_quote
 import pmr2.mercurial.exceptions
 
 import pmr2.app.browser
+from pmr2.app.browser.interfaces import IUpdatablePageView
 from pmr2.app.browser.interfaces import IPlainLayoutWrapper
 from pmr2.app.browser.interfaces import IMathMLLayoutWrapper
 import pmr2.app.security.roles
@@ -30,7 +31,22 @@ mathml_layout_factory = ZopeTwoFormTemplateFactory(
     path('mathml_layout.pt'), form=IMathMLLayoutWrapper)
 
 
-class PlainLayoutWrapper(layout.FormWrapper):
+class FormWrapper(layout.FormWrapper):
+    """\
+    Wrapper that will call a update method of the form_instance within
+    when called, if present.
+
+    Not calling update because it is used by actual forms.
+    """
+
+    def __call__(self):
+        if IUpdatablePageView.providedBy(self.form_instance):
+            # only this interface is known to require updating.
+            self.form_instance.update()
+        return layout.FormWrapper.__call__(self)
+
+
+class PlainLayoutWrapper(FormWrapper):
     """\
     A customized layout wrapper that does not have the title element
     (rendered inside an h1) like the default plone.z3cform.
@@ -39,7 +55,7 @@ class PlainLayoutWrapper(layout.FormWrapper):
     zope.interface.implements(IPlainLayoutWrapper)
 
 
-class BorderedFormWrapper(layout.FormWrapper):
+class BorderedFormWrapper(FormWrapper):
     """\
     A customized layout wrapper that sets enable_border on request
     to short circuit the permission checking.
@@ -50,7 +66,7 @@ class BorderedFormWrapper(layout.FormWrapper):
         self.request['enable_border'] = True
 
 
-class StorageFormWrapper(layout.FormWrapper):
+class StorageFormWrapper(FormWrapper):
     """\
     If cmd is present, pass control to the storage object, let it 
     generate the result from the request sent by client.
@@ -98,7 +114,7 @@ class BorderedStorageFormWrapper(StorageFormWrapper):
         self.request['enable_border'] = True
 
 
-class TraverseFormWrapper(layout.FormWrapper):
+class TraverseFormWrapper(FormWrapper):
     """\
     A customized layout wrapper that implements traversal.
 
@@ -128,7 +144,7 @@ class BorderedTraverseFormWrapper(TraverseFormWrapper):
         self.request['enable_border'] = True
 
 
-class MathMLLayoutWrapper(layout.FormWrapper):
+class MathMLLayoutWrapper(FormWrapper):
     """\
     This layout wrapper provides XML stylesheet declarations for the
     rendering of MathML.
