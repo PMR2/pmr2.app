@@ -7,7 +7,7 @@ from pmr2.app.schema.interfaces import InvalidObjectId
 from pmr2.app.schema.interfaces import IObjectId, IWorkspaceList, ICurationDict
 
 
-_isobjectid = re.compile(r'^[a-zA-Z][a-zA-Z0-9_\.]*$').match
+_isobjectid = re.compile(r'^[a-zA-Z0-9_\.\-]*$').match
 
 class ObjectId(zope.schema.BytesLine):
     """\
