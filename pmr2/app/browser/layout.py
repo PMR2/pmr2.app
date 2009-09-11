@@ -84,7 +84,7 @@ class StorageFormWrapper(layout.FormWrapper):
         storage = getMultiAdapter((self.context,), name='PMR2Storage')
         try:
             return storage.process_request(self.request)
-        except pmr2.mercurial.exceptions.UnsupportedCommand:
+        except pmr2.mercurial.exceptions.UnsupportedCommandError:
             return super(StorageFormWrapper, self).__call__(*a, **kw)
 
 

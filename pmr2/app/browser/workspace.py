@@ -159,7 +159,7 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
                 self._log = storage.get_log(shortlog=self.shortlog,
                                             datefmt=self.datefmt,
                                             maxchanges=self.maxchanges)
-            except pmr2.mercurial.exceptions.RevisionNotFound:
+            except pmr2.mercurial.exceptions.RevisionNotFoundError:
                 raise NotFound(self.context, self.context.title_or_id(), 
                                self.request)
         return self._log
