@@ -24,9 +24,9 @@ class SimplePage(BrowserPage):
     # XXX use adapter to register this instead?
     template = ViewPageTemplateFile('page.pt')
 
-    # XXX need to figure out how to automatically link this together
-    # with the real template.
-    url_expr = None
+    @property
+    def url_expr(self):
+        return '%s/@@%s' % (self.context.absolute_url(), self.__name__)
 
     @property
     def label(self):

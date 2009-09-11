@@ -144,7 +144,6 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
     # This value could be captured using DynamicViewTypeInformation
     # XXX this needs to be fixed to take advantage of shared adapted result.
     shortlog = False
-    url_expr = '@@log'
     tbl = table.ChangelogTable
     maxchanges = None  # default value.
     datefmt = None # default value.
@@ -196,7 +195,6 @@ WorkspaceLogView = layout.wrap_form(
 class WorkspaceShortlog(WorkspaceLog):
 
     shortlog = True
-    url_expr = '@@shortlog'
     tbl = table.ShortlogTable
 
 WorkspaceShortlogView = layout.wrap_form(
@@ -373,7 +371,6 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     
     zope.interface.implements(interfaces.IWorkspaceFilePageView)
 
-    url_expr = '@@file'
     filetemplate = ViewPageTemplateFile('file.pt')
 
     def __init__(self, *a, **kw):
