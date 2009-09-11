@@ -1,5 +1,5 @@
 import zope.component
-from zope.publisher.interfaces import NotFound
+from paste.httpexceptions import HTTPNotFound
 
 import z3c.form.field
 import z3c.form.form
@@ -82,8 +82,7 @@ class PMR2SearchPage(page.TraversePage):
             d[self.context.catalog_index] = self.searchterm
             self.all_results = pt(**d)
             if not self.all_results:
-                raise NotFound(self.context, self.context.title_or_id(),
-                               self.request)
+                raise HTTPNotFound(self.context.title_or_id())
 
         def build_terms():
             try:

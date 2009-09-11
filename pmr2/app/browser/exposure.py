@@ -3,7 +3,8 @@ from random import getrandbits
 
 import zope.interface
 import zope.component
-from zope.publisher.interfaces import IPublishTraverse, NotFound
+from zope.publisher.interfaces import IPublishTraverse
+from paste.httpexceptions import HTTPNotFound
 import z3c.form.field
 from plone.memoize.view import memoize
 from plone.z3cform import layout
@@ -175,7 +176,7 @@ class ExposureTraversalPage(page.TraversePage):
         redir_uri = self.uri_resolver.path_to_uri(
             self.context.commit_id, filepath)
         if redir_uri is None:
-            raise NotFound(self.context, filepath, self.request)
+            raise HTTPNotFound(filepath)
         return self.request.response.redirect(redir_uri)
 
     def render(self):

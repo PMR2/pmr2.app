@@ -6,7 +6,8 @@ import zope.component
 import zope.event
 import zope.lifecycleevent
 import zope.publisher.browser
-from zope.publisher.interfaces import NotFound
+
+from paste.httpexceptions import HTTPNotFound
 
 import z3c.form.interfaces
 import z3c.form.field
@@ -160,8 +161,7 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
                                             datefmt=self.datefmt,
                                             maxchanges=self.maxchanges)
             except pmr2.mercurial.exceptions.RevisionNotFoundError:
-                raise NotFound(self.context, self.context.title_or_id(), 
-                               self.request)
+                raise HTTPNotFound(self.context.title_or_id())
         return self._log
 
     def navlist(self):
@@ -395,9 +395,20 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     def structure(self):
         # XXX this caching should be done at the storage object
         if not hasattr(self, '_structure'):
-            self._structure = self.storage.structure
+            try:
+                self._structure = self.storage.structure
+            except pmr2.mercurial.exceptions.PathNotFoundError:
+                # It's not found.
+                # XXX the recommendation is not going to work.
+                raise HTTPNotFound(self.context.title_or_id())
+            except pmr2.mercurial.exceptions.RepoEmptyError:
+                # We really have nothing.
+                self._structure = {}
+
             if not self._structure:
                 return
+            # XXX assuming a string is a redirect URI.
+            #if instanceof(self._structure, basestring):
 
             if self._structure[''] == 'filerevision':
                 self.fileinfo = self._structure
@@ -423,10 +434,9 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     def content(self):
 
         if self.structure is None:
-            raise NotFound(self.context, self.context.title_or_id(), 
-                           self.request)
+            raise HTTPNotFound(self.context.title_or_id())
 
-        if self._structure[''] == 'manifest':
+        if self.structure[''] == 'manifest':
             t = table.FileManifestTable(self, self.request)
             t.update()
             return t.render()
@@ -438,6 +448,7 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
         """
         provides values for the form.
         """
+
         if self.structure[''] == 'filerevision':
             label = 'Fileinfo'
         elif self.structure[''] == 'manifest':
@@ -486,8 +497,7 @@ class WorkspaceRawfileView(WorkspaceFilePage):
 
     def __call__(self):
         if self.storage.fileinfo is None:
-            raise NotFound(self.context, self.context.title_or_id(), 
-                           self.request)
+            raise HTTPNotFound(self.context.title_or_id())
         else:
             # not supporting resuming download
             # XXX large files will eat RAM

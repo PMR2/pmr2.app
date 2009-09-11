@@ -1,7 +1,7 @@
 import re
 
 import zope.component
-from zope.publisher.interfaces import NotFound
+from paste.httpexceptions import HTTPNotFound
 
 import z3c.form.field
 import z3c.form.form
@@ -98,7 +98,7 @@ class RootFolderListing(layout.FormWrapper):
             # adapter has no import map, or id requested is not in
             # the import map we don't know what to do with the extra 
             # bit, so not found is raised.
-            raise NotFound(self.context, oid, self.request)
+            raise HTTPNotFound(oid)
         
         info = o.pmrimport_map[oid]
         # have to compute value of workspace from requested id as it is

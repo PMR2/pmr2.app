@@ -26,6 +26,7 @@ setup(name='pmr2.app',
       install_requires=[
           'setuptools',
           'z3c.form',
+          'Paste',
           'z3c.table>=0.6.0',
           'plone.app.content',
           'plone.app.z3cform>=0.3.2',
