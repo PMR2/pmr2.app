@@ -7,7 +7,7 @@ import zope.event
 import zope.lifecycleevent
 import zope.publisher.browser
 
-from paste.httpexceptions import HTTPNotFound
+from paste.httpexceptions import HTTPNotFound, HTTPFound
 
 import z3c.form.interfaces
 import z3c.form.field
@@ -399,6 +399,14 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
             self.fileinfo = self._structure
         elif self._structure[''] == 'manifest':
             self.manifest = self._structure
+        elif self._structure[''] == '_subrepo':
+            uri = '%s/@@%s/%s/%s' % (
+                self._structure['location'],
+                self.__name__,
+                self._structure['rev'],
+                self._structure['path'],
+            )
+            raise HTTPFound(uri)
         else:
             # not sure what to do
             raise Exception("unknown storage response structure")
