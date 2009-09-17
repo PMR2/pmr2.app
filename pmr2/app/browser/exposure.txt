@@ -121,7 +121,8 @@ raised.
     >>> view()
     Traceback (most recent call last):
     ...
-    NotFound: ...
+    HTTPNotFound: 404 Not Found
+    ...
 
 There are some caveats, it has to do with existing objects:
 

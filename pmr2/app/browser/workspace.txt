@@ -196,6 +196,7 @@ See if the page renders with expected output.
     >>> request = TestRequest()
     >>> testpage = workspace.WorkspaceFilePage(
     ...     self.folder.repo.workspace.cake, request)
+    >>> testpage.update()
     >>> result = testpage()
     >>> '<th>Filename</th>' in result
     True
