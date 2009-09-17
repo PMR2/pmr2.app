@@ -14,7 +14,7 @@ class PMR2(ATFolder, TraversalCatchAll):
     The repository root object.
     """
 
-    interface.implements(IPMR2)
+    interface.implements(IPMR2, IPMR2GetPath)
 
     # title is defined by ATFolder
     repo_root = fieldproperty.FieldProperty(IPMR2['repo_root'])
@@ -31,5 +31,8 @@ class PMR2(ATFolder, TraversalCatchAll):
             TraversalCatchAll.__before_publishing_traverse__(
                 self, ob, request, '@@root_folder_listing')
         ATFolder.__before_publishing_traverse__(self, ob, request)
+
+    def get_path(self):
+        return self.repo_root
 
 atapi.registerType(PMR2, 'pmr2.app')

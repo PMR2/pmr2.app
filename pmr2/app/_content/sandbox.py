@@ -1,5 +1,3 @@
-import os.path
-
 from zope import interface
 from zope.schema import fieldproperty
 
@@ -15,6 +13,7 @@ import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
 from pmr2.app.browser.interfaces import IPublishTraverse
+from pmr2.app.util import get_path
 
 
 class SandboxContainer(ATBTreeFolder):
@@ -32,18 +31,12 @@ class SandboxContainer(ATBTreeFolder):
     def get_path(self):
         """See ISandboxContainer"""
 
-        obj = aq_inner(self)
-        # aq_inner needed to get out of form wrappers
-        while obj is not None:
-            obj = aq_parent(obj)
-            if IPMR2.providedBy(obj):
-                if not obj.repo_root:
-                    # [1] it may be dangerous to fall through to the 
-                    # next object, so we are done.
-                    break
-                # XXX magic string
-                return os.path.join(obj.repo_root, 'sandbox')
-        raise PathLookupError('repo root is undefined')
+        # XXX magic string 'sandbox'
+        result = get_path(self, 'sandbox')
+        if result is None:
+            raise PathLookupError('repo root is undefined')
+        return result
+
 
 atapi.registerType(SandboxContainer, 'pmr2.app')
 
@@ -63,15 +56,10 @@ class Sandbox(BrowserDefaultMixin, atapi.BaseContent):
     def get_path(self):
         """See ISandbox"""
 
-        obj = aq_inner(self)
-        while obj is not None:
-            obj = aq_parent(obj)
-            if IPMR2GetPath.providedBy(obj):
-                p = obj.get_path()
-                if not p:
-                    # see [1]
-                    break
-                return os.path.join(p, self.id)
-        raise PathLookupError('parent of sandbox cannot calculate path')
+        result = get_path(self, self.id) #XXX
+        if result is None:
+            raise PathLookupError('parent of sandbox cannot calculate path')
+        return result
+
 
 atapi.registerType(Sandbox, 'pmr2.app')
