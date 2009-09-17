@@ -53,13 +53,6 @@ The internal containers are automatically created.
     >>> self.folder.test.exposure
     <ExposureContainer at ...>
 
-These should not return anything, yet, as the repository root has not
-been defined yet.
-::
-
-    >>> self.folder.test.workspace.get_path()
-    >>> self.folder.test.sandbox.get_path()
-
 Should fail if we try to add this again as the object already exists.
 ::
 

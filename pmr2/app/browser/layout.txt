@@ -8,7 +8,7 @@ to render).  Since the default layout.pt provided is very basic, there
 are extension added default layout module.
 
 To test our extensions, we borrowed some preparation code from
-plone.z3cform.
+plone.z3cform and added some more dummies of our own.
 ::
 
     >>> from zope.interface import alsoProvides
@@ -28,11 +28,16 @@ plone.z3cform.
     ...     def getRolesInContext(self, context):
     ...         return []
     ...
+    >>> class pushableUser(object):
+    ...     def getRolesInContext(self, context):
+    ...         return ['WorkspacePusher']
+    ...
 
 Now we build our adapters.
 ::
 
     >>> from zope.component import provideAdapter
+    >>> from zope.component import getMultiAdapter
     >>> from zope.publisher.interfaces.browser import IBrowserRequest
     >>> from zope.interface import Interface
     >>> from pmr2.app.browser.layout import StorageFormWrapper
@@ -57,10 +62,9 @@ Now we build our adapters.
     ... 
 
 We need to emulate some of the fields that gets set and used by our
-wrapper class, namely the user and authentication fields and the like.
+wrapper class.  Since the dummy user has no roles, it will be blocked.
 ::
 
-    >>> from zope.component import getMultiAdapter
     >>> context = Workspace('test')
     >>> request = make_request({'AUTHENTICATED_USER': dummyUser()})
     >>> request.REQUEST_METHOD = 'POST'
@@ -68,9 +72,25 @@ wrapper class, namely the user and authentication fields and the like.
     >>> form
     <pmr2.app.browser.layout.StorageFormWrapper object ...>
     >>> form()
-    False
-    >>> request.response.getHeader('WWW-Authenticate', literal=True)
-    'basic realm=...'
+    Traceback (most recent call last):
+    ...
+    HTTPForbidden: 403 Forbidden
+    ...
+
+On the other hand if the user with the correct role, it will be let in.
+However, it is an "unbound" workspace object so when storage tries to
+initialize, it will trigger the exception.
+::
+
+    >>> request = make_request({'AUTHENTICATED_USER': pushableUser()})
+    >>> request.REQUEST_METHOD = 'POST'
+    >>> form = getMultiAdapter((context, request), name=u"storage-form")
+    >>> form
+    <pmr2.app.browser.layout.StorageFormWrapper object ...>
+    >>> form()
+    Traceback (most recent call last):
+    ...
+    PathLookupError: ...
 
 Here are the two other wrapper types:
 ::

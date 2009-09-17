@@ -22,7 +22,7 @@ class SandboxContainer(ATBTreeFolder):
     Container for sandboxes in PMR2.
     """
 
-    interface.implements(ISandboxContainer)
+    interface.implements(ISandboxContainer, IPMR2GetPath,)
     security = ClassSecurityInfo()
 
     def __init__(self, oid='sandbox', **kwargs):
@@ -32,11 +32,18 @@ class SandboxContainer(ATBTreeFolder):
     def get_path(self):
         """See ISandboxContainer"""
 
-        p = aq_parent(aq_inner(self)).repo_root
-        if not p:
-            return None
-        # XXX magic string
-        return os.path.join(p, 'sandbox')
+        obj = aq_inner(self)
+        # aq_inner needed to get out of form wrappers
+        while obj is not None:
+            obj = aq_parent(obj)
+            if IPMR2.providedBy(obj):
+                if not obj.repo_root:
+                    # [1] it may be dangerous to fall through to the 
+                    # next object, so we are done.
+                    break
+                # XXX magic string
+                return os.path.join(obj.repo_root, 'sandbox')
+        raise PathLookupError('repo root is undefined')
 
 atapi.registerType(SandboxContainer, 'pmr2.app')
 
@@ -46,7 +53,7 @@ class Sandbox(BrowserDefaultMixin, atapi.BaseContent):
     PMR2 Sandbox object is an editable instance of the workspace.
     """
 
-    interface.implements(ISandbox)
+    interface.implements(ISandbox, IPMR2GetPath,)
     security = ClassSecurityInfo()
 
     description = fieldproperty.FieldProperty(ISandbox['description'])
@@ -56,10 +63,15 @@ class Sandbox(BrowserDefaultMixin, atapi.BaseContent):
     def get_path(self):
         """See ISandbox"""
 
-        # aq_inner needed to get out of form wrappers
-        p = aq_parent(aq_inner(self)).get_path()
-        if not p:
-            return None
-        return os.path.join(p, self.id)
+        obj = aq_inner(self)
+        while obj is not None:
+            obj = aq_parent(obj)
+            if IPMR2GetPath.providedBy(obj):
+                p = obj.get_path()
+                if not p:
+                    # see [1]
+                    break
+                return os.path.join(p, self.id)
+        raise PathLookupError('parent of sandbox cannot calculate path')
 
 atapi.registerType(Sandbox, 'pmr2.app')

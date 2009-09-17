@@ -7,6 +7,14 @@ _ = MessageFactory("pmr2")
 from pmr2.app.schema import ObjectId, WorkspaceList, CurationDict
 
 
+# General exceptions.
+
+class PathLookupError(LookupError):
+    """cannot calculate the path to some resource.."""
+
+
+# Validation errors
+
 class ObjectIdExistsError(zope.schema.ValidationError):
     __doc__ = _("""The specified id is already in use.""")
 
@@ -38,6 +46,8 @@ class WorkspaceDirNotExistsError(zope.schema.ValidationError):
 class WorkspaceObjNotFoundError(zope.schema.ValidationError):
     __doc__ = _("""The workspace object is not found.""")
 
+
+# Interfaces
 
 class IObjectIdMixin(zope.interface.Interface):
     """\
@@ -79,6 +89,20 @@ class IPMR2Add(IObjectIdMixin, IPMR2):
     """
 
 
+class IPMR2GetPath(zope.interface.Interface):
+    """\
+    Provides method to return a PMR2 related path on the filesystem
+    based on some configured value.
+    """
+
+    def get_path():
+        """\
+        Returns the root directory where all the workspaces are stored.
+
+        Need to raises PathLookupError if the path cannot be calculated.
+        """
+
+
 class IWorkspaceContainer(zope.interface.Interface):
     """\
     Container for the model workspaces.
@@ -94,11 +118,6 @@ class IWorkspaceContainer(zope.interface.Interface):
         readonly=True,
     ))
 
-    def get_path():
-        """\
-        Returns the root directory where all the workspaces are stored.
-        """
-
 
 class ISandboxContainer(zope.interface.Interface):
     """\
@@ -109,11 +128,6 @@ class ISandboxContainer(zope.interface.Interface):
         title=u'Title',
         default=u'Sandbox',
     )
-
-    def get_path():
-        """\
-        Returns the root directory where all the sandboxes are stored.
-        """
 
 
 class IExposureContainer(zope.interface.Interface):
@@ -143,11 +157,6 @@ class IWorkspace(zope.interface.Interface):
         title=u'Description',
         required=False,
     )
-
-    def get_path():
-        """\
-        Returns path on the filesystem to this instance of workspace.
-        """
 
 
 class IWorkspaceAdd(IObjectIdMixin, IWorkspace):
@@ -201,11 +210,6 @@ class ISandbox(zope.interface.Interface):
         description=u'Status output from VCS',
     )
 
-    def get_path():
-        """\
-        Returns path on the filesystem to this instance of sandbox.
-        """
-
 
 class IExposure(zope.interface.Interface):
     """\
@@ -231,11 +235,6 @@ class IExposure(zope.interface.Interface):
         description=u'Curation of this model.',
         required=False,
     )
-
-    def get_path():
-        """\
-        Returns path on the filesystem to this instance of workspace.
-        """
 
 
 class IExposureDocGen(zope.interface.Interface):

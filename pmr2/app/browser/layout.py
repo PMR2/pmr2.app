@@ -105,7 +105,7 @@ class StorageFormWrapper(FormWrapper):
         except pmr2.mercurial.exceptions.PathInvalidError:
             # This is raised in the case where a Workspace object exists
             # without a corresponding Hg repo on the filesystem.
-            # XXX this does not accurate describe what may have happened
+            # XXX this error page does not say what really happened.
             raise HTTPNotFound(self.context.title_or_id())
 
         try:

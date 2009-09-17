@@ -28,7 +28,7 @@ passed to the client.
     >>> repolist_page = workspace.WorkspaceContainerRepoListing(
     ...     self.folder.repo.workspace, request)
     >>> html = repolist_page()
-    >>> 'Repository Path is undefined.' in html
+    >>> 'Repository Path lookup failed.' in html
     True
 
 The edit form for the Workspace should work.

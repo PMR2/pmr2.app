@@ -23,7 +23,10 @@ class WorkspaceContainer(ATBTreeFolder):
     Container for workspaces in PMR2.
     """
 
-    interface.implements(IWorkspaceContainer)
+    interface.implements(
+        IPMR2GetPath,
+        IWorkspaceContainer,
+    )
     security = ClassSecurityInfo()
 
     # title is defined by ATFolder
@@ -35,11 +38,19 @@ class WorkspaceContainer(ATBTreeFolder):
     def get_path(self):
         """See IWorkspaceContainer"""
 
-        p = aq_parent(aq_inner(self)).repo_root
-        if not p:
-            return None
-        # XXX magic string
-        return os.path.join(p, 'workspace')
+        obj = aq_inner(self)
+        # aq_inner needed to get out of form wrappers
+        while obj is not None:
+            obj = aq_parent(obj)
+            if IPMR2.providedBy(obj):
+                if not obj.repo_root:
+                    # [1] it may be dangerous to fall through to the 
+                    # next object to search for the path, so we are 
+                    # done.
+                    break
+                # XXX magic string
+                return os.path.join(obj.repo_root, 'workspace')
+        raise PathLookupError('repo root is undefined')
 
     security.declareProtected(View, 'get_repository_list')
     def get_repository_list(self):
@@ -102,8 +113,11 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
     and related data.
     """
 
-    interface.implements(IWorkspace, 
-        pmr2.mercurial.interfaces.IPMR2StorageBase)
+    interface.implements(
+        IPMR2GetPath,
+        IWorkspace, 
+        pmr2.mercurial.interfaces.IPMR2StorageBase,
+    )
     security = ClassSecurityInfo()
 
     description = fieldproperty.FieldProperty(IWorkspace['description'])
@@ -112,10 +126,15 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
     def get_path(self):
         """See IWorkspace"""
 
-        # aq_inner needed to get out of form wrappers
-        p = aq_parent(aq_inner(self)).get_path()
-        if not p:
-            return None
-        return os.path.join(p, self.id)
+        obj = aq_inner(self)
+        while obj is not None:
+            obj = aq_parent(obj)
+            if IPMR2GetPath.providedBy(obj):
+                p = obj.get_path()
+                if not p:
+                    # see [1]
+                    break
+                return os.path.join(p, self.id)
+        raise PathLookupError('parent of workspace cannot calculate path')
 
 atapi.registerType(Workspace, 'pmr2.app')

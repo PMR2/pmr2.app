@@ -77,7 +77,10 @@ class WorkspaceContainerRepoListing(page.SimplePage):
         # XXX could use an error template to wrap these error messages.
         try:
             repolist = self.context.get_repository_list()
+        except PathLookupError:
+            return u'<div class="error">Repository Path lookup failed.</div>'
         except RepoPathUndefinedError:
+            # this may be made obsolete by the previous error.
             return u'<div class="error">Repository Path is undefined.</div>'
         except WorkspaceDirNotExistsError:
             return u'<div class="error">Workspace path is missing. ' \

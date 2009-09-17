@@ -79,11 +79,17 @@ to it.
     <ExposureContainer at ...repo/exposure>
 
 Since the path to the repository isn't assigned yet, the get_path method
-of the containers will return nothing.
+of the containers will fail.
 ::
 
     >>> self.folder.repo.workspace.get_path()
+    Traceback (most recent call last):
+    ...
+    PathLookupError: repo root is undefined
     >>> self.folder.repo.sandbox.get_path()
+    Traceback (most recent call last):
+    ...
+    PathLookupError: repo root is undefined
 
 Now we assign the path.  We will use the temporary directory for the
 root.  Once the path is assigned the get_path methods now return a
