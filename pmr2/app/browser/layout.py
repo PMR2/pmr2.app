@@ -7,6 +7,7 @@ from plone.app.workflow.interfaces import ISharingPageRole
 import plone.z3cform
 from plone.z3cform import layout
 from plone.z3cform.templates import ZopeTwoFormTemplateFactory
+from paste.httpexceptions import HTTPNotFound
 
 from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
@@ -97,7 +98,15 @@ class StorageFormWrapper(FormWrapper):
                 auth.challenge(self.request)
                 return False
 
-        storage = getMultiAdapter((self.context,), name='PMR2Storage')
+        try:
+            storage = getMultiAdapter((self.context,), name='PMR2Storage')
+        except pmr2.mercurial.exceptions.PathInvalidError:
+            # This is raised in the case where a Workspace object exists
+            # without a corresponding Hg repo on the filesystem.
+            # XXX raising NotFound instead of some other error page that
+            # accurately describe this error.
+            raise HTTPNotFound(self.context.title_or_id())
+
         try:
             return storage.process_request(self.request)
         except pmr2.mercurial.exceptions.UnsupportedCommandError:
