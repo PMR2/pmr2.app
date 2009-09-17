@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<import-steps>
+  <import-step id="pmr2_app_hg_auth" version="0.1.2.1"
+               handler="pmr2.app.setuphandlers.importVarious"
+               title="HgAuthPAS Plugin">
+  </import-step>
+</import-steps>

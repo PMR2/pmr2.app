@@ -94,6 +94,32 @@ WorkspaceContainerRepoListingView = layout.wrap_form(
 
 # Workspace
 
+class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
+    """\
+    Browser page that encapsulates access to the Mercurial protocol.
+    """
+
+    # XXX this class is currently unused until the permissions can be
+    # totally handled "correctly".
+
+    def __call__(self, *a, **kw):
+        try:
+            storage = getMultiAdapter((self.context,), name='PMR2Storage')
+        except pmr2.mercurial.exceptions.PathInvalidError:
+            # This is raised in the case where a Workspace object exists
+            # without a corresponding Hg repo on the filesystem.
+            # XXX should be raising NotFound instead of some other error 
+            # page that accurately describe this error.
+            raise HTTPNotFound(self.context.title_or_id())
+
+        try:
+            # Process the request.
+            return storage.process_request(self.request)
+        except pmr2.mercurial.exceptions.UnsupportedCommandError:
+            # Can't do this command, redirect back to root object.
+            raise HTTPFound(self.context.absolute_url())
+
+
 class WorkspacePage(page.SimplePage):
     """\
     The main page view.

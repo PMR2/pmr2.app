@@ -7,7 +7,7 @@ from plone.app.workflow.interfaces import ISharingPageRole
 import plone.z3cform
 from plone.z3cform import layout
 from plone.z3cform.templates import ZopeTwoFormTemplateFactory
-from paste.httpexceptions import HTTPNotFound
+from paste.httpexceptions import HTTPFound, HTTPNotFound, HTTPForbidden
 
 from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
@@ -69,45 +69,48 @@ class BorderedFormWrapper(FormWrapper):
 
 class StorageFormWrapper(FormWrapper):
     """\
-    If cmd is present, pass control to the storage object, let it 
-    generate the result from the request sent by client.
+    This is a form wrapper is specific for interaction with the hgweb 
+    objects.  Since Mercurial had its own permission controls that is
+    disabled (since Zope/Plone manages its own), the methods to access/
+    manipulate the repo is called directly.  
+    
+    As a result, permissions need to be defined, but storage exposes a
+    process_request method that will handle the protocol requests.  Most
+    protocol requests are reads (clones, pulls) so they should be
+    allowed, leaving push to be the only one that needs restrictions.
+
+    Another thing, protocol requests have to be handled here as this is 
+    the object that gets called first, so no output of the wrapper HTML 
+    should be generated.
+
+    We would like to rely on the default Plone permissions to manage
+    that specific case (specifically a POST to this object), but I 
+    haven't figured this out yet, so I thought about making the
+    __call__ method below that redirects non GETs to a specific view,
+    however that will still result in duplicate code, so below we have
+    manual authentication.
     """
 
-    # XXX how to unit test this?
-
     def __call__(self, *a, **kw):
+
+        # XXX manual permissions checking.
         if self.request.REQUEST_METHOD != 'GET':
-            # if request is POST, we are changing things so we need
-            # authentication.
-
-            # authenticate the role - there must be a better way than 
-            # this and probably should be done at much higher levels 
-            # (if possible)
-
-            # XXX need to directly involve pmr2.app.security.roles
-            # somehow, eventually, to authenticate, such as:
-            #roles = dict([(i[1], i[0]) for i in 
-            #    getUtilitiesFor(ISharingPageRole)])
-
-            user_roles = self.request['AUTHENTICATED_USER'].\
-                getRolesInContext(self.context)
-
+            user_roles = self.request['AUTHENTICATED_USER'].getRolesInContext(
+                self.context)
             if u'WorkspacePusher' not in user_roles:
-                # request for authentication.
-                auth = HTTPBasicAuthCredentialsPlugin()
-                auth.challenge(self.request)
-                return False
+                raise HTTPForbidden()
 
         try:
             storage = getMultiAdapter((self.context,), name='PMR2Storage')
         except pmr2.mercurial.exceptions.PathInvalidError:
             # This is raised in the case where a Workspace object exists
             # without a corresponding Hg repo on the filesystem.
-            # XXX raising NotFound instead of some other error page that
-            # accurately describe this error.
+            # XXX this does not accurate describe what may have happened
             raise HTTPNotFound(self.context.title_or_id())
 
         try:
+            # Note: this method can be used to manipulate the repo, use
+            # with caution.
             return storage.process_request(self.request)
         except pmr2.mercurial.exceptions.UnsupportedCommandError:
             return super(StorageFormWrapper, self).__call__(*a, **kw)
