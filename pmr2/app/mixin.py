@@ -1,4 +1,5 @@
 from zope.component import queryMultiAdapter
+# we are using the default IPublishTraverse here, is it correct?
 from zope.publisher.interfaces import IPublishTraverse
 from ZPublisher.BaseRequest import DefaultPublishTraverse
 

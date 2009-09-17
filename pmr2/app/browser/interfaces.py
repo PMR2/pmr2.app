@@ -1,5 +1,6 @@
 import zope.schema
 import zope.interface
+import zope.publisher.interfaces
 from plone.theme.interfaces import IDefaultPloneLayer
 from plone.z3cform.interfaces import IFormWrapper
 
@@ -47,3 +48,14 @@ class IMathMLLayoutWrapper(IFormWrapper):
     """\
     Interface for the MathML layout wrapper.
     """
+
+
+class IPublishTraverse(zope.publisher.interfaces.IPublishTraverse):
+    """\
+    Our specialized traversal class with specifics defined.
+    """
+
+    traverse_subpath = zope.schema.List(
+        title=u'Traverse Subpath',
+        description=u'A list of traversal subpaths that got captured.',
+    )

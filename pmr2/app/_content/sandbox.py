@@ -2,7 +2,6 @@ import os.path
 
 from zope import interface
 from zope.schema import fieldproperty
-from zope.publisher.interfaces import IPublishTraverse
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
@@ -15,6 +14,7 @@ import pmr2.mercurial
 import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
+from pmr2.app.browser.interfaces import IPublishTraverse
 
 
 class SandboxContainer(ATBTreeFolder):

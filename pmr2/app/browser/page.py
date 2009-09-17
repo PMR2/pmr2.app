@@ -3,7 +3,6 @@ from os.path import join
 import zope.interface
 from zope.component import getUtilitiesFor, getMultiAdapter
 from zope.publisher.browser import BrowserPage
-from zope.publisher.interfaces import IPublishTraverse
 from zope.app.authentication.httpplugins import HTTPBasicAuthCredentialsPlugin
 
 from zope.app.pagetemplate.viewpagetemplatefile \
@@ -12,6 +11,7 @@ ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
 from plone.z3cform import layout
 
+from pmr2.app.browser.interfaces import IPublishTraverse
 
 class SimplePage(BrowserPage):
     """\

@@ -3,7 +3,6 @@ from random import getrandbits
 
 import zope.interface
 import zope.component
-from zope.publisher.interfaces import IPublishTraverse
 from paste.httpexceptions import HTTPNotFound
 import z3c.form.field
 from plone.memoize.view import memoize
@@ -17,6 +16,7 @@ from pmr2.app.interfaces import *
 from pmr2.app.content import *
 from pmr2.app.util import *
 
+from pmr2.app.browser.interfaces import IPublishTraverse
 from pmr2.app.browser import form
 from pmr2.app.browser import page
 from pmr2.app.browser.page import ViewPageTemplateFile

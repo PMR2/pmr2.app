@@ -1,6 +1,6 @@
 import zope.interface
 import zope.component
-from zope.publisher.interfaces import IPublishTraverse, IPublisherRequest
+from zope.publisher.interfaces import IPublisherRequest
 from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 
@@ -11,6 +11,7 @@ from pmr2.mercurial.adapter import PMR2StorageRequestAdapter
 from pmr2.mercurial import WebStorage
 
 from pmr2.app.interfaces import *
+from pmr2.app.browser.interfaces import IPublishTraverse
 
 
 class PMR2StorageRequestViewAdapter(PMR2StorageRequestAdapter):
@@ -34,6 +35,7 @@ class PMR2StorageRequestViewAdapter(PMR2StorageRequestAdapter):
             The view that implements IPublishTraverse
         """
 
+        assert IPublishTraverse.providedBy(view)
         # populate the request with values derived from view.
         if view.traverse_subpath:
             request['rev'] = view.traverse_subpath[0]

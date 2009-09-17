@@ -2,7 +2,6 @@ import os.path
 
 import zope.interface
 from zope.app.authentication.httpplugins import HTTPBasicAuthCredentialsPlugin
-from zope.publisher.interfaces import IPublishTraverse
 from zope.component import getUtilitiesFor, getMultiAdapter
 from plone.app.workflow.interfaces import ISharingPageRole
 import plone.z3cform
@@ -19,6 +18,7 @@ import pmr2.app.browser
 from pmr2.app.browser.interfaces import IUpdatablePageView
 from pmr2.app.browser.interfaces import IPlainLayoutWrapper
 from pmr2.app.browser.interfaces import IMathMLLayoutWrapper
+from pmr2.app.browser.interfaces import IPublishTraverse
 import pmr2.app.security.roles
 
 path = lambda p: os.path.join(os.path.dirname(pmr2.app.browser.__file__), 
@@ -127,8 +127,7 @@ class TraverseFormWrapper(FormWrapper):
         super(TraverseFormWrapper, self).__init__(*a, **kw)
         self.traverse_subpath = []
         if self.form is not None:
-            # XXX should probably check whether self.form implements
-            # IPublishTraverse
+            assert IPublishTraverse.providedBy(self.form_instance)
             # sharing subpath list with instance of form.
             self.form_instance.traverse_subpath = self.traverse_subpath
 
