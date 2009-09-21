@@ -123,6 +123,26 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
             raise HTTPFound(self.context.absolute_url())
 
 
+class WorkspaceArchive(page.TraversePage):
+    """\
+    Browser page that archives a hg repo.
+    """
+
+    def __call__(self, *a, **kw):
+        try:
+            storage = zope.component.queryMultiAdapter(
+                (self.context, self.request, self), 
+                name="PMR2StorageRequestView",
+            )
+        except (pmr2.mercurial.exceptions.PathInvalidError,
+                pmr2.mercurial.exceptions.RevisionNotFoundError,
+            ):
+            raise HTTPNotFound(self.context.title_or_id())
+
+        # XXX storage.path should be the archive type.
+        return storage.archive(self.request, storage.rev, storage.path)
+
+
 class WorkspacePage(page.SimplePage):
     """\
     The main page view.

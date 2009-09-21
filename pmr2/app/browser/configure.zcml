@@ -110,6 +110,13 @@
 
   <browser:page
       for="pmr2.app.content.Workspace"
+      name="archive"
+      class=".workspace.WorkspaceArchive"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.Workspace"
       name="log"
       class=".workspace.WorkspaceLogView"
       permission="zope2.View"

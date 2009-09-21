@@ -154,8 +154,15 @@ class ShortlogOptionColumn(ItemKeyColumn):
 
     def renderCell(self, item):
         # also could render changeset link (for diffs)
-        return u'<a href="%s/@@file/%s/">[manifest]</a>' % \
-            (self.context.context.absolute_url(), self.getItem(item))
+        result = [
+            u'<a href="%s/@@file/%s/">[manifest]</a>' % \
+                (self.context.context.absolute_url(), self.getItem(item)),
+            u'<a href="%s/@@archive/%s/zip">[zip]</a>' % \
+                (self.context.context.absolute_url(), self.getItem(item)),
+            u'<a href="%s/@@archive/%s/gz">[gz]</a>' % \
+                (self.context.context.absolute_url(), self.getItem(item)),
+        ]
+        return ' '.join(result)
 
 
 class ChangelogTable(z3c.table.table.Table):
