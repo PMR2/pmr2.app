@@ -178,7 +178,6 @@ class IWorkspaceStorageCreate(IWorkspaceAdd):
     )
 
 
-
 class IWorkspaceBulkAdd(zope.interface.Interface):
     """\
     Interface for the use by WorkspaceAddForm.

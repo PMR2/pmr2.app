@@ -139,8 +139,8 @@ class WorkspaceArchive(page.TraversePage):
             ):
             raise HTTPNotFound(self.context.title_or_id())
 
-        # XXX storage.path should be the archive type.
-        return storage.archive(self.request, storage.rev, storage.path)
+        subrepo = self.request.form.get('subrepo', False)
+        return storage.archive(subrepo).getvalue()
 
 
 class WorkspacePage(page.SimplePage):

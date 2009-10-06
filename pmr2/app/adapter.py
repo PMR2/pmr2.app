@@ -7,7 +7,9 @@ from Products.CMFCore.utils import getToolByName
 from pmr2.mercurial import Storage  # XXX remove later [1]
 from pmr2.mercurial.interfaces import IPMR2StorageBase, IPMR2HgWorkspaceAdapter
 from pmr2.mercurial.adapter import PMR2StorageAdapter
+from pmr2.mercurial.adapter import PMR2StorageFixedRevAdapter
 from pmr2.mercurial.adapter import PMR2StorageRequestAdapter
+from pmr2.mercurial.exceptions import PathNotFoundError
 from pmr2.mercurial import WebStorage
 
 from pmr2.app.interfaces import *
@@ -43,7 +45,7 @@ class PMR2StorageRequestViewAdapter(PMR2StorageRequestAdapter):
         PMR2StorageRequestAdapter.__init__(self, context, request)
 
 
-class PMR2ExposureStorageAdapter(PMR2StorageAdapter):
+class PMR2ExposureStorageAdapter(PMR2StorageFixedRevAdapter):
 
     def __init__(self, context):
 
@@ -54,20 +56,10 @@ class PMR2ExposureStorageAdapter(PMR2StorageAdapter):
         )
         self._rev = context.commit_id
         self._path = ()
-        PMR2StorageAdapter.__init__(self, self.workspace, self._rev)
-
-    # XXX [1] this method was in the wrong place in parent.  When it is
-    # finally moved (next version of pmr2.mercurial) remove this and the
-    # above import.
-    def get_full_manifest(self):
-        """\
-        Returns full manifest listing.
-        """
-
-        return Storage.raw_manifest(self, self._rev)
+        PMR2StorageFixedRevAdapter.__init__(self, self.workspace, self._rev)
 
 
-class PMR2ExposureDocStorageAdapter(PMR2StorageAdapter):
+class PMR2ExposureDocStorageAdapter(PMR2StorageFixedRevAdapter):
     """\
     """
 
@@ -92,7 +84,7 @@ class PMR2ExposureDocStorageAdapter(PMR2StorageAdapter):
 
     @property
     def rawfile(self):
-        return self.file(self._rev, self._path)
+        return self.file(self._path)
 
 
 class PMR2StorageURIResolver(PMR2StorageAdapter):
@@ -150,7 +142,7 @@ class PMR2StorageURIResolver(PMR2StorageAdapter):
             if validate:
                 try:
                     test = self.fileinfo(rev, filepath).next()
-                except:  # PathNotFound
+                except PathNotFoundError:
                     return None
 
             frag += (view, rev, filepath,)
