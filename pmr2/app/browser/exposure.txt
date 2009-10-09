@@ -138,3 +138,114 @@ There are some caveats, it has to do with existing objects:
   above) from doing its job.  A customized Folder class will need to be
   implemented to use that mixin and do its own resolution (or pass that
   job the ExposureContainer parent).
+
+
+------------------------------------------------------------------------
+
+=============================================================
+Exposure implementation refactor in v0.2 (Currently Proposed)
+=============================================================
+
+How exposures were originally implemented results in an explosion of
+objects, not necessarily result in a proper one-to-one mapping between
+objects and files.  The objects really should encapsulate the pages
+which in turn represents the different views the file that the object
+represent has.  This will also unify all the views within the repository
+as the option to have standardized front page, which is most important 
+page of any exposure as we have learned in practice.
+
+------------------------------
+Nesting content with same name
+------------------------------
+
+To implement this feature, we will result in having objects in the
+exposures having the exact same name as the file it represents.  This
+will then require specific views to be registered for that content type
+and have the view adapt to the correct persistent class it represents.
+
+For example, in the workspace (http://models.example.com/w/test/) we 
+have this directory structure:
+
+  +\ ./
+    | documentation.html
+    | diagram.svg
+   +\ import/
+     | component-1.cellml
+     | component-2.cellml
+     | diagram.png
+    | main-model.cellml
+    | main-model_a.cellml
+    | main-model_b.cellml
+
+We must retain the access to the files as is.  However, sometimes it may
+be beneficial to override that access to prevent certain kinds of attack
+vectors.  For instance, documentation.html could contain scripts that
+enable XSS attacks, so direct access to them through the exposure must
+be sanitized (whereas through the workspace they must be sent as an
+attachment).  The wrapper will also wrap the content of that file into
+the page template.
+
+Whereas the CellML files will need to be sent as raw, or rather be
+redirected to the actual file, but then they do benefit from having
+customized views (i.e. exposure pages).  The original implementation is
+to add filename extensions to it, but ultimately this is proved to be
+unflexible and clumsy - the hierarchy is all emulated, resulting in a
+confused perception of the definitions of exposure pages and exposure
+subpages.
+
+Also, the original implementation does not include directories.
+
+What I want is this - an object that can either refer to its real self
+or the sanitized view (in the exposure), and to be able to provide
+customized subviews.  More examples:
+
+In exposure http://models.example.com/e/test/ (references same workspace
+as above), we can have these objects:
+
+  +\ ./
+    | documentation.html
+   +\ diagram.svg/
+     | large.png
+     | small.png
+     | thumbnail.png
+   +\ import/
+    +\ component-1.cellml/
+      | index
+    +\ component-2.cellml/
+      | index
+    +\ diagram.png/
+      | thumbnail.png
+   +\ main-model.cellml/
+     | index
+     | metadata
+     | code
+   +\ main-model_a.cellml/
+     | index
+     | metadata
+     | code
+   +\ main-model_b.cellml/
+     | index
+     | metadata
+     | code
+
+Exposures require a descriptive index page that will give a complete
+overview of what the model is, namely the curation status, key curation
+information (citation and/or model authorship).  It will also list the
+model files (usually are variants), giving a quick description of it 
+based on metadata.
+
+The object with the same name as the files in the workspace must be
+able to perform these tasks:
+
+  - get to the original file if configuration allows
+  - present default views
+  - also allow other custom views
+  - contain other objects.
+
+Each of these pages are not going to have its dedicated class (i.e. only
+one page class), but adapters will be registered and will be used to
+render and display.  Each of these pages will store the name of the
+adapter used.  
+
+Changes proposed here will mean redirections from the PMR2 v0.1 pages
+to the new ones will need to take place.
