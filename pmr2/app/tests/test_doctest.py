@@ -59,7 +59,7 @@ def test_suite():
         # Exposure and related object form usage tests.
         ztc.ZopeDocFileSuite(
             'browser/exposure.txt', package='pmr2.app',
-            test_class=base.DocTestCase,
+            test_class=base.ExposureDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 

@@ -3,13 +3,17 @@ import os.path
 from cStringIO import StringIO
 
 from zope import interface
+import zope.interface
+import zope.component
 from zope.schema import fieldproperty
+from persistent import Persistent
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
 from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
-from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
-from Products.ATContentTypes.content.document import ATDocument
+from Products.ATContentTypes.atct import ATCTContent
+from Products.ATContentTypes.atct import ATFolder, ATBTreeFolder
+from Products.ATContentTypes.atct import ATDocument
 from Products.Archetypes.atapi import BaseContent
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import View, ModifyPortalContent
@@ -746,3 +750,58 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
         return self.title
         #return self._get_subdoc_obj(u'ExposureCmetaDocumentFactory', 
         #    '_pmr1_citation_title', u'')
+
+
+# New style Exposure file.
+
+class ExposureFile(ATCTContent, ExposureContentIndexBase):
+    """\
+    Generic object within an exposure that represents a file in the
+    workspace, and as an anchor for adapted content.
+    """
+
+    interface.implements(IExposureFile)
+    adapters = fieldproperty.FieldProperty(IExposureFile['adapters'])
+
+    def source(self):
+        # this could be nested in some folders, so we need to acquire
+        # the parents up to the Exposure object.
+        obj = aq_inner(self)
+        paths = []
+        while obj is not None:
+            if IExposure.providedBy(obj):
+                # as paths were appended...
+                paths.reverse()
+                workspace = zope.component.queryMultiAdapter(
+                    (obj,),
+                    name='ExposureToWorkspace',
+                )
+                return obj, workspace, '/'.join(paths)
+            paths.append(obj.getId())
+            obj = aq_parent(obj)
+        # XXX better exception type.
+        raise ValueError('cannot acquire Exposure object')
+
+    def raw_text(self):
+        results = []
+        for adapter in self.adapters:
+            ctxobj = zope.component.queryAdapter(self, name=adapter)
+            if ctxobj is not None:
+                results.append(ctxobj.raw_text())
+        return '\n'.join(results)
+
+
+class RDFTurtleAdapter(Persistent):
+    """\
+    See interface.
+    """
+
+    zope.interface.implements(IRDFTurtleAdapter)
+    zope.component.adapts(IExposureFile)
+    text = fieldproperty.FieldProperty(IRDFTurtleAdapter['text'])
+
+    def generate(self):
+        pass
+
+    def raw_text(self):
+        pass

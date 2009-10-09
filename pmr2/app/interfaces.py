@@ -505,3 +505,81 @@ class IExposureContentIndex(zope.interface.Interface):
 
     def get_exposure_workspace_index():
         pass
+
+
+# New style exposure classes.
+
+class IExposureFileGen(zope.interface.Interface):
+    """\
+    Interface for the documentation generation.
+    """
+
+    filename = zope.schema.Choice(
+        title=u'File',
+        description=u'The file within the workspace that requires special '\
+                     'processing to be presentable in this exposure.',
+        vocabulary='ManifestListVocab',
+    )   # this will become the id of an ExposureFile object.
+
+
+class IExposureFile(zope.interface.Interface):
+    """\
+    Interface for a basic exposure page.
+
+    Compared to IExposureDocument, a lot less fields, because the object
+    will have the id after the object.
+    """
+
+    adapters = zope.schema.Text(
+        title=u'Adapters',
+        description=u'List of adapters used.',
+        required=False,
+    )
+
+    def source():
+        """\
+        returns a tuple containing its root exposure object, workspace 
+        object and the full path of the actual file in this order.
+        """
+
+    def raw_text():
+        """\
+        returns a concatenated string of all raw text, if it implements
+        IExposureFileRawText
+        """
+
+
+class IExposureFileRawText(zope.interface.Interface):
+    """\
+    Interface that will allow the returning of raw text.
+    """
+
+    def raw_text():
+        """\
+        returns a raw text representation of this adapter.
+        """
+
+
+class IExposureFileBaseAdapter(zope.interface.Interface):
+    """\
+    Base adapter for the IExposureFile
+    """
+
+    # XXX include version fields?  log down the version used to generate
+
+    def generate():
+        """\
+        Parse and store the content
+        """
+
+
+class IRDFTurtleAdapter(IExposureFileBaseAdapter):
+    """\
+    An adapter to show the RDF.
+    """
+
+    text = zope.schema.Text(
+        title=u'Text',
+        description=u'The Turtle representation of the RDF inside.',
+        required=False,
+    )

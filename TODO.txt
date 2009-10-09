@@ -15,15 +15,9 @@ General:
 - better workflow for managing exposures (mostly for deprecation)
   - also single-click workflow change for all subobjects
   - (?)
-- cloning/pushing to private workspaces 
-  - maybe even "private" OpenCell execution links that are active for
-    just long enough for users to test a private model, as it does not
-    support login via http.
-  - (*****)
+- private, use/time limited links to open model?
 - complete implementation of custom search object to fit better into
   the look-and-feel of the default views.
-- Metadata editing.
-- Hg Forest
 
 
 Curation Manifest:
@@ -272,6 +266,14 @@ Listing of models:
 
 More versatile index page that can do listing by alphabetical order and
 the like.
+
+
+Workspace Exposure Listing:
+---------------------------
+
+Clean up that listing so a user can see what has been exposed at a
+glance, and in chronological order if possible.  For performance needs
+the commit id along with its dates will need to be indexed.
 
 
 Searching/Catalog:

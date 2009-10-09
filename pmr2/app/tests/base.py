@@ -62,3 +62,35 @@ class DocTestCase(ptc.FunctionalTestCase):
     def tearDown(self):
         super(DocTestCase, self).tearDown()
         shutil.rmtree(self.tmpdir, ignore_errors=True)
+
+class ExposureDocTestCase(DocTestCase):
+
+    def setUp(self):
+        """\
+        Sets up the environment that the exposure doctest needs.
+        """
+
+        DocTestCase.setUp(self)
+        from plone.z3cform.tests import setup_defaults
+        from pmr2.app.content import *
+        from pmr2.app.tests import utils
+        setup_defaults()
+        self.folder['repo'] = PMR2('repo')
+        self.folder.repo['workspace'] = WorkspaceContainer()
+        self.folder.repo.workspace['eggs'] = Workspace('eggs')
+        self.folder.repo.repo_root = self.tmpdir
+        utils.mkreporoot(self.folder.repo.repo_root)
+        utils.mkrepo(self.folder.repo.workspace.get_path(), 'eggs')
+
+        # create real Hg repos
+
+        import pmr2.mercurial.tests
+        from pmr2.mercurial.tests import util
+        util.extract_archive(self.folder.repo.workspace.get_path())
+        self.archive_revs = util.ARCHIVE_REVS
+        self.folder.repo.workspace['import1'] = Workspace('import1')
+        self.folder.repo.workspace['import2'] = Workspace('import2')
+        self.folder.repo.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
+
+    def tearDown(self):
+        DocTestCase.tearDown(self)

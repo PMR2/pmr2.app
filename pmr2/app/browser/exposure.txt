@@ -2,8 +2,8 @@
 Exposure Related Objects and Forms
 ==================================
 
-Before we get started, we need to import the required classes and set up
-the test environment.  Temporary directories are needed also.
+Before we get started, we need to import the required classes.  The
+directories required should have been already set up by the script.
 ::
 
     >>> from zope import interface
@@ -12,15 +12,6 @@ the test environment.  Temporary directories are needed also.
     >>> from pmr2.app.tests.base import TestRequest
     >>> from pmr2.app.content import *
     >>> from pmr2.app.interfaces import *
-    >>> setup_defaults()
-    >>> request = TestRequest()
-    >>> self.folder['repo'] = PMR2('repo')
-    >>> self.folder.repo['workspace'] = WorkspaceContainer()
-    >>> self.folder.repo.workspace['eggs'] = Workspace('eggs')
-    >>> self.folder.repo.repo_root = self.tmpdir
-    >>> from pmr2.app.tests import utils
-    >>> utils.mkreporoot(self.folder.repo.repo_root)
-    >>> utils.mkrepo(self.folder.repo.workspace.get_path(), 'eggs')
 
 Create the exposure container.
 ::
@@ -249,3 +240,81 @@ adapter used.
 
 Changes proposed here will mean redirections from the PMR2 v0.1 pages
 to the new ones will need to take place.
+
+------------
+Demostration
+------------
+
+For this demo, we need to create an actual environment such that the
+full demo can be appreciated.  We will use the environment that is
+built in setup (uses pmr2.mercurial.tests) and create the exposure using
+a workspace with actual data.
+::
+
+    >>> rev = unicode(self.archive_revs[1])
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.title': u'PMR2 HgTest',
+    ...         'form.widgets.workspace': u'pmr2hgtest',
+    ...         'form.widgets.commit_id': rev,
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = exposure.ExposureAddForm(
+    ...     self.folder.repo.exposure, request)
+    >>> testform.update()
+    >>> exp_id = testform._data['id']
+    >>> context = self.folder.repo.exposure[exp_id]
+    >>> context
+    <Exposure at ...>
+
+Now we have an exposure, try to use one of its default views on it.
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureInfo(context, request)
+    >>> view.render()
+    u'<h1>...
+
+We need to wrap around one of the interesting files inside with the
+standard ExposureFile object.
+::
+
+    >>> pmr2hgtest = self.folder.repo.workspace.pmr2hgtest
+    >>> file1 = u'file1'
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.filename': [file1],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = exposure.ExposureFileGenForm(context, request)
+    >>> testform.update()
+    >>> context[file1]
+    <ExposureFile at ...>
+
+The object a method that returns a tuple of its source:
+::
+
+    >>> answer = (context, pmr2hgtest, 'file1')
+    >>> result = context[file1].source()
+    >>> answer == result
+    True
+
+Test it with the default view.  There should be no adapters added yet.
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureFileInfo(context[file1], request)
+    >>> print view.render()
+    <h2>Views attached to this file</h2>
+    <dl>
+    </dl>
+
+The redirect view should redirect to the actual file within the 
+workspace.
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureFileRedirectView(context[file1], request)
+    >>> result = view()
+    >>> request.response.getHeader('Location')
+    'http://.../workspace/pmr2hgtest/@@rawfile/.../file1'

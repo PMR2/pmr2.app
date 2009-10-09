@@ -3,6 +3,7 @@ from random import getrandbits
 
 import zope.interface
 import zope.component
+from zope.publisher.browser import BrowserPage
 from paste.httpexceptions import HTTPNotFound
 import z3c.form.field
 from plone.memoize.view import memoize
@@ -130,8 +131,6 @@ class ExposureMetadocGenForm(form.AddForm):
 ExposureMetadocGenFormView = layout.wrap_form(ExposureMetadocGenForm, label="Exposure Meta Documentation Generation Form")
 
 
-# also need an exposure_folder_listing that mimics the one below.
-
 class ExposureTraversalPage(page.TraversePage):
     """\
     Since any exposure page can become the root for whatever reason, we
@@ -171,6 +170,10 @@ class ExposureTraversalPage(page.TraversePage):
                 name="PMR2StorageURIResolver"
             )
         return self._uri_resolver
+
+    def portal_url(self):
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        return portal.absolute_url()
 
     def redirect_to_uri(self, filepath):
         redir_uri = self.uri_resolver.path_to_uri(
@@ -259,10 +262,6 @@ class ExposurePMR1Metadoc(ExposureTraversalPage):
 
     render = ViewPageTemplateFile('pmr1_metadoc.pt')
 
-    def portal_url(self):
-        portal = getToolByName(self.context, 'portal_url').getPortalObject()
-        return portal.absolute_url()
-
     @memoize
     def file_access_uris(self):
         result = []
@@ -310,6 +309,118 @@ class ExposurePMR1Metadoc(ExposureTraversalPage):
         }
         return result
 
-
 ExposurePMR1MetadocView = layout.wrap_form(ExposurePMR1Metadoc,
     __wrapper_class=PlainLayoutWrapper)
+
+
+# v0.2 ExposureFile
+
+class ExposureFileGenForm(form.AddForm):
+    """\
+    Form to generate an exposure file (encapsulates an actual file in a
+    workspace).
+    """
+
+    fields = z3c.form.field.Fields(IExposureFileGen)
+
+    def create(self, data):
+        self._data = data
+        result = ExposureFile(data['filename'])
+        # XXX is the id validated to be not a duplicate?
+        self._name = result.id
+        return result
+
+    def add_data(self, ctxobj):
+        pass
+
+ExposureDocGenFormView = layout.wrap_form(ExposureDocGenForm, label="Exposure Documentation Generation Form")
+
+
+class ExposureInfo(ExposureTraversalPage):
+    """\
+    Inheriting from the TraversalPage because this will be the main view
+    wrapping around exposure.
+    """
+
+    render = ViewPageTemplateFile('exposure_info.pt')
+
+    @memoize
+    def pmr1_curation(self):
+        """
+        Temporary method for PMR1 compatibility styles.
+        """
+
+        pairs = (
+            ('pmr_curation_star', u'Curation Status:'),
+            ('pmr_pcenv_star', u'OpenCell:'),
+            ('pmr_jsim_star', u'JSim:'),
+            ('pmr_cor_star', u'COR:'),
+        )
+        curation = self.context.curation or {}
+        result = []
+        for key, label in pairs:
+            # first item or character
+            stars = key in curation and curation[key][0] or u'0'
+            result.append({
+                'label': label,
+                'stars': stars,
+            })
+        return result
+
+    @memoize
+    def derive_from_uri(self):
+        resolver = self.uri_resolver
+        workspace_uri = resolver.path_to_uri(self.context.commit_id)
+        manifest_uri = resolver.path_to_uri(
+            self.context.commit_id, '', '@@file', False)
+        result = {
+            'workspace': {
+                'label': self.workspace.Title,
+                'href': workspace_uri,
+            },
+            'manifest': {
+                'label': short(self.context.commit_id),
+                'href': manifest_uri,
+            },
+        }
+        return result
+
+    @memoize
+    def file_access_uris(self):
+        result = []
+        resolver = self.uri_resolver
+
+        # using resolver to "resolve" a gzip download path.
+        archive_uri = resolver.path_to_uri(
+            self.context.commit_id, 'gz', '@@archive', False)
+        result.append({'label': u'Download (tgz)', 'href': archive_uri})
+
+        return result
+
+ExposureInfoView = layout.wrap_form(ExposureInfo,
+    __wrapper_class=PlainLayoutWrapper)
+
+
+class ExposureFileInfo(page.TraversePage):
+    """\
+    Base view of an ExposureFile object.  Shows the list of adapters.
+    """
+
+    render = ViewPageTemplateFile('exposure_file_info.pt')
+
+ExposureFileInfoView = layout.wrap_form(ExposureFileInfo,
+    __wrapper_class=PlainLayoutWrapper)
+
+
+class ExposureFileRedirectView(BrowserPage):
+    """\
+    This view redirects to the original file.
+    """
+
+    target_view = 'rawfile'
+
+    def __call__(self):
+        exposure, workspace, path = self.context.source()
+        target_uri = '%s/@@%s/%s/%s' % (workspace.absolute_url(), 
+            self.target_view, exposure.commit_id, path)
+        return self.request.response.redirect(target_uri)
