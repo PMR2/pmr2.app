@@ -71,6 +71,9 @@ class ExposureContentIndexBase(object):
     def get_exposure_workspace_index(self):
         return ()
 
+    def get_exposure_commit_id(self):
+        return ''
+
     def get_exposure_root_title(self):
         return ''
 
@@ -111,6 +114,9 @@ class ExposureContentIndexBase(object):
 
     def pmr2_exposure_root_id(self):
         return self.get_exposure_root_id()
+
+    def pmr2_exposure_commit_id(self):
+        return self.get_exposure_commit_id()
 
     # XXX PMR1 display mode compatibility hack
     def pmr1_citation_authors(self):
@@ -200,6 +206,10 @@ class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
     def get_exposure_root_id(self):
         return self.id
 
+    security.declareProtected(View, 'get_exposure_commit_id')
+    def get_exposure_commit_id(self):
+        return self.commit_id
+
     # XXX PMR1 display mode compatibility hack
     security.declareProtected(View, 'pmr1_citation_authors')
     def pmr1_citation_authors(self):
@@ -210,7 +220,7 @@ class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
         return self.Description()
 
 
-class ExposureDocument(ATDocument, ExposureContentIndexBase):  #, TraversalCatchAll):
+class ExposureDocument(ATDocument, ExposureContentIndexBase):
     """\
     Documentation for an exposure.
     """

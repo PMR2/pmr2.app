@@ -17,6 +17,10 @@
     <indexed_attr value="get_keywords_index"/>
   </index>
 
+  <index name="pmr2_exposure_commit_id" meta_type="FieldIndex">
+    <indexed_attr value="get_exposure_commit_id"/>
+  </index>
+
   <index name="pmr2_exposure_workspace" meta_type="KeywordIndex">
     <indexed_attr value="get_exposure_workspace_index"/>
   </index>
@@ -50,6 +54,7 @@
   <column value="pmr2_curation"/>
   <column value="pmr2_keyword"/>
   <column value="pmr2_exposure_workspace"/>
+  <column value="pmr2_exposure_commit_id"/>
   <column value="pmr2_exposure_root_title"/>
   <column value="pmr2_exposure_root_path"/>
   <column value="pmr2_exposure_root_id"/>
