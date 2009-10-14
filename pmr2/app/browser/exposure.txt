@@ -318,3 +318,39 @@ workspace.
     >>> result = view()
     >>> request.response.getHeader('Location')
     'http://.../workspace/pmr2hgtest/@@rawfile/.../file1'
+
+Now we do the same with our set of data, with more content.
+::
+
+    >>> rawrev = 'b94d1701154be42acf63ee6b4bd4a99d09ba043c'
+    >>> rev = unicode(rawrev)
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.title': u'PMR2 Rdfmodel Test',
+    ...         'form.widgets.workspace': u'rdfmodel',
+    ...         'form.widgets.commit_id': rev,
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = exposure.ExposureAddForm(
+    ...     self.folder.repo.exposure, request)
+    >>> testform.update()
+    >>> exp_id = testform._data['id']
+    >>> context = self.folder.repo.exposure[exp_id]
+    >>> context
+    <Exposure at ...>
+
+We need to wrap around one of the interesting files inside with the
+standard ExposureFile object.
+::
+
+    >>> rdfmodel = self.folder.repo.workspace.rdfmodel
+    >>> file1 = u'example_model.cellml'
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.filename': [file1],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = exposure.ExposureFileGenForm(context, request)
+    >>> testform.update()
+    >>> context[file1]
+    <ExposureFile at ...>

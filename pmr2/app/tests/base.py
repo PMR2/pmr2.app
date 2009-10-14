@@ -1,3 +1,4 @@
+from os.path import dirname, join
 import tempfile
 import shutil
 import unittest
@@ -86,11 +87,18 @@ class ExposureDocTestCase(DocTestCase):
 
         import pmr2.mercurial.tests
         from pmr2.mercurial.tests import util
+        # pmr2.mercurial
+        util.extract_archive(self.folder.repo.workspace.get_path())
+        # pmr2.app
+        p2a_test = join(dirname(__file__), 'pmr2.app.testdata.tgz')
+        util.extract_archive(self.folder.repo.workspace.get_path(), p2a_test)
+
         util.extract_archive(self.folder.repo.workspace.get_path())
         self.archive_revs = util.ARCHIVE_REVS
         self.folder.repo.workspace['import1'] = Workspace('import1')
         self.folder.repo.workspace['import2'] = Workspace('import2')
         self.folder.repo.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
+        self.folder.repo.workspace['rdfmodel'] = Workspace('rdfmodel')
 
     def tearDown(self):
         DocTestCase.tearDown(self)
