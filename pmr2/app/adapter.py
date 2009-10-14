@@ -1,6 +1,11 @@
+from cStringIO import StringIO
 import zope.interface
 import zope.component
+from zope.app.container.contained import Contained
+from zope.annotation import factory
+from zope.schema import fieldproperty
 from zope.publisher.interfaces import IPublisherRequest
+from persistent import Persistent
 from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 
@@ -12,6 +17,7 @@ from pmr2.mercurial.adapter import PMR2StorageRequestAdapter
 from pmr2.mercurial.exceptions import PathNotFoundError
 from pmr2.mercurial import WebStorage
 
+from pmr2.processor.cmeta import Cmeta
 from pmr2.app.interfaces import *
 from pmr2.app.browser.interfaces import IPublishTraverse
 
@@ -178,3 +184,40 @@ def ExposureToWorkspaceAdapter(context):
     # there should be only one such id in the workspace for this
     # unique result.
     return result[0].getObject()
+
+
+# Basic support for ExposureFile adapters.
+
+class ExposureFileAdapterBase(Persistent, Contained):
+
+    def _generate(self):
+        raise NotImplementedError('private generate method not implemented')
+
+    def generate(self):
+        self._generate()
+        # appending the adapters.  as this is a schema, we can't just
+        # append the name, but have to reassign it also.
+        adapters = self.__parent__.adapters
+        adapters.append(self.__name__)
+        self.__parent__.adapters = adapters
+
+
+class RDFTurtle(ExposureFileAdapterBase):
+    """\
+    See IRDFTurtle interface.
+    """
+
+    zope.interface.implements(IRDFTurtle)
+    zope.component.adapts(IExposureFile)
+    text = fieldproperty.FieldProperty(IRDFTurtle['text'])
+
+    def _generate(self):
+        input = self.__parent__.file()
+        metadata = Cmeta(StringIO(input))
+        self.text = unicode(metadata.graph.serialize(format='turtle'))
+
+    def raw_text(self):
+        return self.text
+
+# To adapt to that content.
+RDFTurtleFactory = factory(RDFTurtle)

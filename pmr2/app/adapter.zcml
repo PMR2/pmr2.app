@@ -39,4 +39,11 @@
       name="ExposureToWorkspace"
       />
 
+  <adapter
+      for="pmr2.app.interfaces.IExposureFile"
+      factory=".adapter.RDFTurtleFactory"
+      provides="pmr2.app.interfaces.IRDFTurtle"
+      name="RDFTurtle"
+      />
+
 </configure> 

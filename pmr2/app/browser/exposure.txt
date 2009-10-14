@@ -291,6 +291,14 @@ standard ExposureFile object.
     >>> context[file1]
     <ExposureFile at ...>
 
+Try the file method to get the content of the file.  The reason this
+method exist in this class is to serve as a helper to retrieve content,
+not as something for views to use.  May be better served by an adapter.
+::
+
+    >>> context[file1].file()
+    'This is file1, initial commit.\n'
+
 The object a method that returns a tuple of its source:
 ::
 
@@ -305,7 +313,7 @@ Test it with the default view.  There should be no adapters added yet.
     >>> request = TestRequest()
     >>> view = exposure.ExposureFileInfo(context[file1], request)
     >>> print view.render()
-    <h2>Views attached to this file</h2>
+    <h2>Annotations attached to this file</h2>
     <dl>
     </dl>
 
@@ -354,3 +362,39 @@ standard ExposureFile object.
     >>> testform.update()
     >>> context[file1]
     <ExposureFile at ...>
+
+We will get the annotator and annotate our ExposureFile content object.
+::
+
+    >>> filectx = context[file1]
+    >>> annotator = zope.component.queryUtility(IExposureFileAnnotator, 
+    ...                                         name=u'RDFTurtle')
+    >>> annotator(filectx)
+
+Now the default view should report the view
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureFileInfo(context[file1], request)
+    >>> print view.render()
+    <h2>Annotations attached to this file</h2>
+    <dl>
+      <dt>RDFTurtle</dt>
+    </dl>
+
+Which the associated view should then work with the original 
+ExposureFile object.
+::
+
+    >>> filectx = context[file1]
+    >>> request = TestRequest()
+    >>> view = exposure.RDFTurtle(filectx, request)
+    >>> print view()
+    <h3>Metadata: Turtle Representation</h3>
+    <p>The following is a Turtle representation of the RDF graph ...
+    <pre><code>
+    @prefix : 
+    ...
+
+This way it becomes a lot easier to provide new content and associated
+views to a file that requires processing.  One only need to define 

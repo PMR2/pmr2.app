@@ -1,0 +1,9 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+
+  <utility
+      name="RDFTurtle"
+      factory=".factory.RDFTurtleAnnotator"
+      />
+
+</configure>

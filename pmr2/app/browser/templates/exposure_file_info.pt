@@ -1,4 +1,4 @@
-<h2>Views attached to this file</h2>
+<h2>Annotations attached to this file</h2>
 <dl>
 <tal:loop tal:repeat="i context/adapters">
   <dt tal:content="i"></dt>

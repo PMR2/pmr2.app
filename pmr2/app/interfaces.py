@@ -530,16 +530,22 @@ class IExposureFile(zope.interface.Interface):
     will have the id after the object.
     """
 
-    adapters = zope.schema.Text(
+    adapters = zope.schema.List(
         title=u'Adapters',
         description=u'List of adapters used.',
         required=False,
+        default=[],
     )
 
     def source():
         """\
         returns a tuple containing its root exposure object, workspace 
         object and the full path of the actual file in this order.
+        """
+
+    def file():
+        """\
+        returns the string of the file itself.
         """
 
     def raw_text():
@@ -560,20 +566,18 @@ class IExposureFileRawText(zope.interface.Interface):
         """
 
 
-class IExposureFileBaseAdapter(zope.interface.Interface):
+class IExposureFileAnnotator(zope.interface.Interface):
     """\
-    Base adapter for the IExposureFile
+    Interface for the ExposureFile annotation utility.
     """
-
-    # XXX include version fields?  log down the version used to generate
 
     def generate():
         """\
-        Parse and store the content
+        The method used by the call method.
         """
 
 
-class IRDFTurtleAdapter(IExposureFileBaseAdapter):
+class IRDFTurtle(zope.interface.Interface):
     """\
     An adapter to show the RDF.
     """

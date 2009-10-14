@@ -5,6 +5,7 @@ from cStringIO import StringIO
 from zope import interface
 import zope.interface
 import zope.component
+import zope.annotation
 from zope.schema import fieldproperty
 from persistent import Persistent
 
@@ -760,7 +761,10 @@ class ExposureFile(ATCTContent, ExposureContentIndexBase):
     workspace, and as an anchor for adapted content.
     """
 
-    interface.implements(IExposureFile)
+    interface.implements(
+        IExposureFile,
+        zope.annotation.interfaces.IAttributeAnnotatable,
+    )
     adapters = fieldproperty.FieldProperty(IExposureFile['adapters'])
 
     def source(self):
@@ -779,8 +783,22 @@ class ExposureFile(ATCTContent, ExposureContentIndexBase):
                 return obj, workspace, '/'.join(paths)
             paths.append(obj.getId())
             obj = aq_parent(obj)
-        # XXX better exception type.
+        # XXX could benefit from a better exception type?
         raise ValueError('cannot acquire Exposure object')
+
+    def file(self):
+        """\
+        While a view could technically be defined to return this, it is
+        better to generate the redirect to the actual file in the
+        workspace.
+        """
+
+        exposure, workspace, path = self.source()
+        storage = zope.component.queryMultiAdapter(
+            (workspace, exposure.commit_id,),
+            name='PMR2StorageFixedRev',
+        )
+        return storage.file(path)
 
     def raw_text(self):
         results = []
@@ -789,19 +807,3 @@ class ExposureFile(ATCTContent, ExposureContentIndexBase):
             if ctxobj is not None:
                 results.append(ctxobj.raw_text())
         return '\n'.join(results)
-
-
-class RDFTurtleAdapter(Persistent):
-    """\
-    See interface.
-    """
-
-    zope.interface.implements(IRDFTurtleAdapter)
-    zope.component.adapts(IExposureFile)
-    text = fieldproperty.FieldProperty(IRDFTurtleAdapter['text'])
-
-    def generate(self):
-        pass
-
-    def raw_text(self):
-        pass
