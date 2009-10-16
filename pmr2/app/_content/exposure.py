@@ -25,6 +25,7 @@ import pmr2.mercurial.interfaces
 from pmr2.processor.cmeta import Cmeta
 
 from pmr2.app.interfaces import *
+from pmr2.app.atct import ATFolderDocument
 from pmr2.app.mixin import TraversalCatchAll
 import pmr2.app.util
 
@@ -137,7 +138,7 @@ class ExposureContentIndexBase(object):
         return ''
 
 
-class Exposure(ATFolder, TraversalCatchAll, ExposureContentIndexBase):
+class Exposure(ATFolderDocument, TraversalCatchAll, ExposureContentIndexBase):
     """\
     PMR Exposure object is used to encapsulate a single version of any
     given workspace and will allow more clear presentation to users of
@@ -766,6 +767,7 @@ class ExposureFile(ATCTContent, ExposureContentIndexBase):
         zope.annotation.interfaces.IAttributeAnnotatable,
     )
     adapters = fieldproperty.FieldProperty(IExposureFile['adapters'])
+    security = ClassSecurityInfo()
 
     def source(self):
         # this could be nested in some folders, so we need to acquire

@@ -17,17 +17,22 @@
   <element value="Folder"/>
  </property>
  <property name="allow_discussion">False</property>
- <property name="default_view">exposure_folder_listing</property>
+ <property name="default_view">exposure_info</property>
  <property name="view_methods">
-  <element value="folder_summary_view"/>
-  <element value="folder_tabular_view"/>
-  <element value="atct_album_view"/>
   <element value="exposure_folder_listing"/>
+  <element value="exposure_info"/>
   <!-- Showcase view? -->
  </property>
 
  <alias from="(Default)" to="(dynamic view)"/>
- <alias from="edit" to="exposure_edit"/>
+ <alias from="edit" to="atct_edit"/>
+
+ <!-- because it's long -->
+ <alias from="@@curation" to="@@exposure_curation_edit"/>
+
+ <!-- because ultimately this will be a builder, not just a generator -->
+ <alias from="@@builder" to="@@filegen"/>
+
  <alias from="sharing" to="@@sharing"/>
  <alias from="view" to="(selected layout)"/>
 
@@ -42,10 +47,16 @@
   <permission value="Modify portal content"/>
  </action>
 
- <action title="Generate Documentation" action_id="metadocgen" 
+ <action title="Curation" action_id="curation" 
     category="object" 
-    condition_expr="python:'index_html' not in object"
-    url_expr="string:${object_url}/@@metadocgen" visible="True"
+    url_expr="string:${object_url}/@@curation" visible="True"
+    i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+
+ <action title="Builder" action_id="generator" 
+    category="object" 
+    url_expr="string:${object_url}/@@builder" visible="True"
     i18n:attributes="title">
   <permission value="Modify portal content"/>
  </action>

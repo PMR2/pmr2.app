@@ -312,8 +312,8 @@ Test it with the default view.  There should be no adapters added yet.
 
     >>> request = TestRequest()
     >>> view = exposure.ExposureFileInfo(context[file1], request)
-    >>> print view.render()
-    <h2>Annotations attached to this file</h2>
+    >>> print view.content()
+    <h3>Annotations attached to this file</h3>
     <dl>
     </dl>
 
@@ -363,6 +363,15 @@ standard ExposureFile object.
     >>> context[file1]
     <ExposureFile at ...>
 
+Redirect view will work on this.
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureFileRedirectView(context[file1], request)
+    >>> result = view()
+    >>> request.response.getHeader('Location')
+    'http://.../workspace/rdfmodel/@@rawfile/.../example_model.cellml'
+
 We will get the annotator and annotate our ExposureFile content object.
 ::
 
@@ -376,8 +385,8 @@ Now the default view should report the view
 
     >>> request = TestRequest()
     >>> view = exposure.ExposureFileInfo(context[file1], request)
-    >>> print view.render()
-    <h2>Annotations attached to this file</h2>
+    >>> print view.content()
+    <h3>Annotations attached to this file</h3>
     <dl>
       <dt>RDFTurtle</dt>
     </dl>
@@ -397,4 +406,36 @@ ExposureFile object.
     ...
 
 This way it becomes a lot easier to provide new content and associated
-views to a file that requires processing.  One only need to define 
+views to a file that requires processing.  One only need to define an
+ExposureFile adapter class and an utility class that will populate the
+data for that class.  The view would then access the data stored within
+that adapter.
+
+We however only looked at files sitting at the root level.  There are
+many cases where files will be nested within some directory level which
+we have not looked at yet.  Let's see what happens when we try that.
+::
+
+    >>> rdfmodel = self.folder.repo.workspace.rdfmodel
+    >>> path2 = (u'component', u'module.cellml')
+    >>> file2 = '/'.join(path2)
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.filename': [file2],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = exposure.ExposureFileGenForm(context, request)
+    >>> testform.update()
+    >>> efile2 = context[path2[0]][path2[1]]
+    >>> efile2
+    <ExposureFile at ...>
+
+It should also be able to redirect to the correct file within its source
+workspace.
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureFileRedirectView(efile2, request)
+    >>> result = view()
+    >>> request.response.getHeader('Location')
+    'http://.../workspace/rdfmodel/@@rawfile/.../component/module.cellml'

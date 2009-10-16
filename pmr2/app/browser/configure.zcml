@@ -185,6 +185,13 @@
 
   <browser:page
       for="pmr2.app.content.Exposure"
+      name="exposure_info"
+      class=".exposure.ExposureInfoView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.Exposure"
       name="exposure_folder_listing"
       class=".exposure.ExposureFolderListing"
       permission="zope2.View"
@@ -194,6 +201,13 @@
       for="pmr2.app.content.Exposure"
       name="exposure_edit"
       class=".exposure.ExposureEditFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.Exposure"
+      name="exposure_curation_edit"
+      class=".exposure.ExposureEditCurationFormView"
       permission="cmf.ModifyPortalContent"
       />
 
@@ -209,6 +223,29 @@
       name="metadocgen"
       class=".exposure.ExposureMetadocGenFormView"
       permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.Exposure"
+      name="filegen"
+      class=".exposure.ExposureFileGenFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <!-- Exposure File -->
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="exposure_file_redirect"
+      class=".exposure.ExposureFileRedirectView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="exposure_file_info"
+      class=".exposure.ExposureFileInfoView"
+      permission="zope2.View"
       />
 
   <!-- Exposure Document -->

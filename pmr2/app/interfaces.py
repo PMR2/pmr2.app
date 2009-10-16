@@ -507,6 +507,13 @@ class IExposureContentIndex(zope.interface.Interface):
         pass
 
 
+class IExposureFolder(zope.interface.Interface):
+    """\
+    Interface for a folder within an exposure (supports unknwon subpath
+    capturing for redirection to path within its workspace).
+    """
+
+
 # New style exposure classes.
 
 class IExposureFileGen(zope.interface.Interface):

@@ -49,7 +49,8 @@ class ExposureAddForm(form.AddForm):
         ctxobj.commit_id = self._data['commit_id']
         ctxobj.curation = self._data['curation']
 
-ExposureAddFormView = layout.wrap_form(ExposureAddForm, label="Exposure Create Form")
+ExposureAddFormView = layout.wrap_form(ExposureAddForm, 
+    label="Exposure Create Form")
 
 
 class ExposureEditForm(z3c.form.form.EditForm):
@@ -63,7 +64,22 @@ class ExposureEditForm(z3c.form.form.EditForm):
     )
     fields['curation'].widgetFactory = widget.CurationWidgetFactory
 
-ExposureEditFormView = layout.wrap_form(ExposureEditForm, label="Exposure Edit Form")
+ExposureEditFormView = layout.wrap_form(ExposureEditForm, 
+    label="Exposure Edit Form")
+
+
+class ExposureEditCurationForm(z3c.form.form.EditForm):
+    """\
+    Exposure editing form.
+    """
+
+    fields = z3c.form.field.Fields(IExposure).select(
+        'curation',
+    )
+    fields['curation'].widgetFactory = widget.CurationWidgetFactory
+
+ExposureEditCurationFormView = layout.wrap_form(ExposureEditCurationForm, 
+    label="Curation Editor")
 
 
 class ExposureDocGenForm(form.AddForm):
@@ -331,17 +347,22 @@ class ExposureFileGenForm(form.AddForm):
 
     def create(self, data):
         self._data = data
+        # XXX assert that filename exists in workspace?
+        # XXX should this be multiple choice?
+        filename = data['filename']
+        path = filename.split('/')
         result = ExposureFile(data['filename'])
         # XXX is the id validated to be not a duplicate?
         self._name = result.id
+        # XXX this could probably also do annotation from a list
         return result
 
     def add_data(self, ctxobj):
         # This is the most basic form
         pass
 
-ExposureDocGenFormView = layout.wrap_form(ExposureDocGenForm, 
-    label="Exposure Documentation Generation Form")
+ExposureFileGenFormView = layout.wrap_form(ExposureFileGenForm, 
+    label="Add a file to the exposure")
 
 
 class PMR1ExposureFileGenForm(ExposureFileGenForm):
@@ -426,7 +447,8 @@ class ExposureFileInfo(page.TraversePage):
     Base view of an ExposureFile object.  Shows the list of adapters.
     """
 
-    render = ViewPageTemplateFile('exposure_file_info.pt')
+    content = ViewPageTemplateFile('exposure_file_info.pt')
+    subtitle = u'Exposure File Information'
 
 ExposureFileInfoView = layout.wrap_form(ExposureFileInfo,
     __wrapper_class=PlainLayoutWrapper)

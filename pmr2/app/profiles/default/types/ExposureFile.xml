@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<object name="ExposureFile"
+   meta_type="Factory-based Type Information with dynamic views"
+   i18n:domain="pmr2.app" xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="title">PMR2 Exposure File</property>
+ <property name="description">An object within an exposures that represents its counterpart in the exposure's workspace.</property>
+ <property name="content_icon">document_icon.gif</property>
+ <property name="content_meta_type">ExposureFile</property>
+ <property name="product">pmr2.app</property>
+ <property name="factory">addExposureFile</property>
+ <property name="immediate_view">@@annotation</property>
+ <property name="global_allow">False</property>
+ <property name="filter_content_types">True</property>
+ <property name="allowed_content_types" />
+ <property name="allow_discussion">False</property>
+ <property name="default_view">exposure_file_redirect</property>
+ <property name="view_methods">
+  <element value="exposure_file_redirect"/>
+  <element value="exposure_file_info"/>
+ </property>
+
+ <alias from="(Default)" to="(dynamic view)"/>
+ <alias from="edit" to="atct_edit"/>
+ <alias from="sharing" to="@@sharing"/>
+ <alias from="view" to="exposure_file_info"/>
+
+ <action title="View" action_id="view" category="object" condition_expr=""
+    url_expr="string:${object_url}/view" visible="True" i18n:attributes="title">
+  <permission value="View"/>
+ </action>
+
+ <action title="Edit" action_id="edit" category="object" 
+    url_expr="string:${object_url}/edit" visible="True" i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+
+ <action title="Annotation" action_id="annotation" category="object" 
+    url_expr="string:${object_url}/@@annotation" visible="True" 
+    i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+
+</object>

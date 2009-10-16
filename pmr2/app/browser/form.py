@@ -53,6 +53,8 @@ class AddForm(z3c.form.form.AddForm):
         ctxobj.reindexObject()
 
         self.post_add(ctxobj)
+
+        self.ctxobj = ctxobj
         
     def add_data(self, obj):
         """\
@@ -72,9 +74,29 @@ class AddForm(z3c.form.form.AddForm):
 
     def nextURL(self):
         """\
-        Generally this is desirable.
+        Default nextURL method.
         """
-        return "%s/%s" % (self.context.absolute_url(), self._name)
+
+        ctxobj = self.ctxobj
+        # XXX test whether getTypeInfo is provided?
+        fti = ctxobj.getTypeInfo()
+        if fti and not fti.immediate_view == fti.default_view:
+            # since we do the redirects (rather, provide the URI), we
+            # need to support this immediate view value.
+            view = fti.immediate_view
+        else:
+            # XXX propertiestools, typesUseViewActionInListings is
+            # ignored!  for now this product doesn't have anything that
+            # doesn't do the above statement yet require a /view, so
+            # we leave this unimplemented for now.
+            # To implement this, get the portal_properties tools.
+            # refer to plone.app.content, folder_contents.py
+            view = None
+
+        if view:
+            return "%s/%s" % (self.ctxobj.absolute_url(), self._nextview)
+        else:
+            return self.ctxobj.absolute_url()
 
 
 class EditForm(z3c.form.form.EditForm):

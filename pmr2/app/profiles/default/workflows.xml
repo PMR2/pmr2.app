@@ -14,5 +14,6 @@
     <type type_id="ExposureMathDocument" />
     <type type_id="ExposurePMR1Metadoc" />
     <type type_id="ExposureDocument" />
+    <type type_id="ExposureFile" />
   </bindings>
 </object>

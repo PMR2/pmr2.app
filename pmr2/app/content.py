@@ -28,6 +28,7 @@ from pmr2.app._content.support import PMR2Search
 # type registration
 atapi.registerType(ExposureContainer, 'pmr2.app')
 atapi.registerType(Exposure, 'pmr2.app')
+atapi.registerType(ExposureFile, 'pmr2.app')
 atapi.registerType(ExposureDocument, 'pmr2.app')
 atapi.registerType(ExposureMathDocument, 'pmr2.app')
 atapi.registerType(ExposureCmetaDocument, 'pmr2.app')
