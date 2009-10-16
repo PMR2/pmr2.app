@@ -330,7 +330,12 @@ workspace.
 Now we do the same with our set of data, with more content.
 ::
 
-    >>> rawrev = 'b94d1701154be42acf63ee6b4bd4a99d09ba043c'
+    >>> rawrevs = [
+    ...     'b94d1701154be42acf63ee6b4bd4a99d09ba043c',
+    ...     '2647d4389da6345c26d168bbb831f6512322d4f9',
+    ...     '006f11cd9211abd2a879df0f6c7f27b9844a8ff2',
+    ... ]
+    >>> rawrev = rawrevs[2]
     >>> rev = unicode(rawrev)
     >>> request = TestRequest(
     ...     form={
@@ -373,6 +378,7 @@ Redirect view will work on this.
     'http://.../workspace/rdfmodel/@@rawfile/.../example_model.cellml'
 
 We will get the annotator and annotate our ExposureFile content object.
+(Probably should test the form that implements this)
 ::
 
     >>> filectx = context[file1]
@@ -439,3 +445,66 @@ workspace.
     >>> result = view()
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/module.cellml'
+
+We can try the same with another nested file.  Since the 'component'
+folder is already created, it should not be recreated and reused and
+remain accessible.
+::
+
+    >>> rdfmodel = self.folder.repo.workspace.rdfmodel
+    >>> path3 = (u'component', u'docs', u'index.html')
+    >>> file3 = '/'.join(path3)
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.filename': [file3],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = exposure.ExposureFileGenForm(context, request)
+    >>> testform.update()
+    >>> efile3 = context[path3[0]][path3[1]][path3[2]]
+    >>> efile3
+    <ExposureFile at ...>
+    >>> efile2 = context[path2[0]][path2[1]]
+    >>> efile2
+    <ExposureFile at ...>
+
+Again, redirection should remain in place.
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureFileRedirectView(efile3, request)
+    >>> result = view()
+    >>> request.response.getHeader('Location')
+    'http://.../workspace/rdfmodel/@@rawfile/.../component/docs/index.html'
+
+One more time, with the other index file, and go straight to testing
+the redirection view.
+::
+
+    >>> rdfmodel = self.folder.repo.workspace.rdfmodel
+    >>> path4 = (u'component', u'docs', u'index.rst')
+    >>> file4 = '/'.join(path4)
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.filename': [file4],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = exposure.ExposureFileGenForm(context, request)
+    >>> testform.update()
+    >>> efile4 = context[path4[0]][path4[1]][path4[2]]
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureFileRedirectView(efile4, request)
+    >>> result = view()
+    >>> request.response.getHeader('Location')
+    'http://.../workspace/rdfmodel/@@rawfile/.../component/docs/index.rst'
+
+We will also need to demonstrate this again (ensure no duplicate folder
+will be attempted to be created).
+
+Also, multiple adapters could generate content for a single view.  Since
+we now base this on the standard Document archetype, we may allow
+documents in various formats all generating output that will be stored
+into the same view.  So basically the generation adapter will need to be
+modified to allow this flexibility.
+
+Hence generator classes are separated from storage classes.

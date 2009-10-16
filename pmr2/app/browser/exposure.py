@@ -343,22 +343,63 @@ class ExposureFileGenForm(form.AddForm):
     workspace).
     """
 
+    # Multiple choice form will need this method, but generalized.
+    # This will become subclass of that.
     fields = z3c.form.field.Fields(IExposureFileGen)
 
     def create(self, data):
         self._data = data
         # XXX assert that filename exists in workspace?
-        # XXX should this be multiple choice?
-        filename = data['filename']
-        path = filename.split('/')
-        result = ExposureFile(data['filename'])
+        path = data['filename'].split('/')
+        # get the name first
+        id_ = path.pop()
+        # then reverse so they will be popped in the right order
+        path.reverse()
+
+        # save this for later use.
+        self._data['_path'] = path
+
+        result = ExposureFile(id_)
         # XXX is the id validated to be not a duplicate?
+        # I guess we don't need validation if the object
         self._name = result.id
         # XXX this could probably also do annotation from a list
         return result
 
+    def add(self, obj):
+        # there are id checks for the path components within the field 
+        # itself, so any failure happens (due to possible duplicates
+        # invalids) will cause 
+        # an exception during the nested folder creation below.
+        path = self._data['_path']
+        context = self.context
+        while path:
+            name = path.pop()
+            if name in context:
+                # reusing existing context.
+                context = context[name]
+                if IExposureFolder.providedBy(context):
+                    continue
+                # we have some inconsistency, giving up.
+                raise TypeError('%s is not an ExposureFolder', context)
+
+            # object not exist, standard routine to create, add, reindex
+            folderobj = ExposureFolder(name)
+            context[name] = folderobj
+            context.notifyWorkflowCreated()
+            context.reindexObject()
+
+            # done, we have next context.
+            context = context[name]
+
+        # switch to new context so parent class knows to here.
+        # XXX other side effects from setting a new self.context?
+        self.context = context
+        # parent to add
+        super(ExposureFileGenForm, self).add(obj)
+
     def add_data(self, ctxobj):
-        # This is the most basic form
+        # nothing to add.
         pass
 
 ExposureFileGenFormView = layout.wrap_form(ExposureFileGenForm, 

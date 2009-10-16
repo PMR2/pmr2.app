@@ -16,6 +16,9 @@ from pmr2.app._content.sandbox import Sandbox
 from pmr2.app._content.exposure import ExposureContainer
 from pmr2.app._content.exposure import Exposure
 from pmr2.app._content.exposure import ExposureFile
+from pmr2.app._content.exposure import ExposureFolder
+
+# legacy Exposure types
 from pmr2.app._content.exposure import ExposureDocument
 from pmr2.app._content.exposure import ExposureMathDocument
 from pmr2.app._content.exposure import ExposureCmetaDocument
@@ -29,6 +32,8 @@ from pmr2.app._content.support import PMR2Search
 atapi.registerType(ExposureContainer, 'pmr2.app')
 atapi.registerType(Exposure, 'pmr2.app')
 atapi.registerType(ExposureFile, 'pmr2.app')
+atapi.registerType(ExposureFolder, 'pmr2.app')
+
 atapi.registerType(ExposureDocument, 'pmr2.app')
 atapi.registerType(ExposureMathDocument, 'pmr2.app')
 atapi.registerType(ExposureCmetaDocument, 'pmr2.app')

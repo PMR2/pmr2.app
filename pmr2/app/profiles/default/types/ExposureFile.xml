@@ -17,12 +17,13 @@
  <property name="view_methods">
   <element value="exposure_file_redirect"/>
   <element value="exposure_file_info"/>
+  <element value="document_view"/>
  </property>
 
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="atct_edit"/>
  <alias from="sharing" to="@@sharing"/>
- <alias from="view" to="exposure_file_info"/>
+ <alias from="view" to="document_view"/>
 
  <action title="View" action_id="view" category="object" condition_expr=""
     url_expr="string:${object_url}/view" visible="True" i18n:attributes="title">

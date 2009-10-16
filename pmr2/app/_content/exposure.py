@@ -754,9 +754,18 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
         #    '_pmr1_citation_title', u'')
 
 
+class ExposureFolder(ATFolderDocument, TraversalCatchAll):
+
+    interface.implements(IExposureFolder)
+
+    def __before_publishing_traverse__(self, ob, request):
+        TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
+        ATFolder.__before_publishing_traverse__(self, ob, request)
+
+
 # New style Exposure file.
 
-class ExposureFile(ATCTContent, ExposureContentIndexBase):
+class ExposureFile(ATDocument):
     """\
     Generic object within an exposure that represents a file in the
     workspace, and as an anchor for adapted content.
