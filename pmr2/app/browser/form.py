@@ -94,7 +94,7 @@ class AddForm(z3c.form.form.AddForm):
             view = None
 
         if view:
-            return "%s/%s" % (self.ctxobj.absolute_url(), self._nextview)
+            return "%s/%s" % (self.ctxobj.absolute_url(), view)
         else:
             return self.ctxobj.absolute_url()
 
