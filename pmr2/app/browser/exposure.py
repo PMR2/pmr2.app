@@ -522,7 +522,8 @@ class RDFTurtle(page.TraversePage):
     @property
     def annotation(self):
         # standard
-        return zope.component.queryAdapter(self.context, name='RDFTurtle')
+        result = zope.component.queryAdapter(self.context, name='RDFTurtle')
+        return result
 
     @memoize
     def content(self):

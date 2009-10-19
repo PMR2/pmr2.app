@@ -194,6 +194,19 @@ class ExposureFileAdapterBase(Persistent, Contained):
     classes are required.
     """
 
+    zope.component.adapts(IExposureFile)
+
+
+class StandardExposureFile(ExposureFileAdapterBase):
+    """\
+    A dummy of sort that will just reuse the ExposureFile that this
+    adapts.
+    """
+
+    zope.interface.implements(IStandardExposureFile)
+
+StandardExposureFileFactory = factory(StandardExposureFile)
+
 
 class RDFTurtle(ExposureFileAdapterBase):
     """\
@@ -201,11 +214,9 @@ class RDFTurtle(ExposureFileAdapterBase):
     """
 
     zope.interface.implements(IRDFTurtle)
-    zope.component.adapts(IExposureFile)
     text = fieldproperty.FieldProperty(IRDFTurtle['text'])
 
     def raw_text(self):
         return self.text
 
-# To adapt to that content.
 RDFTurtleFactory = factory(RDFTurtle)

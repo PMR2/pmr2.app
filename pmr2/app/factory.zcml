@@ -6,4 +6,14 @@
       factory=".factory.RDFTurtleAnnotator"
       />
 
+  <utility
+      name="safe_html"
+      factory=".factory.HTMLAnnotator"
+      />
+
+  <utility
+      name="rest_to_html"
+      factory=".factory.RSTAnnotator"
+      />
+
 </configure>

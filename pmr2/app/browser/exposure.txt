@@ -138,16 +138,22 @@ Exposure implementation refactor in v0.2 (Currently Proposed)
 =============================================================
 
 How exposures were originally implemented results in an explosion of
-objects, not necessarily result in a proper one-to-one mapping between
-objects and files.  The objects really should encapsulate the pages
-which in turn represents the different views the file that the object
-represent has.  This will also unify all the views within the repository
-as the option to have standardized front page, which is most important 
-page of any exposure as we have learned in practice.
+objects, as a result from one-to-many mapping from file to objects.
 
-------------------------------
-Nesting content with same name
-------------------------------
+In the redesign introduced in v0.2, there is now only one object type
+and only one of them per file.  Each of them will reference its source
+file, and the custom views and data within are provided by adapters
+which is extended off a standard adapter type.  The data generation is
+no longer part of that class but be placed in its own, which can also
+be inherited to be reused by more complicated data processing methods.
+
+This generalization will unify all views in the repository, result in
+a standardized front page for each exposure and is significantly cleaner
+than before.
+
+-----------------------
+Implementation Overview
+-----------------------
 
 To implement this feature, we will result in having objects in the
 exposures having the exact same name as the file it represents.  This
@@ -240,6 +246,36 @@ adapter used.
 
 Changes proposed here will mean redirections from the PMR2 v0.1 pages
 to the new ones will need to take place.
+
+In brief, there are these datatypes.
+
+ExposureFolder
+    Folder like object that exists solely to replicate any directory
+    structures within its parents workspace.
+
+ExposureFile
+    Object in an Exposure that encapsulates its respective file within
+    its parent's workspace.  May be nested inside ExposureFolder.
+
+ExposureFileAdapters
+    Persistent and Contained objects that wraps around the ExposureFile
+    type.  Multiple ExposureFileAnnotator may make use of a single one
+    of these.
+
+    Views will need to be registered with ExposureFile, and those views
+    will make use of these adapters
+ 
+ExposureFileAnnotators
+    Class that provides a generator method that will process the data.
+    There may be different annotators that will use the same adapter
+    types.
+
+Associated Views
+    Views are not exclusive with adapters, it just make use of the
+    results that are stored within the adapters.  It may need some kind
+    of method to determine whether it is active or not for the given
+    ExposureFile object, as the data it requires may or may not be
+    generated or available.
 
 ------------
 Demostration
@@ -501,7 +537,33 @@ the redirection view.
 Also, multiple adapters could generate content for a single view.  Since
 we now base this on the standard Document archetype, we may allow
 documents in various formats all generating output that will be stored
-into the same view.  So basically the generation adapter will need to be
-modified to allow this flexibility.
+into the same view.  We have an annotator class that uses portal 
+transforms to generate the content and store it into the original
+context (which is an ATDocument in this implementation), we can just
+define a standard type which the annotator will use as a marker to get
+to the context.
 
-Hence generator classes are separated from storage classes.
+For the HTML file
+::
+
+    >>> filectx = efile3
+    >>> annotator = zope.component.queryUtility(IExposureFileAnnotator, 
+    ...                                         name=u'safe_html')
+    >>> annotator(filectx)
+    >>> efile3.getText()
+    '\n<p>Lorem ipsum dolar sit amet</p>\n'
+
+For the reStructureText file
+::
+
+    >>> filectx = efile4
+    >>> annotator = zope.component.queryUtility(IExposureFileAnnotator, 
+    ...                                         name=u'rest_to_html')
+    >>> annotator(filectx)
+    >>> efile4.getText()
+    '<h2 class="title">Simple reStructureText</h2>\n<p>...</p>\n'
+
+Hence annotator classes are separated from data adapters.  Of course,
+this means if different annotator classes uses the same adapters the
+data will be overwritten.  The registration and handling of these type
+of conflicts will be addrssed in the future.

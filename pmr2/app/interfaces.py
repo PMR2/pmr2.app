@@ -584,6 +584,13 @@ class IExposureFileAnnotator(zope.interface.Interface):
         """
 
 
+class IStandardExposureFile(zope.interface.Interface):
+    """\
+    An adapter that really isn't one, it just a marker to reuse the
+    original context.
+    """
+
+
 class IRDFTurtle(zope.interface.Interface):
     """\
     An adapter to show the RDF.

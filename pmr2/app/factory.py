@@ -1,6 +1,8 @@
 from cStringIO import StringIO
 
 import zope.interface
+from Products.CMFCore.utils import getToolByName
+from Products.PortalTransforms.data import datastream
 
 from pmr2.processor.cmeta import Cmeta
 from pmr2.app.interfaces import IExposureFileAnnotator
@@ -11,10 +13,13 @@ class ExposureFileAnnotatorBase(object):
         raise NotImplementedError
 
     def __call__(self, context):
-        name = self.__name__
+        name = self.adapter
         # assert context implements IExposureFile?
         self.context = context
-        self.annotation = zope.component.queryAdapter(context, name=name)
+        # let subclasses know not to muck with this
+        self.__annotation = zope.component.queryAdapter(context, name=name)
+        # shouldn't really have to muck around with this either
+        self._input = self.context.file()
         self.generate()
         # we are done, let the adapters be added
         if name not in context.adapters:
@@ -22,14 +27,55 @@ class ExposureFileAnnotatorBase(object):
             a.append(name)
             context.adapters = a
 
+    @property
+    def input(self):
+        if not hasattr(self, '_input'):
+            self._input = self.context.file()
+        return self._input
+
+    @property
+    def annotation(self):
+        return self.__annotation
+
+
+class PortalTransformAnnotator(ExposureFileAnnotatorBase):
+    """\
+    Utilizes Portal Transform to get content.  By default it tries to
+    turn files into HTML.
+    """
+
+    # not implementing this because this is an incomplete tool.
+    #zope.interface.implements(IExposureFileAnnotator)
+    adapter = 'StandardExposureFile'
+    transform = None  # define this
+
+    def convert(self):
+        pt = getToolByName(self.context, 'portal_transforms')
+        stream = datastream('pt_annotation')
+        pt.convert(self.transform, self.input, stream)
+        return stream.getData()
+
+    def generate(self):
+        # standard way is to assign the text field of context
+        output = self.convert()
+        self.context.setText(output)
+
+
+class HTMLAnnotator(PortalTransformAnnotator):
+    zope.interface.implements(IExposureFileAnnotator)
+    transform = 'safe_html'
+
+
+class RSTAnnotator(PortalTransformAnnotator):
+    zope.interface.implements(IExposureFileAnnotator)
+    transform = 'rest_to_html'
+
 
 class RDFTurtleAnnotator(ExposureFileAnnotatorBase):
     zope.interface.implements(IExposureFileAnnotator)
-
-    __name__ = 'RDFTurtle'  # XXX this should be automatically derived.
+    adapter = 'RDFTurtle'
 
     def generate(self):
-        input = self.context.file()
-        metadata = Cmeta(StringIO(input))
+        metadata = Cmeta(StringIO(self.input))
         self.annotation.text = unicode(
             metadata.graph.serialize(format='turtle'))
