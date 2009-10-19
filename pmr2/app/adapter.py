@@ -189,17 +189,10 @@ def ExposureToWorkspaceAdapter(context):
 # Basic support for ExposureFile adapters.
 
 class ExposureFileAdapterBase(Persistent, Contained):
-
-    def _generate(self):
-        raise NotImplementedError('private generate method not implemented')
-
-    def generate(self):
-        self._generate()
-        # appending the adapters.  as this is a schema, we can't just
-        # append the name, but have to reassign it also.
-        adapters = self.__parent__.adapters
-        adapters.append(self.__name__)
-        self.__parent__.adapters = adapters
+    """\
+    The base class for adapter to ExposureFile objects.  Both parent
+    classes are required.
+    """
 
 
 class RDFTurtle(ExposureFileAdapterBase):
@@ -210,11 +203,6 @@ class RDFTurtle(ExposureFileAdapterBase):
     zope.interface.implements(IRDFTurtle)
     zope.component.adapts(IExposureFile)
     text = fieldproperty.FieldProperty(IRDFTurtle['text'])
-
-    def _generate(self):
-        input = self.__parent__.file()
-        metadata = Cmeta(StringIO(input))
-        self.text = unicode(metadata.graph.serialize(format='turtle'))
 
     def raw_text(self):
         return self.text

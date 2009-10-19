@@ -498,9 +498,6 @@ the redirection view.
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/docs/index.rst'
 
-We will also need to demonstrate this again (ensure no duplicate folder
-will be attempted to be created).
-
 Also, multiple adapters could generate content for a single view.  Since
 we now base this on the standard Document archetype, we may allow
 documents in various formats all generating output that will be stored
