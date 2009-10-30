@@ -1,0 +1,7 @@
+<h3 tal:condition="view/subtitle" tal:content="view/subtitle"></h3>
+<p tal:condition="view/description" tal:content="view/description"></p>
+<ul>
+<li tal:repeat="i view/items">
+  <a tal:attributes="href string:${view/url_expr}/$i" tal:content="i"></a>
+</li>
+</ul>

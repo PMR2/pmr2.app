@@ -588,17 +588,21 @@ class ExposureFileViewBase(page.TraversePage):
     zope.interface.implements(IExposureFileView)
 
     @property
+    def name(self):
+        return self.__name__
+
+    @property
     def note(self):
         # get the utility that is tailored for this view.
-        utility = zope.component.queryUtility(IExposureFileViewUtility, 
-                                              name=self.__name__)
+        utility = zope.component.getUtility(IExposureFileViewUtility, 
+                                            name=self.name)
         # this returns the data structure that the view needs.
         return utility(self)
 
 
-class RawText(ExposureFileViewBase):
+class RawTextNote(ExposureFileViewBase):
     """\
-    This view redirects to the original file.
+    This is a raw text view.
     """
 
     template = ViewPageTemplateFile('code.pt')
@@ -609,4 +613,67 @@ class RawText(ExposureFileViewBase):
     def content(self):
         return self.note.text
 
-RawTextView = layout.wrap_form(RawText, __wrapper_class=PlainLayoutWrapper)
+RawTextNoteView = layout.wrap_form(RawTextNote,
+    __wrapper_class=PlainLayoutWrapper)
+
+
+class GroupedNoteViewBase(ExposureFileViewBase):
+    """\
+    This view looks into a valid list of text.
+
+    Quick way to regroup existing raw texts, or a lazy way to create new
+    views but make juggling easier.
+
+    In the future look into a clean way (and not complicated) to
+    generate this.
+    """
+
+    template = ViewPageTemplateFile('sublinks.pt')
+    description = u'The following is a list of available choices'
+    subtitle = u'Raw text view'
+    choices = {}
+
+    @property
+    def items(self):
+        # XXX should this can be derived from the choices provided by 
+        # context
+        # the attributes/keys stored by the context plus all available
+        # views could be listed (can show what can be done, what is not
+        # generated)
+        result = self.choices.keys()
+        result.sort()
+        return result
+
+    def __call__(self):
+        if not self.traverse_subpath:
+            # nothing, give up early by showing the default list.
+            return self.template()
+
+        name = self.traverse_subpath[0]
+        if name in self.choices:
+            view = zope.component.getMultiAdapter(
+                (self.context, self.request), 
+                name=self.choices[name],
+            )
+            # since the view registered is the wrapper, we call the 
+            # inner part of the it rather than itself.
+            return view.form_instance()
+        # XXX set an information note about invalid choice?
+        return self.template()
+
+# base
+GroupedNoteViewBaseView = layout.wrap_form(
+    GroupedNoteViewBase, __wrapper_class=PlainLayoutWrapper)
+
+
+class RdfGroupedNote(GroupedNoteViewBase):
+    subtitle=u'RDF views available'
+    choices={
+        u'turtle': u'rdfturtle', 
+        u'n3': u'rdfn3', 
+        u'xml': u'rdfxml',
+    }
+
+RdfGroupedNoteView = layout.wrap_form(RdfGroupedNote, 
+    __wrapper_class=PlainLayoutWrapper,
+)

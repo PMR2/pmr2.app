@@ -7,6 +7,7 @@ directories required should have been already set up by the script.
 ::
 
     >>> from zope import interface
+    >>> import zope.component
     >>> from plone.z3cform.tests import setup_defaults
     >>> from pmr2.app.browser import workspace, exposure
     >>> from pmr2.app.tests.base import TestRequest
@@ -463,7 +464,7 @@ data (should not really be part of code).
 
     >>> filectx = context[file1]
     >>> request = TestRequest()
-    >>> view = exposure.RawText(filectx, request)
+    >>> view = exposure.RawTextNote(filectx, request)
     >>> view.__name__ = 'rdfturtle'
     >>> print view()
     <h3>...</h3>
@@ -509,7 +510,7 @@ they are just data (should not really be part of code).
 
     >>> filectx = context[file1]
     >>> request = TestRequest()
-    >>> view = exposure.RawText(filectx, request)
+    >>> view = exposure.RawTextNote(filectx, request)
     >>> view.__name__ = 'rdfxml'
     >>> print view()
     <h3>...</h3>
@@ -538,6 +539,46 @@ views to a file that requires processing.  One only need to define an
 ExposureFile adapter class and an utility class that will populate the
 data for that class.  The view would then access the data stored within
 that adapter.
+
+It may be necessary to group some of these subparts together.  Since
+all those views are derived from RDF, it makes sense to have a single
+@@rdf view with subpaths to the particular format.  First we query the
+view and see that it will return a list by default
+::
+
+    >>> filectx = context[file1]
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((filectx, request), name='rdf')
+    >>> view = view.form_instance  # take what we defined.
+    >>> print view()
+    <h3>RDF views available</h3>
+    <p>The following is a list of available choices</p>
+    <ul>
+    <li>
+      <a href="http://.../example_model.cellml/@@rdf/n3">n3</a>
+    </li>
+    <li>
+      <a href="http://.../example_model.cellml/@@rdf/turtle">turtle</a>
+    </li>
+    <li>
+      <a href="http://.../example_model.cellml/@@rdf/xml">xml</a>
+    </li>
+    </ul>
+
+If we define a valid subpath, it will give what we expect.
+::
+
+    >>> view.traverse_subpath = ['xml']
+    >>> print view()
+    <h3>...</h3>
+    <p>...
+    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;rdf:RDF
+    ...
+
+------------------------
+Files within Directories
+------------------------
 
 We however only looked at files sitting at the root level.  There are
 many cases where files will be nested within some directory level which
@@ -694,10 +735,15 @@ view would need to figure out which one it is supposed to use.
 Quick Usage Notes
 -----------------
 
-Someone wants to create a new view for a file.  Let's call it 'exview',
-which will be accessible by http://.../fileobj/@@exview.  To register
+Someone wants to create a new view for a file.  Let's call it 'simple',
+which will be accessible by http://.../fileobj/@@simple.  To register
 the browser class, one can reuse/create an applicable subclass of the
 ExposureFileViewBase browser class.
+
+The storage of the final data will need to be defined also.  It is as
+simple as defining a new factory with the same key as the view.
+
+Since this is the simple case
 
 browser.exposure.
 Create

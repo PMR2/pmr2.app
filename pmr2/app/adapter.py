@@ -214,17 +214,24 @@ class StandardExposureFile(ExposureFileNoteBase):
 StandardExposureFileFactory = factory(StandardExposureFile)
 
 
-class RawText(ExposureFileNoteBase):
+class RawTextNote(ExposureFileNoteBase):
     """\
     See IRDFText interface.
     """
 
-    zope.interface.implements(IRawText)
-    text = fieldproperty.FieldProperty(IRawText['text'])
+    zope.interface.implements(IRawTextNote)
+    text = fieldproperty.FieldProperty(IRawTextNote['text'])
 
     def raw_text(self):
         return self.text
 
-RDFTurtleNoteFactory = factory(RawText, 'rdfturtle')
-RDFn3NoteFactory = factory(RawText, 'rdfn3')
-RDFxmlNoteFactory = factory(RawText, 'rdfxml')
+RDFTurtleNoteFactory = factory(RawTextNote, 'rdfturtle')
+RDFn3NoteFactory = factory(RawTextNote, 'rdfn3')
+RDFxmlNoteFactory = factory(RawTextNote, 'rdfxml')
+
+class GroupedNote(ExposureFileNoteBase):
+
+    zope.interface.implements(IGroupedNote)
+    active_notes = fieldproperty.FieldProperty(IGroupedNote['active_notes']) 
+
+RDFGroupNoteFactory = factory(GroupedNote, 'rdf')

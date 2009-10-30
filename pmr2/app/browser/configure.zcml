@@ -257,8 +257,29 @@
 
   <browser:page
       for="pmr2.app.content.ExposureFile"
+      name="rdf"
+      class=".exposure.RdfGroupedNoteView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="rdfn3"
+      class=".exposure.RawTextNoteView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
       name="rdfturtle"
-      class=".exposure.RawTextView"
+      class=".exposure.RawTextNoteView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="rdfxml"
+      class=".exposure.RawTextNoteView"
       permission="zope2.View"
       />
 
