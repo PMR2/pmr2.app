@@ -9,7 +9,6 @@ from Products.PortalTransforms.data import datastream
 from pmr2.processor.cmeta import Cmeta
 from pmr2.app.interfaces import IExposureFileAnnotator
 from pmr2.app.interfaces import IExposureFileViewUtility
-from pmr2.app.interfaces import IExposureFileViewAssignmentForm
 
 
 def name_utility(obj, event):

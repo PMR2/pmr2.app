@@ -421,7 +421,7 @@ see whether the form has the annotator we needed.
 
     >>> filectx = context[file1]
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileViewAssignmentForm(filectx, request)
+    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
     >>> 'rdfturtle' in result
     True
@@ -434,10 +434,10 @@ Good, now we use that transform to generate the Turtle RDF.
     >>> filectx = context[file1]
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.views': [u'rdfturtle'],
+    ...         'form.widgets.annotators': [u'rdfturtle'],
     ...         'form.buttons.add': 1,
     ...     })
-    >>> view = exposure.ExposureFileViewAssignmentForm(filectx, request)
+    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
     >>> result == ''
     True
@@ -479,10 +479,10 @@ We will do the same thing with the xml format.
     >>> filectx = context[file1]
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.views': [u'rdfxml'],
+    ...         'form.widgets.annotators': [u'rdfxml'],
     ...         'form.buttons.add': 1,
     ...     })
-    >>> view = exposure.ExposureFileViewAssignmentForm(filectx, request)
+    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
     >>> result == ''
     True
@@ -681,10 +681,10 @@ different rendering methods.
 #    >>> filectx = efile3
 #    >>> request = TestRequest(
 #    ...     form={
-#    ...         'form.widgets.views': [u'safe_html'],
+#    ...         'form.widgets.type': [u'safe_html'],
 #    ...         'form.buttons.add': 1,
 #    ...     })
-#    >>> view = exposure.ExposureFileViewAssignmentForm(filectx, request)
+#    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
 #    >>> result = view()
 #    >>> filectx.getText()
 #    '\n<p>Lorem ipsum dolar sit amet</p>\n'
@@ -698,7 +698,7 @@ different rendering methods.
 #    ...         'form.widgets.views': [u'rest_to_html'],
 #    ...         'form.buttons.add': 1,
 #    ...     })
-#    >>> view = exposure.ExposureFileViewAssignmentForm(filectx, request)
+#    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
 #    >>> result = view()
 #    >>> filectx.getText()
 #    '<h2 class="title">Simple reStructureText</h2>\n<p>...</p>\n'

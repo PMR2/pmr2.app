@@ -345,7 +345,7 @@ class ExposureFileGenForm(form.AddForm):
 
     # Multiple choice form will need this method, but generalized.
     # This will become subclass of that.
-    fields = z3c.form.field.Fields(IExposureFileGen)
+    fields = z3c.form.field.Fields(IExposureFileGenForm)
 
     def create(self, data):
         self._data = data
@@ -417,16 +417,16 @@ class ExposureFileAnnotatorForm(form.AddForm):
 
     def create(self, data):
         self._data = data
-        annotator = zope.component.queryUtility(
+        annotator = zope.component.getUtility(
             IExposureFileAnnotator,
-            name=data['annotator']
+            name=data['annotators']
         )
         return annotator
 
     def add(self, obj):
         # we don't actually add the obj into the ExposureFile, we call
         # it with the context as the argument, magic happens.
-        obj(self.context)
+        obj.write(self.context)
 
     def nextURL(self):
         # we want our context to be the object that provides the URL.
@@ -440,21 +440,21 @@ ExposureFileAnnotatorFormView = layout.wrap_form(ExposureFileAnnotatorForm,
     label="Add an annotation to an Exposure File.")
 
 
-class ExposureFileViewAssignmentForm(form.AddForm):
+class ExposureFileDocViewGenForm(form.AddForm):
     """\
     Form to generate all the required notes for the selected view.
     """
 
     # Multiple choice form will need this method, but generalized.
     # This will become subclass of that.
-    zope.interface.implements(IExposureFileViewAssignmentForm)
-    fields = z3c.form.field.Fields(IExposureFileViewAssignmentForm)
+    zope.interface.implements(IExposureFileDocViewGenForm)
+    fields = z3c.form.field.Fields(IExposureFileDocViewGenForm)
 
     def create(self, data):
         self._data = data
         view = zope.component.queryUtility(
-            IExposureFileAnnotator,
-            name=data['views']
+            IExposureFileDocViewGenForm,
+            name=data['view']
         )
         return view
 
@@ -471,9 +471,9 @@ class ExposureFileViewAssignmentForm(form.AddForm):
         url = form.AddForm.nextURL(self)
         return url
 
-ExposureFileViewAssignmentFormView = layout.wrap_form(
-    ExposureFileViewAssignmentForm, 
-    label="Add an annotation to an Exposure File.")
+ExposureFileDocViewGenFormView = layout.wrap_form(
+    ExposureFileDocViewGenForm, 
+    label="Generate Default View for Exposure File.")
 
 
 class PMR1ExposureFileGenForm(ExposureFileGenForm):

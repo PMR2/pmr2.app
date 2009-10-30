@@ -237,7 +237,7 @@
   <browser:page
       for="pmr2.app.content.ExposureFile"
       name="annotation"
-      class=".exposure.ExposureFileViewAssignmentFormView"
+      class=".exposure.ExposureFileAnnotatorFormView"
       permission="cmf.ModifyPortalContent"
       />
 

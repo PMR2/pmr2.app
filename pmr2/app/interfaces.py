@@ -516,9 +516,9 @@ class IExposureFolder(zope.interface.Interface):
 
 # New style exposure classes.
 
-class IExposureFileGen(zope.interface.Interface):
+class IExposureFileGenForm(zope.interface.Interface):
     """\
-    Interface for the class that will handle the generation of an
+    Interface for the form that will handle the generation of an
     ExposureFile object.
     """
 
@@ -610,8 +610,17 @@ class IExposureFileAnnotator(zope.interface.Interface):
 
 class IExposureFileAnnotatorForm(zope.interface.Interface):
     """\
-    XXX deprecated?
+    Interface for the form and utility that that allows notes to be
+    annotated to the ExposureFile.
     """
+
+    annotators = zope.schema.Choice(
+        title=u'Annotators Available',
+        description=u'The selected annotators will annotate the current ' \
+                     'file and enable the view.',
+        vocabulary='ExposureFileAnnotatorVocab',
+        required=True,
+    )
 
 
 class IExposureFileViewUtility(zope.interface.Interface):
@@ -665,19 +674,6 @@ class IExposureFileView(zope.interface.Interface):
     """
 
 
-class IExposureFileViewAssignmentForm(zope.interface.Interface):
-    """\
-    Interface for the form that allows annotations to be added.
-    """
-
-    views = zope.schema.Choice(
-        title=u'Views Available',
-        description=u'The views to be enabled for this file.',
-        vocabulary='ExposureFileAnnotatorVocab',
-        required=True,
-    )
-
-
 class IStandardExposureFile(zope.interface.Interface):
     """\
     An adapter that really isn't one, it just a marker to reuse the
@@ -720,3 +716,18 @@ class ICodeViews(zope.interface.Interface):
     """\
     Interface related to code views.
     """
+
+
+class IExposureFileDocViewGenForm(zope.interface.Interface):
+    """\
+    For the form and utility that handles the generation of the text for
+    the ExposureFile default document_view.
+    """
+
+    default_docview = zope.schema.Choice(
+        title=u'Default View',
+        description=u'The selected method will be used to attempt to ' \
+                     'generate text for the default document view.',
+        required=True,
+        vocabulary='ExposureFileDocViewGenVocab',
+    )
