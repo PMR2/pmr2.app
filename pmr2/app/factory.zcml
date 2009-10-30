@@ -35,19 +35,19 @@
 
   <utility
       name="rdfturtle"
-      factory=".factory.EFVUrdfturtle"
+      factory=".factory.ExposureFileViewUtility"
       provides=".interfaces.IExposureFileViewUtility"
       />
 
   <utility
       name="rdfn3"
-      factory=".factory.EFVUrdfn3"
+      factory=".factory.ExposureFileViewUtility"
       provides=".interfaces.IExposureFileViewUtility"
       />
 
   <utility
       name="rdfxml"
-      factory=".factory.EFVUrdfxml"
+      factory=".factory.ExposureFileViewUtility"
       provides=".interfaces.IExposureFileViewUtility"
       />
 

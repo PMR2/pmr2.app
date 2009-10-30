@@ -124,7 +124,7 @@ class RDFxmlAnnotator(ExposureFileAnnotatorBase):
             metadata.graph.serialize(format='xml'))
 
 
-class ExposureFileViewUtilityBase(object):
+class ExposureFileViewUtility(Location):
     """\
     This utility is for the views and not the context.  Instances of
     this should be registered with the same name as the view it is meant
@@ -134,6 +134,21 @@ class ExposureFileViewUtilityBase(object):
     zope.interface.implements(IExposureFileViewUtility)
     # view is the name of this thing
     # annotators is defined in subclass
+
+    @property
+    def annotator(self):
+        if not hasattr(self, '__annotator'):
+            self.__annotator = zope.component.getUtility(
+                IExposureFileAnnotator, name=self.__name__)
+        return self.__annotator
+
+    @property
+    def title(self):
+        return self.annotator.title
+
+    @property
+    def description(self):
+        return self.annotator.description
 
     def __read(self, context):
         """\
@@ -145,9 +160,7 @@ class ExposureFileViewUtilityBase(object):
 
     def __write(self, context):
         # the adapters used should be assigned by the annotator classes.
-        annotator = zope.component.queryUtility(
-            IExposureFileAnnotator, name=self.__name__)
-        annotator(context)
+        self.annotator(context)
         # as this utility is registered with the same name as the view
         # that this reader/writer is for, append it the context to
         # mark the view as generated.
@@ -163,18 +176,3 @@ class ExposureFileViewUtilityBase(object):
             self.__write(context)
         else:
             return self.__read(context)
-
-# XXX don't subclass, make factories!
-class EFVUrdfturtle(ExposureFileViewUtilityBase):
-    zope.interface.implements(IExposureFileViewUtility)
-    title = u'RDF Turtle View'
-
-# XXX don't subclass, make factories!
-class EFVUrdfn3(ExposureFileViewUtilityBase):
-    zope.interface.implements(IExposureFileViewUtility)
-    title = u'RDF N3 View'
-
-# XXX don't subclass, make factories!
-class EFVUrdfxml(ExposureFileViewUtilityBase):
-    zope.interface.implements(IExposureFileViewUtility)
-    title = u'RDF XML View'
