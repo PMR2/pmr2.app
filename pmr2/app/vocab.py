@@ -6,9 +6,7 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
 from Products.CMFCore.utils import getToolByName
 
-from pmr2.app.interfaces import IExposureDocumentFactory
-from pmr2.app.interfaces import IExposureMetadocFactory
-from pmr2.app.interfaces import IExposureFileAnnotator
+from pmr2.app.interfaces import *
 
 
 class WorkspaceDirObjListVocab(SimpleVocabulary):
@@ -154,3 +152,20 @@ def ExposureFileAnnotatorVocabFactory(context):
     return ExposureFileAnnotatorVocab(context)
 
 alsoProvides(ExposureFileAnnotatorVocabFactory, IVocabularyFactory)
+
+
+class ExposureFileDocViewGenVocab(SimpleVocabulary):
+
+    def __init__(self, context):
+        self.context = context
+        values = [(i[0], i[0], i[1].title) for i in 
+                  getUtilitiesFor(IExposureFileDocViewGen)]
+        # sort by title
+        values.sort(cmp=lambda x, y: cmp(x[2], y[2]))
+        terms = [SimpleTerm(*i) for i in values]
+        super(ExposureFileDocViewGenVocab, self).__init__(terms)
+
+def ExposureFileDocViewGenVocabFactory(context):
+    return ExposureFileDocViewGenVocab(context)
+
+alsoProvides(ExposureFileDocViewGenVocabFactory, IVocabularyFactory)

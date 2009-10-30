@@ -675,33 +675,33 @@ same view.  Since the ExposureFile is built on top of the standard
 Document archetype, we may have different file formats that require
 different rendering methods.
 
-#For the HTML file
-#::
-#
-#    >>> filectx = efile3
-#    >>> request = TestRequest(
-#    ...     form={
-#    ...         'form.widgets.type': [u'safe_html'],
-#    ...         'form.buttons.add': 1,
-#    ...     })
-#    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
-#    >>> result = view()
-#    >>> filectx.getText()
-#    '\n<p>Lorem ipsum dolar sit amet</p>\n'
-#
-#For the reStructureText file
-#::
-#
-#    >>> filectx = efile4
-#    >>> request = TestRequest(
-#    ...     form={
-#    ...         'form.widgets.views': [u'rest_to_html'],
-#    ...         'form.buttons.add': 1,
-#    ...     })
-#    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
-#    >>> result = view()
-#    >>> filectx.getText()
-#    '<h2 class="title">Simple reStructureText</h2>\n<p>...</p>\n'
+For the HTML file
+::
+
+    >>> filectx = efile3
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.docview_generator': [u'safe_html'],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> view = exposure.ExposureFileDocViewGenForm(filectx, request)
+    >>> result = view()
+    >>> filectx.getText()
+    '\n<p>Lorem ipsum dolar sit amet</p>\n'
+
+For the reStructureText file
+::
+
+    >>> filectx = efile4
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.docview_generator': [u'rest_to_html'],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> view = exposure.ExposureFileDocViewGenForm(filectx, request)
+    >>> result = view()
+    >>> filectx.getText()
+    '<h2 class="title">Simple reStructureText</h2>\n<p>...</p>\n'
 
 Hence annotator classes are separated from data adapters.  Of course,
 this means if different annotator classes uses the same adapters the

@@ -44,4 +44,10 @@
       name="ExposureFileAnnotatorVocab"
       />
 
+  <utility
+      provides="zope.schema.interfaces.IVocabularyFactory"
+      component="pmr2.app.vocab.ExposureFileDocViewGenVocabFactory"
+      name="ExposureFileDocViewGenVocab"
+      />
+
 </configure>

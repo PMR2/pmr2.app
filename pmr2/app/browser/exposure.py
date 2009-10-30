@@ -452,16 +452,16 @@ class ExposureFileDocViewGenForm(form.AddForm):
 
     def create(self, data):
         self._data = data
-        view = zope.component.queryUtility(
-            IExposureFileDocViewGenForm,
-            name=data['view']
+        view = zope.component.getUtility(
+            IExposureFileDocViewGen,
+            name=data['docview_generator']
         )
         return view
 
     def add(self, obj):
         # we don't actually add the obj into the ExposureFile, we call
         # it with the view, which then it will determine what to do
-        obj.write(self.context)
+        obj(self.context)
 
     def nextURL(self):
         # we want our context to be the object that provides the URL.

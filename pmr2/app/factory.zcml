@@ -23,14 +23,14 @@
 
   <utility
       name="safe_html"
-      factory=".factory.HTMLAnnotator"
-      provides=".interfaces.IExposureFileDocViewGenForm"
+      factory=".factory.HTMLDocViewGen"
+      provides=".interfaces.IExposureFileDocViewGen"
       />
 
   <utility
       name="rest_to_html"
-      factory=".factory.RSTAnnotator"
-      provides=".interfaces.IExposureFileDocViewGenForm"
+      factory=".factory.RSTDocViewGen"
+      provides=".interfaces.IExposureFileDocViewGen"
       />
 
 </configure>

@@ -14,4 +14,10 @@
       handler=".factory.name_utility"
       />
 
+  <subscriber
+      for=".interfaces.IExposureFileDocViewGen
+          zope.component.interfaces.IRegistered"
+      handler=".factory.name_utility"
+      />
+
 </configure>
