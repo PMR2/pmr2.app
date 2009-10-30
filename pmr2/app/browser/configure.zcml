@@ -236,6 +236,13 @@
 
   <browser:page
       for="pmr2.app.content.ExposureFile"
+      name="annotation"
+      class=".exposure.ExposureFileViewAssignmentFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
       name="exposure_file_redirect"
       class=".exposure.ExposureFileRedirectView"
       permission="zope2.View"
@@ -250,9 +257,9 @@
 
   <browser:page
       for="pmr2.app.content.ExposureFile"
-      name="annotation"
-      class=".exposure.ExposureFileAnnotatorFormView"
-      permission="cmf.ModifyPortalContent"
+      name="rdfturtle"
+      class=".exposure.RawTextView"
+      permission="zope2.View"
       />
 
   <!-- Exposure Document -->

@@ -41,6 +41,7 @@ atapi.registerType(ExposureCodeDocument, 'pmr2.app')
 atapi.registerType(ExposurePMR1Metadoc, 'pmr2.app')
 
 def catalog_content(obj, event):
+    # for the subscriber event.
     obj.reindexObject()
 
 

@@ -65,6 +65,12 @@ class PMR2ExposureStorageAdapter(PMR2StorageFixedRevAdapter):
         PMR2StorageFixedRevAdapter.__init__(self, self.workspace, self._rev)
 
 
+class PMR2ExposureStorageURIResolver(PMR2ExposureStorageAdapter):
+
+    def __init__(self, context):
+        pass
+
+
 class PMR2ExposureDocStorageAdapter(PMR2StorageFixedRevAdapter):
     """\
     """
@@ -208,15 +214,17 @@ class StandardExposureFile(ExposureFileNoteBase):
 StandardExposureFileFactory = factory(StandardExposureFile)
 
 
-class RDFTurtle(ExposureFileNoteBase):
+class RawText(ExposureFileNoteBase):
     """\
-    See IRDFTurtle interface.
+    See IRDFText interface.
     """
 
-    zope.interface.implements(IRDFTurtle)
-    text = fieldproperty.FieldProperty(IRDFTurtle['text'])
+    zope.interface.implements(IRawText)
+    text = fieldproperty.FieldProperty(IRawText['text'])
 
     def raw_text(self):
         return self.text
 
-RDFTurtleFactory = factory(RDFTurtle)
+RDFTurtleNoteFactory = factory(RawText, 'rdfturtle')
+RDFn3NoteFactory = factory(RawText, 'rdfn3')
+RDFxmlNoteFactory = factory(RawText, 'rdfxml')

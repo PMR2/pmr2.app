@@ -1,6 +1,6 @@
-<h3>Annotations attached to this file</h3>
+<h3>Views generated for this file</h3>
 <dl>
-<tal:loop tal:repeat="i context/adapters">
+<tal:loop tal:repeat="i context/views">
   <dt tal:content="i"></dt>
 </tal:loop>
 </dl>

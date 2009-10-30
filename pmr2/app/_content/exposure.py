@@ -775,9 +775,11 @@ class ExposureFile(ATDocument):
         IExposureFile,
         zope.annotation.interfaces.IAttributeAnnotatable,
     )
+    views = fieldproperty.FieldProperty(IExposureFile['views'])
     adapters = fieldproperty.FieldProperty(IExposureFile['adapters'])
     security = ClassSecurityInfo()
 
+    security.declareProtected(View, 'source')
     def source(self):
         # this could be nested in some folders, so we need to acquire
         # the parents up to the Exposure object.
@@ -797,6 +799,7 @@ class ExposureFile(ATDocument):
         # XXX could benefit from a better exception type?
         raise ValueError('cannot acquire Exposure object')
 
+    security.declareProtected(View, 'file')
     def file(self):
         """\
         While a view could technically be defined to return this, it is
@@ -811,6 +814,7 @@ class ExposureFile(ATDocument):
         )
         return storage.file(path)
 
+    security.declareProtected(View, 'raw_text')
     def raw_text(self):
         results = []
         for adapter in self.adapters:

@@ -11,12 +11,12 @@
   <include package=".browser" />
   <include package=".validator" />
 
+  <include file="subscriber.zcml" />
   <include file="adapter.zcml" />
   <include file="content.zcml" />
   <include file="converter.zcml" />
   <include file="factory.zcml" />
   <include file="profiles.zcml" />
-  <include file="subscriber.zcml" />
   <include file="vocab.zcml" />
 
 </configure>

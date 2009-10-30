@@ -50,9 +50,23 @@
 
   <adapter
       for="pmr2.app.interfaces.IExposureFile"
-      factory=".adapter.RDFTurtleFactory"
-      provides="pmr2.app.interfaces.IRDFTurtle"
-      name="RDFTurtle"
+      factory=".adapter.RDFTurtleNoteFactory"
+      provides="pmr2.app.interfaces.IRawText"
+      name="rdfturtle"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposureFile"
+      factory=".adapter.RDFn3NoteFactory"
+      provides="pmr2.app.interfaces.IRawText"
+      name="rdfn3"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposureFile"
+      factory=".adapter.RDFn3NoteFactory"
+      provides="pmr2.app.interfaces.IRawText"
+      name="rdfxml"
       />
 
 </configure> 

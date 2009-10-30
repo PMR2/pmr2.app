@@ -349,7 +349,7 @@ Test it with the default view.  There should be no adapters added yet.
     >>> request = TestRequest()
     >>> view = exposure.ExposureFileInfo(context[file1], request)
     >>> print view.content()
-    <h3>Annotations attached to this file</h3>
+    <h3>Views generated for this file</h3>
     <dl>
     </dl>
 
@@ -420,9 +420,11 @@ see whether the form has the annotator we needed.
 
     >>> filectx = context[file1]
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
+    >>> view = exposure.ExposureFileViewAssignmentForm(filectx, request)
     >>> result = view()
-    >>> 'RDFTurtle' in result
+    >>> 'rdfturtle' in result
+    True
+    >>> 'rdfxml' in result  # for later usage
     True
 
 Good, now we use that transform to generate the Turtle RDF.
@@ -431,10 +433,10 @@ Good, now we use that transform to generate the Turtle RDF.
     >>> filectx = context[file1]
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.annotator': [u'RDFTurtle'],
+    ...         'form.widgets.views': [u'rdfturtle'],
     ...         'form.buttons.add': 1,
     ...     })
-    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
+    >>> view = exposure.ExposureFileViewAssignmentForm(filectx, request)
     >>> result = view()
     >>> result == ''
     True
@@ -445,21 +447,88 @@ Now the default view should show the new adapter.
     >>> request = TestRequest()
     >>> view = exposure.ExposureFileInfo(context[file1], request)
     >>> print view.content()
-    <h3>Annotations attached to this file</h3>
+    <h3>Views generated for this file</h3>
     <dl>
-      <dt>RDFTurtle</dt>
+      <dt>rdfturtle</dt>
     </dl>
 
 Which the associated view should then work with the original 
-ExposureFile object.
+ExposureFile object.  Since we are constructing the view directly rather
+than the component registry (as it is registered using the generated
+class which we can't test in here), we manually assign its __name__
+
+Also, the headers will need to be reassigned later as they are just
+data (should not really be part of code).
 ::
 
     >>> filectx = context[file1]
     >>> request = TestRequest()
-    >>> view = exposure.RDFTurtle(filectx, request)
+    >>> view = exposure.RawText(filectx, request)
+    >>> view.__name__ = 'rdfturtle'
     >>> print view()
-    <h3>Metadata: Turtle Representation</h3>
-    <p>The following is a Turtle representation of the RDF graph ...
+    <h3>...</h3>
+    <p>...
+    <pre><code>
+    @prefix : 
+    ...
+
+We will do the same thing with the xml format.
+::
+
+    >>> filectx = context[file1]
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.views': [u'rdfxml'],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> view = exposure.ExposureFileViewAssignmentForm(filectx, request)
+    >>> result = view()
+    >>> result == ''
+    True
+
+Now the default view should show the new adapter.
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureFileInfo(context[file1], request)
+    >>> print view.content()
+    <h3>Views generated for this file</h3>
+    <dl>
+      <dt>rdfturtle</dt>
+      <dt>rdfxml</dt>
+    </dl>
+
+Which the associated view should then work with the original 
+ExposureFile object.  Since we are constructing the view directly rather
+than the component registry (as it is registered using the generated
+class which we can't test in here), we manually assign its __name__
+
+Also, the titles and descriptions will need to be reassigned later as 
+they are just data (should not really be part of code).
+::
+
+    >>> filectx = context[file1]
+    >>> request = TestRequest()
+    >>> view = exposure.RawText(filectx, request)
+    >>> view.__name__ = 'rdfxml'
+    >>> print view()
+    <h3>...</h3>
+    <p>...
+    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;rdf:RDF
+    ...
+
+Of course assignment to this new set of data, it will not overwrite the
+other note class because it has a distinct annotation key.  We can even
+reuse the same instance of the view if the name is reassigned (in
+practice this will not happen, but this is a demonstration of how all
+the data is keyed by the identifier of the view).
+::
+
+    >>> view.__name__ = 'rdfturtle'
+    >>> print view()
+    <h3>...</h3>
+    <p>...
     <pre><code>
     @prefix : 
     ...
@@ -560,35 +629,76 @@ context (which is an ATDocument in this implementation), we can just
 define a standard type which the annotator will use as a marker to get
 to the context.
 
-For the HTML file
-::
-
-    >>> filectx = efile3
-    >>> request = TestRequest(
-    ...     form={
-    ...         'form.widgets.annotator': [u'safe_html'],
-    ...         'form.buttons.add': 1,
-    ...     })
-    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
-    >>> result = view()
-    >>> filectx.getText()
-    '\n<p>Lorem ipsum dolar sit amet</p>\n'
-
-For the reStructureText file
-::
-
-    >>> filectx = efile4
-    >>> request = TestRequest(
-    ...     form={
-    ...         'form.widgets.annotator': [u'rest_to_html'],
-    ...         'form.buttons.add': 1,
-    ...     })
-    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
-    >>> result = view()
-    >>> filectx.getText()
-    '<h2 class="title">Simple reStructureText</h2>\n<p>...</p>\n'
+#For the HTML file
+#::
+#
+#    >>> filectx = efile3
+#    >>> request = TestRequest(
+#    ...     form={
+#    ...         'form.widgets.views': [u'safe_html'],
+#    ...         'form.buttons.add': 1,
+#    ...     })
+#    >>> view = exposure.ExposureFileViewAssignmentForm(filectx, request)
+#    >>> result = view()
+#    >>> filectx.getText()
+#    '\n<p>Lorem ipsum dolar sit amet</p>\n'
+#
+#For the reStructureText file
+#::
+#
+#    >>> filectx = efile4
+#    >>> request = TestRequest(
+#    ...     form={
+#    ...         'form.widgets.views': [u'rest_to_html'],
+#    ...         'form.buttons.add': 1,
+#    ...     })
+#    >>> view = exposure.ExposureFileViewAssignmentForm(filectx, request)
+#    >>> result = view()
+#    >>> filectx.getText()
+#    '<h2 class="title">Simple reStructureText</h2>\n<p>...</p>\n'
 
 Hence annotator classes are separated from data adapters.  Of course,
 this means if different annotator classes uses the same adapters the
 data will be overwritten.  The registration and handling of these type
 of conflicts will be addrssed in the future.
+
+======================
+Notes/Question to Self
+======================
+
+We have
+adapters (for the annotation, storage)
+utility (to generate the annotation/note)
+views (which will pull data from the adapter, it will have the same name 
+as the utility to get data from the adapter)
+
+Also a way to "enable" a view by finding the utility for the view, make
+it write data.
+
+Name to get to the notes (the annotations) can be different from the
+name of the view that will use it because there are multiple annotators
+(the generators) that may use the same EFNote class.  For instance, code
+generation (view: /@@code/lang; data: note(context).code['lang'])*, 
+document to html (which uses a marker as it reuses parent, which is an
+ATDocument).  The note adapters manage the storage, the
+view would need to figure out which one it is supposed to use.
+
+* Code gen
+
+  - could have different APIs to generate code, but somehow reuses the
+  same storage adapter.
+
+  - reuse the same storage class, but it could be stored under different 
+  keys
+
+Quick Usage Notes
+-----------------
+
+Someone wants to create a new view for a file.  Let's call it 'exview',
+which will be accessible by http://.../fileobj/@@exview.  To register
+the browser class, one can reuse/create an applicable subclass of the
+ExposureFileViewBase browser class.
+
+browser.exposure.
+Create
+Define the browser dire

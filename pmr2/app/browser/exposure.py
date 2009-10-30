@@ -440,6 +440,42 @@ ExposureFileAnnotatorFormView = layout.wrap_form(ExposureFileAnnotatorForm,
     label="Add an annotation to an Exposure File.")
 
 
+class ExposureFileViewAssignmentForm(form.AddForm):
+    """\
+    Form to generate all the required notes for the selected view.
+    """
+
+    # Multiple choice form will need this method, but generalized.
+    # This will become subclass of that.
+    zope.interface.implements(IExposureFileViewAssignmentForm)
+    fields = z3c.form.field.Fields(IExposureFileViewAssignmentForm)
+
+    def create(self, data):
+        self._data = data
+        view = zope.component.queryUtility(
+            IExposureFileViewUtility,
+            name=data['views']
+        )
+        return view
+
+    def add(self, obj):
+        # we don't actually add the obj into the ExposureFile, we call
+        # it with the view, which then it will determine what to do
+        obj(self)
+
+    def nextURL(self):
+        # we want our context to be the object that provides the URL.
+        self.ctxobj = self.context
+        # XXX will need to redirect to the view associated with the
+        # generator somehow... just going to use default for now.
+        url = form.AddForm.nextURL(self)
+        return url
+
+ExposureFileViewAssignmentFormView = layout.wrap_form(
+    ExposureFileViewAssignmentForm, 
+    label="Add an annotation to an Exposure File.")
+
+
 class PMR1ExposureFileGenForm(ExposureFileGenForm):
     """\
     Adds adapters that are part of the view.
@@ -543,33 +579,34 @@ class ExposureFileRedirectView(BrowserPage):
         return self.request.response.redirect(target_uri)
 
 
-class ExposureFileNoteViewBase(page.TraversePage):
+class ExposureFileViewBase(page.TraversePage):
     """\
     Base class for views that peek require the annotation adapters that
     are attached to the ExposureFile objects.
     """
 
+    zope.interface.implements(IExposureFileView)
 
-class RDFTurtle(ExposureFileNoteViewBase):
+    @property
+    def note(self):
+        # get the utility that is tailored for this view.
+        utility = zope.component.queryUtility(IExposureFileViewUtility, 
+                                              name=self.__name__)
+        # this returns the data structure that the view needs.
+        return utility(self)
+
+
+class RawText(ExposureFileViewBase):
     """\
     This view redirects to the original file.
     """
 
     template = ViewPageTemplateFile('code.pt')
-    description = u'The following is a Turtle representation of the RDF ' \
-                   'graph within this file.'
-    subtitle = u'Metadata: Turtle Representation'
-
-    @property
-    def annotation(self):
-        # standard
-        result = zope.component.queryAdapter(self.context, name='RDFTurtle')
-        return result
+    description = u'The following is a raw text representation of the file.'
+    subtitle = u'Raw text view'
 
     @memoize
     def content(self):
-        # dynamic
-        return self.annotation.text
+        return self.note.text
 
-RDFTurtleView = layout.wrap_form(RDFTurtle,
-    __wrapper_class=PlainLayoutWrapper)
+RawTextView = layout.wrap_form(RawText, __wrapper_class=PlainLayoutWrapper)
