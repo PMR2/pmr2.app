@@ -518,7 +518,8 @@ class IExposureFolder(zope.interface.Interface):
 
 class IExposureFileGen(zope.interface.Interface):
     """\
-    Interface for the documentation generation.
+    Interface for the class that will handle the generation of an
+    ExposureFile object.
     """
 
     filename = zope.schema.Choice(
@@ -529,7 +530,7 @@ class IExposureFileGen(zope.interface.Interface):
     )   # this will become the id of an ExposureFile object.
 
 
-class IExposureFileAnnotation(zope.interface.Interface):
+class IExposureFileAnnotatorForm(zope.interface.Interface):
     """\
     Interface for the form that allows annotations to be added.
     """

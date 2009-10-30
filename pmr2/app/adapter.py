@@ -188,7 +188,7 @@ def ExposureToWorkspaceAdapter(context):
 
 # Basic support for ExposureFile adapters.
 
-class ExposureFileAdapterBase(Persistent, Contained):
+class ExposureFileNoteBase(Persistent, Contained):
     """\
     The base class for adapter to ExposureFile objects.  Both parent
     classes are required.
@@ -197,7 +197,7 @@ class ExposureFileAdapterBase(Persistent, Contained):
     zope.component.adapts(IExposureFile)
 
 
-class StandardExposureFile(ExposureFileAdapterBase):
+class StandardExposureFile(ExposureFileNoteBase):
     """\
     A dummy of sort that will just reuse the ExposureFile that this
     adapts.
@@ -208,7 +208,7 @@ class StandardExposureFile(ExposureFileAdapterBase):
 StandardExposureFileFactory = factory(StandardExposureFile)
 
 
-class RDFTurtle(ExposureFileAdapterBase):
+class RDFTurtle(ExposureFileNoteBase):
     """\
     See IRDFTurtle interface.
     """

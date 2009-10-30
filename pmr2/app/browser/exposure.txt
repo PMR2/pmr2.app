@@ -257,7 +257,7 @@ ExposureFile
     Object in an Exposure that encapsulates its respective file within
     its parent's workspace.  May be nested inside ExposureFolder.
 
-ExposureFileAdapters
+ExposureFileNote
     Persistent and Contained objects that wraps around the ExposureFile
     type.  Multiple ExposureFileAnnotator may make use of a single one
     of these.
@@ -420,7 +420,7 @@ see whether the form has the annotator we needed.
 
     >>> filectx = context[file1]
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileAnnotationForm(filectx, request)
+    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
     >>> 'RDFTurtle' in result
     True
@@ -434,7 +434,7 @@ Good, now we use that transform to generate the Turtle RDF.
     ...         'form.widgets.annotator': [u'RDFTurtle'],
     ...         'form.buttons.add': 1,
     ...     })
-    >>> view = exposure.ExposureFileAnnotationForm(filectx, request)
+    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
     >>> result == ''
     True
@@ -569,7 +569,7 @@ For the HTML file
     ...         'form.widgets.annotator': [u'safe_html'],
     ...         'form.buttons.add': 1,
     ...     })
-    >>> view = exposure.ExposureFileAnnotationForm(filectx, request)
+    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
     >>> filectx.getText()
     '\n<p>Lorem ipsum dolar sit amet</p>\n'
@@ -583,7 +583,7 @@ For the reStructureText file
     ...         'form.widgets.annotator': [u'rest_to_html'],
     ...         'form.buttons.add': 1,
     ...     })
-    >>> view = exposure.ExposureFileAnnotationForm(filectx, request)
+    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
     >>> filectx.getText()
     '<h2 class="title">Simple reStructureText</h2>\n<p>...</p>\n'

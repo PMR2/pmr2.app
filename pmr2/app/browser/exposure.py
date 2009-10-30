@@ -406,14 +406,14 @@ ExposureFileGenFormView = layout.wrap_form(ExposureFileGenForm,
     label="Add a file to the exposure")
 
 
-class ExposureFileAnnotationForm(form.AddForm):
+class ExposureFileAnnotatorForm(form.AddForm):
     """\
-    Form to add an annotation to an ExposureFile.
+    Form to add a note to an ExposureFile.
     """
 
     # Multiple choice form will need this method, but generalized.
     # This will become subclass of that.
-    fields = z3c.form.field.Fields(IExposureFileAnnotation)
+    fields = z3c.form.field.Fields(IExposureFileAnnotatorForm)
 
     def create(self, data):
         self._data = data
@@ -436,7 +436,7 @@ class ExposureFileAnnotationForm(form.AddForm):
         url = form.AddForm.nextURL(self)
         return url
 
-ExposureFileAnnotationFormView = layout.wrap_form(ExposureFileAnnotationForm, 
+ExposureFileAnnotatorFormView = layout.wrap_form(ExposureFileAnnotatorForm, 
     label="Add an annotation to an Exposure File.")
 
 
@@ -543,7 +543,14 @@ class ExposureFileRedirectView(BrowserPage):
         return self.request.response.redirect(target_uri)
 
 
-class RDFTurtle(page.TraversePage):
+class ExposureFileNoteViewBase(page.TraversePage):
+    """\
+    Base class for views that peek require the annotation adapters that
+    are attached to the ExposureFile objects.
+    """
+
+
+class RDFTurtle(ExposureFileNoteViewBase):
     """\
     This view redirects to the original file.
     """

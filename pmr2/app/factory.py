@@ -38,14 +38,12 @@ class ExposureFileAnnotatorBase(object):
         return self.__annotation
 
 
-class PortalTransformAnnotator(ExposureFileAnnotatorBase):
+class PortalTransformAnnotatorBase(ExposureFileAnnotatorBase):
     """\
     Utilizes Portal Transform to get content.  By default it tries to
     turn files into HTML.
     """
 
-    # not implementing this because this is an incomplete tool.
-    #zope.interface.implements(IExposureFileAnnotator)
     adapter = 'StandardExposureFile'
     transform = None  # define this
 
@@ -61,7 +59,7 @@ class PortalTransformAnnotator(ExposureFileAnnotatorBase):
         self.context.setText(output)
 
 
-class HTMLAnnotator(PortalTransformAnnotator):
+class HTMLAnnotator(PortalTransformAnnotatorBase):
     zope.interface.implements(IExposureFileAnnotator)
     transform = 'safe_html'
     title = u'HTML annotator'
@@ -69,7 +67,7 @@ class HTMLAnnotator(PortalTransformAnnotator):
                    'a Plone site.'
 
 
-class RSTAnnotator(PortalTransformAnnotator):
+class RSTAnnotator(PortalTransformAnnotatorBase):
     zope.interface.implements(IExposureFileAnnotator)
     transform = 'rest_to_html'
     title = u'reStructuredText annotator'
