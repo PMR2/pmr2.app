@@ -545,11 +545,11 @@ class IExposureFile(zope.interface.Interface):
         default=[],
     )
 
-    adapters = zope.schema.List(
-        title=u'Adapters',
-        description=u'List of adapters used.',
+    default_generator = zope.schema.TextLine(
+        title=u'Default View Generator',
+        description=u'The default view generator utility that was used to ' \
+                     'generate the contents viewed via document_view.',
         required=False,
-        default=[],
     )
 
     def source():
@@ -600,9 +600,11 @@ class IExposureFileAnnotator(zope.interface.Interface):
         required=False,
     )
 
-    def generate():
+    def process(context):
         """\
-        The method used by the call method.
+        Process the given context to return a list of tuples in the
+        form (name, value) where name is the name of the field for the
+        respective note class to store the value in.
         """
 
 
@@ -671,7 +673,7 @@ class IExposureFileViewAssignmentForm(zope.interface.Interface):
     views = zope.schema.Choice(
         title=u'Views Available',
         description=u'The views to be enabled for this file.',
-        vocabulary='ExposureFileViewVocab',
+        vocabulary='ExposureFileAnnotatorVocab',
         required=True,
     )
 

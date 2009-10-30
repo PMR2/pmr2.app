@@ -453,7 +453,7 @@ class ExposureFileViewAssignmentForm(form.AddForm):
     def create(self, data):
         self._data = data
         view = zope.component.queryUtility(
-            IExposureFileViewUtility,
+            IExposureFileAnnotator,
             name=data['views']
         )
         return view
@@ -461,7 +461,7 @@ class ExposureFileViewAssignmentForm(form.AddForm):
     def add(self, obj):
         # we don't actually add the obj into the ExposureFile, we call
         # it with the view, which then it will determine what to do
-        obj(self)
+        obj.write(self.context)
 
     def nextURL(self):
         # we want our context to be the object that provides the URL.
@@ -594,10 +594,7 @@ class ExposureFileViewBase(page.TraversePage):
     @property
     def note(self):
         # get the utility that is tailored for this view.
-        utility = zope.component.getUtility(IExposureFileViewUtility, 
-                                            name=self.name)
-        # this returns the data structure that the view needs.
-        return utility(self)
+        return zope.component.queryAdapter(self.context, name=self.__name__)
 
 
 class RawTextNote(ExposureFileViewBase):

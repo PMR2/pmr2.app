@@ -776,7 +776,6 @@ class ExposureFile(ATDocument):
         zope.annotation.interfaces.IAttributeAnnotatable,
     )
     views = fieldproperty.FieldProperty(IExposureFile['views'])
-    adapters = fieldproperty.FieldProperty(IExposureFile['adapters'])
     security = ClassSecurityInfo()
 
     security.declareProtected(View, 'source')

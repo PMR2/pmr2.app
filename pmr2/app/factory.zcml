@@ -19,6 +19,8 @@
       provides=".interfaces.IExposureFileAnnotator"
       />
 
+  <!-- default view generators -->
+
   <utility
       name="safe_html"
       factory=".factory.HTMLAnnotator"
@@ -29,26 +31,6 @@
       name="rest_to_html"
       factory=".factory.RSTAnnotator"
       provides=".interfaces.IExposureFileAnnotator"
-      />
-
-  <!-- utilities for the view -->
-
-  <utility
-      name="rdfturtle"
-      factory=".factory.ExposureFileViewUtility"
-      provides=".interfaces.IExposureFileViewUtility"
-      />
-
-  <utility
-      name="rdfn3"
-      factory=".factory.ExposureFileViewUtility"
-      provides=".interfaces.IExposureFileViewUtility"
-      />
-
-  <utility
-      name="rdfxml"
-      factory=".factory.ExposureFileViewUtility"
-      provides=".interfaces.IExposureFileViewUtility"
       />
 
 </configure>

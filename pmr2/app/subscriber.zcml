@@ -9,12 +9,6 @@
       />
 
   <subscriber
-      for=".interfaces.IExposureFileViewUtility
-          zope.component.interfaces.IRegistered"
-      handler=".factory.name_utility"
-      />
-
-  <subscriber
       for=".interfaces.IExposureFileAnnotator
           zope.component.interfaces.IRegistered"
       handler=".factory.name_utility"

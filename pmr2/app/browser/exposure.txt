@@ -661,14 +661,19 @@ the redirection view.
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/docs/index.rst'
 
-Also, multiple adapters could generate content for a single view.  Since
-we now base this on the standard Document archetype, we may allow
-documents in various formats all generating output that will be stored
-into the same view.  We have an annotator class that uses portal 
-transforms to generate the content and store it into the original
-context (which is an ATDocument in this implementation), we can just
-define a standard type which the annotator will use as a marker to get
-to the context.
+If each view requires storage of multiple values, its respective note
+adapter should contain it.  However it is possible to rely on multiple
+note adapters, but it cannot be guarantee that the data exists since
+there is a one-to-one mapping between storage and name that is enforced.
+
+---------------------
+Default Document View
+---------------------
+
+This is the case where multiple generators can be used to result in a
+same view.  Since the ExposureFile is built on top of the standard 
+Document archetype, we may have different file formats that require
+different rendering methods.
 
 #For the HTML file
 #::
