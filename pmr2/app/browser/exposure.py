@@ -406,6 +406,40 @@ ExposureFileGenFormView = layout.wrap_form(ExposureFileGenForm,
     label="Add a file to the exposure")
 
 
+class ExposureFileAnnotationForm(form.AddForm):
+    """\
+    Form to add an annotation to an ExposureFile.
+    """
+
+    # Multiple choice form will need this method, but generalized.
+    # This will become subclass of that.
+    fields = z3c.form.field.Fields(IExposureFileAnnotation)
+
+    def create(self, data):
+        self._data = data
+        annotator = zope.component.queryUtility(
+            IExposureFileAnnotator,
+            name=data['annotator']
+        )
+        return annotator
+
+    def add(self, obj):
+        # we don't actually add the obj into the ExposureFile, we call
+        # it with the context as the argument, magic happens.
+        obj(self.context)
+
+    def nextURL(self):
+        # we want our context to be the object that provides the URL.
+        self.ctxobj = self.context
+        # XXX will need to redirect to the view associated with the
+        # generator somehow... just going to use default for now.
+        url = form.AddForm.nextURL(self)
+        return url
+
+ExposureFileAnnotationFormView = layout.wrap_form(ExposureFileAnnotationForm, 
+    label="Add an annotation to an Exposure File.")
+
+
 class PMR1ExposureFileGenForm(ExposureFileGenForm):
     """\
     Adds adapters that are part of the view.

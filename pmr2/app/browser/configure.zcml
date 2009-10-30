@@ -248,6 +248,13 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="annotation"
+      class=".exposure.ExposureFileAnnotationFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <!-- Exposure Document -->
 
   <browser:page

@@ -529,6 +529,19 @@ class IExposureFileGen(zope.interface.Interface):
     )   # this will become the id of an ExposureFile object.
 
 
+class IExposureFileAnnotation(zope.interface.Interface):
+    """\
+    Interface for the form that allows annotations to be added.
+    """
+
+    annotator = zope.schema.Choice(
+        title=u'Annotator Type',
+        description=u'Which annotator to use to annotate this file.',
+        vocabulary='ExposureFileAnnotatorVocab',
+        required=True,
+    )
+
+
 class IExposureFile(zope.interface.Interface):
     """\
     Interface for a basic exposure page.
@@ -577,6 +590,18 @@ class IExposureFileAnnotator(zope.interface.Interface):
     """\
     Interface for the ExposureFile annotation utility.
     """
+
+    title = zope.schema.Text(
+        title=u'Title',
+        description=u'Title of this annotator',
+        required=False,
+    )
+
+    description = zope.schema.Text(
+        title=u'Description',
+        description=u'A brief note about what this annotator does.',
+        required=False,
+    )
 
     def generate():
         """\

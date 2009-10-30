@@ -413,16 +413,33 @@ Redirect view will work on this.
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../example_model.cellml'
 
-We will get the annotator and annotate our ExposureFile content object.
-(Probably should test the form that implements this)
+We will use the annotation form, which will get the annotator and 
+annotate our ExposureFile content object.  Of course, first we have to
+see whether the form has the annotator we needed.
 ::
 
     >>> filectx = context[file1]
-    >>> annotator = zope.component.queryUtility(IExposureFileAnnotator, 
-    ...                                         name=u'RDFTurtle')
-    >>> annotator(filectx)
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureFileAnnotationForm(filectx, request)
+    >>> result = view()
+    >>> 'RDFTurtle' in result
+    True
 
-Now the default view should report the view
+Good, now we use that transform to generate the Turtle RDF.
+::
+
+    >>> filectx = context[file1]
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.annotator': [u'RDFTurtle'],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> view = exposure.ExposureFileAnnotationForm(filectx, request)
+    >>> result = view()
+    >>> result == ''
+    True
+
+Now the default view should show the new adapter.
 ::
 
     >>> request = TestRequest()
@@ -547,20 +564,28 @@ For the HTML file
 ::
 
     >>> filectx = efile3
-    >>> annotator = zope.component.queryUtility(IExposureFileAnnotator, 
-    ...                                         name=u'safe_html')
-    >>> annotator(filectx)
-    >>> efile3.getText()
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.annotator': [u'safe_html'],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> view = exposure.ExposureFileAnnotationForm(filectx, request)
+    >>> result = view()
+    >>> filectx.getText()
     '\n<p>Lorem ipsum dolar sit amet</p>\n'
 
 For the reStructureText file
 ::
 
     >>> filectx = efile4
-    >>> annotator = zope.component.queryUtility(IExposureFileAnnotator, 
-    ...                                         name=u'rest_to_html')
-    >>> annotator(filectx)
-    >>> efile4.getText()
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.annotator': [u'rest_to_html'],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> view = exposure.ExposureFileAnnotationForm(filectx, request)
+    >>> result = view()
+    >>> filectx.getText()
     '<h2 class="title">Simple reStructureText</h2>\n<p>...</p>\n'
 
 Hence annotator classes are separated from data adapters.  Of course,

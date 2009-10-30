@@ -8,6 +8,7 @@ from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import IExposureDocumentFactory
 from pmr2.app.interfaces import IExposureMetadocFactory
+from pmr2.app.interfaces import IExposureFileAnnotator
 
 
 class WorkspaceDirObjListVocab(SimpleVocabulary):
@@ -136,3 +137,20 @@ def PMR2ExposureMetadocFactoryVocabFactory(context):
     return PMR2ExposureMetadocFactoryVocab(context)
 
 alsoProvides(PMR2ExposureMetadocFactoryVocabFactory, IVocabularyFactory)
+
+
+class ExposureFileAnnotatorVocab(SimpleVocabulary):
+
+    def __init__(self, context):
+        self.context = context
+        values = [(i[0], i[0], i[1].title) for i in 
+                  getUtilitiesFor(IExposureFileAnnotator)]
+        # sort by title
+        values.sort(cmp=lambda x, y: cmp(x[2], y[2]))
+        terms = [SimpleTerm(*i) for i in values]
+        super(ExposureFileAnnotatorVocab, self).__init__(terms)
+
+def ExposureFileAnnotatorVocabFactory(context):
+    return ExposureFileAnnotatorVocab(context)
+
+alsoProvides(ExposureFileAnnotatorVocabFactory, IVocabularyFactory)

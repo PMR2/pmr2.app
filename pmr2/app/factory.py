@@ -64,16 +64,25 @@ class PortalTransformAnnotator(ExposureFileAnnotatorBase):
 class HTMLAnnotator(PortalTransformAnnotator):
     zope.interface.implements(IExposureFileAnnotator)
     transform = 'safe_html'
+    title = u'HTML annotator'
+    description = u'This converts raw HTML files into a format suitable for ' \
+                   'a Plone site.'
 
 
 class RSTAnnotator(PortalTransformAnnotator):
     zope.interface.implements(IExposureFileAnnotator)
     transform = 'rest_to_html'
+    title = u'reStructuredText annotator'
+    description = u'This converts raw RST files into a format suitable for ' \
+                   'a Plone site.'
 
 
 class RDFTurtleAnnotator(ExposureFileAnnotatorBase):
     zope.interface.implements(IExposureFileAnnotator)
     adapter = 'RDFTurtle'
+    title = u'RDF Turtle'
+    description = u'This extracts and converts a CellML with RDF (or an RDF ' \
+                   'file into Turtle format for display.'
 
     def generate(self):
         metadata = Cmeta(StringIO(self.input))
