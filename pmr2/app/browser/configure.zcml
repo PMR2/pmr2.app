@@ -243,6 +243,13 @@
 
   <browser:page
       for="pmr2.app.content.ExposureFile"
+      name="docviewgen"
+      class=".exposure.ExposureFileDocViewGenFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
       name="exposure_file_redirect"
       class=".exposure.ExposureFileRedirectView"
       permission="zope2.View"
@@ -252,34 +259,6 @@
       for="pmr2.app.content.ExposureFile"
       name="exposure_file_info"
       class=".exposure.ExposureFileInfoView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="rdf"
-      class=".exposure.RdfGroupedNoteView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="rdfn3"
-      class=".exposure.RawTextNoteView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="rdfturtle"
-      class=".exposure.RawTextNoteView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="rdfxml"
-      class=".exposure.RawTextNoteView"
       permission="zope2.View"
       />
 

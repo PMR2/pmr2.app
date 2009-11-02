@@ -233,10 +233,3 @@ class GroupedNote(ExposureFileNoteBase):
 
     zope.interface.implements(IGroupedNote)
     active_notes = fieldproperty.FieldProperty(IGroupedNote['active_notes']) 
-
-
-RDFTurtleNoteFactory = factory(RawTextNote, 'rdfturtle')
-RDFn3NoteFactory = factory(RawTextNote, 'rdfn3')
-RDFxmlNoteFactory = factory(RawTextNote, 'rdfxml')
-
-RDFGroupNoteFactory = factory(GroupedNote, 'rdf')

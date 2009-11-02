@@ -1,0 +1,73 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    >
+
+  <utility
+      name="rdfturtle"
+      factory="pmr2.app.tests.adapter.RDFTurtleAnnotator"
+      provides=".interfaces.IExposureFileAnnotator"
+      />
+
+  <utility
+      name="rdfn3"
+      factory="pmr2.app.tests.adapter.RDFn3Annotator"
+      provides=".interfaces.IExposureFileAnnotator"
+      />
+
+  <utility
+      name="rdfxml"
+      factory="pmr2.app.tests.adapter.RDFxmlAnnotator"
+      provides=".interfaces.IExposureFileAnnotator"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposureFile"
+      factory="pmr2.app.tests.adapter.RDFTurtleNoteFactory"
+      provides="pmr2.app.interfaces.IRawTextNote"
+      name="rdfturtle"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposureFile"
+      factory="pmr2.app.tests.adapter.RDFn3NoteFactory"
+      provides="pmr2.app.interfaces.IRawTextNote"
+      name="rdfn3"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposureFile"
+      factory="pmr2.app.tests.adapter.RDFxmlNoteFactory"
+      provides="pmr2.app.interfaces.IRawTextNote"
+      name="rdfxml"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="rdf"
+      class="pmr2.app.tests.browser.RdfGroupedNoteView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="rdfn3"
+      class="pmr2.app.browser.exposure.RawTextNoteView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="rdfturtle"
+      class="pmr2.app.browser.exposure.RawTextNoteView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="rdfxml"
+      class="pmr2.app.browser.exposure.RawTextNoteView"
+      permission="zope2.View"
+      />
+
+</configure>

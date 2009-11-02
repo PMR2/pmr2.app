@@ -57,30 +57,6 @@ class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
         )
 
 
-class RDFTurtleAnnotator(RDFLibEFAnnotator):
-    zope.interface.implements(IExposureFileAnnotator)
-    title = u'RDF Turtle'
-    description = u'This extracts and converts a CellML with RDF (or an RDF ' \
-                   'file) into Turtle format for display.'
-    format = 'turtle'
-
-
-class RDFn3Annotator(RDFLibEFAnnotator):
-    zope.interface.implements(IExposureFileAnnotator)
-    title = u'RDF n-Triple'
-    description = u'This extracts and converts a CellML with RDF (or an RDF ' \
-                   'file) into n-triple format for display.'
-    format = 'n3'
-
-
-class RDFxmlAnnotator(RDFLibEFAnnotator):
-    zope.interface.implements(IExposureFileAnnotator)
-    title = u'RDF xml'
-    description = u'This extracts and converts a CellML with RDF (or an RDF ' \
-                   'file) into xml format for display.'
-    format = 'xml'
-
-
 # DocView Generator
 class ExposureFileDocViewGenBase(object):
     """\

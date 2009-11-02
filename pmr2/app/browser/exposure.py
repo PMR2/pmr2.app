@@ -661,16 +661,3 @@ class GroupedNoteViewBase(ExposureFileViewBase):
 # base
 GroupedNoteViewBaseView = layout.wrap_form(
     GroupedNoteViewBase, __wrapper_class=PlainLayoutWrapper)
-
-
-class RdfGroupedNote(GroupedNoteViewBase):
-    subtitle=u'RDF views available'
-    choices={
-        u'turtle': u'rdfturtle', 
-        u'n3': u'rdfn3', 
-        u'xml': u'rdfxml',
-    }
-
-RdfGroupedNoteView = layout.wrap_form(RdfGroupedNote, 
-    __wrapper_class=PlainLayoutWrapper,
-)
