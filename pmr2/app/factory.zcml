@@ -1,26 +1,6 @@
 <configure
     xmlns="http://namespaces.zope.org/zope">
 
-  <!--
-  <utility
-      name="rdfturtle"
-      factory=".factory.RDFTurtleAnnotator"
-      provides=".interfaces.IExposureFileAnnotator"
-      />
-
-  <utility
-      name="rdfn3"
-      factory=".factory.RDFn3Annotator"
-      provides=".interfaces.IExposureFileAnnotator"
-      />
-
-  <utility
-      name="rdfxml"
-      factory=".factory.RDFxmlAnnotator"
-      provides=".interfaces.IExposureFileAnnotator"
-      />
-  -->
-
   <!-- default view generators -->
 
   <utility

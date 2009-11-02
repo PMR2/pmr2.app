@@ -39,35 +39,5 @@
       name="ExposureToWorkspace"
       />
 
-  <!-- for ExposureFile 
-
-  <adapter
-      for="pmr2.app.interfaces.IExposureFile"
-      factory=".adapter.StandardExposureFile"
-      provides="pmr2.app.interfaces.IStandardExposureFile"
-      name="StandardExposureFile"
-      />
-
-  <adapter
-      for="pmr2.app.interfaces.IExposureFile"
-      factory=".adapter.RDFTurtleNoteFactory"
-      provides="pmr2.app.interfaces.IRawTextNote"
-      name="rdfturtle"
-      />
-
-  <adapter
-      for="pmr2.app.interfaces.IExposureFile"
-      factory=".adapter.RDFn3NoteFactory"
-      provides="pmr2.app.interfaces.IRawTextNote"
-      name="rdfn3"
-      />
-
-  <adapter
-      for="pmr2.app.interfaces.IExposureFile"
-      factory=".adapter.RDFxmlNoteFactory"
-      provides="pmr2.app.interfaces.IRawTextNote"
-      name="rdfxml"
-      />
-  -->
 
 </configure> 

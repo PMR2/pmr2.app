@@ -19,6 +19,21 @@ def name_utility(obj, event):
     locate(obj, None, event.object.name)
 
 
+class PortalTransformGenBase(object):
+    """\
+    Utilizes Portal Transform to get content.
+    """
+
+    transform = None  # define this
+
+    def convert(self, context):
+        input = context.file()
+        pt = getToolByName(input, 'portal_transforms')
+        stream = datastream('pt_annotation')
+        pt.convert(self.transform, input, stream)
+        return stream.getData()
+
+
 class ExposureFileAnnotatorBase(Location):
 
     def generate(self, context):
@@ -47,6 +62,13 @@ class ExposureFileAnnotatorBase(Location):
         context.views = views
 
 
+class PortalTransformAnnotatorBase(
+        PortalTransformGenBase, ExposureFileAnnotatorBase):
+    """\
+    Combining PortalTransforms with the annotator.
+    """
+
+
 class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
 
     def generate(self, context):
@@ -71,24 +93,14 @@ class ExposureFileDocViewGenBase(object):
         context.docview_generator = self.__name__
 
 
-class PortalTransformDocViewGenBase(ExposureFileDocViewGenBase):
+class PortalTransformDocViewGenBase(
+        PortalTransformGenBase, ExposureFileDocViewGenBase):
     """\
-    Utilizes Portal Transform to get content.  By default it tries to
-    turn files into HTML.
+    Combining PortalTransforms with the document view generator.
     """
 
-    transform = None  # define this
-
-    def convert(self, input):
-        pt = getToolByName(input, 'portal_transforms')
-        stream = datastream('pt_annotation')
-        pt.convert(self.transform, input, stream)
-        return stream.getData()
-
     def generate(self, context):
-        # standard way is to assign the text field of context
-        input = context.file()
-        return self.convert(input)
+        return self.convert(context)
 
 
 class HTMLDocViewGen(PortalTransformDocViewGenBase):
