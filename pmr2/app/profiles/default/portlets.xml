@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <portlets>
 
+<!--
  <portlet 
      addview="portlets.SubPMR1"
      title="Exposure Metadoc Subdocuments"
@@ -21,6 +22,14 @@
      description="A portlet that lists the exposures metadocuments.">
      <for interface="plone.app.portlets.interfaces.IColumn" />
  </portlet>
+-->
+
+ <portlet 
+     addview="portlets.ExposureFileNotes"
+     title="Exposure File Notes"
+     description="A portlet that lists the notes attached to this Exposure File.">
+     <for interface="plone.app.portlets.interfaces.IColumn" />
+ </portlet>
 
 <!--
  <assignment
@@ -29,7 +38,7 @@
      key="/"
      type="portlets.SubPMR1"
      name="subpmr1"
-     insert-before="*"
+     remove="true"
      />
 
  <assignment
@@ -48,7 +57,7 @@
      key="ExposureContainer"
      type="portlets.SubPMR1"
      name="subpmr1"
-     insert-before="*"
+     remove="true"
      />
 
  <assignment
@@ -57,7 +66,7 @@
      key="Exposure"
      type="portlets.SubPMR1"
      name="subpmr1"
-     insert-before="*"
+     remove="true"
      />
 
  <assignment
@@ -66,7 +75,7 @@
      key="ExposureDocument"
      type="portlets.SubPMR1"
      name="subpmr1"
-     insert-before="*"
+     remove="true"
      />
 
  <assignment
@@ -75,7 +84,7 @@
      key="ExposureCmetaDocument"
      type="portlets.SubPMR1"
      name="subpmr1"
-     insert-before="*"
+     remove="true"
      />
 
  <assignment
@@ -84,7 +93,7 @@
      key="ExposureCodeDocument"
      type="portlets.SubPMR1"
      name="subpmr1"
-     insert-before="*"
+     remove="true"
      />
 
  <assignment
@@ -93,7 +102,7 @@
      key="ExposureMathDocument"
      type="portlets.SubPMR1"
      name="subpmr1"
-     insert-before="*"
+     remove="true"
      />
 
  <assignment
@@ -102,7 +111,7 @@
      key="ExposurePMR1Metadoc"
      type="portlets.SubPMR1"
      name="subpmr1"
-     insert-before="*"
+     remove="true"
      />
 
  <!-- Metadocument Listing/Nav -->
@@ -112,7 +121,7 @@
      key="ExposureContainer"
      type="portlets.ExposureMetadocNav"
      name="exposure_list"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -121,7 +130,7 @@
      key="Exposure"
      type="portlets.ExposureMetadocNav"
      name="exposure_list"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -130,7 +139,7 @@
      key="ExposureDocument"
      type="portlets.ExposureMetadocNav"
      name="exposure_list"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -139,7 +148,7 @@
      key="ExposureCmetaDocument"
      type="portlets.ExposureMetadocNav"
      name="exposure_list"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -148,7 +157,7 @@
      key="ExposureCodeDocument"
      type="portlets.ExposureMetadocNav"
      name="exposure_list"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -157,7 +166,7 @@
      key="ExposureMathDocument"
      type="portlets.ExposureMetadocNav"
      name="exposure_list"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -166,7 +175,7 @@
      key="ExposurePMR1Metadoc"
      type="portlets.ExposureMetadocNav"
      name="exposure_list"
-     insert-after="*"
+     remove="true"
      />
 
  <!-- Exposure Listing -->
@@ -176,7 +185,7 @@
      key="ExposureContainer"
      type="portlets.ExposureNav"
      name="exposure_nav"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -185,7 +194,7 @@
      key="Exposure"
      type="portlets.ExposureNav"
      name="exposure_nav"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -194,7 +203,7 @@
      key="ExposureDocument"
      type="portlets.ExposureNav"
      name="exposure_nav"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -203,7 +212,7 @@
      key="ExposureCmetaDocument"
      type="portlets.ExposureNav"
      name="exposure_nav"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -212,7 +221,7 @@
      key="ExposureCodeDocument"
      type="portlets.ExposureNav"
      name="exposure_nav"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -221,7 +230,7 @@
      key="ExposureMathDocument"
      type="portlets.ExposureNav"
      name="exposure_nav"
-     insert-after="*"
+     remove="true"
      />
 
  <assignment
@@ -230,39 +239,7 @@
      key="ExposurePMR1Metadoc"
      type="portlets.ExposureNav"
      name="exposure_nav"
-     insert-after="*"
-     />
-
- <!-- Force content_type portlets to show up -->
-
- <blacklist
-     manager="plone.rightcolumn"
-     category="content_type"
-     location="/"
-     status="show"
-     />
-
- <blacklist
-     manager="plone.leftcolumn"
-     category="content_type"
-     location="/"
-     status="show"
-     />
-
- <!-- assume default installation location -->
-
- <blacklist
-     manager="plone.rightcolumn"
-     category="context"
-     location="/models/exposure"
-     status="block"
-     />
-
- <blacklist
-     manager="plone.leftcolumn"
-     category="context"
-     location="/models/exposure"
-     status="block"
+     remove="true"
      />
 
 <!--

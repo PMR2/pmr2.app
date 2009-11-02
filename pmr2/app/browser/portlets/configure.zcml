@@ -33,6 +33,17 @@
       editview=".ExposureMetadocNav.EditForm"
       />
 
+  <!-- v0.2 -->
+
+  <plone:portlet
+      name="portlets.ExposureFileNotes"
+      interface=".ExposureFileNotes.IExposureFileNotesPortlet"
+      assignment=".ExposureFileNotes.Assignment"
+      renderer=".ExposureFileNotes.Renderer"
+      addview=".ExposureFileNotes.AddForm"
+      editview=".ExposureFileNotes.EditForm"
+      />
+
   <!--
   <plone:portletRenderer
       portlet=".subpmr1.ISubPMR1Portlet"

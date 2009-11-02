@@ -599,7 +599,8 @@ class ExposureFileViewBase(page.TraversePage):
 
 class RawTextNote(ExposureFileViewBase):
     """\
-    This is a raw text view.
+    This is a raw text view, wrapped in a pre block by the default 
+    template.
     """
 
     template = ViewPageTemplateFile('code.pt')
