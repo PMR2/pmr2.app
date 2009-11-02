@@ -181,3 +181,9 @@ class MathMLLayoutWrapper(FormWrapper):
                     (registry_url, skinname, style.getId())
                 result.append(src)
         return "\n".join(result)
+
+    def __call__(self):
+        result = super(MathMLLayoutWrapper, self).__call__()
+        self.request.response.setHeader(
+            'Content-Type', 'application/xhtml+xml')
+        return result

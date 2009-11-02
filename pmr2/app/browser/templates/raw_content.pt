@@ -1,0 +1,3 @@
+<h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
+<p tal:content="view/description"/>
+<div tal:content="structure view/content"/>

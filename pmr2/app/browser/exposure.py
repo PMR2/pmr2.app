@@ -228,7 +228,6 @@ class ExposureMathMLWrapper(ExposureTraversalPage):
     """
 
     def render(self):
-        self.request.response.setHeader('Content-Type', 'application/xhtml+xml')
         return self.context.mathml
 
 ExposureMathMLWrapperView = layout.wrap_form(ExposureMathMLWrapper,
@@ -613,6 +612,32 @@ class RawTextNote(ExposureFileViewBase):
 
 RawTextNoteView = layout.wrap_form(RawTextNote,
     __wrapper_class=PlainLayoutWrapper)
+
+
+class RawContentNote(ExposureFileViewBase):
+    """\
+    This is a raw content view, where the raw text is rendered as a
+    struture as per the default template.
+    """
+
+    template = ViewPageTemplateFile('raw_content.pt')
+    description = u'The following is a raw representation of the file.'
+    subtitle = u'Raw content view'
+
+    def content(self):
+        return self.note.text
+
+
+class MathMLNote(RawContentNote):
+    """\
+    Wraps an object around the mathml view.
+    """
+
+    template = RawContentNote.content
+
+MathMLNoteView = layout.wrap_form(MathMLNote,
+    __wrapper_class=MathMLLayoutWrapper
+    )
 
 
 class GroupedNoteViewBase(ExposureFileViewBase):
