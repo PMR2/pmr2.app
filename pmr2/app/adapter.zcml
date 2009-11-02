@@ -39,5 +39,13 @@
       name="ExposureToWorkspace"
       />
 
+  <!-- for ExposureFile -->
+
+  <adapter
+      for="pmr2.app.interfaces.IExposureFile"
+      factory=".adapter.BasicMathMLNoteFactory"
+      provides="pmr2.app.interfaces.IRawTextNote"
+      name="basic_mathml"
+      />
 
 </configure> 

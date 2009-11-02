@@ -262,6 +262,13 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="basic_mathml"
+      class=".exposure.RawTextNoteView"
+      permission="zope2.View"
+      />
+
   <!-- Exposure Document -->
 
   <browser:page

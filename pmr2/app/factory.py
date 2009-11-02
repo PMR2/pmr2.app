@@ -69,6 +69,17 @@ class PortalTransformAnnotatorBase(
     """
 
 
+class CellML2MathMLAnnotator(PortalTransformAnnotatorBase):
+    zope.interface.implements(IExposureFileAnnotator)
+    transform = 'pmr2_processor_legacy_cellml2html_mathml'
+    title = u'Basic MathML'
+
+    def generate(self, context):
+        return (
+            ('text', self.convert(context).decode('utf8')),
+        )
+
+
 class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
 
     def generate(self, context):

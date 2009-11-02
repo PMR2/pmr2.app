@@ -1,6 +1,12 @@
 <configure
     xmlns="http://namespaces.zope.org/zope">
 
+  <utility
+      name="basic_mathml"
+      factory=".factory.CellML2MathMLAnnotator"
+      provides=".interfaces.IExposureFileAnnotator"
+      />
+
   <!-- default view generators -->
 
   <utility

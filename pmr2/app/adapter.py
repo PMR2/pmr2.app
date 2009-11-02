@@ -233,3 +233,6 @@ class GroupedNote(ExposureFileNoteBase):
 
     zope.interface.implements(IGroupedNote)
     active_notes = fieldproperty.FieldProperty(IGroupedNote['active_notes']) 
+
+
+BasicMathMLNoteFactory = factory(RawTextNote)
