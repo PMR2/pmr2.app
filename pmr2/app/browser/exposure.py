@@ -425,7 +425,7 @@ class ExposureFileAnnotatorForm(form.AddForm):
     def add(self, obj):
         # we don't actually add the obj into the ExposureFile, we call
         # it with the context as the argument, magic happens.
-        obj.write(self.context)
+        obj(self.context)
 
     def nextURL(self):
         # we want our context to be the object that provides the URL.

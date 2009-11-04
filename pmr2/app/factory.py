@@ -39,15 +39,7 @@ class ExposureFileAnnotatorBase(Location):
     def generate(self, context):
         raise NotImplementedError
 
-    def read(self, context):
-        """\
-        Parse the context into an object with the required fields.
-        """
-
-        result = zope.component.queryAdapter(context, name=self.__name__)
-        return result
-
-    def write(self, context):
+    def __call__(self, context):
         # XXX return a data struture instead
         note = zope.component.queryAdapter(context, name=self.__name__)
         data = self.generate(context)
