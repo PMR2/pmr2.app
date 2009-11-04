@@ -9,6 +9,24 @@
       />
 
   <subscriber
+      for=".interfaces.IExposure
+          zope.app.event.interfaces.IObjectModifiedEvent"
+      handler=".content.catalog_content"
+      />
+
+  <subscriber
+      for=".interfaces.IExposureFile
+          zope.app.event.interfaces.IObjectModifiedEvent"
+      handler=".content.catalog_content"
+      />
+
+  <subscriber
+      for=".interfaces.IExposureFolder
+          zope.app.event.interfaces.IObjectModifiedEvent"
+      handler=".content.catalog_content"
+      />
+
+  <subscriber
       for=".interfaces.IExposureFileAnnotator
           zope.component.interfaces.IRegistered"
       handler=".factory.name_utility"

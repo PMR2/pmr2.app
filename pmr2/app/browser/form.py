@@ -1,6 +1,7 @@
 import zope.component
 import z3c.form.form
 from plone.i18n.normalizer.interfaces import IIDNormalizer
+from z3c.form.form import Form, EditForm
 
 
 class AddForm(z3c.form.form.AddForm):
@@ -97,14 +98,3 @@ class AddForm(z3c.form.form.AddForm):
             return "%s/%s" % (self.ctxobj.absolute_url(), view)
         else:
             return self.ctxobj.absolute_url()
-
-
-class EditForm(z3c.form.form.EditForm):
-    """\
-    Standard z3c EditForm.
-    """
-
-    def applyChanges(self, data):
-        changes = super(EditForm, self).applyChanges(data)
-        self.context.reindexObject()
-        return changes
