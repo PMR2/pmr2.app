@@ -4,8 +4,12 @@ from random import getrandbits
 import zope.interface
 import zope.component
 from zope.publisher.browser import BrowserPage
+from zope.i18nmessageid import MessageFactory
+_ = MessageFactory("pmr2")
+
 from paste.httpexceptions import HTTPNotFound
 import z3c.form.field
+from z3c.form import button
 from plone.memoize.view import memoize
 from plone.z3cform import layout
 
@@ -405,7 +409,7 @@ ExposureFileGenFormView = layout.wrap_form(ExposureFileGenForm,
     label="Add a file to the exposure")
 
 
-class ExposureFileAnnotatorForm(form.AddForm):
+class ExposureFileAnnotatorForm(form.BaseAnnotationForm):
     """\
     Form to add a note to an ExposureFile.
     """
@@ -414,32 +418,27 @@ class ExposureFileAnnotatorForm(form.AddForm):
     # This will become subclass of that.
     fields = z3c.form.field.Fields(IExposureFileAnnotatorForm)
 
-    def create(self, data):
-        self._data = data
+    @button.buttonAndHandler(_('Annotate'), name='apply')
+    def handleAnnotate(self, action):
+        self.baseAnnotate(action)
+
+    def annotate(self):
         annotator = zope.component.getUtility(
             IExposureFileAnnotator,
-            name=data['annotators']
+            name=self._data['annotators']
         )
-        return annotator
-
-    def add(self, obj):
-        # we don't actually add the obj into the ExposureFile, we call
-        # it with the context as the argument, magic happens.
-        obj(self.context)
+        annotator(self.context)
 
     def nextURL(self):
-        # we want our context to be the object that provides the URL.
-        self.ctxobj = self.context
-        # XXX will need to redirect to the view associated with the
-        # generator somehow... just going to use default for now.
-        url = form.AddForm.nextURL(self)
-        return url
+        # if there are multiple choices, redirect to default view.
+        # XXX default view only for now.
+        return '%s/@@%s' % (self.context.absolute_url(), 'view')
 
 ExposureFileAnnotatorFormView = layout.wrap_form(ExposureFileAnnotatorForm, 
     label="Add an annotation to an Exposure File.")
 
 
-class ExposureFileDocViewGenForm(form.AddForm):
+class ExposureFileDocViewGenForm(form.BaseAnnotationForm):
     """\
     Form to generate all the required notes for the selected view.
     """
@@ -449,26 +448,21 @@ class ExposureFileDocViewGenForm(form.AddForm):
     zope.interface.implements(IExposureFileDocViewGenForm)
     fields = z3c.form.field.Fields(IExposureFileDocViewGenForm)
 
-    def create(self, data):
-        self._data = data
-        view = zope.component.getUtility(
-            IExposureFileDocViewGen,
-            name=data['docview_generator']
-        )
-        return view
+    @button.buttonAndHandler(_('Generate'), name='apply')
+    def handleGenerate(self, action):
+        self.baseAnnotate(action)
 
-    def add(self, obj):
-        # we don't actually add the obj into the ExposureFile, we call
-        # it with the view, which then it will determine what to do
-        obj(self.context)
+    def annotate(self):
+        viewgen = zope.component.getUtility(
+            IExposureFileDocViewGen,
+            name=self._data['docview_generator']
+        )
+        viewgen(self.context)
 
     def nextURL(self):
-        # we want our context to be the object that provides the URL.
-        self.ctxobj = self.context
-        # XXX will need to redirect to the view associated with the
-        # generator somehow... just going to use default for now.
-        url = form.AddForm.nextURL(self)
-        return url
+        # if there are multiple choices, redirect to default view.
+        # XXX default view only for now.
+        return '%s/@@%s' % (self.context.absolute_url(), 'view')
 
 ExposureFileDocViewGenFormView = layout.wrap_form(
     ExposureFileDocViewGenForm, 

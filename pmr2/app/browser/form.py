@@ -1,4 +1,9 @@
 import zope.component
+import zope.event
+import zope.lifecycleevent
+from zope.i18nmessageid import MessageFactory
+_ = MessageFactory("pmr2")
+
 import z3c.form.form
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from z3c.form.form import Form, EditForm
@@ -98,3 +103,41 @@ class AddForm(z3c.form.form.AddForm):
             return "%s/%s" % (self.ctxobj.absolute_url(), view)
         else:
             return self.ctxobj.absolute_url()
+
+
+class BaseAnnotationForm(z3c.form.form.Form):
+    """\
+    Basic form to generate data and apply them to the object.
+    """
+
+    # XXX interface declaration needed
+
+    ignoreContext = True
+    ignoreReadonly = True
+    _finishedAdd = False
+    formErrorsMessage = _('There were some errors.')
+
+    def nextURL(self):
+        raise NotImplementedError
+
+    def annotate(self):
+        raise NotImplementedError
+
+    def baseAnnotate(self, action):
+        # subclasses need to assign the button for this.
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+        self._data = data
+        self.annotate()
+        zope.event.notify(
+            zope.lifecycleevent.ObjectModifiedEvent(self.context))
+        self._finishedAdd = True
+
+    def render(self):
+        if self._finishedAdd:
+            self.request.response.redirect(self.nextURL())
+            return ""
+        return super(BaseAnnotationForm, self).render()
+

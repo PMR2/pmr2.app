@@ -435,7 +435,7 @@ Good, now we use that transform to generate the Turtle RDF.
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.annotators': [u'rdfturtle'],
-    ...         'form.buttons.add': 1,
+    ...         'form.buttons.apply': 1,
     ...     })
     >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
@@ -480,7 +480,7 @@ We will do the same thing with the xml format.
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.annotators': [u'rdfxml'],
-    ...         'form.buttons.add': 1,
+    ...         'form.buttons.apply': 1,
     ...     })
     >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
@@ -682,7 +682,7 @@ For the HTML file
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.docview_generator': [u'safe_html'],
-    ...         'form.buttons.add': 1,
+    ...         'form.buttons.apply': 1,
     ...     })
     >>> view = exposure.ExposureFileDocViewGenForm(filectx, request)
     >>> result = view()
@@ -696,7 +696,7 @@ For the reStructureText file
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.docview_generator': [u'rest_to_html'],
-    ...         'form.buttons.add': 1,
+    ...         'form.buttons.apply': 1,
     ...     })
     >>> view = exposure.ExposureFileDocViewGenForm(filectx, request)
     >>> result = view()
