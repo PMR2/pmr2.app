@@ -26,8 +26,7 @@ class PortalTransformGenBase(object):
 
     transform = None  # define this
 
-    def convert(self, context):
-        input = context.file()
+    def convert(self, input):
         pt = getToolByName(input, 'portal_transforms')
         stream = datastream('pt_annotation')
         pt.convert(self.transform, input, stream)
@@ -67,8 +66,9 @@ class CellML2MathMLAnnotator(PortalTransformAnnotatorBase):
     title = u'Basic MathML'
 
     def generate(self, context):
+        input = context.file()
         return (
-            ('text', self.convert(context).decode('utf8')),
+            ('text', self.convert(input).decode('utf8')),
         )
 
 
@@ -117,7 +117,8 @@ class PortalTransformDocViewGenBase(
         return u''
 
     def generateText(self, context):
-        return self.convert(context)
+        input = context.file()
+        return self.convert(input)
 
 
 class HTMLDocViewGen(PortalTransformDocViewGenBase):
