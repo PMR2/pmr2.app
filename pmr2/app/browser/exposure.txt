@@ -688,6 +688,8 @@ For the HTML file
     >>> result = view()
     >>> filectx.getText()
     '\n<p>Lorem ipsum dolar sit amet</p>\n'
+    >>> filectx.docview_generator
+    u'safe_html'
 
 For the reStructureText file
 ::
@@ -702,6 +704,8 @@ For the reStructureText file
     >>> result = view()
     >>> filectx.getText()
     '<h2 class="title">Simple reStructureText</h2>\n<p>...</p>\n'
+    >>> filectx.docview_generator
+    u'rest_to_html'
 
 Hence annotator classes are separated from data adapters.  Of course,
 this means if different annotator classes uses the same adapters the

@@ -1,6 +1,8 @@
-from zope.annotation import factory
+from zope.interface import alsoProvides
+import zope.annotation
 from pmr2.app.adapter import *
 from pmr2.app.factory import *
+from pmr2.app.interfaces import *
 
 
 class RDFTurtleAnnotator(RDFLibEFAnnotator):
@@ -26,8 +28,13 @@ class RDFxmlAnnotator(RDFLibEFAnnotator):
                    'file) into xml format for display.'
     format = 'xml'
 
-RDFTurtleNoteFactory = factory(RawTextNote, 'rdfturtle')
-RDFn3NoteFactory = factory(RawTextNote, 'rdfn3')
-RDFxmlNoteFactory = factory(RawTextNote, 'rdfxml')
+RDFTurtleAnnotatorFactory = factory(RDFTurtleAnnotator)
+RDFn3AnnotatorFactory = factory(RDFn3Annotator)
+RDFxmlAnnotatorFactory = factory(RDFxmlAnnotator)
 
-RDFGroupNoteFactory = factory(GroupedNote, 'rdf')
+
+RDFTurtleNoteFactory = zope.annotation.factory(RawTextNote, 'rdfturtle')
+RDFn3NoteFactory = zope.annotation.factory(RawTextNote, 'rdfn3')
+RDFxmlNoteFactory = zope.annotation.factory(RawTextNote, 'rdfxml')
+
+RDFGroupNoteFactory = zope.annotation.factory(GroupedNote, 'rdf')

@@ -161,6 +161,8 @@ class Exposure(ATFolderDocument, TraversalCatchAll, ExposureContentIndexBase):
     workspace = fieldproperty.FieldProperty(IExposure['workspace'])
     commit_id = fieldproperty.FieldProperty(IExposure['commit_id'])
     curation = fieldproperty.FieldProperty(IExposure['curation'])
+    generated_from = fieldproperty.FieldProperty(IExposure['generated_from'])
+    generator_name = fieldproperty.FieldProperty(IExposure['generator_name'])
 
     def __before_publishing_traverse__(self, ob, request):
         TraversalCatchAll.__before_publishing_traverse__(self, ob, request)

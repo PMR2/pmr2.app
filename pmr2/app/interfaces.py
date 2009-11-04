@@ -235,6 +235,19 @@ class IExposure(zope.interface.Interface):
         required=False,
     )
 
+    generated_from = zope.schema.TextLine(
+        title=u'Generated From',
+        description=u'The source file which the documentation or data is '
+                     'generated from.',
+        required=False,
+    )
+
+    generator_name = zope.schema.TextLine(
+        title=u'Generator Name',
+        description=u'The name of the generator used to make this view.',
+        required=False,
+    )
+
 
 class IExposureDocGen(zope.interface.Interface):
     """\
@@ -718,6 +731,12 @@ class ICodeViews(zope.interface.Interface):
     """
 
 
+class INamedUtilBase(zope.interface.Interface):
+    """\
+    Marker interface for the utility generator.
+    """
+
+
 class IExposureFileDocViewGen(zope.interface.Interface):
     """\
     For the utilities that will generate the text for the document_view
@@ -757,6 +776,27 @@ class IExposureFileDocViewGenForm(zope.interface.Interface):
     For the form and utility that handles the generation of the text for
     the ExposureFile default document_view.
     """
+
+    docview_generator = zope.schema.Choice(
+        title=u'View Generator',
+        description=u'The selected generator will be used to attempt to ' \
+                     'generate text for the default document view.',
+        required=True,
+        vocabulary='ExposureFileDocViewGenVocab',
+    )
+
+
+class IExposureDocViewGenForm(zope.interface.Interface):
+    """\
+    For the form and utility that handles the generation of the text for
+    the ExposureFile default document_view.
+    """
+
+    filename = zope.schema.Choice(
+        title=u'Documentation File',
+        description=u'The file where the documentation resides in.',
+        vocabulary='ManifestListVocab',
+    )
 
     docview_generator = zope.schema.Choice(
         title=u'View Generator',

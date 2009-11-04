@@ -440,7 +440,7 @@ ExposureFileAnnotatorFormView = layout.wrap_form(ExposureFileAnnotatorForm,
 
 class ExposureFileDocViewGenForm(form.BaseAnnotationForm):
     """\
-    Form to generate all the required notes for the selected view.
+    Form to generate all the default view of a file within an exposure.
     """
 
     # Multiple choice form will need this method, but generalized.
@@ -462,11 +462,43 @@ class ExposureFileDocViewGenForm(form.BaseAnnotationForm):
     def nextURL(self):
         # if there are multiple choices, redirect to default view.
         # XXX default view only for now.
-        return '%s/@@%s' % (self.context.absolute_url(), 'view')
+        #return '%s/@@%s' % (self.context.absolute_url(), 'view')
+        return '%s/%s' % (self.context.absolute_url(), 'view')
 
 ExposureFileDocViewGenFormView = layout.wrap_form(
     ExposureFileDocViewGenForm, 
     label="Generate Default View for Exposure File.")
+
+
+class ExposureDocViewGenForm(form.BaseAnnotationForm):
+    """\
+    Form to generate the default view of the base exposure.
+    """
+
+    # Multiple choice form will need this method, but generalized.
+    # This will become subclass of that.
+    zope.interface.implements(IExposureDocViewGenForm)
+    fields = z3c.form.field.Fields(IExposureDocViewGenForm)
+
+    @button.buttonAndHandler(_('Generate'), name='apply')
+    def handleGenerate(self, action):
+        self.baseAnnotate(action)
+
+    def annotate(self):
+        viewgen = zope.component.getUtility(
+            IExposureDocViewGen,
+            name=self._data['docview_generator']
+        )
+        viewgen(self.context)
+
+    def nextURL(self):
+        # if there are multiple choices, redirect to default view.
+        # XXX default view only for now.
+        return '%s/@@%s' % (self.context.absolute_url(), 'view')
+
+ExposureDocViewGenFormView = layout.wrap_form(
+    ExposureDocViewGenForm, 
+    label="Generate Default View for Exposure.")
 
 
 class PMR1ExposureFileGenForm(ExposureFileGenForm):

@@ -18,6 +18,38 @@ def name_utility(obj, event):
 
     locate(obj, None, event.object.name)
 
+def factory(klass):
+    class _factory(Location):
+        zope.interface.implements(INamedUtilBase)
+        def __init__(self):
+            self.title = klass.title
+            self.description = klass.description
+        def __call__(self, context):
+            # returns instance of the annotator
+            result = klass(context)
+            result.__name__ = self.__name__
+            result()
+    # create/return instance of the factory that instantiates the 
+    # classes below.
+    return _factory()
+
+
+class NamedUtilBase(Location):
+    """\
+    Class that allows a utility to be named.
+    """
+
+    zope.interface.implements(INamedUtilBase)
+    title = None
+    description = None
+
+    def __init__(self, context):
+        self.context = context
+
+    @property
+    def name(self):
+        return self.__name__
+
 
 class PortalTransformGenBase(object):
     """\
@@ -33,22 +65,23 @@ class PortalTransformGenBase(object):
         return stream.getData()
 
 
-class ExposureFileAnnotatorBase(Location):
+class ExposureFileAnnotatorBase(NamedUtilBase):
 
-    def generate(self, context):
+    def generate(self):
         raise NotImplementedError
 
-    def __call__(self, context):
+    def __call__(self):
         # XXX return a data struture instead
-        note = zope.component.queryAdapter(context, name=self.__name__)
-        data = self.generate(context)
+        context = self.context
+        note = zope.component.getAdapter(context, name=self.name)
+        data = self.generate()
         for a, v in data:
              setattr(note, a, v)
         # as this utility is registered with the same name as the view
         # that this reader/writer is for, append it the context to
         # mark the view as generated.
         views = context.views or []  # need a list
-        views.append(self.__name__)
+        views.append(self.name)
         # write: to generate this view, this annonator was used
         context.views = views
 
@@ -64,18 +97,21 @@ class CellML2MathMLAnnotator(PortalTransformAnnotatorBase):
     zope.interface.implements(IExposureFileAnnotator)
     transform = 'pmr2_processor_legacy_cellml2html_mathml'
     title = u'Basic MathML'
+    description = u''
 
-    def generate(self, context):
-        input = context.file()
+    def generate(self):
+        input = self.context.file()
         return (
             ('text', self.convert(input).decode('utf8')),
         )
 
+CellML2MathMLAnnotatorFactory = factory(CellML2MathMLAnnotator)
+
 
 class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
 
-    def generate(self, context):
-        input = context.file()
+    def generate(self):
+        input = self.context.file()
         metadata = Cmeta(StringIO(input))
         return (
             ('text', unicode(metadata.graph.serialize(format=self.format))),
@@ -83,25 +119,26 @@ class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
 
 
 # DocView Generator
-class ExposureFileDocViewGenBase(object):
+class ExposureFileDocViewGenBase(NamedUtilBase):
     """\
     Base utility class.
     """
 
-    def generateTitle(self, context):
+    def generateTitle(self):
         raise NotImplementedError
 
-    def generateDescription(self, context):
+    def generateDescription(self):
         raise NotImplementedError
 
     def generateText(self):
         raise NotImplementedError
 
-    def __call__(self, context):
-        context.setTitle(self.generateTitle(context))
-        context.setDescription(self.generateDescription(context))
-        context.setText(self.generateText(context))
-        context.docview_generator = self.__name__
+    def __call__(self):
+        context = self.context
+        context.setTitle(self.generateTitle())
+        context.setDescription(self.generateDescription())
+        context.setText(self.generateText())
+        context.docview_generator = self.name
 
 
 class PortalTransformDocViewGenBase(
@@ -110,14 +147,14 @@ class PortalTransformDocViewGenBase(
     Combining PortalTransforms with the document view generator.
     """
 
-    def generateTitle(self, context):
+    def generateTitle(self):
         return u''
 
-    def generateDescription(self, context):
+    def generateDescription(self):
         return u''
 
-    def generateText(self, context):
-        input = context.file()
+    def generateText(self):
+        input = self.context.file()
         return self.convert(input)
 
 
@@ -128,6 +165,8 @@ class HTMLDocViewGen(PortalTransformDocViewGenBase):
     description = u'This converts raw HTML files into a format suitable for ' \
                    'a Plone site.'
 
+HTMLDocViewGenFactory = factory(HTMLDocViewGen)
+
 
 class RSTDocViewGen(PortalTransformDocViewGenBase):
     zope.interface.implements(IExposureFileDocViewGen)
@@ -135,3 +174,5 @@ class RSTDocViewGen(PortalTransformDocViewGenBase):
     title = u'reStructuredText annotator'
     description = u'This converts raw RST files into a format suitable for ' \
                    'a Plone site.'
+
+RSTDocViewGenFactory = factory(RSTDocViewGen)

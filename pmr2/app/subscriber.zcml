@@ -27,13 +27,7 @@
       />
 
   <subscriber
-      for=".interfaces.IExposureFileAnnotator
-          zope.component.interfaces.IRegistered"
-      handler=".factory.name_utility"
-      />
-
-  <subscriber
-      for=".interfaces.IExposureFileDocViewGen
+      for=".interfaces.INamedUtilBase
           zope.component.interfaces.IRegistered"
       handler=".factory.name_utility"
       />

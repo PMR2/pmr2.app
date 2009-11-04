@@ -5,19 +5,19 @@
 
   <utility
       name="rdfturtle"
-      factory="pmr2.app.tests.adapter.RDFTurtleAnnotator"
+      component="pmr2.app.tests.adapter.RDFTurtleAnnotatorFactory"
       provides=".interfaces.IExposureFileAnnotator"
       />
 
   <utility
       name="rdfn3"
-      factory="pmr2.app.tests.adapter.RDFn3Annotator"
+      component="pmr2.app.tests.adapter.RDFn3AnnotatorFactory"
       provides=".interfaces.IExposureFileAnnotator"
       />
 
   <utility
       name="rdfxml"
-      factory="pmr2.app.tests.adapter.RDFxmlAnnotator"
+      component="pmr2.app.tests.adapter.RDFxmlAnnotatorFactory"
       provides=".interfaces.IExposureFileAnnotator"
       />
 

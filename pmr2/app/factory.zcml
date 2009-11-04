@@ -3,7 +3,7 @@
 
   <utility
       name="basic_mathml"
-      factory=".factory.CellML2MathMLAnnotator"
+      component=".factory.CellML2MathMLAnnotatorFactory"
       provides=".interfaces.IExposureFileAnnotator"
       />
 
@@ -11,13 +11,13 @@
 
   <utility
       name="safe_html"
-      factory=".factory.HTMLDocViewGen"
+      component=".factory.HTMLDocViewGenFactory"
       provides=".interfaces.IExposureFileDocViewGen"
       />
 
   <utility
       name="rest_to_html"
-      factory=".factory.RSTDocViewGen"
+      component=".factory.RSTDocViewGenFactory"
       provides=".interfaces.IExposureFileDocViewGen"
       />
 
