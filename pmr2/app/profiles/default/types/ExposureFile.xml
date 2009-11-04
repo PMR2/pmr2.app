@@ -41,4 +41,10 @@
   <permission value="Modify portal content"/>
  </action>
 
+ <action title="Set Default View" action_id="docviewgen" category="object" 
+    url_expr="string:${object_url}/@@docviewgen" visible="True" 
+    i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+
 </object>

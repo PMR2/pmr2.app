@@ -88,11 +88,19 @@ class ExposureFileDocViewGenBase(object):
     Base utility class.
     """
 
-    def generate(self):
+    def generateTitle(self, context):
+        raise NotImplementedError
+
+    def generateDescription(self, context):
+        raise NotImplementedError
+
+    def generateText(self):
         raise NotImplementedError
 
     def __call__(self, context):
-        context.setText(self.generate(context))
+        context.setTitle(self.generateTitle(context))
+        context.setDescription(self.generateDescription(context))
+        context.setText(self.generateText(context))
         context.docview_generator = self.__name__
 
 
@@ -102,7 +110,13 @@ class PortalTransformDocViewGenBase(
     Combining PortalTransforms with the document view generator.
     """
 
-    def generate(self, context):
+    def generateTitle(self, context):
+        return u''
+
+    def generateDescription(self, context):
+        return u''
+
+    def generateText(self, context):
         return self.convert(context)
 
 

@@ -735,10 +735,20 @@ class IExposureFileDocViewGen(zope.interface.Interface):
         description=u'A brief note about what this generator does.',
         required=False,
     )
-    
-    def generate():
+
+    def generateTitle():
         """\
-        The method that will generate the text for the call method.
+        The method that will generate the title.
+        """
+
+    def generateDescription():
+        """\
+        The method that will generate the description.
+        """
+
+    def generateText():
+        """\
+        The method that will generate the text.
         """
 
 
