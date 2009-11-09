@@ -232,6 +232,13 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <browser:page
+      for="pmr2.app.content.Exposure"
+      name="viewgen"
+      class=".exposure.ExposureDocViewGenFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <!-- Exposure File -->
 
   <browser:page

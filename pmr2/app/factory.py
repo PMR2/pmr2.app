@@ -153,6 +153,11 @@ class PortalTransformDocViewGenBase(
     Combining PortalTransforms with the document view generator.
     """
 
+    def __init__(self, *a, **kw):
+        super(PortalTransformDocViewGenBase, self).__init__(*a, **kw)
+        self.input = zope.component.getAdapter(
+            self.context, IExposureDocViewGenSourceAdapter).file()
+
     def generateTitle(self):
         return u''
 
@@ -160,8 +165,7 @@ class PortalTransformDocViewGenBase(
         return u''
 
     def generateText(self):
-        input = zope.component.getAdapter(
-            self.context, IExposureDocViewGenSourceAdapter).file()
+        input = self.input
         return self.convert(input)
 
 

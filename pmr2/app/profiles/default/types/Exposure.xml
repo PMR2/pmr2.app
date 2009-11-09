@@ -57,9 +57,16 @@
   <permission value="Modify portal content"/>
  </action>
 
- <action title="Builder" action_id="generator" 
+ <action title="Builder" action_id="filegen" 
     category="object" 
     url_expr="string:${object_url}/@@filegen" visible="True"
+    i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+
+ <action title="View Gen" action_id="viewgen" 
+    category="object" 
+    url_expr="string:${object_url}/@@viewgen" visible="True"
     i18n:attributes="title">
   <permission value="Modify portal content"/>
  </action>
