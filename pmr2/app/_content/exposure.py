@@ -153,7 +153,7 @@ class Exposure(ATFolderDocument, TraversalCatchAll, ExposureContentIndexBase):
     have classes defined for them.
     """
 
-    interface.implements(IExposure)
+    interface.implements(IExposure, IExposureObject)
     security = ClassSecurityInfo()
     # XXX the get_ methods are similar to IWorkspace.
     # best to define a common interface.
@@ -747,7 +747,7 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
 
 class ExposureFolder(ATFolderDocument, TraversalCatchAll):
 
-    interface.implements(IExposureFolder)
+    interface.implements(IExposureFolder, IExposureObject)
 
     def __before_publishing_traverse__(self, ob, request):
         TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
@@ -763,49 +763,19 @@ class ExposureFile(ATDocument):
     """
 
     interface.implements(
+        IExposureObject,
         IExposureFile,
         zope.annotation.interfaces.IAttributeAnnotatable,
     )
     views = fieldproperty.FieldProperty(IExposureFile['views'])
     security = ClassSecurityInfo()
 
-    security.declareProtected(View, 'source')
-    def source(self):
-        # this could be nested in some folders, so we need to acquire
-        # the parents up to the Exposure object.
-        obj = aq_inner(self)
-        paths = []
-        while obj is not None:
-            if IExposure.providedBy(obj):
-                # as paths were appended...
-                paths.reverse()
-                workspace = zope.component.queryMultiAdapter(
-                    (obj,),
-                    name='ExposureToWorkspace',
-                )
-                return obj, workspace, '/'.join(paths)
-            paths.append(obj.getId())
-            obj = aq_parent(obj)
-        # XXX could benefit from a better exception type?
-        raise ValueError('cannot acquire Exposure object')
-
-    security.declareProtected(View, 'file')
-    def file(self):
-        """\
-        While a view could technically be defined to return this, it is
-        better to generate the redirect to the actual file in the
-        workspace.
-        """
-
-        exposure, workspace, path = self.source()
-        storage = zope.component.queryMultiAdapter(
-            (workspace, exposure.commit_id,),
-            name='PMR2StorageFixedRev',
-        )
-        return storage.file(path)
-
     security.declareProtected(View, 'raw_text')
     def raw_text(self):
+        """\
+        Fetches raw text of all notes that are annotate to this file.
+        """
+
         results = []
         for adapter in self.adapters:
             ctxobj = zope.component.queryAdapter(self, name=adapter)

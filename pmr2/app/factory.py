@@ -100,7 +100,8 @@ class CellML2MathMLAnnotator(PortalTransformAnnotatorBase):
     description = u''
 
     def generate(self):
-        input = self.context.file()
+        input = zope.component.getAdapter(
+            self.context, IExposureSourceAdapter).file()
         return (
             ('text', self.convert(input).decode('utf8')),
         )
@@ -111,7 +112,8 @@ CellML2MathMLAnnotatorFactory = factory(CellML2MathMLAnnotator)
 class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
 
     def generate(self):
-        input = self.context.file()
+        input = zope.component.getAdapter(
+            self.context, IExposureSourceAdapter).file()
         metadata = Cmeta(StringIO(input))
         return (
             ('text', unicode(metadata.graph.serialize(format=self.format))),
@@ -154,7 +156,8 @@ class PortalTransformDocViewGenBase(
         return u''
 
     def generateText(self):
-        input = self.context.file()
+        input = zope.component.getAdapter(
+            self.context, IExposureSourceAdapter).file()
         return self.convert(input)
 
 

@@ -210,6 +210,12 @@ class ISandbox(zope.interface.Interface):
     )
 
 
+class IExposureObject(zope.interface.Interface):
+    """\
+    Any object within an exposure need to implement this.
+    """
+
+
 class IExposure(zope.interface.Interface):
     """\
     Container for all exposure pages.
@@ -565,17 +571,6 @@ class IExposureFile(zope.interface.Interface):
         required=False,
     )
 
-    def source():
-        """\
-        returns a tuple containing its root exposure object, workspace 
-        object and the full path of the actual file in this order.
-        """
-
-    def file():
-        """\
-        returns the string of the file itself.
-        """
-
     def raw_text():
         """\
         returns a concatenated string of all raw text, if it implements
@@ -805,3 +800,21 @@ class IExposureDocViewGenForm(zope.interface.Interface):
         required=True,
         vocabulary='ExposureFileDocViewGenVocab',
     )
+
+class IExposureSourceAdapter(zope.interface.Interface):
+    """\
+    Provides any Exposure related objects with methods that will return
+    its source Exposure (root), the Workspace object, the relative path
+    within it and the content of the file.
+    """
+
+    def source():
+        """\
+        returns a tuple containing its root exposure object, workspace 
+        object and the full path of the actual file in this order.
+        """
+
+    def file():
+        """\
+        returns the string of the file itself.
+        """

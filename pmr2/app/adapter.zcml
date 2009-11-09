@@ -39,6 +39,12 @@
       name="ExposureToWorkspace"
       />
 
+  <adapter
+      for="pmr2.app.interfaces.IExposureObject"
+      factory=".adapter.ExposureSourceAdapter"
+      provides="pmr2.app.interfaces.IExposureSourceAdapter"
+      />
+
   <!-- for ExposureFile -->
 
   <adapter

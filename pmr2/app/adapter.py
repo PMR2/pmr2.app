@@ -192,7 +192,55 @@ def ExposureToWorkspaceAdapter(context):
     return result[0].getObject()
 
 
-# Basic support for ExposureFile adapters.
+class ExposureSourceAdapter(object):
+    """\
+    See interface.
+    """
+
+    zope.interface.implements(IExposureSourceAdapter)
+
+    def __init__(self, context):
+        """
+        context - any exposure object
+        """
+
+        self.context = context
+
+    def source(self):
+        # this could be nested in some folders, so we need to acquire
+        # the parents up to the Exposure object.
+        obj = aq_inner(self.context)
+        paths = []
+        while obj is not None:
+            if IExposure.providedBy(obj):
+                # as paths were appended...
+                paths.reverse()
+                workspace = zope.component.queryMultiAdapter(
+                    (obj,),
+                    name='ExposureToWorkspace',
+                )
+                return obj, workspace, '/'.join(paths)
+            paths.append(obj.getId())
+            obj = aq_parent(obj)
+        # XXX could benefit from a better exception type?
+        raise ValueError('cannot acquire Exposure object')
+
+    def file(self):
+        """\
+        While a view could technically be defined to return this, it is
+        better to generate the redirect to the actual file in the
+        workspace.
+        """
+
+        exposure, workspace, path = self.source()
+        storage = zope.component.queryMultiAdapter(
+            (workspace, exposure.commit_id,),
+            name='PMR2StorageFixedRev',
+        )
+        return storage.file(path)
+
+
+# Basic support for ExposureFileNote annotation adapters.
 
 class ExposureFileNoteBase(Persistent, Contained):
     """\

@@ -598,7 +598,9 @@ class ExposureFileRedirectView(BrowserPage):
     target_view = 'rawfile'
 
     def __call__(self):
-        exposure, workspace, path = self.context.source()
+        helper = zope.component.queryAdapter(
+            self.context, IExposureSourceAdapter)
+        exposure, workspace, path = helper.source()
         target_uri = '%s/@@%s/%s/%s' % (workspace.absolute_url(), 
             self.target_view, exposure.commit_id, path)
         return self.request.response.redirect(target_uri)

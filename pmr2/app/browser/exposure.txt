@@ -325,24 +325,27 @@ standard ExposureFile object.
     ...     })
     >>> testform = exposure.ExposureFileGenForm(context, request)
     >>> testform.update()
-    >>> context[file1]
+    >>> efile1 = context[file1]
+    >>> efile1
     <ExposureFile at ...>
 
-Try the file method to get the content of the file.  The reason this
-method exist in this class is to serve as a helper to retrieve content,
-not as something for views to use.  May be better served by an adapter.
+We need a way to get to the content of the file.  I have generalized the
+required methods into its own adapter, so we utilize it and call the
+method that will return the source
 ::
 
-    >>> context[file1].file()
-    'This is file1, initial commit.\n'
-
-The object a method that returns a tuple of its source:
-::
-
+    >>> helper = zope.component.queryAdapter(efile1, IExposureSourceAdapter)
     >>> answer = (context, pmr2hgtest, 'file1')
-    >>> result = context[file1].source()
+    >>> result = helper.source()
     >>> answer == result
     True
+
+The adapter also provides a method that returns the contents of the file
+that this represents.
+::
+
+    >>> helper.file()
+    'This is file1, initial commit.\n'
 
 Test it with the default view.  There should be no adapters added yet.
 ::
