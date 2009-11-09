@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<object>
+  <order manager="plone.abovecontentbody">
+    <viewlet name="pmr2.app.above_content_body_portlets" />
+  </order>
+</object>

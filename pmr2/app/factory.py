@@ -25,7 +25,7 @@ def factory(klass):
             self.title = klass.title
             self.description = klass.description
         def __call__(self, context):
-            # returns instance of the annotator
+            # instantiate annotator and calls it.
             result = klass(context)
             result.__name__ = self.__name__
             result()

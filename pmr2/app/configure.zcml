@@ -10,6 +10,7 @@
   <include package="z3c.table" />
   <include package=".browser" />
   <include package=".validator" />
+  <include package=".viewlets" />
 
   <include file="subscriber.zcml" />
   <include file="adapter.zcml" />

@@ -134,9 +134,9 @@ There are some caveats, it has to do with existing objects:
 
 ------------------------------------------------------------------------
 
-=============================================================
-Exposure implementation refactor in v0.2 (Currently Proposed)
-=============================================================
+========================
+Exposure Files and Notes
+========================
 
 How exposures were originally implemented results in an explosion of
 objects, as a result from one-to-many mapping from file to objects.
@@ -145,8 +145,8 @@ In the redesign introduced in v0.2, there is now only one object type
 and only one of them per file.  Each of them will reference its source
 file, and the custom views and data within are provided by adapters
 which is extended off a standard adapter type.  The data generation is
-no longer part of that class but be placed in its own, which can also
-be inherited to be reused by more complicated data processing methods.
+no longer part of that class but be placed in its own, which can also be 
+inherited to be reused by more complicated data processing methods.
 
 This generalization will unify all views in the repository, result in
 a standardized front page for each exposure and is significantly cleaner

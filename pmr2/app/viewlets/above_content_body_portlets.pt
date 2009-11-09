@@ -1,0 +1,1 @@
+<tal:block replace="structure provider:pmr2.app.above_content_body_portlets" />
