@@ -46,8 +46,8 @@
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.ExposureFileDocViewGenVocabFactory"
-      name="ExposureFileDocViewGenVocab"
+      component="pmr2.app.vocab.DocViewGenVocabFactory"
+      name="DocViewGenVocab"
       />
 
 </configure>

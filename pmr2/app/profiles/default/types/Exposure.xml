@@ -34,7 +34,7 @@
  <alias from="@@curation" to="@@exposure_curation_edit"/>
 
  <!-- because ultimately this will be a builder, not just a generator -->
- <alias from="@@builder" to="@@filegen"/>
+ <!-- <alias from="@@builder" to="@@filegen"/> -->
 
  <alias from="sharing" to="@@sharing"/>
  <alias from="view" to="(selected layout)"/>
@@ -59,7 +59,7 @@
 
  <action title="Builder" action_id="generator" 
     category="object" 
-    url_expr="string:${object_url}/@@builder" visible="True"
+    url_expr="string:${object_url}/@@filegen" visible="True"
     i18n:attributes="title">
   <permission value="Modify portal content"/>
  </action>

@@ -28,9 +28,9 @@ class RDFxmlAnnotator(RDFLibEFAnnotator):
                    'file) into xml format for display.'
     format = 'xml'
 
-RDFTurtleAnnotatorFactory = factory(RDFTurtleAnnotator)
-RDFn3AnnotatorFactory = factory(RDFn3Annotator)
-RDFxmlAnnotatorFactory = factory(RDFxmlAnnotator)
+RDFTurtleAnnotatorFactory = named_factory(RDFTurtleAnnotator)
+RDFn3AnnotatorFactory = named_factory(RDFn3Annotator)
+RDFxmlAnnotatorFactory = named_factory(RDFxmlAnnotator)
 
 
 RDFTurtleNoteFactory = zope.annotation.factory(RawTextNote, 'rdfturtle')

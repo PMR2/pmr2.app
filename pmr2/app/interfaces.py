@@ -737,10 +737,10 @@ class INamedUtilBase(zope.interface.Interface):
     """
 
 
-class IExposureFileDocViewGen(zope.interface.Interface):
+class IDocViewGen(zope.interface.Interface):
     """\
     For the utilities that will generate the text for the document_view
-    of exposure file objects.
+    of exposure type objects.
     """
 
     title = zope.schema.Text(
@@ -782,7 +782,7 @@ class IExposureFileDocViewGenForm(zope.interface.Interface):
         description=u'The selected generator will be used to attempt to ' \
                      'generate text for the default document view.',
         required=True,
-        vocabulary='ExposureFileDocViewGenVocab',
+        vocabulary='DocViewGenVocab',
     )
 
 
@@ -803,7 +803,7 @@ class IExposureDocViewGenForm(zope.interface.Interface):
         description=u'The selected generator will be used to attempt to ' \
                      'generate text for the default document view.',
         required=True,
-        vocabulary='ExposureFileDocViewGenVocab',
+        vocabulary='DocViewGenVocab',
     )
 
 class IExposureSourceAdapter(zope.interface.Interface):

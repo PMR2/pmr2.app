@@ -12,13 +12,13 @@
   <utility
       name="safe_html"
       component=".factory.HTMLDocViewGenFactory"
-      provides=".interfaces.IExposureFileDocViewGen"
+      provides=".interfaces.IDocViewGen"
       />
 
   <utility
       name="rest_to_html"
       component=".factory.RSTDocViewGenFactory"
-      provides=".interfaces.IExposureFileDocViewGen"
+      provides=".interfaces.IDocViewGen"
       />
 
 </configure>

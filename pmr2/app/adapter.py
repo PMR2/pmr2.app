@@ -227,10 +227,12 @@ class ExposureSourceAdapter(object):
 
     def file(self):
         """\
-        While a view could technically be defined to return this, it is
-        better to generate the redirect to the actual file in the
-        workspace.
+        Returns contents of this file.
         """
+
+        # While a view could technically be defined to return this, it 
+        # is better to generate the redirect to the actual file in the
+        # workspace.
 
         exposure, workspace, path = self.source()
         storage = zope.component.queryMultiAdapter(

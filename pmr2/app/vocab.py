@@ -154,18 +154,18 @@ def ExposureFileAnnotatorVocabFactory(context):
 alsoProvides(ExposureFileAnnotatorVocabFactory, IVocabularyFactory)
 
 
-class ExposureFileDocViewGenVocab(SimpleVocabulary):
+class DocViewGenVocab(SimpleVocabulary):
 
     def __init__(self, context):
         self.context = context
         values = [(i[0], i[0], i[1].title) for i in 
-                  getUtilitiesFor(IExposureFileDocViewGen)]
+                  getUtilitiesFor(IDocViewGen)]
         # sort by title
         values.sort(cmp=lambda x, y: cmp(x[2], y[2]))
         terms = [SimpleTerm(*i) for i in values]
-        super(ExposureFileDocViewGenVocab, self).__init__(terms)
+        super(DocViewGenVocab, self).__init__(terms)
 
-def ExposureFileDocViewGenVocabFactory(context):
-    return ExposureFileDocViewGenVocab(context)
+def DocViewGenVocabFactory(context):
+    return DocViewGenVocab(context)
 
-alsoProvides(ExposureFileDocViewGenVocabFactory, IVocabularyFactory)
+alsoProvides(DocViewGenVocabFactory, IVocabularyFactory)

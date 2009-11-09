@@ -454,7 +454,7 @@ class ExposureFileDocViewGenForm(form.BaseAnnotationForm):
 
     def annotate(self):
         viewgen = zope.component.getUtility(
-            IExposureFileDocViewGen,
+            IDocViewGen,
             name=self._data['docview_generator']
         )
         viewgen(self.context)
@@ -486,7 +486,7 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
 
     def annotate(self):
         viewgen = zope.component.getUtility(
-            IExposureDocViewGen,
+            IDocViewGen,
             name=self._data['docview_generator']
         )
         viewgen(self.context)

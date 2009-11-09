@@ -18,7 +18,11 @@ def name_utility(obj, event):
 
     locate(obj, None, event.object.name)
 
-def factory(klass):
+def named_factory(klass):
+    """\
+    Named Factory maker
+    """
+
     class _factory(Location):
         zope.interface.implements(INamedUtilBase)
         def __init__(self):
@@ -26,9 +30,9 @@ def factory(klass):
             self.description = klass.description
         def __call__(self, context):
             # instantiate annotator and calls it.
-            result = klass(context)
-            result.__name__ = self.__name__
-            result()
+            generator = klass(context)
+            generator.__name__ = self.__name__
+            generator()
     # create/return instance of the factory that instantiates the 
     # classes below.
     return _factory()
@@ -106,7 +110,7 @@ class CellML2MathMLAnnotator(PortalTransformAnnotatorBase):
             ('text', self.convert(input).decode('utf8')),
         )
 
-CellML2MathMLAnnotatorFactory = factory(CellML2MathMLAnnotator)
+CellML2MathMLAnnotatorFactory = named_factory(CellML2MathMLAnnotator)
 
 
 class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
@@ -121,7 +125,7 @@ class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
 
 
 # DocView Generator
-class ExposureFileDocViewGenBase(NamedUtilBase):
+class DocViewGenBase(NamedUtilBase):
     """\
     Base utility class.
     """
@@ -144,7 +148,7 @@ class ExposureFileDocViewGenBase(NamedUtilBase):
 
 
 class PortalTransformDocViewGenBase(
-        PortalTransformGenBase, ExposureFileDocViewGenBase):
+        PortalTransformGenBase, DocViewGenBase):
     """\
     Combining PortalTransforms with the document view generator.
     """
@@ -162,20 +166,20 @@ class PortalTransformDocViewGenBase(
 
 
 class HTMLDocViewGen(PortalTransformDocViewGenBase):
-    zope.interface.implements(IExposureFileDocViewGen)
+    zope.interface.implements(IDocViewGen)
     transform = 'safe_html'
     title = u'HTML annotator'
     description = u'This converts raw HTML files into a format suitable for ' \
                    'a Plone site.'
 
-HTMLDocViewGenFactory = factory(HTMLDocViewGen)
+HTMLDocViewGenFactory = named_factory(HTMLDocViewGen)
 
 
 class RSTDocViewGen(PortalTransformDocViewGenBase):
-    zope.interface.implements(IExposureFileDocViewGen)
+    zope.interface.implements(IDocViewGen)
     transform = 'rest_to_html'
     title = u'reStructuredText annotator'
     description = u'This converts raw RST files into a format suitable for ' \
                    'a Plone site.'
 
-RSTDocViewGenFactory = factory(RSTDocViewGen)
+RSTDocViewGenFactory = named_factory(RSTDocViewGen)
