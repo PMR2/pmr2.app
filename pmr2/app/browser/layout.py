@@ -10,6 +10,7 @@ from plone.z3cform.templates import ZopeTwoFormTemplateFactory
 from paste.httpexceptions import HTTPFound, HTTPNotFound, HTTPForbidden
 
 from Acquisition import aq_inner
+from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName
 from Products.PythonScripts.standard import url_quote
 
@@ -112,7 +113,8 @@ class StorageFormWrapper(FormWrapper):
             user_roles = self.request['AUTHENTICATED_USER'].getRolesInContext(
                 self.context)
             if u'WorkspacePusher' not in user_roles:
-                raise HTTPForbidden()
+                raise Unauthorized(
+                    'You are unauthorized to push to this workspace')
 
         try:
             storage = getMultiAdapter((self.context,), name='PMR2Storage')

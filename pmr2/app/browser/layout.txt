@@ -74,8 +74,7 @@ wrapper class.  Since the dummy user has no roles, it will be blocked.
     >>> form()
     Traceback (most recent call last):
     ...
-    HTTPForbidden: 403 Forbidden
-    ...
+    Unauthorized: You are unauthorized to push to this workspace
 
 On the other hand if the user with the correct role, it will be let in.
 However, it is an "unbound" workspace object so when storage tries to
