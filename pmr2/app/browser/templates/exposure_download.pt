@@ -1,0 +1,12 @@
+<dl class="portlet" id="pmr_source">
+  <dt class="portletHeader">Download Methods:</dt>
+  <dd>
+    <ul>
+      <li tal:repeat="i view/file_access_uris"
+        ><a 
+          tal:attributes="href i/href"
+          tal:content="i/label"
+        ></a></li>
+    </ul>
+  </dd>
+</dl>

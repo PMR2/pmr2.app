@@ -40,4 +40,22 @@
      description="A portlet that shows the information available for the exposure.">
  </portlet>
 
+ <portlet 
+     addview="pmr2.portlets.pmr1_curation"
+     title="Exposure Curation"
+     description="A portlet that shows the curation of the exposure.">
+ </portlet>
+
+ <portlet 
+     addview="pmr2.portlets.exposure_source"
+     title="Exposure Source"
+     description="A portlet that shows the source of the expsoure.">
+ </portlet>
+
+ <portlet 
+     addview="pmr2.portlets.exposure_download"
+     title="Exposure Download"
+     description="A portlet that shows the download options available for the exposure object.">
+ </portlet>
+
 </portlets>

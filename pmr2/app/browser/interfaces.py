@@ -44,6 +44,12 @@ class IPlainLayoutWrapper(IFormWrapper):
     """
 
 
+class IPloneviewLayoutWrapper(IFormWrapper):
+    """\
+    Interface for the Ploneview layout wrapper.
+    """
+
+
 class IMathMLLayoutWrapper(IFormWrapper):
     """\
     Interface for the MathML layout wrapper.

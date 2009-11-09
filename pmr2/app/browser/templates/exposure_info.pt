@@ -1,6 +1,4 @@
-<h1 tal:content="context/title">Title</h1>
 <h4>General Information</h4>
-
 <div id="pmr1_ex_header">
   <dl id="pmr1_curation">
     <dt>PMR1 Curation</dt>
@@ -23,7 +21,7 @@
   </dl>
 
   <dl id="pmr1_download">
-    <dt>Access model via:</dt>
+    <dt>Download Methods:</dt>
     <dd>
       <ul>
         <li tal:repeat="i view/file_access_uris"
@@ -50,9 +48,4 @@
       tal:content="source/manifest/label"
     >workspace</a>.
   </dl>
-</div>
-
-<h4>Documentation</h4>
-<div tal:condition="nothing">
-  <div tal:replace="structure context/getText"/>
 </div>

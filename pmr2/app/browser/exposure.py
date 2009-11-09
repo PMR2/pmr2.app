@@ -27,7 +27,7 @@ from pmr2.app.browser import page
 from pmr2.app.browser.page import ViewPageTemplateFile
 from pmr2.app.browser import widget
 from pmr2.app.browser.layout import PlainLayoutWrapper, MathMLLayoutWrapper, \
-    BorderedTraverseFormWrapper
+    PloneviewLayoutWrapper, BorderedTraverseFormWrapper
 
 
 class ExposureAddForm(form.AddForm):
@@ -501,81 +501,17 @@ ExposureDocViewGenFormView = layout.wrap_form(
     label="Generate Default View for Exposure.")
 
 
-class PMR1ExposureFileGenForm(ExposureFileGenForm):
-    """\
-    Adds adapters that are part of the view.
-    """
-
-    def add_data(self, ctxobj):
-        pass
-
-ExposureDocGenFormView = layout.wrap_form(ExposureDocGenForm, 
-    label="Exposure Documentation Generation Form")
-
-
 class ExposureInfo(ExposureTraversalPage):
     """\
     Inheriting from the TraversalPage because this will be the main view
     wrapping around exposure.
     """
 
-    render = ViewPageTemplateFile('exposure_info.pt')
-
-    @memoize
-    def pmr1_curation(self):
-        """
-        Temporary method for PMR1 compatibility styles.
-        """
-
-        pairs = (
-            ('pmr_curation_star', u'Curation Status:'),
-            ('pmr_pcenv_star', u'OpenCell:'),
-            ('pmr_jsim_star', u'JSim:'),
-            ('pmr_cor_star', u'COR:'),
-        )
-        curation = self.context.curation or {}
-        result = []
-        for key, label in pairs:
-            # first item or character
-            stars = key in curation and curation[key][0] or u'0'
-            result.append({
-                'label': label,
-                'stars': stars,
-            })
-        return result
-
-    @memoize
-    def derive_from_uri(self):
-        resolver = self.uri_resolver
-        workspace_uri = resolver.path_to_uri(self.context.commit_id)
-        manifest_uri = resolver.path_to_uri(
-            self.context.commit_id, '', '@@file', False)
-        result = {
-            'workspace': {
-                'label': self.workspace.Title,
-                'href': workspace_uri,
-            },
-            'manifest': {
-                'label': short(self.context.commit_id),
-                'href': manifest_uri,
-            },
-        }
-        return result
-
-    @memoize
-    def file_access_uris(self):
-        result = []
-        resolver = self.uri_resolver
-
-        # using resolver to "resolve" a gzip download path.
-        archive_uri = resolver.path_to_uri(
-            self.context.commit_id, 'gz', '@@archive', False)
-        result.append({'label': u'Download (tgz)', 'href': archive_uri})
-
-        return result
+    def render(self):
+        return self.context.getText()
 
 ExposureInfoView = layout.wrap_form(ExposureInfo,
-    __wrapper_class=PlainLayoutWrapper)
+    __wrapper_class=PloneviewLayoutWrapper)
 
 
 class ExposureFileInfo(page.TraversePage):

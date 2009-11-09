@@ -36,12 +36,48 @@
   <!-- v0.2 -->
 
   <plone:portlet
-      name="portlets.ExposureFileNotes"
+      name="pmr2.portlets.ExposureInfo"
+      interface=".ExposureInfo.IExposureInfoPortlet"
+      assignment=".ExposureInfo.Assignment"
+      renderer=".ExposureInfo.Renderer"
+      addview=".ExposureInfo.AddForm"
+      editview=".ExposureInfo.EditForm"
+      />
+
+  <plone:portlet
+      name="pmr2.portlets.ExposureFileNotes"
       interface=".ExposureFileNotes.IExposureFileNotesPortlet"
       assignment=".ExposureFileNotes.Assignment"
       renderer=".ExposureFileNotes.Renderer"
       addview=".ExposureFileNotes.AddForm"
       editview=".ExposureFileNotes.EditForm"
+      />
+
+  <plone:portlet
+      name="pmr2.portlets.pmr1_curation"
+      interface=".PMR1Curation.IPMR1CurationPortlet"
+      assignment=".PMR1Curation.Assignment"
+      renderer=".PMR1Curation.Renderer"
+      addview=".PMR1Curation.AddForm"
+      editview=".PMR1Curation.EditForm"
+      />
+
+  <plone:portlet
+      name="pmr2.portlets.exposure_source"
+      interface=".ExposureSource.IExposureSourcePortlet"
+      assignment=".ExposureSource.Assignment"
+      renderer=".ExposureSource.Renderer"
+      addview=".ExposureSource.AddForm"
+      editview=".ExposureSource.EditForm"
+      />
+
+  <plone:portlet
+      name="pmr2.portlets.exposure_download"
+      interface=".ExposureDownload.IExposureDownloadPortlet"
+      assignment=".ExposureDownload.Assignment"
+      renderer=".ExposureDownload.Renderer"
+      addview=".ExposureDownload.AddForm"
+      editview=".ExposureDownload.EditForm"
       />
 
   <!--

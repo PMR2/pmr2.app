@@ -23,6 +23,7 @@
  <property name="view_methods">
   <element value="exposure_folder_listing"/>
   <element value="exposure_info"/>
+  <element value="document_view"/>
   <!-- Showcase view? -->
  </property>
 

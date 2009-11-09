@@ -439,6 +439,7 @@
 
   <adapter factory=".layout.plain_layout_factory" />
   <adapter factory=".layout.mathml_layout_factory" />
+  <adapter factory=".layout.ploneview_layout_factory" />
 
   <!-- 
     Resource declarations.

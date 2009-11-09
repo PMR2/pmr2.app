@@ -310,7 +310,7 @@ Now we have an exposure, try to use one of its default views on it.
     >>> request = TestRequest()
     >>> view = exposure.ExposureInfo(context, request)
     >>> view.render()
-    u'<h1>...
+    ''
 
 We need to wrap around one of the interesting files inside with the
 standard ExposureFile object.

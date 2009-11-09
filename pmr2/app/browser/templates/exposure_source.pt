@@ -1,0 +1,11 @@
+<dl class="portlet" tal:define="source view/derive_from_uri" id="pmr_source">
+  <dt class="portletHeader">Source</dt>
+  <dd>Derived from workspace <a 
+    tal:attributes="href source/workspace/href"
+    tal:content="source/workspace/label"
+  >workspace</a> at changeset <a 
+    tal:attributes="href source/manifest/href"
+    tal:content="source/manifest/label"
+  >workspace</a>.
+  </dd>
+</dl>

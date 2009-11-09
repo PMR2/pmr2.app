@@ -18,12 +18,16 @@ import pmr2.mercurial.exceptions
 import pmr2.app.browser
 from pmr2.app.browser.interfaces import IUpdatablePageView
 from pmr2.app.browser.interfaces import IPlainLayoutWrapper
+from pmr2.app.browser.interfaces import IPloneviewLayoutWrapper
 from pmr2.app.browser.interfaces import IMathMLLayoutWrapper
 from pmr2.app.browser.interfaces import IPublishTraverse
 import pmr2.app.security.roles
 
 path = lambda p: os.path.join(os.path.dirname(pmr2.app.browser.__file__), 
                               'templates', p)
+
+ploneview_layout_factory = ZopeTwoFormTemplateFactory(
+    path('ploneview_layout.pt'), form=IPloneviewLayoutWrapper)
 
 plain_layout_factory = ZopeTwoFormTemplateFactory(
     path('plain_layout.pt'), form=IPlainLayoutWrapper)
@@ -45,6 +49,16 @@ class FormWrapper(layout.FormWrapper):
             # only this interface is known to require updating.
             self.form_instance.update()
         return layout.FormWrapper.__call__(self)
+
+
+class PloneviewLayoutWrapper(FormWrapper):
+    """\
+    A customized layout wrapper that also renders the viewlet managers
+    defined in the default plone views.
+    (rendered inside an h1) like the default plone.z3cform.
+    """
+
+    zope.interface.implements(IPloneviewLayoutWrapper)
 
 
 class PlainLayoutWrapper(FormWrapper):
