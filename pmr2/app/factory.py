@@ -161,7 +161,7 @@ class PortalTransformDocViewGenBase(
 
     def generateText(self):
         input = zope.component.getAdapter(
-            self.context, IExposureSourceAdapter).file()
+            self.context, IExposureDocViewGenSourceAdapter).file()
         return self.convert(input)
 
 

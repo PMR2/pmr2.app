@@ -45,6 +45,12 @@
       provides="pmr2.app.interfaces.IExposureSourceAdapter"
       />
 
+  <adapter
+      for="pmr2.app.interfaces.IExposureObject"
+      factory=".adapter.ExposureDocViewGenSourceAdapter"
+      provides="pmr2.app.interfaces.IExposureDocViewGenSourceAdapter"
+      />
+
   <!-- for ExposureFile -->
 
   <adapter

@@ -242,6 +242,21 @@ class ExposureSourceAdapter(object):
         return storage.file(path)
 
 
+class ExposureDocViewGenSourceAdapter(ExposureSourceAdapter):
+
+    zope.interface.implements(IExposureDocViewGenSourceAdapter)
+
+    def source(self):
+        exposure, workspace, path = ExposureSourceAdapter.source(self)
+        # Since this is for document source, Exposure objects has
+        # special handling procedures.
+        if IExposure.providedBy(self.context):
+            # as the root Exposure object can specify a path for now we
+            # lock it to a specific field for now
+            path = self.context.docview_gensource
+        return exposure, workspace, path
+
+
 # Basic support for ExposureFileNote annotation adapters.
 
 class ExposureFileNoteBase(Persistent, Contained):

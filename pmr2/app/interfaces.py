@@ -244,7 +244,7 @@ class IExposure(zope.interface.Interface):
     # this is not a Choice because the manifest list generation can be
     # a performance hit as this object gets hit a lot, and we don't have
     # caching yet... not to mention users won't be changing this.
-    generated_from = zope.schema.TextLine(
+    docview_gensource = zope.schema.TextLine(
         title=u'Generated From',
         description=u'The source file which the documentation or data is '
                      'generated from.',
@@ -253,7 +253,7 @@ class IExposure(zope.interface.Interface):
 
     # sometimes generator can become depcrecated and removed, thus no
     # longer in the vocabulary, plain text field again.
-    generator_name = zope.schema.TextLine(
+    docview_generator = zope.schema.TextLine(
         title=u'Generator Name',
         description=u'The name of the generator used to make this view.',
         required=False,
@@ -823,3 +823,10 @@ class IExposureSourceAdapter(zope.interface.Interface):
         """\
         returns the string of the file itself.
         """
+
+
+class IExposureDocViewGenSourceAdapter(zope.interface.Interface):
+    """\
+    Specific for DocViewGen, which has one exception case for IExposure
+    types.
+    """
