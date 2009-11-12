@@ -223,6 +223,7 @@ class IExposure(zope.interface.Interface):
 
     title = zope.schema.TextLine(
         title=u'Title',
+        required=False,
     )
 
     workspace = zope.schema.TextLine(

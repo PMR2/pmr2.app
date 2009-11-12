@@ -1,3 +1,5 @@
+import urllib
+
 from zope.component import queryMultiAdapter
 
 from plone.app.contentmenu.menu import WorkflowSubMenuItem
@@ -27,12 +29,15 @@ class WorkspaceMenuProvider(ContentMenuProvider):
             name="PMR2StorageRequestView")
         rev = storage.rev
         workspace = self.context.id
-
-        queryStr = '%s/@@create?type=%s&workspace=%s&rev=%s'
+        title = self.context.title
 
         actionRootUri = self.context.absolute_url()
-        mkSandboxUri = queryStr % (actionRootUri, 'sandbox', workspace, rev)
-        mkExposureUri = queryStr % (actionRootUri, 'exposure', workspace, rev)
+        args = tuple(map(urllib.quote_plus, (workspace, rev, title)))
+        queryStr = '&workspace=%s&rev=%s&title=%s' % args
+        baseUri = '%s/@@create?type=%s%s'
+
+        mkSandboxUri = baseUri % (actionRootUri, 'sandbox', queryStr)
+        mkExposureUri = baseUri % (actionRootUri, 'exposure', queryStr)
 
         items = [{
             'title': u'Workspace Actions',

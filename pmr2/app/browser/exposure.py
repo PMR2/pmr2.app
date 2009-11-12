@@ -35,7 +35,12 @@ class ExposureAddForm(form.AddForm):
     Exposure creation form.
     """
 
-    fields = z3c.form.field.Fields(IExposure)
+    fields = z3c.form.field.Fields(IExposure).select(
+        'title',
+        'workspace',
+        'commit_id',
+        'curation',
+    )
     fields['curation'].widgetFactory = widget.CurationWidgetFactory
     clsobj = Exposure
 

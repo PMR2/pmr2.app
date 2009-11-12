@@ -1,5 +1,6 @@
 import warnings
 import mimetypes
+import urllib
 
 import zope.interface
 import zope.component
@@ -618,15 +619,19 @@ class CreateForm(z3c.form.form.Form):
 
     def __call__(self):
         type = self.request.form.get('type', None)
-        rev = self.request.form.get('rev', None)
-        workspace = self.request.form.get('workspace', None)
+        rev = self.request.form.get('rev', '')
+        workspace = self.request.form.get('workspace', '')
+        title = self.request.form.get('title', '')
         if type == 'exposure':
             # XXX magic creation view
             subfrag = ('exposure', '@@exposure_add_form',)
             url = '/'.join(self.context.getPhysicalPath()[0:-2] + subfrag)
-            url += '?form.widgets.workspace=%s&form.widgets.commit_id=%s' % (
-                workspace,
-                rev,
+            url += '?form.widgets.workspace=%s' \
+                   '&form.widgets.commit_id=%s' \
+                   '&form.widgets.title=%s' % (
+                urllib.quote_plus(workspace),
+                urllib.quote_plus(rev),
+                urllib.quote_plus(title),
             )
             return self.request.response.redirect(url)
 
