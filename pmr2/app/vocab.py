@@ -135,12 +135,19 @@ class ExposureFileAnnotatorVocab(SimpleVocabulary):
         """
 
         self.context = context
-        values = [(i[0], i[0], i[1].title) for i in 
-                  getUtilitiesFor(IExposureFileAnnotator)]
+        terms = self._buildTerms()
+        super(ExposureFileAnnotatorVocab, self).__init__(terms)
+
+    def _getValues(self):
+        return [(i[0], i[0], i[1].title) for i in 
+                getUtilitiesFor(IExposureFileAnnotator)]
+
+    def _buildTerms(self):
         # sort by title
+        values = self._getValues()
         values.sort(cmp=lambda x, y: cmp(x[2], y[2]))
         terms = [SimpleTerm(*i) for i in values]
-        super(ExposureFileAnnotatorVocab, self).__init__(terms)
+        return terms
 
     def getTerm(self, value):
         """
@@ -150,8 +157,27 @@ class ExposureFileAnnotatorVocab(SimpleVocabulary):
         try:
             return super(ExposureFileAnnotatorVocab, self).getTerm(value)
         except LookupError:
-            # must have been removed. defaulting to default.
-            return SimpleTerm(value, value, value)
+            # XXX a little trickery here.
+            # this *might* be the default singleton instance; if that's
+            # the case then self.context must be None, and it may not
+            # contain all possible terms.
+            # this vocab should have been initalized at the right place
+            # such that this special treatment is not needed
+            # doing it only on failure because this isn't normally used
+            # to generate a list.
+            if self.context is None:
+                values = self._getValues()
+                if len(self) != len(values):
+                    # so we are not offering the full list here, reinitialize
+                    self.__init__(self.context)
+                    # try this again.
+                    try:
+                        return super(ExposureFileAnnotatorVocab,
+                            self).getTerm(value)
+                    except LookupError:
+                        pass
+        # default option.
+        return SimpleTerm(value, value, value)
 
 ExposureFileAnnotatorVocabFactory = vocab_factory(ExposureFileAnnotatorVocab)
 
