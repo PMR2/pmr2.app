@@ -437,7 +437,8 @@ class ExposureFileAnnotatorForm(form.BaseAnnotationForm):
     def nextURL(self):
         # if there are multiple choices, redirect to default view.
         # XXX default view only for now.
-        return '%s/@@%s' % (self.context.absolute_url(), 'view')
+        return '%s/@@%s' % (self.context.absolute_url(), 
+                            self._data['annotators'])
 
 ExposureFileAnnotatorFormView = layout.wrap_form(ExposureFileAnnotatorForm, 
     label="Add an annotation to an Exposure File.")

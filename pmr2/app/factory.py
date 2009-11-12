@@ -8,6 +8,7 @@ from Products.PortalTransforms.data import datastream
 
 from pmr2.processor.cmeta import Cmeta
 from pmr2.app.interfaces import *
+import pmr2.app.util
 
 
 def name_utility(obj, event):
@@ -71,6 +72,11 @@ class PortalTransformGenBase(object):
 
 class ExposureFileAnnotatorBase(NamedUtilBase):
 
+    def __init__(self, context):
+        super(ExposureFileAnnotatorBase, self).__init__(context)
+        self.input = zope.component.getAdapter(
+            self.context, IExposureSourceAdapter).file()
+
     def generate(self):
         raise NotImplementedError
 
@@ -84,10 +90,11 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
         # as this utility is registered with the same name as the view
         # that this reader/writer is for, append it the context to
         # mark the view as generated.
-        views = context.views or []  # need a list
-        views.append(self.name)
-        # write: to generate this view, this annonator was used
-        context.views = views
+        if self.name not in context.views:
+            views = context.views or []  # need a list
+            views.append(self.name)
+            # write: to generate this view, this annonator was used
+            context.views = views
 
 
 class PortalTransformAnnotatorBase(
@@ -104,10 +111,8 @@ class CellML2MathMLAnnotator(PortalTransformAnnotatorBase):
     description = u''
 
     def generate(self):
-        input = zope.component.getAdapter(
-            self.context, IExposureSourceAdapter).file()
         return (
-            ('text', self.convert(input).decode('utf8')),
+            ('text', self.convert(self.input).decode('utf8')),
         )
 
 CellML2MathMLAnnotatorFactory = named_factory(CellML2MathMLAnnotator)
@@ -116,9 +121,7 @@ CellML2MathMLAnnotatorFactory = named_factory(CellML2MathMLAnnotator)
 class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
 
     def generate(self):
-        input = zope.component.getAdapter(
-            self.context, IExposureSourceAdapter).file()
-        metadata = Cmeta(StringIO(input))
+        metadata = Cmeta(StringIO(self.input))
         return (
             ('text', unicode(metadata.graph.serialize(format=self.format))),
         )
@@ -129,6 +132,11 @@ class DocViewGenBase(NamedUtilBase):
     """\
     Base utility class.
     """
+
+    def __init__(self, context):
+        super(DocViewGenBase, self).__init__(context)
+        self.input = zope.component.getAdapter(
+            self.context, IExposureDocViewGenSourceAdapter).file()
 
     def generateTitle(self):
         raise NotImplementedError
@@ -155,8 +163,6 @@ class PortalTransformDocViewGenBase(
 
     def __init__(self, *a, **kw):
         super(PortalTransformDocViewGenBase, self).__init__(*a, **kw)
-        self.input = zope.component.getAdapter(
-            self.context, IExposureDocViewGenSourceAdapter).file()
 
     def generateTitle(self):
         return u''

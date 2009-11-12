@@ -269,6 +269,8 @@
       permission="zope2.View"
       />
 
+  <!-- Exposure Notes -->
+
   <browser:page
       for="pmr2.app.content.ExposureFile"
       name="basic_mathml"

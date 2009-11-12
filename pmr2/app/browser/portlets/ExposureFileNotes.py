@@ -1,5 +1,5 @@
-from zope import schema
-from zope.component import getMultiAdapter
+import zope.schema
+import zope.component
 from zope.formlib import form
 from zope.interface import implements
 
@@ -44,10 +44,13 @@ class Renderer(base.Renderer):
     @property
     def links(self):
         result = []
+        vocab = zope.component.queryUtility(zope.schema.interfaces.IVocabulary,
+                                            name='ExposureFileAnnotatorVocab')
+
         for view in self.context.views:
             result.append({
                 'href': '%s/@@%s' % (self.context.absolute_url(), view),
-                'title': view,
+                'title': vocab.getTerm(view).title,
             })
         return result
 

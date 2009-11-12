@@ -20,6 +20,7 @@ from pmr2.mercurial import WebStorage
 from pmr2.processor.cmeta import Cmeta
 from pmr2.app.interfaces import *
 from pmr2.app.browser.interfaces import IPublishTraverse
+import pmr2.app.util
 
 
 class PMR2StorageRequestViewAdapter(PMR2StorageRequestAdapter):
@@ -299,5 +300,5 @@ class GroupedNote(ExposureFileNoteBase):
     zope.interface.implements(IGroupedNote)
     active_notes = fieldproperty.FieldProperty(IGroupedNote['active_notes']) 
 
+BasicMathMLNoteFactory = factory(RawTextNote, 'basic_mathml')
 
-BasicMathMLNoteFactory = factory(RawTextNote)
