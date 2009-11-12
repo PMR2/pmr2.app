@@ -1,12 +1,20 @@
+import zope.interface
 from zope.interface import alsoProvides
 from zope.component import getUtilitiesFor, queryMultiAdapter
 
-from zope.schema.interfaces import IVocabularyFactory, ISource
+from zope.schema.interfaces import IVocabulary, IVocabularyFactory, ISource
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import *
+
+
+def vocab_factory(vocab):
+    def _vocab_factory(context):
+        return vocab(context)
+    alsoProvides(_vocab_factory, IVocabularyFactory)
+    return _vocab_factory
 
 
 class WorkspaceDirObjListVocab(SimpleVocabulary):
@@ -17,11 +25,7 @@ class WorkspaceDirObjListVocab(SimpleVocabulary):
         terms = [SimpleTerm(i, i[0]) for i in values]
         super(WorkspaceDirObjListVocab, self).__init__(terms)
 
-
-def WorkspaceDirObjListVocabFactory(context):
-    return WorkspaceDirObjListVocab(context)
-
-alsoProvides(WorkspaceDirObjListVocabFactory, IVocabularyFactory)
+WorkspaceDirObjListVocabFactory = vocab_factory(WorkspaceDirObjListVocab)
 
 
 class ManifestListVocab(SimpleVocabulary):
@@ -40,11 +44,7 @@ class ManifestListVocab(SimpleVocabulary):
         terms = [SimpleTerm(i, i) for i in values]
         super(ManifestListVocab, self).__init__(terms)
 
-
-def ManifestListVocabFactory(context):
-    return ManifestListVocab(context)
-
-alsoProvides(ManifestListVocabFactory, IVocabularyFactory)
+ManifestListVocabFactory = vocab_factory(ManifestListVocab)
 
 
 class PMR2TransformsVocab(SimpleVocabulary):
@@ -58,11 +58,7 @@ class PMR2TransformsVocab(SimpleVocabulary):
         terms = [SimpleTerm(*i) for i in transforms]
         super(PMR2TransformsVocab, self).__init__(terms)
 
-
-def PMR2TransformsVocabFactory(context):
-    return PMR2TransformsVocab(context)
-
-alsoProvides(PMR2TransformsVocabFactory, IVocabularyFactory)
+PMR2TransformsVocabFactory = vocab_factory(PMR2TransformsVocab)
 
 
 class PMR2IndexesVocab(SimpleVocabulary):
@@ -94,11 +90,7 @@ class PMR2IndexesVocab(SimpleVocabulary):
         else:
             return super(PMR2IndexesVocab, self).__contains__(terms)
 
-
-def PMR2IndexesVocabFactory(context):
-    return PMR2IndexesVocab(context)
-
-alsoProvides(PMR2IndexesVocabFactory, IVocabularyFactory)
+PMR2IndexesVocabFactory = vocab_factory(PMR2IndexesVocab)
 
 
 class PMR2ExposureDocumentFactoryVocab(SimpleVocabulary):
@@ -112,11 +104,8 @@ class PMR2ExposureDocumentFactoryVocab(SimpleVocabulary):
         terms = [SimpleTerm(*i) for i in values]
         super(PMR2ExposureDocumentFactoryVocab, self).__init__(terms)
 
-# Someone please save me / I am becoming one of / those FactoryFactory
-def PMR2ExposureDocumentFactoryVocabFactory(context):
-    return PMR2ExposureDocumentFactoryVocab(context)
-
-alsoProvides(PMR2ExposureDocumentFactoryVocabFactory, IVocabularyFactory)
+PMR2ExposureDocumentFactoryVocabFactory = \
+    vocab_factory(PMR2ExposureDocumentFactoryVocab)
 
 
 class PMR2ExposureMetadocFactoryVocab(SimpleVocabulary):
@@ -130,16 +119,21 @@ class PMR2ExposureMetadocFactoryVocab(SimpleVocabulary):
         terms = [SimpleTerm(*i) for i in values]
         super(PMR2ExposureMetadocFactoryVocab, self).__init__(terms)
 
-# Someone please save me / I am becoming one of / those FactoryFactory
-def PMR2ExposureMetadocFactoryVocabFactory(context):
-    return PMR2ExposureMetadocFactoryVocab(context)
-
-alsoProvides(PMR2ExposureMetadocFactoryVocabFactory, IVocabularyFactory)
+PMR2ExposureMetadocFactoryVocabFactory = \
+    vocab_factory(PMR2ExposureMetadocFactoryVocab)
 
 
 class ExposureFileAnnotatorVocab(SimpleVocabulary):
 
-    def __init__(self, context):
+    zope.interface.implements(IVocabulary)
+
+    def __init__(self, context=None):
+        """\
+        This can be registered without a context since the utilities are
+        generally not inserted during runtime (thus no need to 
+        regenerate this list all the time).
+        """
+
         self.context = context
         values = [(i[0], i[0], i[1].title) for i in 
                   getUtilitiesFor(IExposureFileAnnotator)]
@@ -148,10 +142,18 @@ class ExposureFileAnnotatorVocab(SimpleVocabulary):
         terms = [SimpleTerm(*i) for i in values]
         super(ExposureFileAnnotatorVocab, self).__init__(terms)
 
-def ExposureFileAnnotatorVocabFactory(context):
-    return ExposureFileAnnotatorVocab(context)
+    def getTerm(self, value):
+        """
+        As this vocabulary will be used for querying the title of
+        """
 
-alsoProvides(ExposureFileAnnotatorVocabFactory, IVocabularyFactory)
+        try:
+            return super(ExposureFileAnnotatorVocab, self).getTerm(value)
+        except LookupError:
+            # must have been removed. defaulting to default.
+            return SimpleTerm(value, value, value)
+
+ExposureFileAnnotatorVocabFactory = vocab_factory(ExposureFileAnnotatorVocab)
 
 
 class DocViewGenVocab(SimpleVocabulary):
@@ -165,7 +167,4 @@ class DocViewGenVocab(SimpleVocabulary):
         terms = [SimpleTerm(*i) for i in values]
         super(DocViewGenVocab, self).__init__(terms)
 
-def DocViewGenVocabFactory(context):
-    return DocViewGenVocab(context)
-
-alsoProvides(DocViewGenVocabFactory, IVocabularyFactory)
+DocViewGenVocabFactory = vocab_factory(DocViewGenVocab)
