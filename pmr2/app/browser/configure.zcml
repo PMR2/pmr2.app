@@ -278,6 +278,13 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="cmeta"
+      class=".exposure.CmetaNoteView"
+      permission="zope2.View"
+      />
+
   <!-- Exposure Document -->
 
   <browser:page

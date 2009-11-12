@@ -302,3 +302,73 @@ class GroupedNote(ExposureFileNoteBase):
 
 BasicMathMLNoteFactory = factory(RawTextNote, 'basic_mathml')
 
+
+class CmetaNote(ExposureFileNoteBase):
+    """\
+    Contains a rendering of the CellML Metadata.
+    """
+    # XXX this class should be part of the metadata, and registered into
+    # some sort of database that will automatically load this up into
+    # one of the valid document types that can be added.
+
+    zope.interface.implements(IExposureCmetaDocument)
+
+    metadata = fieldproperty.FieldProperty(IExposureCmetaDocument['metadata'])
+    citation_authors = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_authors'])
+    citation_title = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_title'])
+    citation_bibliographicCitation = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_bibliographicCitation'])
+    citation_id = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_id'])
+    citation_issued = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_issued'])
+    keywords = fieldproperty.FieldProperty(IExposureCmetaDocument['keywords'])
+
+    def citation_authors_string(self):
+        if not self.citation_authors:
+            return u''
+        middle = u'</li>\n<li>'.join(
+            ['%s, %s %s' % i for i in self.citation_authors])
+        return u'<ul>\n<li>%s</li>\n</ul>' % middle
+
+    def citation_id_html(self):
+        if not self.citation_id:
+            return u''
+        http = pmr2.app.util.uri2http(self.citation_id)
+        if http:
+            return '<a href="%s">%s</a>' % (http, self.citation_id)
+        return self.citation_id
+
+    def get_authors_family_index(self):
+        if self.citation_authors:
+            return [pmr2.app.util.normal_kw(i[0]) 
+                    for i in self.citation_authors]
+        else:
+            return []
+
+    def get_citation_title_index(self):
+        if self.citation_title:
+            return pmr2.app.util.normal_kw(self.citation_title)
+
+    def get_keywords_index(self):
+        if self.keywords:
+            results = [pmr2.app.util.normal_kw(i[1]) for i in self.keywords]
+            results.sort()
+            return results
+        else:
+            return []
+
+    def keywords_string(self):
+        return ', '.join(self.get_keywords_index())
+
+    def pmr1_citation_authors(self):
+        if self.citation_authors and self.citation_issued:
+            authors = u', '.join([i[0] for i in self.citation_authors])
+            return u'%s, %s' % (authors, self.citation_issued[:4])
+        else:
+            return u''
+
+    def pmr1_citation_title(self):
+        if self.citation_title:
+            return self.citation_title
+        else:
+            return u''
+
+CmetaNoteFactory = factory(CmetaNote, 'cmeta')

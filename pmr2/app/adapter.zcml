@@ -60,4 +60,11 @@
       name="basic_mathml"
       />
 
+  <adapter
+      for="pmr2.app.interfaces.IExposureFile"
+      factory=".adapter.CmetaNoteFactory"
+      provides="pmr2.app.interfaces.ICmetaNote"
+      name="cmeta"
+      />
+
 </configure> 

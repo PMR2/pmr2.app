@@ -615,6 +615,16 @@ MathMLNoteView = layout.wrap_form(MathMLNote,
     )
 
 
+class CmetaNote(ExposureFileViewBase):
+    """\
+    Wraps an object around the mathml view.
+    """
+
+    template = ViewPageTemplateFile('cmeta_note.pt')
+
+CmetaNoteView = layout.wrap_form(CmetaNote, __wrapper_class=PlainLayoutWrapper)
+
+
 class GroupedNoteViewBase(ExposureFileViewBase):
     """\
     This view looks into a valid list of text.

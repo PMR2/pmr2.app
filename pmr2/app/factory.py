@@ -127,6 +127,55 @@ class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
         )
 
 
+class CmetaAnnotator(ExposureFileAnnotatorBase):
+    zope.interface.implements(IExposureFileAnnotator)
+    title = u'Basic CellML Metadata'
+
+    def generate(self):
+        input = self.input
+        result = {}
+        metadata = Cmeta(StringIO(input))
+        ids = metadata.get_cmetaid()
+        if not ids:
+            # got no metadata.
+            return
+
+        citation = metadata.get_citation(ids[0])
+        if not citation:
+            # no citation, everyone go home
+            return
+
+        result['citation_id'] = citation[0]['citation_id']
+        # more than just journal
+        result['citation_bibliographicCitation'] = citation[0]['journal']
+        result['citation_title'] = citation[0]['title']
+
+        # XXX ad-hoc sanity checking
+        issued = citation[0]['issued']
+        if pmr2.app.util.simple_valid_date(issued):
+            result['citation_issued'] = issued
+        else:
+            result['citation_issued'] = u''
+
+        authors = []
+        for c in citation[0]['creator']:
+            family = c['family']
+            given = c['given']
+            if c['other']:
+                other = ' '.join(c['other'])
+            else:
+                other = ''
+            fn = (family, given, other)
+            authors.append(fn)
+            
+        result['citation_authors'] = authors
+        result['keywords'] = metadata.get_keywords()
+        # annotators are expected to return a list of tuples.
+        return result.items()
+
+CmetaAnnotatorFactory = named_factory(CmetaAnnotator)
+
+
 # DocView Generator
 class DocViewGenBase(NamedUtilBase):
     """\

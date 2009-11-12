@@ -7,6 +7,12 @@
       provides=".interfaces.IExposureFileAnnotator"
       />
 
+  <utility
+      name="cmeta"
+      component=".factory.CmetaAnnotatorFactory"
+      provides=".interfaces.IExposureFileAnnotator"
+      />
+
   <!-- default view generators -->
 
   <utility

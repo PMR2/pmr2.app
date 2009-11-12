@@ -579,6 +579,47 @@ If we define a valid subpath, it will give what we expect.
     &lt;rdf:RDF
     ...
 
+In PMR2 v0.1, the Cmeta views was implemented as a separate type, now
+it is reimplemented as an annotator.  We can test whether this works.
+First we make the note using the form, then we view the output using
+the view registered.
+
+    >>> filectx = context[file1]
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.annotators': [u'cmeta'],
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
+    >>> result = view()
+    >>> result == ''
+    True
+
+That should have generated all the data needed for the cmeta view.
+
+    >>> filectx = context[file1]
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter(
+    ...     (filectx, request), name='cmeta')
+    >>> view = view.form_instance
+    >>> print view()
+    <dl>
+    <dt>Authors:</dt>
+    <dd><ul>
+    <li>Family1, Given1 ...</li>
+    <li>Family2, G </li>
+    <li>Family2, H W</li>
+    </ul></dd>
+    <dt>Citation Title:</dt>
+    <dd>One Example Paper</dd>
+    <dt>Citation Source:</dt>
+    <dd>Journal of Example Subject</dd>
+    <dt>Citation Identifier:</dt>
+    <dd><a href="http://www.ncbi.nlm.nih.gov/pubmed/1111111111">urn:miriam:pubmed:1111111111</a></dd>
+    <dt>Model Keywords:</dt>
+    <dd>cardiac, electrophysiology, ventricular_myocyte</dd>
+    </dl>
+
 ------------------------
 Files within Directories
 ------------------------
