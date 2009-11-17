@@ -518,7 +518,12 @@ class ExposureInfo(ExposureTraversalPage):
     wrapping around exposure.
     """
 
-    def render(self):
+    render = ViewPageTemplateFile('exposure_docview.pt')
+
+    def subtitle(self):
+        return self.context.Description()
+
+    def content(self):
         return self.context.getText()
 
 ExposureInfoView = layout.wrap_form(ExposureInfo,

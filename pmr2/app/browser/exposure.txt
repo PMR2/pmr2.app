@@ -309,8 +309,8 @@ Now we have an exposure, try to use one of its default views on it.
 
     >>> request = TestRequest()
     >>> view = exposure.ExposureInfo(context, request)
-    >>> view.render()
-    ''
+    >>> print view.render()
+    <div></div>
 
 We need to wrap around one of the interesting files inside with the
 standard ExposureFile object.
@@ -603,6 +603,8 @@ That should have generated all the data needed for the cmeta view.
     ...     (filectx, request), name='cmeta')
     >>> view = view.form_instance
     >>> print view()
+    <h1>Model Metadata</h1>
+    <h3>Citation</h3>
     <dl>
     <dt>Authors:</dt>
     <dd><ul>
@@ -610,11 +612,11 @@ That should have generated all the data needed for the cmeta view.
     <li>Family2, G </li>
     <li>Family2, H W</li>
     </ul></dd>
-    <dt>Citation Title:</dt>
+    <dt>Title:</dt>
     <dd>One Example Paper</dd>
-    <dt>Citation Source:</dt>
+    <dt>Source:</dt>
     <dd>Journal of Example Subject</dd>
-    <dt>Citation Identifier:</dt>
+    <dt>Identifier:</dt>
     <dd><a href="http://www.ncbi.nlm.nih.gov/pubmed/1111111111">urn:miriam:pubmed:1111111111</a></dd>
     <dt>Model Keywords:</dt>
     <dd>cardiac, electrophysiology, ventricular_myocyte</dd>
