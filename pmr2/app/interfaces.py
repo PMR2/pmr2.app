@@ -843,6 +843,21 @@ class ICmetaNote(zope.interface.Interface):
         description=u'The metadata content',
     )
 
+    model_title = zope.schema.TextLine(
+        title=u'Model Title',
+        description=u'Title of the model',
+    )
+
+    model_author = zope.schema.TextLine(
+        title=u'Model Author',
+        description=u'Author of the model',
+    )
+
+    model_author_org = zope.schema.TextLine(
+        title=u'Model Author Organization',
+        description=u'Organization which the author is part of',
+    )
+
     citation_authors = zope.schema.List(
         title=u'Citation Authors',
         description=u'List of authors of this citation',

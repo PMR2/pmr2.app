@@ -604,6 +604,15 @@ That should have generated all the data needed for the cmeta view.
     >>> view = view.form_instance
     >>> print view()
     <h1>Model Metadata</h1>
+    <h3>Authorship</h3>
+    <dl>
+    <dt>Title:</dt>
+    <dd></dd>
+    <dt>Creator:</dt>
+    <dd>Family Given</dd>
+    <dt>Organization:</dt>
+    <dd>Example Subsidary, Example Organization</dd>
+    </dl>
     <h3>Citation</h3>
     <dl>
     <dt>Authors:</dt>

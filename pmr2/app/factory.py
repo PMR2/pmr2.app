@@ -170,6 +170,15 @@ class CmetaAnnotator(ExposureFileAnnotatorBase):
             
         result['citation_authors'] = authors
         result['keywords'] = metadata.get_keywords()
+
+        dcvc = metadata.get_dc_vcard_info()
+        if dcvc:
+            # using only first one
+            info = dcvc[0]
+            result['model_title'] = info['title']
+            result['model_author'] = '%s %s' % (info['family'], info['given'])
+            result['model_author_org'] = \
+                '%s, %s' % (info['orgunit'], info['orgname']) 
         # annotators are expected to return a list of tuples.
         return result.items()
 

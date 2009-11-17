@@ -1,4 +1,15 @@
 <h1>Model Metadata</h1>
+
+<h3>Authorship</h3>
+<dl>
+<dt>Title:</dt>
+<dd tal:content="view/note/model_title"/>
+<dt>Creator:</dt>
+<dd tal:content="view/note/model_author"/>
+<dt>Organization:</dt>
+<dd tal:content="view/note/model_author_org"/>
+</dl>
+
 <h3>Citation</h3>
 <dl>
 <dt>Authors:</dt>
@@ -11,4 +22,5 @@
 <dd tal:content="structure view/note/citation_id_html"/>
 <dt>Model Keywords:</dt>
 <dd tal:content="view/note/keywords_string"/>
+
 </dl>

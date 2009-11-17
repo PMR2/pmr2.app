@@ -311,15 +311,20 @@ class CmetaNote(ExposureFileNoteBase):
     # some sort of database that will automatically load this up into
     # one of the valid document types that can be added.
 
-    zope.interface.implements(IExposureCmetaDocument)
+    zope.interface.implements(ICmetaNote)
 
-    metadata = fieldproperty.FieldProperty(IExposureCmetaDocument['metadata'])
-    citation_authors = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_authors'])
-    citation_title = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_title'])
-    citation_bibliographicCitation = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_bibliographicCitation'])
-    citation_id = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_id'])
-    citation_issued = fieldproperty.FieldProperty(IExposureCmetaDocument['citation_issued'])
-    keywords = fieldproperty.FieldProperty(IExposureCmetaDocument['keywords'])
+    metadata = fieldproperty.FieldProperty(ICmetaNote['metadata'])
+
+    model_title = fieldproperty.FieldProperty(ICmetaNote['model_title'])
+    model_author = fieldproperty.FieldProperty(ICmetaNote['model_author'])
+    model_author_org = fieldproperty.FieldProperty(ICmetaNote['model_author_org'])
+
+    citation_authors = fieldproperty.FieldProperty(ICmetaNote['citation_authors'])
+    citation_title = fieldproperty.FieldProperty(ICmetaNote['citation_title'])
+    citation_bibliographicCitation = fieldproperty.FieldProperty(ICmetaNote['citation_bibliographicCitation'])
+    citation_id = fieldproperty.FieldProperty(ICmetaNote['citation_id'])
+    citation_issued = fieldproperty.FieldProperty(ICmetaNote['citation_issued'])
+    keywords = fieldproperty.FieldProperty(ICmetaNote['keywords'])
 
     def citation_authors_string(self):
         if not self.citation_authors:
