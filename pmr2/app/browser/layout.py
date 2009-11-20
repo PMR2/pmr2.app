@@ -2,6 +2,7 @@ import os.path
 
 import zope.interface
 from zope.app.authentication.httpplugins import HTTPBasicAuthCredentialsPlugin
+import zope.app.pagetemplate.viewpagetemplatefile
 from zope.component import getUtilitiesFor, getMultiAdapter
 from plone.app.workflow.interfaces import ISharingPageRole
 import plone.z3cform
@@ -53,6 +54,14 @@ __all__ = [
     'BorderedTraverseFormWrapper',
     'MathMLLayoutWrapper',
 ]
+
+
+class Macros(plone.z3cform.templates.Macros):
+    template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+        path('macros.pt'))
+
+    def __getitem__(self, key):
+        return self.template.macros[key]
 
 
 class FormWrapper(layout.FormWrapper):

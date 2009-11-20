@@ -37,6 +37,20 @@
 
   -->
 
+  <!-- bug fix/workarounds -->
+
+  <!-- 
+    this is for specifically forms with traverse subpaths, where the
+    default supplied with plone.z3cform does not take account of.
+  -->
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.interfaces.IExposureFile"
+      class=".layout.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public" />
+
+
   <!-- pages -->
 
   <browser:page
