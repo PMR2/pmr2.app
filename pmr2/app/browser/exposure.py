@@ -465,9 +465,10 @@ class ExposureFileDocViewGenForm(form.BaseAnnotationForm):
         viewgen(self.context)
 
     def nextURL(self):
-        # if there are multiple choices, redirect to default view.
+        # if there are multiple choices, redirect to a view.
         # XXX default view only for now.
-        #return '%s/@@%s' % (self.context.absolute_url(), 'view')
+        #return '%s/@@%s' % (self.context.absolute_url(), 
+        #                    self._data['docview_generator'])
         return '%s/%s' % (self.context.absolute_url(), 'view')
 
 ExposureFileDocViewGenFormView = layout.wrap_form(
@@ -502,9 +503,9 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
         viewgen(self.context)
 
     def nextURL(self):
-        # if there are multiple choices, redirect to default view.
-        # XXX default view only for now.
-        return '%s/@@%s' % (self.context.absolute_url(), 'view')
+        # return to the root, because we will only have one default view
+        # that generally will work.
+        return self.context.absolute_url()
 
 ExposureDocViewGenFormView = layout.wrap_form(
     ExposureDocViewGenForm, 

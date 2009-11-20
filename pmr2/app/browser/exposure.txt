@@ -282,6 +282,10 @@ Associated Views
 Demostration
 ------------
 
+Disclaimer: The doctests here only test the "workflow" (not Plone
+workflow but how the objects are created/used), there isn't enough
+testing of individual adapters (i.e. unit tests) written.
+
 For this demo, we need to create an actual environment such that the
 full demo can be appreciated.  We will use the environment that is
 built in setup (uses pmr2.mercurial.tests) and create the exposure using
@@ -583,6 +587,7 @@ In PMR2 v0.1, the Cmeta views was implemented as a separate type, now
 it is reimplemented as an annotator.  We can test whether this works.
 First we make the note using the form, then we view the output using
 the view registered.
+::
 
     >>> filectx = context[file1]
     >>> request = TestRequest(
@@ -596,6 +601,7 @@ the view registered.
     True
 
 That should have generated all the data needed for the cmeta view.
+::
 
     >>> filectx = context[file1]
     >>> request = TestRequest()
