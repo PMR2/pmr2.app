@@ -1,6 +1,5 @@
 import zope.interface
-from zope.interface import alsoProvides
-from zope.component import getUtilitiesFor, queryMultiAdapter
+import zope.component
 
 from zope.schema.interfaces import IVocabulary, IVocabularyFactory, ISource
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
@@ -13,7 +12,7 @@ from pmr2.app.interfaces import *
 def vocab_factory(vocab):
     def _vocab_factory(context):
         return vocab(context)
-    alsoProvides(_vocab_factory, IVocabularyFactory)
+    zope.interface.alsoProvides(_vocab_factory, IVocabularyFactory)
     return _vocab_factory
 
 
@@ -32,9 +31,16 @@ class ManifestListVocab(SimpleVocabulary):
 
     def __init__(self, context):
         self.context = context
+        obj = context
 
-        storage = queryMultiAdapter(
-            (context,),
+        helper = zope.component.queryAdapter(obj, IExposureSourceAdapter)
+        if not helper:
+            raise TypeError('could not acquire source from context')
+        obj, wks, path = helper.source()
+
+        # XXX could just adapt wks to the storage adapter from here
+        storage = zope.component.getMultiAdapter(
+            (obj,),
             name='PMR2ExposureStorageAdapter',
         )
 
@@ -98,7 +104,7 @@ class PMR2ExposureDocumentFactoryVocab(SimpleVocabulary):
     def __init__(self, context):
         self.context = context
         values = [(i[0], i[1].description) for i in 
-                  getUtilitiesFor(IExposureDocumentFactory)]
+                  zope.component.getUtilitiesFor(IExposureDocumentFactory)]
         # sort by description
         values.sort(cmp=lambda x, y: cmp(x[1], y[1]))
         terms = [SimpleTerm(*i) for i in values]
@@ -113,7 +119,7 @@ class PMR2ExposureMetadocFactoryVocab(SimpleVocabulary):
     def __init__(self, context):
         self.context = context
         values = [(i[0], i[1].description) for i in 
-                  getUtilitiesFor(IExposureMetadocFactory)]
+                  zope.component.getUtilitiesFor(IExposureMetadocFactory)]
         # sort by description
         values.sort(cmp=lambda x, y: cmp(x[1], y[1]))
         terms = [SimpleTerm(*i) for i in values]
@@ -140,7 +146,7 @@ class ExposureFileAnnotatorVocab(SimpleVocabulary):
 
     def _getValues(self):
         return [(i[0], i[0], i[1].title) for i in 
-                getUtilitiesFor(IExposureFileAnnotator)]
+                zope.component.getUtilitiesFor(IExposureFileAnnotator)]
 
     def _buildTerms(self):
         # sort by title
@@ -190,7 +196,7 @@ class ExposureFileNoteViewVocab(ExposureFileAnnotatorVocab):
 
     def _getValues(self):
         return [(i[0], i[0], i[1].label) for i in 
-                getUtilitiesFor(IExposureFileAnnotator)]
+                zope.component.getUtilitiesFor(IExposureFileAnnotator)]
 
 
 class DocViewGenVocab(SimpleVocabulary):
@@ -198,7 +204,7 @@ class DocViewGenVocab(SimpleVocabulary):
     def __init__(self, context):
         self.context = context
         values = [(i[0], i[0], i[1].title) for i in 
-                  getUtilitiesFor(IDocViewGen)]
+                  zope.component.getUtilitiesFor(IDocViewGen)]
         # sort by title
         values.sort(cmp=lambda x, y: cmp(x[2], y[2]))
         terms = [SimpleTerm(*i) for i in values]

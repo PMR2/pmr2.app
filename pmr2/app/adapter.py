@@ -243,6 +243,15 @@ class ExposureSourceAdapter(object):
         return storage.file(path)
 
 
+class ExposureFileNoteSourceAdapter(ExposureSourceAdapter):
+
+    def __init__(self, context):
+        self.context = context.__parent__
+        # Since an annotation note should have a parent that provides
+        # IExposureObject, this should pass
+        assert IExposureObject.providedBy(self.context)
+
+
 class ExposureDocViewGenSourceAdapter(ExposureSourceAdapter):
 
     zope.interface.implements(IExposureDocViewGenSourceAdapter)
