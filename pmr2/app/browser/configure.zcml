@@ -280,6 +280,13 @@
 
   <browser:page
       for="pmr2.app.content.ExposureFile"
+      name="basic_ccode"
+      class=".exposure.BasicCCodeNoteView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
       name="cmeta"
       class=".exposure.CmetaNoteView"
       permission="zope2.View"

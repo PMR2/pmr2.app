@@ -121,6 +121,21 @@ class CellML2MathMLAnnotator(PortalTransformAnnotatorBase):
 CellML2MathMLAnnotatorFactory = named_factory(CellML2MathMLAnnotator)
 
 
+class CellML2CAnnotator(PortalTransformAnnotatorBase):
+    zope.interface.implements(IExposureFileAnnotator)
+    transform = 'pmr2_processor_cellmlapi_cellml2c'
+    title = u'CellML C Code Generation'
+    label = u'Procedural C Code'
+    description = u''
+
+    def generate(self):
+        return (
+            ('text', self.convert(self.input).decode('utf8')),
+        )
+
+CellML2CAnnotatorFactory = named_factory(CellML2CAnnotator)
+
+
 class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
 
     def generate(self):

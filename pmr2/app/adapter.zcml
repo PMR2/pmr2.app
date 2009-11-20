@@ -62,6 +62,13 @@
 
   <adapter
       for="pmr2.app.interfaces.IExposureFile"
+      factory=".adapter.BasicCCodeNoteFactory"
+      provides="pmr2.app.interfaces.IRawTextNote"
+      name="basic_ccode"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposureFile"
       factory=".adapter.CmetaNoteFactory"
       provides="pmr2.app.interfaces.ICmetaNote"
       name="cmeta"

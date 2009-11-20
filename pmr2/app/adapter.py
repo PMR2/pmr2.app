@@ -301,6 +301,7 @@ class GroupedNote(ExposureFileNoteBase):
     active_notes = fieldproperty.FieldProperty(IGroupedNote['active_notes']) 
 
 BasicMathMLNoteFactory = factory(RawTextNote, 'basic_mathml')
+BasicCCodeNoteFactory = factory(RawTextNote, 'basic_ccode')
 
 
 class CmetaNote(ExposureFileNoteBase):
