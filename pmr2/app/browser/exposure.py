@@ -26,8 +26,7 @@ from pmr2.app.browser import form
 from pmr2.app.browser import page
 from pmr2.app.browser.page import ViewPageTemplateFile
 from pmr2.app.browser import widget
-from pmr2.app.browser.layout import PlainLayoutWrapper, MathMLLayoutWrapper, \
-    PloneviewLayoutWrapper, BorderedTraverseFormWrapper
+from pmr2.app.browser.layout import *
 
 
 class ExposureAddForm(form.AddForm):
@@ -569,6 +568,10 @@ class ExposureFileViewBase(page.TraversePage):
     @property
     def name(self):
         return self.__name__
+
+    @property
+    def view_url(self):
+        return '%s/@@%s' % (self.context.absolute_url(), self.name)
 
     @property
     def note(self):

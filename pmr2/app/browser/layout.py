@@ -36,6 +36,24 @@ plain_layout_factory = ZopeTwoFormTemplateFactory(
 mathml_layout_factory = ZopeTwoFormTemplateFactory(
     path('mathml_layout.pt'), form=IMathMLLayoutWrapper)
 
+__all__ = [
+    'ploneview_layout_factory',
+    'plain_layout_factory',
+    'mathml_layout_factory',
+
+    'FormWrapper',
+    'PloneviewLayoutWrapper',
+    'PlainLayoutWrapper',
+    'BorderedFormWrapper',
+    'StorageFormWrapper',
+    'BorderedStorageFormWrapper',
+    'TraverseFormWrapper',
+    'PlainTraverseLayoutWrapper',
+    'PlainTraverseOverridableWrapper',
+    'BorderedTraverseFormWrapper',
+    'MathMLLayoutWrapper',
+]
+
 
 class FormWrapper(layout.FormWrapper):
     """\
@@ -162,6 +180,22 @@ class TraverseFormWrapper(FormWrapper):
     def publishTraverse(self, request, name):
         self.traverse_subpath.append(name)
         return self
+
+
+class PlainTraverseLayoutWrapper(TraverseFormWrapper):
+    zope.interface.implements(IPlainLayoutWrapper)
+
+
+class PlainTraverseOverridableWrapper(PlainTraverseLayoutWrapper):
+    """\
+    This wrapper, if traversal elements are included, skip itself and
+    use the internal form only.
+    """
+
+    def __call__(self):
+        if self.traverse_subpath:
+            return self.form_instance()
+        return super(PlainTraverseOverridableWrapper, self).__call__()
 
 
 class BorderedTraverseFormWrapper(TraverseFormWrapper):
