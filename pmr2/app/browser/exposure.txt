@@ -637,6 +637,89 @@ That should have generated all the data needed for the cmeta view.
     <dd>cardiac, electrophysiology, ventricular_myocyte</dd>
     </dl>
 
+Session files are kind of different, since currently there isn't a way
+to determine one as they are not linked (not strictly true, it can be
+determined by parsing all session files, but it is currently not within
+the scope to do so).  So we allow the user to specify one and attached
+to the file as a note.  However, some notes are not meant for users to
+edit for some content are not compatible with sanitization after the
+generation was done, so we have the editable note implement a marker
+interface of some sort.  Anyway, we test out editing first on the
+session file note/annotator.
+::
+
+    >>> filectx = context[file1]
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.annotators': [u'opencellsession'],
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
+    >>> result = view()
+    >>> result == ''
+    True
+    >>> request.response.getHeader('Location')
+    'http://.../example_model.cellml/@@note_editor/opencellsession'
+
+We should have been a redirect to the edit view.  The editor view is
+defined without any default fields, so it must figure out the correct
+fields from the name of the note from the URI supplied.  We replicate
+what the request would see here and render the note edit view.
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureFileNoteEditForm(filectx, request)
+    >>> view.traverse_subpath = ['opencellsession']
+    >>> result = view()
+    >>> 'filename' in result
+    True
+    >>> 'component/docs/index.html' in result
+    True
+
+The filename field is rendered.  Whereas the other notes that are not
+meant to be user editable will result in a not found error.  Likewise
+for the lack of input.
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureFileNoteEditForm(filectx, request)
+    >>> view.traverse_subpath = []
+    >>> view()
+    Traceback (most recent call last):
+    ...
+    HTTPNotFound: 404 Not Found
+    ...
+    >>> view.traverse_subpath = ['cmeta']
+    >>> view()
+    Traceback (most recent call last):
+    ...
+    HTTPNotFound: 404 Not Found
+    ...
+
+Then apply on the edit form for the note, and the note will have its
+field updated.
+::
+
+    >>> session_path = u'component/docs/index.html'
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.filename': [session_path],
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> view = exposure.ExposureFileNoteEditForm(filectx, request)
+    >>> view.traverse_subpath = ['opencellsession']
+    >>> result = view()
+
+Now if we call the OpenCell session note view for the file, it will
+redirect to the session file.
+::
+
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((filectx, request), 
+    ...                                         name='opencellsession')
+    >>> result = view()
+    >>> print request.response.getHeader('Location')
+    http://...rdfmodel/@@pcenv/.../component/docs/index.html
+
 ------------------------
 Files within Directories
 ------------------------
