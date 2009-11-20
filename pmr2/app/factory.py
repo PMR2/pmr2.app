@@ -180,7 +180,7 @@ class CmetaAnnotator(ExposureFileAnnotatorBase):
             # using only first one
             info = dcvc[0]
             result['model_title'] = info['title']
-            result['model_author'] = '%s %s' % (info['family'], info['given'])
+            result['model_author'] = '%s %s' % (info['given'], info['family'])
             result['model_author_org'] = \
                 '%s, %s' % (info['orgunit'], info['orgname']) 
         # annotators are expected to return a list of tuples.

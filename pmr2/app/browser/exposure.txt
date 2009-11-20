@@ -609,7 +609,7 @@ That should have generated all the data needed for the cmeta view.
     <dt>Title:</dt>
     <dd></dd>
     <dt>Creator:</dt>
-    <dd>Family Given</dd>
+    <dd>Given Family</dd>
     <dt>Organization:</dt>
     <dd>Example Subsidary, Example Organization</dd>
     </dl>
