@@ -639,6 +639,16 @@ class IExposureFileAnnotatorForm(zope.interface.Interface):
     )
 
 
+class IExposureFileNoteEditForm(zope.interface.Interface):
+    """\
+    Interface for the note edit form.
+    """
+
+    # Lacking fields here because we don't have any fixed fields yet,
+    # not to mention the fields are dynamically acquired from the name
+    # of the note which is passed into via traversal subpath.
+
+
 class IExposureFileViewUtility(zope.interface.Interface):
     """\
     Utilty for ExposureFile view classes.  Generally this will provide
@@ -679,6 +689,13 @@ class IExposureFileViewUtility(zope.interface.Interface):
 class IExposureFileNote(zope.interface.Interface):
     """\
     Interface for notes attached to ExposureFile objects.
+    """
+
+
+class IExposureFileEditableNote(zope.interface.Interface):
+    """\
+    Interface for notes attached to ExposureFile objects that are 
+    editable by users.
     """
 
 

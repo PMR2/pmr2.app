@@ -86,9 +86,15 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
         # XXX return a data struture instead
         context = self.context
         note = zope.component.getAdapter(context, name=self.name)
-        data = self.generate()
-        for a, v in data:
-             setattr(note, a, v)
+
+        # if it is meant to be a user editable note, don't generate the
+        # data.  however this will need revisiting later, maybe another
+        # type that allows generation on first try, marker added if user
+        # edits later.
+        if not IExposureFileEditableNote.providedBy(note):
+            data = self.generate()
+            for a, v in data:
+                 setattr(note, a, v)
         # as this utility is registered with the same name as the view
         # that this reader/writer is for, append it the context to
         # mark the view as generated.

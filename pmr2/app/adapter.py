@@ -276,6 +276,15 @@ class ExposureFileNoteBase(Persistent, Contained):
     """
 
     zope.component.adapts(IExposureFile)
+    zope.interface.implements(IExposureFileNote)
+
+
+class ExposureFileEditableNoteBase(ExposureFileNoteBase):
+    """\
+    Base class for editable notes.
+    """
+
+    zope.interface.implements(IExposureFileEditableNote)
 
 
 class StandardExposureFile(ExposureFileNoteBase):
