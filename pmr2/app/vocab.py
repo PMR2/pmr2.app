@@ -182,6 +182,17 @@ class ExposureFileAnnotatorVocab(SimpleVocabulary):
 ExposureFileAnnotatorVocabFactory = vocab_factory(ExposureFileAnnotatorVocab)
 
 
+class ExposureFileNoteViewVocab(ExposureFileAnnotatorVocab):
+    """\
+    This is for the Note View listing, where the label of the annotator
+    is used to generate the title.
+    """
+
+    def _getValues(self):
+        return [(i[0], i[0], i[1].label) for i in 
+                getUtilitiesFor(IExposureFileAnnotator)]
+
+
 class DocViewGenVocab(SimpleVocabulary):
 
     def __init__(self, context):

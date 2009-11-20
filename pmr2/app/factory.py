@@ -28,6 +28,7 @@ def named_factory(klass):
         zope.interface.implements(INamedUtilBase)
         def __init__(self):
             self.title = klass.title
+            self.label = klass.label
             self.description = klass.description
         def __call__(self, context):
             # instantiate annotator and calls it.
@@ -46,6 +47,7 @@ class NamedUtilBase(Location):
 
     zope.interface.implements(INamedUtilBase)
     title = None
+    label = None
     description = None
 
     def __init__(self, context):
@@ -108,6 +110,7 @@ class CellML2MathMLAnnotator(PortalTransformAnnotatorBase):
     zope.interface.implements(IExposureFileAnnotator)
     transform = 'pmr2_processor_legacy_cellml2html_mathml'
     title = u'Basic MathML'
+    label = u'Mathematics'
     description = u''
 
     def generate(self):
@@ -130,6 +133,7 @@ class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
 class CmetaAnnotator(ExposureFileAnnotatorBase):
     zope.interface.implements(IExposureFileAnnotator)
     title = u'Basic CellML Metadata'
+    label = u'Model Metadata'
 
     def generate(self):
         input = self.input

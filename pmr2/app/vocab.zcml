@@ -38,17 +38,17 @@
       name="ExposureMetadocFactoryVocab"
       />
 
-  <!-- needed because schemas depend on this -->
+  <!-- need factory method to make class because schemas depend on this -->
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.ExposureFileAnnotatorVocabFactory"
       name="ExposureFileAnnotatorVocab"
       />
 
-  <!-- no need for factory because we are reusing this contextless -->
+  <!-- factory is the class because we are reusing this without context -->
   <utility
       provides="zope.schema.interfaces.IVocabulary"
-      factory="pmr2.app.vocab.ExposureFileAnnotatorVocab"
+      factory="pmr2.app.vocab.ExposureFileNoteViewVocab"
       name="ExposureFileAnnotatorVocab"
       />
 
