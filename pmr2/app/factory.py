@@ -190,7 +190,7 @@ class CmetaAnnotator(ExposureFileAnnotatorBase):
         result['citation_authors'] = authors
         result['keywords'] = metadata.get_keywords()
 
-        dcvc = metadata.get_dc_vcard_info()
+        dcvc = metadata.get_dc_vcard_info(node='')
         if dcvc:
             # using only first one
             info = dcvc[0]
