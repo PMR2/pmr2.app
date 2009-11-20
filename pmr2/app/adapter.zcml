@@ -80,4 +80,11 @@
       name="cmeta"
       />
 
+  <adapter
+      for="pmr2.app.interfaces.IExposureFile"
+      factory=".adapter.OpenCellSessionNoteFactory"
+      provides="pmr2.app.interfaces.IOpenCellSessionNote"
+      name="opencellsession"
+      />
+
 </configure> 

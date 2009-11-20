@@ -19,6 +19,12 @@
       provides=".interfaces.IExposureFileAnnotator"
       />
 
+  <utility
+      name="opencellsession"
+      component=".factory.OpenCellSessionAnnotatorFactory"
+      provides=".interfaces.IExposureFileAnnotator"
+      />
+
   <!-- default view generators -->
 
   <utility

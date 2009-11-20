@@ -318,6 +318,13 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="opencellsession"
+      class=".exposure.OpenCellSessionNoteView"
+      permission="zope2.View"
+      />
+
   <!-- Exposure Document -->
 
   <browser:page

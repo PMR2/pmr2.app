@@ -396,3 +396,14 @@ class CmetaNote(ExposureFileNoteBase):
             return u''
 
 CmetaNoteFactory = factory(CmetaNote, 'cmeta')
+
+
+class OpenCellSessionNote(ExposureFileEditableNoteBase):
+    """\
+    Points to the OpenCell session attached to this file.
+    """
+
+    zope.interface.implements(IOpenCellSessionNote)
+    filename = fieldproperty.FieldProperty(IOpenCellSessionNote['filename'])
+
+OpenCellSessionNoteFactory = factory(OpenCellSessionNote, 'opencellsession')

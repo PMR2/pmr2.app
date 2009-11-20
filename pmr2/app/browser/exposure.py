@@ -718,6 +718,22 @@ class CmetaNote(ExposureFileViewBase):
 CmetaNoteView = layout.wrap_form(CmetaNote, __wrapper_class=PlainLayoutWrapper)
 
 
+class OpenCellSessionNoteView(ExposureFileViewBase):
+    # XXX change this when we have better/generalized
+    target_view = 'pcenv'
+
+    def __call__(self):
+        if self.note.filename is None:
+            # no session specified.
+            raise HTTPNotFound()
+        helper = zope.component.queryAdapter(
+            self.context, IExposureSourceAdapter)
+        exposure, workspace, path = helper.source()
+        target_uri = '%s/@@%s/%s/%s' % (workspace.absolute_url(), 
+            self.target_view, exposure.commit_id, self.note.filename)
+        return self.request.response.redirect(target_uri)
+
+
 class GroupedNoteViewBase(ExposureFileViewBase):
     """\
     This view looks into a valid list of text.

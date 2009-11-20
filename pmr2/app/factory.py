@@ -151,6 +151,17 @@ class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
         )
 
 
+class OpenCellSessionAnnotator(ExposureFileAnnotatorBase):
+    zope.interface.implements(IExposureFileAnnotator)
+    title = u'OpenCell Session Link'
+    label = u'OpenCell Session'
+
+    def generate(self):
+        return ()
+
+OpenCellSessionAnnotatorFactory = named_factory(OpenCellSessionAnnotator)
+
+
 class CmetaAnnotator(ExposureFileAnnotatorBase):
     zope.interface.implements(IExposureFileAnnotator)
     title = u'Basic CellML Metadata'

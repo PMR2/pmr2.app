@@ -906,3 +906,15 @@ class ICmetaNote(zope.interface.Interface):
         title=u'Keywords',
         description=u'The keywords of this model.',
     )
+
+
+class IOpenCellSessionNote(zope.interface.Interface):
+    """\
+    OpenCell Session Note
+    """
+
+    filename = zope.schema.Choice(
+        title=u'Session File',
+        description=u'The session file that is made for this file.',
+        vocabulary='ManifestListVocab',
+    )
