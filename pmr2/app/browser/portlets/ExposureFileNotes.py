@@ -39,7 +39,7 @@ class Renderer(base.Renderer):
 
     def __init__(self, *args):
         base.Renderer.__init__(self, *args)
-        self.title = 'Exposure File Notes'
+        self.title = 'Views available'
 
     @property
     def links(self):
