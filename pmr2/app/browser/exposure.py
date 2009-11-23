@@ -489,6 +489,7 @@ class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
         # XXX this appears to work, we only want the interface that is
         # directly implemented by the class, which this appears to 
         # return in the order provided.
+        # See: Exposure.ExposureExport (uses same method)
         inf = zope.interface.providedBy(note).interfaces().next()
         self.fields = z3c.form.field.Fields(inf)
         super(ExposureFileNoteEditForm, self).update()

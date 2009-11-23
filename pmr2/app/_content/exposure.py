@@ -748,6 +748,8 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
 class ExposureFolder(ATFolderDocument, TraversalCatchAll):
 
     interface.implements(IExposureFolder, IExposureObject)
+    docview_gensource = fieldproperty.FieldProperty(IExposureFolder['docview_gensource'])
+    docview_generator = fieldproperty.FieldProperty(IExposureFolder['docview_generator'])
 
     def __before_publishing_traverse__(self, ob, request):
         TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
@@ -768,6 +770,7 @@ class ExposureFile(ATDocument):
         zope.annotation.interfaces.IAttributeAnnotatable,
     )
     views = fieldproperty.FieldProperty(IExposureFile['views'])
+    docview_generator = fieldproperty.FieldProperty(IExposureFile['docview_generator'])
     security = ClassSecurityInfo()
 
     security.declareProtected(View, 'raw_text')
@@ -777,8 +780,8 @@ class ExposureFile(ATDocument):
         """
 
         results = []
-        for adapter in self.adapters:
-            ctxobj = zope.component.queryAdapter(self, name=adapter)
+        for view in self.views:
+            ctxobj = zope.component.queryAdapter(self, name=view)
             if ctxobj is not None:
                 results.append(ctxobj.raw_text())
         return '\n'.join(results)
@@ -793,7 +796,63 @@ class ExposureExport(object):
         # context must be an Exposure
         self.context = context
 
+    def _builder(self, cur, prefix=''):
+        if not prefix:
+            objpath = lambda x: '%s' % x
+        else:
+            objpath = lambda x: '%s/%s' % (prefix, x)
+
+        result = []
+
+        for i in cur:
+            p = objpath(i)
+            obj = cur[i]
+            # do stuff depend on type
+
+            if IExposureFile.providedBy(obj):
+                # get list of file notes
+                d = {}
+                d['docview_generator'] = obj.docview_generator
+                v = []
+                for vname in obj.views:
+                    note = zope.component.queryAdapter(obj, name=vname)
+                    if not note:
+                        # We can't export this
+                        # do we need error reporting? the actual page
+                        # is probably broken...
+                        continue
+                    if not IExposureFileEditableNote.providedBy(note):
+                        # assuming standard note, just get none.
+                        v.append((vname, None,))
+                        continue
+                    # this should be editable, grab the fields, build
+                    # dictionary.
+                    # XXX see: ExposureFileNoteEditForm
+                    inf = zope.interface.providedBy(note).interfaces().next()
+                    noted = dict([(fname, getattr(note, fname)) 
+                                  for fname in inf.names()])
+                    v.append((vname, noted,))
+                # now query the eaco views.
+                d['views'] = v
+                result.append((p, d))
+            else:
+                result.extend(self._builder(obj, p))
+
+        # folder gets appended last for lazy reason - we assume all
+        # paths will be created as files, meaning folders are
+        # created automatically, rather than creating that as file.
+        # Then annotations can be assigned to them later.
+        # XXX just append folder as is.
+        d = {
+            'docview_gensource': cur.docview_gensource,
+            'docview_generator': cur.docview_generator,
+        }
+        result.append((prefix, d))
+
+        return result
+
     def __call__(self):
         # returns a dictionary that contains a flattened list of all
         # files with its annotations (notes).
-        return {}
+        result = self._builder(self.context)
+        return result

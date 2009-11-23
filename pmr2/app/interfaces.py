@@ -540,6 +540,20 @@ class IExposureFolder(zope.interface.Interface):
     capturing for redirection to path within its workspace).
     """
 
+    # for reason why these two fields are TextLine, please see IExposure
+    docview_gensource = zope.schema.TextLine(
+        title=u'Generated From',
+        description=u'The source file which the documentation or data is '
+                     'generated from.',
+        required=False,
+    )
+
+    docview_generator = zope.schema.TextLine(
+        title=u'Generator Name',
+        description=u'The name of the generator used to make this view.',
+        required=False,
+    )
+
 
 # New style exposure classes.
 

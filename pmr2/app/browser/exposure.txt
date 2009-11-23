@@ -900,6 +900,47 @@ above, and call the utility that will make what we need.
 
     >>> context
     <Exposure at ...>
+    >>> exporter = exposure.ExposureExport(context)
+    >>> result = exporter()
+    >>> answer = [
+    ...     ('example_model.cellml', {
+    ...         'docview_generator': None,
+    ...         'views': [
+    ...             (u'rdfturtle', None),
+    ...             (u'rdfxml', None),
+    ...             (u'cmeta', None),
+    ...             (u'opencellsession', {
+    ...                 'filename': 'component/docs/index.html',
+    ...             }),
+    ...         ]
+    ...     }),
+    ...     ('component/module.cellml', {
+    ...         'docview_generator': None,
+    ...         'views': [],
+    ...     }),
+    ...     ('component/docs/index.html', {
+    ...         'docview_generator': u'safe_html',
+    ...         'views': [],
+    ...     }),
+    ...     ('component/docs/index.rst', {
+    ...         'docview_generator': u'rest_to_html',
+    ...         'views': [],
+    ...     }),
+    ...     ('component/docs', {
+    ...         'docview_gensource': None,
+    ...         'docview_generator': None,
+    ...     }),
+    ...     ('component', {
+    ...         'docview_gensource': None,
+    ...         'docview_generator': None,
+    ...     }),
+    ...     ('', {
+    ...         'docview_generator': u'safe_html',
+    ...         'docview_gensource': u'component/docs/index.html'
+    ...     })
+    ... ]
+    >>> result == answer
+    True
 
 ======================
 Notes/Question to Self

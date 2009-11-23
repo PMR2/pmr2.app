@@ -17,6 +17,7 @@ from pmr2.app._content.exposure import ExposureContainer
 from pmr2.app._content.exposure import Exposure
 from pmr2.app._content.exposure import ExposureFile
 from pmr2.app._content.exposure import ExposureFolder
+from pmr2.app._content.exposure import ExposureExport
 
 # legacy Exposure types
 from pmr2.app._content.exposure import ExposureDocument
