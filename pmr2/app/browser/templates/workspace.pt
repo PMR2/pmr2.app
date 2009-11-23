@@ -14,17 +14,6 @@
       tal:attributes="href context/absolute_url"
       tal:content="context/absolute_url"></a></dd>
 
-  <tal:if tal:condition="view/exposure_list">
-    <dt>Exposures created from this workspace</dt>
-    <dd>
-      <ul>
-        <li tal:repeat="i view/exposure_list"><a href="" 
-            tal:attributes="href i/getURL">
-            <span tal:content="i/Title"></span> @ <span tal:content="python:i.getObject().commit_id"/></a></li>
-      </ul>
-    </dd>
-  </tal:if>
-
 </dl>
 <h4>Most recent changes</h4>
 <div tal:content="structure view/shortlog"/>

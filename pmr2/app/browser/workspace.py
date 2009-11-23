@@ -167,17 +167,12 @@ class WorkspacePage(page.SimplePage):
 
     def shortlog(self):
         if not hasattr(self, '_log'):
-            self._log = WorkspaceShortlog(self.context, self.request)
+            # XXX aq_inner(self.context) not needed?
+            self._log = WorkspacePageShortlog(self.context, self.request)
             # set our requirements.
             self._log.maxchanges = 10  # XXX magic number
             self._log.navlist = None
         return self._log()
-
-    def exposure_list(self):
-        pt = getToolByName(self.context, 'portal_catalog')
-        d = {}
-        d['pmr2_exposure_workspace'] = self.context.id
-        return pt(**d)
 
 
 WorkspacePageView = layout.wrap_form(
@@ -252,6 +247,12 @@ WorkspaceShortlogView = layout.wrap_form(
     __wrapper_class=BorderedTraverseFormWrapper,
     label='Shortlog'
 )
+
+
+class WorkspacePageShortlog(WorkspaceShortlog):
+    # for workspace main listing.
+
+    tbl = table.WorkspacePageShortlogTable
 
 
 class WorkspaceLogRss(page.RssPage, WorkspaceLog):

@@ -1,6 +1,8 @@
 from sys import maxint
 import cgi
 
+from Products.CMFCore.utils import getToolByName
+
 import z3c.table.column
 import z3c.table.table
 
@@ -165,6 +167,31 @@ class ShortlogOptionColumn(ItemKeyColumn):
         return ' '.join(result)
 
 
+class ExposureColumn(ItemKeyColumn):
+    weight = 50
+    header = _(u'Exposure')
+    itemkey = None  # actually derived from catalog
+
+    def renderCell(self, item):
+        # query
+        workspace = self.context.context  # the workspace
+        pt = getToolByName(workspace, 'portal_catalog')
+        query = {}
+        query['portal_type'] = 'Exposure'  # XXX this may need changing
+        query['pmr2_exposure_workspace'] = workspace.id
+        query['pmr2_exposure_commit_id'] = item['node']
+        items = pt(**query)
+
+        if items:
+            result = []
+            for i in items:
+                result.append
+            return u'<br />\n'.join([
+                u'<a href="%s">%s</a>' % (i.getURL(), i.Title) for i in items
+            ])
+        return u'(none)'
+
+
 class ChangelogTable(z3c.table.table.Table):
 
     sortOn = None
@@ -200,6 +227,30 @@ class ShortlogTable(z3c.table.table.Table):
             ),
             z3c.table.column.addColumn(
                 self, ShortlogOptionColumn, u'shortlog_opt'
+            ),
+        ]
+
+
+class WorkspacePageShortlogTable(z3c.table.table.Table):
+
+    sortOn = None
+
+    def setUpColumns(self):
+        return [
+            z3c.table.column.addColumn(
+                self, ChangesetDateColumn, u'changeset_date'
+            ),
+            z3c.table.column.addColumn(
+                self, ChangesetAuthorColumn, u'changeset_author'
+            ),
+            z3c.table.column.addColumn(
+                self, ChangesetDescColumn, u'changeset_desc'
+            ),
+            z3c.table.column.addColumn(
+                self, ShortlogOptionColumn, u'shortlog_opt'
+            ),
+            z3c.table.column.addColumn(
+                self, ExposureColumn, u'exposure_list'
             ),
         ]
 
