@@ -266,7 +266,7 @@ class ExposureCodeWrapper(ExposureTraversalPage):
 
     @memoize
     def content(self):
-        self.context.raw_code
+        return self.context.raw_code
 
 ExposureCodeWrapperView = layout.wrap_form(
     ExposureCodeWrapper,
