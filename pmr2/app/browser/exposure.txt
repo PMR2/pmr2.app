@@ -877,18 +877,33 @@ and the annotator to process it with.  We can pick any file.
     >>> context.docview_gensource == source_file
     True
 
+-----------------------
+"Upgrading" an Exposure
+-----------------------
+
+Using "upgrade" loosely here, since this is a process that creates a new
+exposure (almost always with a different commit id), but retains the
+structure used in a previous exposure.  This means the view generators,
+annotation (notes) and curation information will be migrated over to the
+new one.  Fields that are generated will be regenerated from existing
+data, and fields that are manually edited will have its data copied to
+the new one.
+
+(Yes, the following should have its own unit tests, but for now we at
+least need some integration/functional tests)
+
+First we need to generate a structure that represents an exposure, such
+that it contains all the information required to automatically generate
+an identical new object hierarchy.  We will use the data we created from
+above, and call the utility that will make what we need.
+::
+
+    >>> context
+    <Exposure at ...>
+
 ======================
 Notes/Question to Self
 ======================
-
-We have
-adapters (for the annotation, storage)
-utility (to generate the annotation/note)
-views (which will pull data from the adapter, it will have the same name 
-as the utility to get data from the adapter)
-
-Also a way to "enable" a view by finding the utility for the view, make
-it write data.
 
 Name to get to the notes (the annotations) can be different from the
 name of the view that will use it because there are multiple annotators
@@ -916,9 +931,3 @@ ExposureFileViewBase browser class.
 
 The storage of the final data will need to be defined also.  It is as
 simple as defining a new factory with the same key as the view.
-
-Since this is the simple case
-
-browser.exposure.
-Create
-Define the browser dire

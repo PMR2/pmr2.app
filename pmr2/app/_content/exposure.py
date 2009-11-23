@@ -782,3 +782,18 @@ class ExposureFile(ATDocument):
             if ctxobj is not None:
                 results.append(ctxobj.raw_text())
         return '\n'.join(results)
+
+
+class ExposureExport(object):
+    """
+    an exporter for an exposure
+    """
+
+    def __init__(self, context):
+        # context must be an Exposure
+        self.context = context
+
+    def __call__(self):
+        # returns a dictionary that contains a flattened list of all
+        # files with its annotations (notes).
+        return {}
