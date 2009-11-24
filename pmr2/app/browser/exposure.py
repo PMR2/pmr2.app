@@ -838,9 +838,8 @@ class ExposurePort(form.Form):
         else:
             objpath = lambda x: '%s/%s' % (prefix, x)
 
-        for i in cur:
-            p = objpath(i)
-            obj = cur[i]
+        for obj_id, obj in cur.items():
+            p = objpath(obj_id)
             # do stuff depend on type
 
             if IExposureFile.providedBy(obj):

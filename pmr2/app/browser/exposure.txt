@@ -1004,6 +1004,11 @@ supply an existing commit id.
     ...     pp(answer)
     ...     pp(result)
 
+Need to test this with the catalog, such that the results can still be
+queried.
+
+Also need to filter out incompatible objects.
+
 ======================
 Notes/Question to Self
 ======================
