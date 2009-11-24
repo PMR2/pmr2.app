@@ -35,7 +35,6 @@ class ExposureAddForm(form.AddForm):
     """
 
     fields = z3c.form.field.Fields(IExposure).select(
-        'title',
         'workspace',
         'commit_id',
         'curation',
@@ -52,7 +51,6 @@ class ExposureAddForm(form.AddForm):
         return form.AddForm.create(self, data)
 
     def add_data(self, ctxobj):
-        ctxobj.title = self._data['title']
         ctxobj.workspace = self._data['workspace']
         ctxobj.commit_id = self._data['commit_id']
         ctxobj.curation = self._data['curation']
@@ -373,12 +371,19 @@ class ExposureFileGenForm(form.AddForm):
         # XXX this could probably also do annotation from a list
         return result
 
-    def add(self, obj):
+    def resolve_folder(self, path, create=False):
+        # XXX move to separate class?
         # there are id checks for the path components within the field 
         # itself, so any failure happens (due to possible duplicates
         # invalids) will cause 
         # an exception during the nested folder creation below.
-        path = self._data['_path']
+        if not path:
+            path = []
+        if isinstance(path, basestring):
+            # XXX not sure if it's "right" to make this easy/shortcut
+            path = path.split('/')
+            path.reverse()
+
         context = self.context
         while path:
             name = path.pop()
@@ -388,20 +393,25 @@ class ExposureFileGenForm(form.AddForm):
                 if IExposureFolder.providedBy(context):
                     continue
                 # we have some inconsistency, giving up.
-                raise TypeError('%s is not an ExposureFolder', context)
+                raise TypeError('`%s` is not an ExposureFolder' % name)
+
+            if not create:
+                # XXX exception type?
+                raise ValueError('%s is not in context' % name)
 
             # object not exist, standard routine to create, add, reindex
             folderobj = ExposureFolder(name)
             context[name] = folderobj
             context.notifyWorkflowCreated()
             context.reindexObject()
-
             # done, we have next context.
             context = context[name]
+        return context
 
+    def add(self, obj):
         # switch to new context so parent class knows to here.
         # XXX other side effects from setting a new self.context?
-        self.context = context
+        self.context = self.resolve_folder(self._data['_path'], True)
         # parent to add
         super(ExposureFileGenForm, self).add(obj)
 
@@ -797,6 +807,11 @@ class ExposurePort(object):
 
     def _export(self, cur, prefix=''):
 
+        def fieldvalues(obj):
+            inf = zope.interface.providedBy(obj).interfaces().next()
+            # XXX no error notification on missing fields.
+            return dict([(fn, getattr(obj, fn, None)) for fn in inf.names()])
+
         def viewinfo(obj):
             # maybe make this into generator in the future.
             v = []
@@ -814,10 +829,8 @@ class ExposurePort(object):
                 # this should be editable, grab the fields, build
                 # dictionary.
                 # XXX see: ExposureFileNoteEditForm
-                inf = zope.interface.providedBy(note).interfaces().next()
-                noted = dict([(fname, getattr(note, fname)) 
-                              for fname in inf.names()])
-                v.append((vname, noted,))
+
+                v.append((vname, fieldvalues(note),))
             return v
 
         # we don't have or need leading / to denote root.
@@ -832,6 +845,9 @@ class ExposurePort(object):
             # do stuff depend on type
 
             if IExposureFile.providedBy(obj):
+                # cannot use fieldvalues to automatically grab data,
+                # and not needed anyway because this type only has
+                # limited fields (i.e. manually exported here)
                 # get list of file notes
                 d = {}
                 d['docview_generator'] = obj.docview_generator
@@ -843,18 +859,73 @@ class ExposurePort(object):
                     yield i
 
         # folder gets appended last for lazy reason - we assume all
-        # paths will be created as files, meaning folders are
-        # created automatically, rather than creating that as file.
-        # Then annotations can be assigned to them later.
-        # XXX just append folder as is.
-        d = {
-            'docview_gensource': cur.docview_gensource,
-            'docview_generator': cur.docview_generator,
-        }
-        yield (prefix, d,)
+        # paths will be created as files, meaning folders are created 
+        # automatically, rather than creating that as file.
+        # Then annotations can be assigned to them later, use viewinfo
+        # to grab the relevant fields.
+        yield (prefix, fieldvalues(cur),)
 
     def export(self):
         # returns a dictionary that contains a flattened list of all
         # files with its annotations (notes).
         for i in self._export(self.context):
             yield i
+
+    def mold(self, target):
+        """\
+        Creates the new exposure at target
+        """
+
+        for path, fields in self.export():
+            if 'views' in fields:
+                # XXX assume this specifies an ExposureFile
+                fgen = ExposureFileGenForm(target, None)
+                d = {
+                    'filename': path,
+                }
+                fgen.createAndAdd(d)
+                # XXX using something that is magic in nature
+                # <form>.ctxobj is created by our customized object
+                # creation method for the form, and we are using 
+                # this informally declared object.
+                ctxobj = fgen.ctxobj
+
+                # generate docview
+                if fields['docview_generator']:
+                    viewgen = zope.component.getUtility(
+                        IDocViewGen,
+                        name=fields['docview_generator'],
+                    )
+                    viewgen(ctxobj)
+
+                for view, view_fields in fields['views']:
+                    # generate views
+                    annotator = zope.component.getUtility(
+                        IExposureFileAnnotator,
+                        name=view,
+                    )
+                    annotator(ctxobj)
+                    # XXX assume editable still
+                    if view_fields:
+                        note = zope.component.getAdapter(ctxobj, name=view)
+                        for key, value in view_fields.iteritems():
+                            setattr(note, key, value)
+            else:
+                # generate views.
+                # using this to resolve the folder object
+                fgen = ExposureFileGenForm(target, None)
+                container = fgen.resolve_folder(path)
+
+                if fields['docview_gensource']:
+                    # there is a source
+                    container.docview_gensource = fields['docview_gensource']
+                    viewgen = zope.component.getUtility(
+                        IDocViewGen,
+                        name=fields['docview_generator']
+                    )
+                    viewgen(container)
+
+                if IExposure.providedBy(container):
+                    # only copy curation over, until this becomes an
+                    # annotation.
+                    container.curation = fields['curation']

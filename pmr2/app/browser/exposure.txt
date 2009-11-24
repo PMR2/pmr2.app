@@ -6,6 +6,7 @@ Before we get started, we need to import the required classes.  The
 directories required should have been already set up by the script.
 ::
 
+    >>> from pprint import pprint
     >>> from zope import interface
     >>> import zope.component
     >>> from plone.z3cform.tests import setup_defaults
@@ -13,6 +14,7 @@ directories required should have been already set up by the script.
     >>> from pmr2.app.tests.base import TestRequest
     >>> from pmr2.app.content import *
     >>> from pmr2.app.interfaces import *
+    >>> pp = lambda x: pprint(x, indent=4, width=1)
 
 Create the exposure container.
 ::
@@ -27,7 +29,6 @@ a 32 byte long hex string.
 
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.title': u'Delicious Eggs',
     ...         'form.widgets.workspace': u'eggs',
     ...         'form.widgets.commit_id': u'00000000',
     ...         'form.buttons.add': 1,
@@ -42,8 +43,10 @@ a 32 byte long hex string.
 Exposure object is created with fields properly populated.
 ::
 
-    >>> self.folder.repo.exposure[oid].title
-    u'Delicious Eggs'
+    >>> self.folder.repo.exposure[oid].workspace
+    u'eggs'
+    >>> self.folder.repo.exposure[oid].commit_id
+    u'00000000'
 
 =======================
 Exposure Traversal Page
@@ -295,7 +298,6 @@ a workspace with actual data.
     >>> rev = unicode(self.archive_revs[1])
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.title': u'PMR2 HgTest',
     ...         'form.widgets.workspace': u'pmr2hgtest',
     ...         'form.widgets.commit_id': rev,
     ...         'form.buttons.add': 1,
@@ -383,7 +385,6 @@ Now we do the same with our set of data, with more content.
     >>> rev = unicode(rawrev)
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.title': u'PMR2 Rdfmodel Test',
     ...         'form.widgets.workspace': u'rdfmodel',
     ...         'form.widgets.commit_id': rev,
     ...         'form.buttons.add': 1,
@@ -899,7 +900,8 @@ above, and call the utility that will make what we need.
 ::
 
     >>> context
-    <Exposure at ...>
+    <Exposure at /.../exposure/...>
+    >>> context.curation = {'key': ['value1', 'value2']}
     >>> porter = exposure.ExposurePort(context)
     >>> result = list(porter.export())
     >>> answer = [
@@ -935,15 +937,47 @@ above, and call the utility that will make what we need.
     ...         'docview_generator': None,
     ...     }),
     ...     ('', {
+    ...         'commit_id': u'006f11cd9211abd2a879df0f6c7f27b9844a8ff2',
+    ...         'curation': {'key': ['value1', 'value2']},
     ...         'docview_generator': u'safe_html',
-    ...         'docview_gensource': u'component/docs/index.html'
+    ...         'docview_gensource': u'component/docs/index.html',
+    ...         'title': u'',
+    ...         'workspace': u'rdfmodel',
     ...     })
     ... ]
-    >>> result == answer
-    True
+    >>> if not result == answer:
+    ...     pp(result)
 
 Once we know it will return the expected structure, we can expect the
-porter to be able to recreate the
+porter to be able to recreate the same exposure with the same commit.
+First we need need a new exposure object.
+
+    >>> old_ex = context
+    >>> eaf = exposure.ExposureAddForm(self.folder.repo.exposure, None)
+    >>> rawrev = rawrevs[2]
+    >>> rev = unicode(rawrev)
+    >>> data = {
+    ...     'title': u'PMR2 Rdfmodel Test',
+    ...     'workspace': u'rdfmodel',
+    ...     'curation': None,
+    ...     'commit_id': rev,
+    ... }
+    >>> obj = eaf.createAndAdd(data)
+    >>> exp_id = data['id']
+    >>> new_ex = self.folder.repo.exposure[exp_id]
+    >>> new_ex
+    <Exposure at /.../exposure/...>
+    >>> new_ex == old_ex
+    False
+
+Now we use the porter to mold the new exposure based on what it knows.
+
+    >>> porter.mold(new_ex)
+    >>> newport = exposure.ExposurePort(new_ex)
+    >>> result = list(newport.export())
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
 
 ======================
 Notes/Question to Self
