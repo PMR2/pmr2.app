@@ -900,8 +900,8 @@ above, and call the utility that will make what we need.
 
     >>> context
     <Exposure at ...>
-    >>> exporter = exposure.ExposureExport(context)
-    >>> result = exporter()
+    >>> porter = exposure.ExposurePort(context)
+    >>> result = list(porter.export())
     >>> answer = [
     ...     ('example_model.cellml', {
     ...         'docview_generator': None,
@@ -941,6 +941,9 @@ above, and call the utility that will make what we need.
     ... ]
     >>> result == answer
     True
+
+Once we know it will return the expected structure, we can expect the
+porter to be able to recreate the
 
 ======================
 Notes/Question to Self

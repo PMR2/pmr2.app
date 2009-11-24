@@ -782,3 +782,79 @@ class GroupedNoteViewBase(ExposureFileViewBase):
 # base
 GroupedNoteViewBaseView = layout.wrap_form(
     GroupedNoteViewBase, __wrapper_class=PlainLayoutWrapper)
+
+
+# utility
+
+class ExposurePort(object):
+    """
+    an export/importer for exposures
+    """
+
+    def __init__(self, context):
+        # context must be an Exposure
+        self.context = context
+
+    def _export(self, cur, prefix=''):
+
+        def viewinfo(obj):
+            # maybe make this into generator in the future.
+            v = []
+            for vname in obj.views:
+                note = zope.component.queryAdapter(obj, name=vname)
+                if not note:
+                    # We can't export this
+                    # do we need error reporting? the actual page
+                    # is probably broken...
+                    continue
+                if not IExposureFileEditableNote.providedBy(note):
+                    # assuming standard note, just get none.
+                    v.append((vname, None,))
+                    continue
+                # this should be editable, grab the fields, build
+                # dictionary.
+                # XXX see: ExposureFileNoteEditForm
+                inf = zope.interface.providedBy(note).interfaces().next()
+                noted = dict([(fname, getattr(note, fname)) 
+                              for fname in inf.names()])
+                v.append((vname, noted,))
+            return v
+
+        # we don't have or need leading / to denote root.
+        if not prefix:
+            objpath = lambda x: '%s' % x
+        else:
+            objpath = lambda x: '%s/%s' % (prefix, x)
+
+        for i in cur:
+            p = objpath(i)
+            obj = cur[i]
+            # do stuff depend on type
+
+            if IExposureFile.providedBy(obj):
+                # get list of file notes
+                d = {}
+                d['docview_generator'] = obj.docview_generator
+                # now query the each views.
+                d['views'] = viewinfo(obj)
+                yield (p, d,)
+            else:
+                for i in self._export(obj, p):
+                    yield i
+
+        # folder gets appended last for lazy reason - we assume all
+        # paths will be created as files, meaning folders are
+        # created automatically, rather than creating that as file.
+        # Then annotations can be assigned to them later.
+        # XXX just append folder as is.
+        d = {
+            'docview_gensource': cur.docview_gensource,
+            'docview_generator': cur.docview_generator,
+        }
+        yield (prefix, d,)
+
+    def export(self):
+        # returns a dictionary that contains a flattened list of all
+        # files with its annotations (notes).
+        for i in self._export(self.context):
+            yield i
