@@ -902,7 +902,7 @@ above, and call the utility that will make what we need.
     >>> context
     <Exposure at /.../exposure/...>
     >>> context.curation = {'key': ['value1', 'value2']}
-    >>> porter = exposure.ExposurePort(context)
+    >>> porter = exposure.ExposurePort(context, None)
     >>> result = list(porter.export())
     >>> answer = [
     ...     ('example_model.cellml', {
@@ -951,13 +951,13 @@ above, and call the utility that will make what we need.
 Once we know it will return the expected structure, we can expect the
 porter to be able to recreate the same exposure with the same commit.
 First we need need a new exposure object.
+::
 
     >>> old_ex = context
     >>> eaf = exposure.ExposureAddForm(self.folder.repo.exposure, None)
     >>> rawrev = rawrevs[2]
     >>> rev = unicode(rawrev)
     >>> data = {
-    ...     'title': u'PMR2 Rdfmodel Test',
     ...     'workspace': u'rdfmodel',
     ...     'curation': None,
     ...     'commit_id': rev,
@@ -971,9 +971,34 @@ First we need need a new exposure object.
     False
 
 Now we use the porter to mold the new exposure based on what it knows.
+::
 
     >>> porter.mold(new_ex)
-    >>> newport = exposure.ExposurePort(new_ex)
+    >>> newport = exposure.ExposurePort(new_ex, None)
+    >>> result = list(newport.export())
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
+
+The ExposurePort class can be subclassed into customized forms, 
+depending on how the upgrade process is presented.  Here we have a form
+that is based on the old context, takes the next commit id.  We can
+supply an existing commit id.
+::
+
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': rev,
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                         name='upgrade')
+    >>> result = view.form_instance()
+    >>> nextURL = request.response.getHeader('Location')
+    >>> print nextURL
+    http://.../exposure/...
+    >>> new_id = nextURL.split('/')[-1]
+    >>> new_ex = self.folder.repo.exposure[new_id]
+    >>> newport = exposure.ExposurePort(new_ex, None)
     >>> result = list(newport.export())
     >>> if not result == answer:
     ...     pp(answer)

@@ -258,6 +258,13 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <browser:page
+      for="pmr2.app.content.Exposure"
+      name="upgrade"
+      class=".exposure.ExposurePortCommitIdFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <!-- Exposure File -->
 
   <browser:page

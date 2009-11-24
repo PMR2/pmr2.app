@@ -796,14 +796,13 @@ GroupedNoteViewBaseView = layout.wrap_form(
 
 # utility
 
-class ExposurePort(object):
+class ExposurePort(form.Form):
     """
     an export/importer for exposures
     """
 
-    def __init__(self, context):
-        # context must be an Exposure
-        self.context = context
+    ignoreContext = True
+    ignoreReadonly = True
 
     def _export(self, cur, prefix=''):
 
@@ -929,3 +928,55 @@ class ExposurePort(object):
                     # only copy curation over, until this becomes an
                     # annotation.
                     container.curation = fields['curation']
+
+class ExposurePortCommitIdForm(ExposurePort):
+
+    # this just have commit id, create exposure.
+
+    formErrorsMessage = _('There are errors')
+
+    _finishedAdd = False
+    fields = z3c.form.field.Fields(IExposure).select(
+        'commit_id',
+    )
+
+    def find_exposure_container(self):
+        context = aq_inner(self.context)
+        while context:
+            if IExposureContainer.providedBy(context):
+                return context
+            context = aq_parent(context)
+
+    @button.buttonAndHandler(_('Migrate'), name='apply')
+    def handleMigrate(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        parent = self.find_exposure_container()
+
+        eaf = ExposureAddForm(parent, None)
+        data = {
+            'workspace': self.context.workspace,
+            'curation': None,  # to be copied later
+            'commit_id': data['commit_id'],
+        }
+        eaf.createAndAdd(data)
+        exp_id = data['id']
+        target = parent[exp_id]
+        self.mold(target)
+        self._finishedAdd = True
+        self.target = target
+
+    def nextURL(self):
+        return self.target.absolute_url()
+
+    def render(self):
+        if self._finishedAdd:
+            self.request.response.redirect(self.nextURL())
+            return ""
+        return super(ExposurePortCommitIdForm, self).render()
+
+ExposurePortCommitIdFormView = layout.wrap_form(ExposurePortCommitIdForm, 
+    label="Exposure Port to new commit id")
