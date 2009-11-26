@@ -530,24 +530,30 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
             self.storage.path.replace('/', ' / '),
         )
 
+    def _getpath(self, view='rawfile', path=None):
+        result = [
+            self.context.absolute_url(),
+            '@@' + view,
+            self.storage.rev,
+        ]
+        if path:
+            result.append(path)
+        return result
+
     @property
     def rooturi(self):
         """the root uri."""
-        return '/'.join([
-            self.context.absolute_url(),
-            '@@rawfile',
-            self.storage.rev,
-        ])
+        return '/'.join(self._getpath())
+
+    @property
+    def xmlrooturi(self):
+        """the root uri."""
+        return '/'.join(self._getpath(view='xmlbase'))
 
     @property
     def fullpath(self):
         """permanent uri."""
-        return '/'.join([
-            self.context.absolute_url(),
-            '@@rawfile',
-            self.storage.rev,
-            self.storage.path,
-        ])
+        return '/'.join(self._getpath(path=self.storage.path))
 
 WorkspaceFilePageView = layout.wrap_form(
     WorkspaceFilePage,
@@ -583,9 +589,14 @@ class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
 
     def __call__(self):
         data = WorkspaceRawfileView.__call__(self)
+        frag = self.storage.path.rsplit('/', 1)
+        filename = frag.pop()
+        s_path = frag and frag.pop() or ''
 
-        # add the xml:base, and append '/' to complete path
-        data = set_xmlbase(data, self.rooturi + '/')
+        # add the xml:base, with empty end string for trailing /
+        # since this is the xml base rewrite, we be consistent.
+        xmlroot = '/'.join((self.xmlrooturi, s_path, '',))
+        data = set_xmlbase(data, xmlroot)
 
         if self.storage.path.endswith('session.xml'):
             # See pmr2.app.util.fix_pcenv_externalurl and
@@ -594,7 +605,6 @@ class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
 
         # all done, now set headers.
         contentType = self.find_type()
-        filename = self.storage.path.split('/').pop()
         if contentType:
             self.request.response.setHeader('Content-Type', contentType)
         self.request.response.setHeader('Content-Disposition',
