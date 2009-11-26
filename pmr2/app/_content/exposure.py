@@ -554,6 +554,7 @@ class ExposurePMR1Metadoc(ExposureMetadoc):
     for an exposure.
     """
 
+    interface.implements(IExposurePMR1Metadoc)
     security = ClassSecurityInfo()
 
     security.declareProtected(ModifyPortalContent, 'generate_content')
