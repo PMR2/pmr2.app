@@ -840,6 +840,13 @@ class IExposureDocViewGenForm(zope.interface.Interface):
         vocabulary='DocViewGenVocab',
     )
 
+
+class IExposurePortDataProvider(zope.interface.Interface):
+    """\
+    Provides generator whenever unknown datatypes are encountered.
+    """
+
+
 class IExposureSourceAdapter(zope.interface.Interface):
     """\
     Provides any Exposure related objects with methods that will return

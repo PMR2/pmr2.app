@@ -371,18 +371,21 @@ class ExposureFileGenForm(form.AddForm):
         # XXX this could probably also do annotation from a list
         return result
 
-    def resolve_folder(self, path, create=False):
-        # XXX move to separate class?
-        # there are id checks for the path components within the field 
-        # itself, so any failure happens (due to possible duplicates
-        # invalids) will cause 
-        # an exception during the nested folder creation below.
+    def resolve_folder(self, path):
         if not path:
             path = []
         if isinstance(path, basestring):
             # XXX not sure if it's "right" to make this easy/shortcut
             path = path.split('/')
-            path.reverse()
+        path.reverse()
+        return self._resolve_folder(path)
+
+    def _resolve_folder(self, path, create=False):
+        # XXX move to separate class?
+        # there are id checks for the path components within the field 
+        # itself, so any failure happens (due to possible duplicates
+        # invalids) will cause 
+        # an exception during the nested folder creation below.
 
         context = self.context
         while path:
@@ -411,7 +414,7 @@ class ExposureFileGenForm(form.AddForm):
     def add(self, obj):
         # switch to new context so parent class knows to here.
         # XXX other side effects from setting a new self.context?
-        self.context = self.resolve_folder(self._data['_path'], True)
+        self.context = self._resolve_folder(self._data['_path'], True)
         # parent to add
         super(ExposureFileGenForm, self).add(obj)
 
@@ -852,9 +855,17 @@ class ExposurePort(form.Form):
                 # now query the each views.
                 d['views'] = viewinfo(obj)
                 yield (p, d,)
-            else:
+            elif IExposureFolder.providedBy(obj):
+                # XXX we are ignorning other folder types...
                 for i in self._export(obj, p):
                     yield i
+            else:
+                # we don't know, so we ask an adapter to provide the
+                # structure required, and trust they won't provide
+                # something they don't own.
+                a = zope.component.queryAdapter(obj, IExposurePortDataProvider)
+                if a is not None:
+                    yield a()
 
         # folder gets appended last for lazy reason - we assume all
         # paths will be created as files, meaning folders are created 
@@ -908,6 +919,7 @@ class ExposurePort(form.Form):
                         note = zope.component.getAdapter(ctxobj, name=view)
                         for key, value in view_fields.iteritems():
                             setattr(note, key, value)
+                ctxobj.reindexObject()
             else:
                 # generate views.
                 # using this to resolve the folder object
@@ -927,6 +939,8 @@ class ExposurePort(form.Form):
                     # only copy curation over, until this becomes an
                     # annotation.
                     container.curation = fields['curation']
+                container.reindexObject()
+
 
 class ExposurePortCommitIdForm(ExposurePort):
 
