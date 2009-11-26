@@ -447,17 +447,15 @@ class PMR1ExposurePortDataProvider(BaseExposurePortDataProvider):
         resolver = zope.component.queryMultiAdapter((workspace,),
             name="PMR2StorageURIResolver"
         )
-        session_path = splitext(filename)[0] + '.session.xml'
-        s_uri = resolver.path_to_uri(exposure.commit_id, 
-            session_path, '@@pcenv')
         # base views assumption here
         views = [
             (u'cmeta', None),
             (u'basic_mathml', None),
             (u'basic_ccode', None),
         ]
-        if s_uri:
-            view.append((u'opencellsession', {'filename': str(s_uri),},))
+        session_file = splitext(filename)[0] + '.session.xml'
+        if resolver.path_to_uri(exposure.commit_id, session_file, '@@pcenv'):
+            views.append((u'opencellsession', {'filename': session_file,},))
 
         return (filename, {
             'docview_generator': docview_generator,
