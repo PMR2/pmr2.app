@@ -1,3 +1,4 @@
+from os.path import splitext
 from cStringIO import StringIO
 import zope.interface
 import zope.component
@@ -407,3 +408,60 @@ class OpenCellSessionNote(ExposureFileEditableNoteBase):
     filename = fieldproperty.FieldProperty(IOpenCellSessionNote['filename'])
 
 OpenCellSessionNoteFactory = factory(OpenCellSessionNote, 'opencellsession')
+
+
+# Exposure Port adapters
+
+class BaseExposurePortDataProvider(object):
+    """\
+    The base class for adapter to ExposureFile objects.  Both parent
+    classes are required.
+    """
+
+    def __init__(self, context):
+        self.context = context
+
+
+class PMR1ExposurePortDataProvider(BaseExposurePortDataProvider):
+    """\
+    For PMR1 type exposures.
+    """
+
+    zope.component.adapts(IExposurePMR1Metadoc)
+    zope.interface.implements(IExposurePortDataProvider)
+
+    def __call__(self):
+        context = self.context
+        parent = aq_parent(context)  # XXX assume to be exposure
+        filename = str(context.origin)
+        # assumption here
+        docview_generator = 'cellml_tmpdoc'
+        # if context.subdocument:
+        #     maindoc = parent.get(context.subdocument[0], None)
+        #     if maindoc:
+        #         docview_generator = maindoc.transform
+
+        helper = zope.component.getAdapter(parent, IExposureSourceAdapter)
+        exposure, workspace, path = helper.source()
+
+        resolver = zope.component.queryMultiAdapter((workspace,),
+            name="PMR2StorageURIResolver"
+        )
+        session_path = splitext(filename)[0] + '.session.xml'
+        s_uri = resolver.path_to_uri(exposure.commit_id, 
+            session_path, '@@pcenv')
+        # base views assumption here
+        views = [
+            (u'cmeta', None),
+            (u'basic_mathml', None),
+            (u'basic_ccode', None),
+        ]
+        if s_uri:
+            view.append((u'opencellsession', {'filename': str(s_uri),},))
+
+        return (filename, {
+            'docview_generator': docview_generator,
+            'views': views,
+        })
+        # XXX maybe provide the default ('', docview_gen + filename) when
+        # supported.

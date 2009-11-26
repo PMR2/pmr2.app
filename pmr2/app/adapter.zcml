@@ -87,4 +87,12 @@
       name="opencellsession"
       />
 
+  <!-- export data provider -->
+
+  <adapter
+      for="pmr2.app.interfaces.IExposurePMR1Metadoc"
+      factory=".adapter.PMR1ExposurePortDataProvider"
+      provides="pmr2.app.interfaces.IExposurePortDataProvider"
+      />
+
 </configure> 
