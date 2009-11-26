@@ -133,7 +133,7 @@ class WorkspaceStatusTable(z3c.table.table.SequenceTable):
 
 class ChangesetDateColumn(ItemKeyColumn):
     weight = 10
-    header = _(u'Changeset Date')
+    header = _(u'Date')
     itemkey = 'date'
 
 

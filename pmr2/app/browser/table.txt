@@ -182,7 +182,7 @@ changelog table is tested, using a fake container as context.
     <table>
       <thead>
         <tr>
-          <th>Changeset Date</th>
+          <th>Date</th>
           <th>Author</th>
           <th>Log</th>
         </tr>
@@ -211,7 +211,7 @@ good enough.
     <table>
       <thead>
         <tr>
-          <th>Changeset Date</th>
+          <th>Date</th>
           <th>Author</th>
           <th>Log</th>
           <th>Options</th>

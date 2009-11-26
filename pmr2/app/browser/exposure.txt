@@ -946,6 +946,7 @@ above, and call the utility that will make what we need.
     ...     })
     ... ]
     >>> if not result == answer:
+    ...     pp(answer)
     ...     pp(result)
 
 Once we know it will return the expected structure, we can expect the

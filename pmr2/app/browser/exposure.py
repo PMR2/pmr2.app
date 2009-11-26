@@ -875,14 +875,20 @@ class ExposurePort(form.Form):
         yield (prefix, fieldvalues(cur),)
 
     def export(self):
-        # returns a dictionary that contains a flattened list of all
-        # files with its annotations (notes).
-        for i in self._export(self.context):
+        """\
+        Returns a generator object that produces tuples containing the
+        full path of the objects and a dictionary with values of its
+        fields and annotations (notes) attached to it, along with its
+        field values if applicable.
+        """
+
+        for i in self._export(self.getContent()):
             yield i
 
     def mold(self, target):
         """\
-        Creates the new exposure at target
+        Creates the new exposure at target, using what is produced by
+        the export method.
         """
 
         for path, fields in self.export():
@@ -924,6 +930,8 @@ class ExposurePort(form.Form):
                 # generate views.
                 # using this to resolve the folder object
                 fgen = ExposureFileGenForm(target, None)
+                # XXX couldn't this just create the folder first for out
+                # of order exports?
                 container = fgen.resolve_folder(path)
 
                 if fields['docview_gensource']:
