@@ -29,7 +29,7 @@ class WorkspaceMenuProvider(ContentMenuProvider):
             name="PMR2StorageRequestView")
         rev = storage.rev
         workspace = self.context.id
-        title = self.context.title
+        title = self.context.title or self.context.id
 
         actionRootUri = self.context.absolute_url()
         args = tuple(map(urllib.quote_plus, (workspace, rev, title)))
