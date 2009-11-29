@@ -841,6 +841,22 @@ class IExposureDocViewGenForm(zope.interface.Interface):
     )
 
 
+class IExposureRolloverForm(zope.interface.Interface):
+    """
+    """
+
+    # XXX this should be some sort of radio choice, but I haven't
+    # figured out how to integrate the radio widgets with the table.
+
+    commit_id = zope.schema.TextLine(
+        title=u'Commit ID'
+    )
+
+    exposure_id = zope.schema.TextLine(
+        title=u'Exposure ID'
+    )
+
+
 class IExposurePortDataProvider(zope.interface.Interface):
     """\
     Provides generator whenever unknown datatypes are encountered.

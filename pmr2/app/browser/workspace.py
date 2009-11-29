@@ -7,6 +7,8 @@ import zope.component
 import zope.event
 import zope.lifecycleevent
 import zope.publisher.browser
+from zope.i18nmessageid import MessageFactory
+_ = MessageFactory("pmr2")
 
 from paste.httpexceptions import HTTPNotFound, HTTPFound
 
@@ -14,9 +16,11 @@ import z3c.form.interfaces
 import z3c.form.field
 import z3c.form.form
 import z3c.form.value
+import z3c.form.button
 
 from plone.z3cform import layout
 from Products.CMFCore.utils import getToolByName
+from Acquisition import aq_parent, aq_inner
 
 import pmr2.mercurial.exceptions
 import pmr2.mercurial.utils
@@ -35,6 +39,8 @@ from pmr2.app.browser import table
 
 from pmr2.app.browser.layout import BorderedStorageFormWrapper
 from pmr2.app.browser.layout import BorderedTraverseFormWrapper
+
+from pmr2.app.browser.exposure import ExposurePort, ExposureAddForm
 
 
 # Workspace Container
@@ -246,6 +252,68 @@ WorkspaceShortlogView = layout.wrap_form(
     WorkspaceShortlog,
     __wrapper_class=BorderedTraverseFormWrapper,
     label='Shortlog'
+)
+
+
+class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
+
+    # more suitable interface name needed?
+    zope.interface.implements(IExposureRolloverForm)
+    _finishedAdd = False
+    fields = z3c.form.field.Fields(IExposureRolloverForm)
+
+    shortlog = True
+    tbl = table.ExposureRolloverLogTable
+
+    def find_exposure_container(self):
+        # XXX magic, we assume exposure container's location
+        obj = aq_inner(self.context)
+        while obj:
+            if IPMR2.providedBy(obj):
+                return obj['exposure']
+            obj = aq_parent(obj)
+
+    def export_source(self):
+        return self.source_exposure
+
+    @z3c.form.button.buttonAndHandler(_('Migrate'), name='apply')
+    def handleMigrate(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        exposure_container = self.find_exposure_container()
+        self.exposure_container = exposure_container
+        self.source_exposure = exposure_container[data['exposure_id']]
+
+        eaf = ExposureAddForm(exposure_container, None)
+        data = {
+            'workspace': unicode(self.context.id),  # should be fine
+            'curation': None,  # to be copied later
+            'commit_id': data['commit_id'],
+        }
+        eaf.createAndAdd(data)
+        exp_id = data['id']
+        target = exposure_container[exp_id]
+        self.mold(target)
+        self._finishedAdd = True
+        self.target = target
+
+    def nextURL(self):
+        return self.target.absolute_url()
+
+    def render(self):
+        if self._finishedAdd:
+            self.request.response.redirect(self.nextURL())
+            return ""
+        return super(WorkspaceExposureRollover, self).render()
+
+
+WorkspaceExposureRolloverView = layout.wrap_form(
+    WorkspaceExposureRollover,
+    __wrapper_class=BorderedTraverseFormWrapper,
+    label='Exposure Rollover'
 )
 
 

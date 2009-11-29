@@ -30,6 +30,17 @@ class ItemKeyColumn(z3c.table.column.Column):
         return self.getItem(item)
 
 
+class ItemKeyRadioColumn(ItemKeyColumn, z3c.table.column.RadioColumn):
+
+    def getItemValue(self, item):
+        return self.getItem(item)
+
+    def renderCell(self, item):
+        radio = z3c.table.column.RadioColumn.renderCell(self, item)
+        return '<label>%s %s</label>' % (
+            radio, self.getItem(item)[0:12])
+
+
 class EscapedItemKeyColumn(ItemKeyColumn):
     """With CGI escape."""
 
@@ -131,6 +142,17 @@ class WorkspaceStatusTable(z3c.table.table.SequenceTable):
 
 # Workspace log table.
 
+
+class ChangesetRadioColumn(ItemKeyRadioColumn):
+    weight = 0
+    header = _(u'Changeset')
+    itemkey = 'node'
+
+    def getItemKey(self, item):
+        # XXX magic
+        return u'form.widgets.commit_id'
+
+
 class ChangesetDateColumn(ItemKeyColumn):
     weight = 10
     header = _(u'Date')
@@ -172,24 +194,47 @@ class ExposureColumn(ItemKeyColumn):
     header = _(u'Exposure')
     itemkey = None  # actually derived from catalog
 
-    def renderCell(self, item):
-        # query
+    def getItem(self, item):
         workspace = self.context.context  # the workspace
         pt = getToolByName(workspace, 'portal_catalog')
         query = {}
         query['portal_type'] = 'Exposure'  # XXX this may need changing
         query['pmr2_exposure_workspace'] = workspace.id
         query['pmr2_exposure_commit_id'] = item['node']
-        items = pt(**query)
+        return pt(**query)
 
+    def renderCell(self, item):
+        items = self.getItem(item)
         if items:
-            result = []
-            for i in items:
-                result.append
             return u'<br />\n'.join([
-                u'<a href="%s">%s</a>' % (i.getURL(), i.Title) for i in items
+                u'<a href="%s">%s</a>' % (i.getURL(),
+                    i.Title or i.id) for i in items
             ])
         return u'(none)'
+
+
+class ExposureRadioColumn(ItemKeyRadioColumn, ExposureColumn):
+
+    def getItemKey(self, item):
+        # XXX magic
+        return u'form.widgets.exposure_id'
+
+    def renderCell(self, item):
+        items = self.getItem(item)
+        if not items:
+            return u'(none)'
+        result = []
+        for i in items:
+            selected = (item == self.selectedItem) and \
+                u'checked="checked"' or u''
+            radio = u'<input type="radio" class="%s" name="%s" ' \
+                     'value="%s" %s />' % ('radio-widget',
+                                           self.getItemKey(item), 
+                                           i.id,
+                                           selected)
+            result.append(u'<label>%s <a href="%s">%s</a></label>' % (
+                radio, i.getURL(), i.Title or i.id))
+        return '<br />\n'.join(result)
 
 
 class ChangelogTable(z3c.table.table.Table):
@@ -254,6 +299,32 @@ class WorkspacePageShortlogTable(z3c.table.table.Table):
             ),
         ]
 
+
+class ExposureRolloverLogTable(z3c.table.table.Table):
+
+    sortOn = None
+
+    def setUpColumns(self):
+        return [
+            z3c.table.column.addColumn(
+                self, ChangesetRadioColumn, u'node'
+            ),
+            z3c.table.column.addColumn(
+                self, ChangesetDateColumn, u'changeset_date'
+            ),
+            z3c.table.column.addColumn(
+                self, ChangesetAuthorColumn, u'changeset_author'
+            ),
+            z3c.table.column.addColumn(
+                self, ChangesetDescColumn, u'changeset_desc'
+            ),
+            z3c.table.column.addColumn(
+                self, ShortlogOptionColumn, u'shortlog_opt'
+            ),
+            z3c.table.column.addColumn(
+                self, ExposureRadioColumn, u'exposure_list'
+            ),
+        ]
 
 # Workspace manifest table.
 

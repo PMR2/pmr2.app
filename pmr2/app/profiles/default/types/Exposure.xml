@@ -71,4 +71,11 @@
   <permission value="Modify portal content"/>
  </action>
 
+ <action title="Rollover" action_id="rollover" 
+    category="object" 
+    url_expr="string:${object_url}/@@rollover" visible="True"
+    i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+
 </object>

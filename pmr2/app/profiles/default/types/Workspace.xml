@@ -67,4 +67,11 @@
   <permission value="View"/>
  </action>
 
+ <action title="Exposure Rollover" action_id="exposure_rollover" 
+    category="object" condition_expr="" 
+    url_expr="string:${object_url}/@@exposure_rollover" 
+    visible="True" i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+
 </object>

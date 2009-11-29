@@ -10,7 +10,6 @@ from persistent import Persistent
 from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 
-from pmr2.mercurial import Storage  # XXX remove later [1]
 from pmr2.mercurial.interfaces import IPMR2StorageBase, IPMR2HgWorkspaceAdapter
 from pmr2.mercurial.adapter import PMR2StorageAdapter
 from pmr2.mercurial.adapter import PMR2StorageFixedRevAdapter

@@ -4,9 +4,11 @@ import zope.interface
 from zope.app.authentication.httpplugins import HTTPBasicAuthCredentialsPlugin
 import zope.app.pagetemplate.viewpagetemplatefile
 from zope.component import getUtilitiesFor, getMultiAdapter
+import z3c.form.interfaces
 from plone.app.workflow.interfaces import ISharingPageRole
 import plone.z3cform
 from plone.z3cform import layout
+from plone.z3cform.templates import FormTemplateFactory
 from plone.z3cform.templates import ZopeTwoFormTemplateFactory
 from paste.httpexceptions import HTTPFound, HTTPNotFound, HTTPForbidden
 
@@ -37,10 +39,14 @@ plain_layout_factory = ZopeTwoFormTemplateFactory(
 mathml_layout_factory = ZopeTwoFormTemplateFactory(
     path('mathml_layout.pt'), form=IMathMLLayoutWrapper)
 
+rollover_form_factory = FormTemplateFactory(
+    path('rollover_form.pt'), form=z3c.form.interfaces.IForm)
+
 __all__ = [
     'ploneview_layout_factory',
     'plain_layout_factory',
     'mathml_layout_factory',
+    'rollover_form_factory',
 
     'FormWrapper',
     'PloneviewLayoutWrapper',
@@ -59,6 +65,14 @@ __all__ = [
 class Macros(plone.z3cform.templates.Macros):
     template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
         path('macros.pt'))
+
+    def __getitem__(self, key):
+        return self.template.macros[key]
+
+
+class RolloverMacros(plone.z3cform.templates.Macros):
+    template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
+        path('rollover_macros.pt'))
 
     def __getitem__(self, key):
         return self.template.macros[key]

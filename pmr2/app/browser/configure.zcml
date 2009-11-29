@@ -50,6 +50,23 @@
       allowed_interface="zope.interface.common.mapping.IItemMapping"
       permission="zope.Public" />
 
+  <!-- 
+    these two are for the rollover.  I wish this isn't needed, will work
+    on making this more reusable for other types when time permits.
+  -->
+
+  <adapter 
+      for="pmr2.app.interfaces.IExposureRolloverForm
+           zope.publisher.interfaces.IPublisherRequest"
+      factory=".layout.rollover_form_factory" />
+
+  <browser:page
+      name="rollover-macros"
+      for="pmr2.app.interfaces.IWorkspace"
+      class=".layout.RolloverMacros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public" />
+
 
   <!-- pages -->
 
@@ -171,6 +188,13 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="pmr2.app.content.Workspace"
+      name="exposure_rollover"
+      class=".workspace.WorkspaceExposureRolloverView"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <!-- 
     XXX we are not doing this for every single custom mime type 
     - one way around this is we implement annotations in the exposures
@@ -260,7 +284,7 @@
 
   <browser:page
       for="pmr2.app.content.Exposure"
-      name="upgrade"
+      name="rollover"
       class=".exposure.ExposurePortCommitIdFormView"
       permission="cmf.ModifyPortalContent"
       />

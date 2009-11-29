@@ -856,7 +856,8 @@ class ExposurePort(form.Form):
                 d['views'] = viewinfo(obj)
                 yield (p, d,)
             elif IExposureFolder.providedBy(obj):
-                # XXX we are ignorning other folder types...
+                # we are ignorning other folder types, let an adapter
+                # handle it below.
                 for i in self._export(obj, p):
                     yield i
             else:
@@ -874,6 +875,9 @@ class ExposurePort(form.Form):
         # to grab the relevant fields.
         yield (prefix, fieldvalues(cur),)
 
+    def export_source(self):
+        return self.context
+
     def export(self):
         """\
         Returns a generator object that produces tuples containing the
@@ -882,7 +886,7 @@ class ExposurePort(form.Form):
         field values if applicable.
         """
 
-        for i in self._export(self.getContent()):
+        for i in self._export(self.export_source()):
             yield i
 
     def mold(self, target):
