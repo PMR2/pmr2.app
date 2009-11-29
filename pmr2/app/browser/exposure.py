@@ -54,6 +54,11 @@ class ExposureAddForm(form.AddForm):
         ctxobj.workspace = self._data['workspace']
         ctxobj.commit_id = self._data['commit_id']
         ctxobj.curation = self._data['curation']
+        helper = zope.component.queryAdapter(ctxobj, IExposureSourceAdapter)
+        if helper:
+            exposure, workspace, path = helper.source()
+            ctxobj.setTitle(workspace.title)
+        
 
 ExposureAddFormView = layout.wrap_form(ExposureAddForm, 
     label="Exposure Create Form")
