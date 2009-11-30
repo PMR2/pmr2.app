@@ -424,8 +424,8 @@ class ExposureFileGenForm(form.AddForm):
         super(ExposureFileGenForm, self).add(obj)
 
     def add_data(self, ctxobj):
-        # nothing to add.
-        pass
+        # give a default title based on filename
+        ctxobj.setTitle(ctxobj.id)
 
 ExposureFileGenFormView = layout.wrap_form(ExposureFileGenForm, 
     label="Add a file to the exposure")

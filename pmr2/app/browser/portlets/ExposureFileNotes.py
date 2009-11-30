@@ -59,7 +59,7 @@ class Renderer(base.Renderer):
 
     @property
     def available(self):
-        return IExposureFile.providedBy(self.context)
+        return IExposureFile.providedBy(self.context) and self.context.views
 
 
 class AddForm(base.AddForm):

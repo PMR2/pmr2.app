@@ -51,6 +51,14 @@ class Renderer(base.Renderer):
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         return portal.absolute_url()
 
+    def view_url(self, view='rawfile'):
+        return '%s/@@%s/%s/%s' % (
+            self.workspace.absolute_url(),
+            view,
+            self.exposure.commit_id,
+            self.path
+        )
+
     # labels may change, so commenting this out for now
     #@memoize
     def file_access_uris(self):
@@ -60,13 +68,17 @@ class Renderer(base.Renderer):
         result.append({
             'label': u'Complete Archive as .tgz', 'href': archive_uri})
         if IExposureFile.providedBy(self.context):
-            file_uri = '%s/@@rawfile/%s/%s' % (
-                self.workspace.absolute_url(),
-                self.exposure.commit_id,
-                self.path
-            )
             result.append({
-                'label': u'This File (%s)' % self.path, 'href': file_uri})
+                'label': u'This File',
+                'href': self.view_url(),
+            })
+            # XXX CellML/OpenCell specific.
+            if self.path.endswith('.cellml') or \
+                    self.path.endswith('.session.xml'):
+                result.append({
+                    'label': u'Solve using OpenCell',
+                    'href': self.view_url('pcenv'),
+                })
         return result
 
     @property

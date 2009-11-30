@@ -308,7 +308,7 @@ class IBaseExposureDocument(zope.interface.Interface):
 
     def generate_content():
         """\
-        The method to generate/populate content for an exposure document.
+        The method to generate/populate fields of an exposure document.
         """
 
 
@@ -630,9 +630,9 @@ class IExposureFileAnnotator(zope.interface.Interface):
         required=False,
     )
 
-    def process(context):
+    def generate(context):
         """\
-        Process the given context to return a list of tuples in the
+        Process the input context to return a list of tuples in the
         form (name, value) where name is the name of the field for the
         respective note class to store the value in.
         """

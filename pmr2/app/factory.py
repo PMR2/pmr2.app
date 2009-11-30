@@ -93,8 +93,16 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
         # edits later.
         if not IExposureFileEditableNote.providedBy(note):
             data = self.generate()
-            for a, v in data:
-                 setattr(note, a, v)
+            try:
+                for a, v in data:
+                    # XXX should validate field/value by schema somehow
+                    setattr(note, a, v)
+            except TypeError:
+                raise TypeError('%s.generate failed to return a list of ' \
+                                'tuple(key, value)' % self.__class__)
+            except ValueError:
+                raise ValueError('%s.generate returned invalid values (not ' \
+                                 'list of tuple(key, value)' % self.__class__)
         # as this utility is registered with the same name as the view
         # that this reader/writer is for, append it the context to
         # mark the view as generated.
@@ -174,12 +182,12 @@ class CmetaAnnotator(ExposureFileAnnotatorBase):
         ids = metadata.get_cmetaid()
         if not ids:
             # got no metadata.
-            return
+            return ()
 
         citation = metadata.get_citation(ids[0])
         if not citation:
             # no citation, everyone go home
-            return
+            return ()
 
         result['citation_id'] = citation[0]['citation_id']
         # more than just journal
