@@ -537,6 +537,7 @@ class ExposureFileDocViewGenForm(form.BaseAnnotationForm):
             name=self._data['docview_generator']
         )
         viewgen(self.context)
+        self.context.reindexObject()
 
     def nextURL(self):
         # if there are multiple choices, redirect to a view.
@@ -575,6 +576,7 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
             name=self._data['docview_generator']
         )
         viewgen(self.context)
+        self.context.reindexObject()
 
     def nextURL(self):
         # return to the root, because we will only have one default view
@@ -846,6 +848,10 @@ class ExposurePort(form.Form):
         else:
             objpath = lambda x: '%s/%s' % (prefix, x)
 
+        # XXX this is a special case variable for ExposurePMR1Metadoc,
+        # see below.
+        default_fv = None
+
         for obj_id, obj in cur.items():
             p = objpath(obj_id)
             # do stuff depend on type
@@ -871,6 +877,16 @@ class ExposurePort(form.Form):
                 # something they don't own.
                 a = zope.component.queryAdapter(obj, IExposurePortDataProvider)
                 if a is not None:
+
+                    # XXX legacy type had default page, which needs to 
+                    # be converted into the current type.
+                    if IExposurePMR1Metadoc.providedBy(obj) and not default_fv:
+                        default_fv = {
+                            'docview_gensource': obj.origin,
+                            'docview_generator': u'cellml_tmpdoc',
+                        }
+
+                    # otherwise procede as normal
                     yield a()
 
         # folder gets appended last for lazy reason - we assume all
@@ -878,7 +894,11 @@ class ExposurePort(form.Form):
         # automatically, rather than creating that as file.
         # Then annotations can be assigned to them later, use viewinfo
         # to grab the relevant fields.
-        yield (prefix, fieldvalues(cur),)
+        fv = fieldvalues(cur)
+        if default_fv:
+            # XXX legacy default values
+            fv.update(default_fv)
+        yield (prefix, fv,)
 
     def export_source(self):
         return self.context

@@ -992,7 +992,7 @@ supply an existing commit id.
     ...    'form.buttons.apply': 1,
     ... })
     >>> view = zope.component.queryMultiAdapter((context, request), 
-    ...                                         name='upgrade')
+    ...                                         name='rollover')
     >>> result = view.form_instance()
     >>> nextURL = request.response.getHeader('Location')
     >>> print nextURL
