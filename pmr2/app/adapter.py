@@ -268,6 +268,13 @@ class ExposureDocViewGenSourceAdapter(ExposureSourceAdapter):
         return exposure, workspace, path
 
 
+class ExposureDocViewGenFormSourceAdapter(ExposureFileNoteSourceAdapter,
+        ExposureDocViewGenSourceAdapter):
+    """\
+    Data source for the class below.
+    """
+
+
 class ExposureDocViewGenForm(Location):
 
     zope.component.adapts(IExposure)
@@ -277,17 +284,10 @@ class ExposureDocViewGenForm(Location):
 
     def __init__(self, context):
         # must locate itself into context the very first thing, as the
-        # vocabulary depends on it.
+        # vocabulary uses source adapter registered above.
         locate(self, context, '')
         self.docview_gensource = context.docview_gensource
         self.docview_generator = context.docview_generator
-
-
-class ExposureDocViewGenFormSourceAdapter(ExposureFileNoteSourceAdapter,
-        ExposureDocViewGenSourceAdapter):
-    """\
-    Data source for the above form
-    """
 
 
 # Basic support for ExposureFileNote annotation adapters.

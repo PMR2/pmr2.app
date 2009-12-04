@@ -289,6 +289,20 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <browser:page
+      for="pmr2.app.content.Exposure"
+      name="upgrade-pmr1"
+      class=".exposure.ExposurePortPMR1FormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureContainer"
+      name="upgrade-pmr1"
+      class=".exposure.ExposurePortPMR1BulkFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <!-- Exposure File -->
 
   <browser:page

@@ -576,9 +576,14 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
         # XXX Assigning the filename here because it is specified, and
         # the annotator expects a filename due to special case for
         # Exposure, and to kep the default annotator simple.
-        # XXX manual unicode call
-        self.context.docview_gensource = unicode(
-            self._data['docview_gensource'])
+        # XXX manual unicode call, because vocab derives data directly
+        # from manifest in mercurial, which is str.
+        self.context.docview_gensource = \
+            unicode(self._data['docview_gensource'])
+        self.context.docview_generator = self._data['docview_generator']
+        if not (self.context.docview_gensource and 
+                self.context.docview_generator):
+            return None  # do nothing
         viewgen = zope.component.getUtility(
             IDocViewGen,
             name=self._data['docview_generator']
@@ -1038,3 +1043,96 @@ class ExposurePortCommitIdForm(ExposurePort):
 
 ExposurePortCommitIdFormView = layout.wrap_form(ExposurePortCommitIdForm, 
     label="Exposure Port to new commit id")
+
+
+# PMR2 v0.1 to v0.2 migration related forms.
+
+class ExposurePortPMR1Form(ExposurePort):
+
+    # this just have commit id, create exposure.
+
+    formErrorsMessage = _('There are errors with migration, probably because this is not a PMR1 styled exposure, or contain objects that are incompatible with migration.')
+
+    _finishedAdd = False
+
+    def export(self):
+        """\
+        Generate and save structure, delete all objects, rebuild.
+        """
+
+        if hasattr(self, 'exported'):
+            return self.exported
+
+        # we need the actual data, now.
+        self.exported = list(self._export(self.export_source()))
+
+        # delete
+        cur = self.export_source()
+        for obj_id, obj in cur.items():
+            # do stuff depend on type
+            if IExposureDocument.providedBy(obj) or \
+                    IExposureMetadoc.providedBy(obj):
+                # delete object
+                cur.manage_delObjects(obj.getId())
+
+        return self.exported
+
+    @button.buttonAndHandler(_('Migrate'), name='apply')
+    def handleMigrate(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        try:
+            self.migrate()
+        except:
+            self.status = self.formErrorsMessage
+            return
+
+    def migrate(self):
+        # we are "rebuliding self"
+        target = self.context
+        self.mold(target)
+
+    def nextURL(self):
+        return self.target.absolute_url()
+
+    def render(self):
+        if self._finishedAdd:
+            self.request.response.redirect(self.nextURL())
+            return ""
+        return super(ExposurePortPMR1Form, self).render()
+
+ExposurePortPMR1FormView = layout.wrap_form(ExposurePortPMR1Form, 
+    label="Exposure PMR1 to current")
+
+
+class ExposurePortPMR1BulkForm(form.Form):
+    """\
+    Exposure creation form.
+    """
+
+    @button.buttonAndHandler(_('Migrate'), name='apply')
+    def handleMigrate(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        # search for all exposures
+        catalog = getToolByName(self.context, 'portal_catalog')
+        q = {
+            'path': self.context.getPhysicalPath(),
+            'portal_type': 'ExposurePMR1Metadoc',
+        }
+        results = set([aq_parent(i.getObject()).absolute_url_path() 
+            for i in catalog(**q)])
+
+        for i in results:
+            ctx = catalog(path=i, portal_type='Exposure')[0].getObject()
+            f = ExposurePortPMR1Form(ctx, None)
+            f.migrate()
+
+ExposurePortPMR1BulkFormView = layout.wrap_form(ExposurePortPMR1BulkForm, 
+    label="Exposure PMR1 to current")
