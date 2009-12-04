@@ -6,9 +6,11 @@
     <type type_id="PMR2">
       <bound-workflow workflow_id="pmr2_root_workflow"/>
     </type>
+    <!--
     <type type_id="Exposure">
       <bound-workflow workflow_id="pmr2_exposure_workflow"/>
     </type>
+    -->
     <!-- These still need workflows for now...
     <type type_id="ExposureCodeDocument" />
     <type type_id="ExposureCmetaDocument" />
