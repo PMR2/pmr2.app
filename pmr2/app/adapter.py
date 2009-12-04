@@ -187,8 +187,15 @@ def ExposureToWorkspaceAdapter(context):
     }
     result = catalog(**q)
     if not result:
-        # XXX manual gathering not implemented.
-        raise WorkspaceObjNotFoundError()
+        # okay, I guess the catalog is not going to help, we manually
+        # try to find this, based on the current assumption
+        try:
+            # it should be there...
+            result = aq_parent(aq_parent(aq_inner(context)))\
+                ['workspace'][context.workspace]
+            return result
+        except:
+            raise WorkspaceObjNotFoundError()
     # there should be only one such id in the workspace for this
     # unique result.
     return result[0].getObject()

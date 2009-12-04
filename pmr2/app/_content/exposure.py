@@ -759,7 +759,7 @@ class ExposureFolder(ATFolderDocument, TraversalCatchAll):
 
 # New style Exposure file.
 
-class ExposureFile(ATDocument):
+class ExposureFile(ATDocument, ExposureContentIndexBase):
     """\
     Generic object within an exposure that represents a file in the
     workspace, and as an anchor for adapted content.
@@ -786,3 +786,54 @@ class ExposureFile(ATDocument):
             if ctxobj is not None:
                 results.append(ctxobj.raw_text())
         return '\n'.join(results)
+
+    # and then we have to deal with being compatible with features that
+    # comptability that can't be cleanly decoupled at all.
+
+    def get_authors_family_index(self):
+        # @@metadata
+        note = zope.component.queryAdapter(self, name='cmeta')
+        if not (note and note.citation_authors):
+            return []
+        return [pmr2.app.util.normal_kw(i[0]) for i in note.citation_authors]
+
+    def get_citation_title_index(self):
+        # @@metadata
+        note = zope.component.queryAdapter(self, name='cmeta')
+        if not (note and note.citation_title):
+            return []
+        return pmr2.app.util.normal_kw(note.citation_title)
+
+    def get_keywords_index(self):
+        # @@metadata
+        note = zope.component.queryAdapter(self, name='cmeta')
+        if not (note and note.keywords):
+            return []
+        results = [pmr2.app.util.normal_kw(i[1]) for i in note.keywords]
+        results.sort()
+        return results
+
+    # ... of course, PMR1.
+    security.declareProtected(View, 'pmr1_citation_authors')
+    def pmr1_citation_authors(self):
+        note = zope.component.queryAdapter(self, name='cmeta')
+        if not (note and note.citation_authors and note.citation_issued):
+            # grab the workspace id (from exposure) and fix it
+            # XXX can't do this, because this is a catalog function.
+            #sa = zope.component.getAdapter(self, IExposureSourceAdapter)
+            #exposure, workspace, p = sa.source()
+            ctx = aq_parent(self)
+            while ctx is not None:
+                if IExposure.providedBy(ctx):
+                    return ctx.workspace.replace('_', ', ').title()
+                ctx = aq_parent(ctx)
+            return ''
+        authors = u', '.join([i[0] for i in note.citation_authors])
+        return u'%s, %s' % (authors, note.citation_issued[:4])
+
+    security.declareProtected(View, 'pmr1_citation_title')
+    def pmr1_citation_title(self):
+        note = zope.component.queryAdapter(self, name='cmeta')
+        if not (note and note.citation_title):
+            return self.Title()
+        return note.citation_title
