@@ -2,6 +2,7 @@ from os.path import splitext
 from cStringIO import StringIO
 import zope.interface
 import zope.component
+from zope.location import Location, locate
 from zope.app.container.contained import Contained
 from zope.annotation import factory
 from zope.schema import fieldproperty
@@ -265,6 +266,28 @@ class ExposureDocViewGenSourceAdapter(ExposureSourceAdapter):
             # lock it to a specific field for now
             path = self.context.docview_gensource
         return exposure, workspace, path
+
+
+class ExposureDocViewGenForm(Location):
+
+    zope.component.adapts(IExposure)
+    zope.interface.implements(IExposureDocViewGenForm)
+    docview_gensource = fieldproperty.FieldProperty(IExposureDocViewGenForm['docview_gensource'])
+    docview_generator = fieldproperty.FieldProperty(IExposureDocViewGenForm['docview_generator'])
+
+    def __init__(self, context):
+        # must locate itself into context the very first thing, as the
+        # vocabulary depends on it.
+        locate(self, context, '')
+        self.docview_gensource = context.docview_gensource
+        self.docview_generator = context.docview_generator
+
+
+class ExposureDocViewGenFormSourceAdapter(ExposureFileNoteSourceAdapter,
+        ExposureDocViewGenSourceAdapter):
+    """\
+    Data source for the above form
+    """
 
 
 # Basic support for ExposureFileNote annotation adapters.

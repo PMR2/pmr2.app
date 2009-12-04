@@ -558,8 +558,15 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
 
     # Multiple choice form will need this method, but generalized.
     # This will become subclass of that.
+    ignoreContext = False
     zope.interface.implements(IExposureDocViewGenForm)
     fields = z3c.form.field.Fields(IExposureDocViewGenForm)
+
+    def getContent(self):
+        # since we are not using the same interface as the exposure
+        # object as it does not use choice, to populate the values here
+        # will require an adapter.
+        return zope.component.getAdapter(self.context, IExposureDocViewGenForm)
 
     @button.buttonAndHandler(_('Generate'), name='apply')
     def handleGenerate(self, action):

@@ -826,7 +826,7 @@ class IExposureDocViewGenForm(zope.interface.Interface):
     the ExposureFile default document_view.
     """
 
-    filename = zope.schema.Choice(
+    docview_gensource = zope.schema.Choice(
         title=u'Documentation File',
         description=u'The file where the documentation resides in.',
         vocabulary='ManifestListVocab',
