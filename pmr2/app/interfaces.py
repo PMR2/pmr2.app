@@ -266,6 +266,8 @@ class IExposure(zope.interface.Interface):
 class IExposureDocGen(zope.interface.Interface):
     """\
     Interface for the documentation generation.
+
+    XXX deprecated
     """
 
     filename = zope.schema.Choice(
@@ -285,6 +287,8 @@ class IExposureDocGen(zope.interface.Interface):
 class IExposureMetadocGen(zope.interface.Interface):
     """\
     Interface for the generation of metadocumentation.
+
+    XXX deprecated
     """
 
     filename = zope.schema.Choice(
@@ -304,6 +308,8 @@ class IExposureMetadocGen(zope.interface.Interface):
 class IBaseExposureDocument(zope.interface.Interface):
     """\
     Base interface for all types of exposure documents.
+
+    XXX deprecated
     """
 
     def generate_content():
@@ -315,6 +321,8 @@ class IBaseExposureDocument(zope.interface.Interface):
 class IExposureDocument(IBaseExposureDocument):
     """\
     Interface for an exposure document.
+
+    XXX deprecated
     """
 
     origin = zope.schema.TextLine(
@@ -340,6 +348,8 @@ class IExposureMetadoc(IBaseExposureDocument):
     """\
     Interface for an exposure document that creates a set of exposure
     documents.
+
+    XXX deprecated
     """
 
     origin = zope.schema.Text(
@@ -361,6 +371,8 @@ class IExposureMetadoc(IBaseExposureDocument):
 class IExposureMathDocument(IExposureDocument):
     """\
     Exposure Document with embedded MathML.
+
+    XXX deprecated
     """
 
     mathml = zope.schema.Text(
@@ -372,6 +384,8 @@ class IExposureMathDocument(IExposureDocument):
 class IExposureCodeDocument(IExposureDocument):
     """\
     Exposure Document for code.
+
+    XXX deprecated
     """
 
     raw_code = zope.schema.Text(
@@ -383,6 +397,8 @@ class IExposureCodeDocument(IExposureDocument):
 class IExposureCmetaDocument(IExposureDocument):
     """\
     Exposure Document that handles CellML Metadata.
+
+    XXX deprecated
     """
 
     metadata = zope.schema.Text(
@@ -424,12 +440,16 @@ class IExposureCmetaDocument(IExposureDocument):
 class IExposurePMR1Metadoc(IExposureMetadoc):
     """\
     Interface for the PMR1 set of exposure documents.
+
+    XXX deprecated
     """
 
 
 class IBaseExposureDocumentFactory(zope.interface.Interface):
     """\
     Base interface for exposure document types factory.
+
+    XXX deprecated
     """
 
     klass = zope.schema.InterfaceField(
@@ -448,6 +468,8 @@ class IBaseExposureDocumentFactory(zope.interface.Interface):
 class IExposureDocumentFactory(IBaseExposureDocumentFactory):
     """
     For factories that creates exposure documents.
+
+    XXX deprecated
     """
 
     transform = zope.schema.TextLine(
@@ -459,6 +481,8 @@ class IExposureDocumentFactory(IBaseExposureDocumentFactory):
 class IExposureMetadocFactory(IBaseExposureDocumentFactory):
     """
     Interface for meta-document factories.
+
+    XXX deprecated
     """
 
     factories = zope.schema.List(
@@ -830,14 +854,15 @@ class IExposureDocViewGenForm(zope.interface.Interface):
         title=u'Documentation File',
         description=u'The file where the documentation resides in.',
         vocabulary='ManifestListVocab',
+        required=False,
     )
 
     docview_generator = zope.schema.Choice(
         title=u'View Generator',
         description=u'The selected generator will be used to attempt to ' \
                      'generate text for the default document view.',
-        required=True,
         vocabulary='DocViewGenVocab',
+        required=False,
     )
 
 

@@ -863,7 +863,7 @@ and the annotator to process it with.  We can pick any file.
     >>> source_file = u'component/docs/index.html'
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.filename': [source_file],
+    ...         'form.widgets.docview_gensource': [source_file],
     ...         'form.widgets.docview_generator': [u'safe_html'],
     ...         'form.buttons.apply': 1,
     ...     })

@@ -577,7 +577,8 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
         # the annotator expects a filename due to special case for
         # Exposure, and to kep the default annotator simple.
         # XXX manual unicode call
-        self.context.docview_gensource = unicode(self._data['filename'])
+        self.context.docview_gensource = unicode(
+            self._data['docview_gensource'])
         viewgen = zope.component.getUtility(
             IDocViewGen,
             name=self._data['docview_generator']

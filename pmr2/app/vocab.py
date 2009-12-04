@@ -50,6 +50,13 @@ class ManifestListVocab(SimpleVocabulary):
         terms = [SimpleTerm(i, i) for i in values]
         super(ManifestListVocab, self).__init__(terms)
 
+    def getTerm(self, value):
+        if value is None:
+            # unspecified, let this slide...
+            return SimpleTerm(value)
+        else:
+            return super(ManifestListVocab, self).getTerm(value)
+
 ManifestListVocabFactory = vocab_factory(ManifestListVocab)
 
 
@@ -209,5 +216,12 @@ class DocViewGenVocab(SimpleVocabulary):
         values.sort(cmp=lambda x, y: cmp(x[2], y[2]))
         terms = [SimpleTerm(*i) for i in values]
         super(DocViewGenVocab, self).__init__(terms)
+
+    def getTerm(self, value):
+        try:
+            return super(DocViewGenVocab, self).getTerm(value)
+        except LookupError:
+            # can be triggered by various cases
+            return SimpleTerm(value)
 
 DocViewGenVocabFactory = vocab_factory(DocViewGenVocab)
