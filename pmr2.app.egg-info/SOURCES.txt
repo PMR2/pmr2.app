@@ -108,6 +108,8 @@ pmr2/app/browser/templates/pmr1_folder_listing.pt
 pmr2/app/browser/templates/pmr1_metadoc.pt
 pmr2/app/browser/templates/pmr2search.pt
 pmr2/app/browser/templates/raw_content.pt
+pmr2/app/browser/templates/rollover_form.pt
+pmr2/app/browser/templates/rollover_macros.pt
 pmr2/app/browser/templates/rss.pt
 pmr2/app/browser/templates/sublinks.pt
 pmr2/app/browser/templates/workspace.pt
