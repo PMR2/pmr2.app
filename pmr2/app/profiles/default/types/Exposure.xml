@@ -17,6 +17,7 @@
   <!-- disable default folder? -->
   <element value="Folder"/>  
   <element value="ExposureFolder"/>
+  <element value="ExposureFile"/>
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">exposure_info</property>
