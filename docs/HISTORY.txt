@@ -1,8 +1,40 @@
 Changelog
 =========
 
-0.0 - Unreleased
+0.2 - Unreleased
 ----------------
 
-* Initial release
+* Rewrote how Exposures are done.  The pages have been made deprecated
+  and replaced with Exposure Files, which are wrappers around the files
+  that can be referenced by the exposure.  The views are now annotations
+  to those files.
+* Support for Mercurial subrepo for embedding workspaces within another.
+* Fixed pushing to workspaces that are marked private using PAS
+  (Pluggable Authentication System).
+* Various UI refinements.
 
+0.1.2 - Released (2009-07-23)
+---------------------------
+
+* Made empty workspace not result in an error page.
+
+0.1.1 - Released (2009-07-16)
+---------------------------
+
+* Session label should mention OpenCell to avoid confusion.
+* Fixed a minor rendering issue with MathML on empty models.
+* Fixed keyword string generation.
+* Made citation author list sort case agnostic.
+
+0.1 - Released (2009-06-22)
+---------------------------
+
+* Initial release of the Physiome Model Repository 2.  This provides
+  integration with Mercurial using the API through a wrapper module.
+* Workspaces are objects that wrap around a Mercurial repository.
+* Exposures are folder objects that references a specific changeset of
+  a specific workspace.
+* Exposure pages are pages that represent some files, and are grouped
+  together by metapages.
+* For detailed changes from initial development to this release, please
+  consult the logs in the version control system.
