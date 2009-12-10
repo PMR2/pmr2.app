@@ -845,7 +845,10 @@ class IExposureDocViewGenForm(zope.interface.Interface):
 
     docview_gensource = zope.schema.Choice(
         title=u'Documentation File',
-        description=u'The file where the documentation resides in.',
+        description=u'The file where the documentation resides in.  If this '
+                     'object is already a file, leaving this field unselected '
+                     'means the current file will provide the data from which '
+                     'the document will be generated from.',
         vocabulary='ManifestListVocab',
         required=False,
     )
