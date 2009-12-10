@@ -69,6 +69,12 @@
       provides="pmr2.app.interfaces.IExposureDocViewGenForm"
       />
 
+  <adapter
+      for="pmr2.app.interfaces.IExposureFile"
+      factory=".adapter.ExposureDocViewGenForm"
+      provides="pmr2.app.interfaces.IExposureDocViewGenForm"
+      />
+
   <!-- for ExposureFile -->
 
   <adapter

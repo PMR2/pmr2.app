@@ -515,40 +515,6 @@ class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
 ExposureFileNoteEditFormView = layout.wrap_form(ExposureFileNoteEditForm, 
     __wrapper_class=PlainTraverseLayoutWrapper,
     label="Edit an Exposure File Note.")
-    
-
-class ExposureFileDocViewGenForm(form.BaseAnnotationForm):
-    """\
-    Form to generate all the default view of a file within an exposure.
-    """
-
-    # Multiple choice form will need this method, but generalized.
-    # This will become subclass of that.
-    zope.interface.implements(IExposureFileDocViewGenForm)
-    fields = z3c.form.field.Fields(IExposureFileDocViewGenForm)
-
-    @button.buttonAndHandler(_('Generate'), name='apply')
-    def handleGenerate(self, action):
-        self.baseAnnotate(action)
-
-    def annotate(self):
-        viewgen = zope.component.getUtility(
-            IDocViewGen,
-            name=self._data['docview_generator']
-        )
-        viewgen(self.context)
-        self.context.reindexObject()
-
-    def nextURL(self):
-        # if there are multiple choices, redirect to a view.
-        # XXX default view only for now.
-        #return '%s/@@%s' % (self.context.absolute_url(), 
-        #                    self._data['docview_generator'])
-        return '%s/%s' % (self.context.absolute_url(), 'view')
-
-ExposureFileDocViewGenFormView = layout.wrap_form(
-    ExposureFileDocViewGenForm, 
-    label="Generate Default View for Exposure File.")
 
 
 class ExposureDocViewGenForm(form.BaseAnnotationForm):
@@ -573,17 +539,15 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
         self.baseAnnotate(action)
 
     def annotate(self):
-        # XXX Assigning the filename here because it is specified, and
-        # the annotator expects a filename due to special case for
-        # Exposure, and to kep the default annotator simple.
-        # XXX manual unicode call, because vocab derives data directly
-        # from manifest in mercurial, which is str.
-        self.context.docview_gensource = \
-            unicode(self._data['docview_gensource'])
+        if self._data['docview_gensource'] is not None:
+            # XXX manual unicode call, because vocab derives data directly
+            # from manifest in mercurial, which is str.
+            self.context.docview_gensource = \
+                unicode(self._data['docview_gensource'])
         self.context.docview_generator = self._data['docview_generator']
-        if not (self.context.docview_gensource and 
-                self.context.docview_generator):
-            return None  # do nothing
+        if not self.context.docview_generator:
+            # do nothing if we have no generator.
+            return None 
         viewgen = zope.component.getUtility(
             IDocViewGen,
             name=self._data['docview_generator']
@@ -875,6 +839,7 @@ class ExposurePort(form.Form):
                 # limited fields (i.e. manually exported here)
                 # get list of file notes
                 d = {}
+                d['docview_gensource'] = obj.docview_gensource
                 d['docview_generator'] = obj.docview_generator
                 # now query the each views.
                 d['views'] = viewinfo(obj)
@@ -949,6 +914,7 @@ class ExposurePort(form.Form):
 
                 # generate docview
                 if fields['docview_generator']:
+                    ctxobj.docview_gensource = fields['docview_gensource']
                     viewgen = zope.component.getUtility(
                         IDocViewGen,
                         name=fields['docview_generator'],

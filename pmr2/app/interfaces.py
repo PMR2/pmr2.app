@@ -610,6 +610,14 @@ class IExposureFile(zope.interface.Interface):
         default=[],
     )
 
+    docview_gensource = zope.schema.TextLine(
+        title=u'Documentation File',
+        description=u'The file where the documentation for this file reside '
+                     'in, for files that do not have any method of specifying '
+                     'one.',
+        required=False,
+    )
+
     docview_generator = zope.schema.TextLine(
         title=u'Default View Generator',
         description=u'The default view generator utility that was used to ' \
@@ -827,21 +835,6 @@ class IDocViewGen(zope.interface.Interface):
         """\
         The method that will generate the text.
         """
-
-
-class IExposureFileDocViewGenForm(zope.interface.Interface):
-    """\
-    For the form and utility that handles the generation of the text for
-    the ExposureFile default document_view.
-    """
-
-    docview_generator = zope.schema.Choice(
-        title=u'View Generator',
-        description=u'The selected generator will be used to attempt to ' \
-                     'generate text for the default document view.',
-        required=True,
-        vocabulary='DocViewGenVocab',
-    )
 
 
 class IExposureDocViewGenForm(zope.interface.Interface):

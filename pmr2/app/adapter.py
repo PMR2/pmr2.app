@@ -266,11 +266,9 @@ class ExposureDocViewGenSourceAdapter(ExposureSourceAdapter):
 
     def source(self):
         exposure, workspace, path = ExposureSourceAdapter.source(self)
-        # Since this is for document source, Exposure objects has
-        # special handling procedures.
-        if IExposure.providedBy(self.context):
-            # as the root Exposure object can specify a path for now we
-            # lock it to a specific field for now
+        # object could provide a source path
+        if hasattr(self.context, 'docview_gensource') and \
+                self.context.docview_gensource:
             path = self.context.docview_gensource
         return exposure, workspace, path
 
@@ -284,7 +282,6 @@ class ExposureDocViewGenFormSourceAdapter(ExposureFileNoteSourceAdapter,
 
 class ExposureDocViewGenForm(Location):
 
-    zope.component.adapts(IExposure)
     zope.interface.implements(IExposureDocViewGenForm)
     docview_gensource = fieldproperty.FieldProperty(IExposureDocViewGenForm['docview_gensource'])
     docview_generator = fieldproperty.FieldProperty(IExposureDocViewGenForm['docview_generator'])
