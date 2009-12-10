@@ -267,10 +267,12 @@ class PortalTransformDocViewGenBase(
         super(PortalTransformDocViewGenBase, self).__init__(*a, **kw)
 
     def generateTitle(self):
-        return u''
+        # don't generate title
+        return self.context.Title()
 
     def generateDescription(self):
-        return u''
+        # don't generate description
+        return self.context.Description()
 
     def generateText(self):
         input = self.input
