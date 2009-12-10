@@ -880,6 +880,27 @@ and the annotator to process it with.  We can pick any file.
     >>> context.docview_gensource == source_file
     True
 
+ExposureFiles can also reference a separate file for its documentation.
+::
+
+    >>> source_file = u'component/docs/index.html'
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.docview_gensource': [source_file],
+    ...         'form.widgets.docview_generator': [u'safe_html'],
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> view = exposure.ExposureDocViewGenForm(efile2, request)
+    >>> result = view()
+    >>> result
+    ''
+    >>> efile2.getText()
+    '\n<p>Lorem ipsum dolar sit amet</p>\n'
+    >>> efile2.docview_generator
+    u'safe_html'
+    >>> efile2.docview_gensource == source_file
+    True
+
 -----------------------
 "Upgrading" an Exposure
 -----------------------
@@ -915,13 +936,13 @@ above, and call the utility that will make what we need.
     ...             (u'rdfxml', None),
     ...             (u'cmeta', None),
     ...             (u'opencellsession', {
-    ...                 'filename': 'component/docs/index.html',
+    ...                 'filename': u'component/docs/index.html',
     ...             }),
     ...         ]
     ...     }),
     ...     ('component/module.cellml', {
-    ...         'docview_gensource': None,
-    ...         'docview_generator': None,
+    ...         'docview_gensource': u'component/docs/index.html',
+    ...         'docview_generator': u'safe_html',
     ...         'views': [],
     ...     }),
     ...     ('component/docs/index.html', {
