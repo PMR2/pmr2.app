@@ -1,25 +1,39 @@
 Changelog
 =========
 
-0.2 - Unreleased
-----------------
+0.2rc2 - Unreleased
+-------------------
+
+* Document view generation no longer generates empty title and 
+  description if it's unknown.
+* HTML document view now generates title from head/title.
+* Files can also have a seprate source document like exposure root.
+* Fixed authentication issue for Mercurial v0.9.5
+
+0.2rc1 - Unreleased
+-------------------
 
 * Rewrote how Exposures are done.  The pages have been made deprecated
   and replaced with Exposure Files, which are wrappers around the files
   that can be referenced by the exposure.  The views are now annotations
   to those files.
+* Buildout includes other view specific for CellML (i.e. code generation
+  and MathML).
+* Documentation can be generated.  Ones currently builtin to PMR2 
+  include HTML and reStructuredText.  The buildout includes ones for
+  CellML files.
 * Support for Mercurial subrepo for embedding workspaces within another.
 * Fixed pushing to workspaces that are marked private using PAS
   (Pluggable Authentication System).
 * Various UI refinements.
 
 0.1.2 - Released (2009-07-23)
----------------------------
+-----------------------------
 
 * Made empty workspace not result in an error page.
 
 0.1.1 - Released (2009-07-16)
----------------------------
+-----------------------------
 
 * Session label should mention OpenCell to avoid confusion.
 * Fixed a minor rendering issue with MathML on empty models.
