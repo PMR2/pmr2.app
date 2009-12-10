@@ -322,7 +322,7 @@
   <browser:page
       for="pmr2.app.content.ExposureFile"
       name="docviewgen"
-      class=".exposure.ExposureFileDocViewGenFormView"
+      class=".exposure.ExposureDocViewGenFormView"
       permission="cmf.ModifyPortalContent"
       />
 

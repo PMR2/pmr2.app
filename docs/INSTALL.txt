@@ -41,3 +41,13 @@ recipe to manage your project, you can do this:
         
 You can skip the ZCML slug if you are going to explicitly include the package
 from another package's configure.zcml file.
+
+
+Caveats
+=======
+
+- Sometimes pushing doesn't work after installation.  This is due to
+  hgauthpas (The Mercurial credential authentication provider) is not
+  placed in the correct order.  From the ZMI, go to the acl_users under
+  the Plone instance, plugins, Challenge Plugins, move hgauthpas to the
+  top under Active Plugins.

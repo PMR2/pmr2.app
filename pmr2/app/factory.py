@@ -5,6 +5,7 @@ import zope.component
 from zope.location import Location, locate
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
+from elementtree import HTMLTreeBuilder
 
 from pmr2.processor.cmeta import Cmeta
 from pmr2.app.interfaces import *
@@ -267,10 +268,12 @@ class PortalTransformDocViewGenBase(
         super(PortalTransformDocViewGenBase, self).__init__(*a, **kw)
 
     def generateTitle(self):
-        return u''
+        # don't generate title
+        return self.context.Title()
 
     def generateDescription(self):
-        return u''
+        # don't generate description
+        return self.context.Description()
 
     def generateText(self):
         input = self.input
@@ -283,6 +286,14 @@ class HTMLDocViewGen(PortalTransformDocViewGenBase):
     title = u'HTML annotator'
     description = u'This converts raw HTML files into a format suitable for ' \
                    'a Plone site.'
+
+    def generateTitle(self):
+        try:
+            tree = HTMLTreeBuilder.parse(StringIO(self.input))
+            return tree.findtext("head/title")
+        except:
+            pass
+        return self.context.Title()
 
 HTMLDocViewGenFactory = named_factory(HTMLDocViewGen)
 

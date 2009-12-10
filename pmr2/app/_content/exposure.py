@@ -771,6 +771,7 @@ class ExposureFile(ATDocument, ExposureContentIndexBase):
         zope.annotation.interfaces.IAttributeAnnotatable,
     )
     views = fieldproperty.FieldProperty(IExposureFile['views'])
+    docview_gensource = fieldproperty.FieldProperty(IExposureFile['docview_gensource'])
     docview_generator = fieldproperty.FieldProperty(IExposureFile['docview_generator'])
     security = ClassSecurityInfo()
 

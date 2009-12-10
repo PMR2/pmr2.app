@@ -826,11 +826,14 @@ For the HTML file
     >>> filectx = efile3
     >>> request = TestRequest(
     ...     form={
+    ...         'form.widgets.docview_gensource': [],
     ...         'form.widgets.docview_generator': [u'safe_html'],
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> view = exposure.ExposureFileDocViewGenForm(filectx, request)
+    >>> view = exposure.ExposureDocViewGenForm(filectx, request)
     >>> result = view()
+    >>> filectx.Title()
+    'Simple HTML'
     >>> filectx.getText()
     '\n<p>Lorem ipsum dolar sit amet</p>\n'
     >>> filectx.docview_generator
@@ -842,10 +845,11 @@ For the reStructureText file
     >>> filectx = efile4
     >>> request = TestRequest(
     ...     form={
+    ...         'form.widgets.docview_gensource': [],
     ...         'form.widgets.docview_generator': [u'rest_to_html'],
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> view = exposure.ExposureFileDocViewGenForm(filectx, request)
+    >>> view = exposure.ExposureDocViewGenForm(filectx, request)
     >>> result = view()
     >>> filectx.getText()
     '<h2 class="title">Simple reStructureText</h2>\n<p>...</p>\n'
@@ -878,6 +882,27 @@ and the annotator to process it with.  We can pick any file.
     >>> context.docview_gensource == source_file
     True
 
+ExposureFiles can also reference a separate file for its documentation.
+::
+
+    >>> source_file = u'component/docs/index.html'
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.docview_gensource': [source_file],
+    ...         'form.widgets.docview_generator': [u'safe_html'],
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> view = exposure.ExposureDocViewGenForm(efile2, request)
+    >>> result = view()
+    >>> result
+    ''
+    >>> efile2.getText()
+    '\n<p>Lorem ipsum dolar sit amet</p>\n'
+    >>> efile2.docview_generator
+    u'safe_html'
+    >>> efile2.docview_gensource == source_file
+    True
+
 -----------------------
 "Upgrading" an Exposure
 -----------------------
@@ -906,25 +931,29 @@ above, and call the utility that will make what we need.
     >>> result = list(porter.export())
     >>> answer = [
     ...     ('example_model.cellml', {
+    ...         'docview_gensource': None,
     ...         'docview_generator': None,
     ...         'views': [
     ...             (u'rdfturtle', None),
     ...             (u'rdfxml', None),
     ...             (u'cmeta', None),
     ...             (u'opencellsession', {
-    ...                 'filename': 'component/docs/index.html',
+    ...                 'filename': u'component/docs/index.html',
     ...             }),
     ...         ]
     ...     }),
     ...     ('component/module.cellml', {
-    ...         'docview_generator': None,
+    ...         'docview_gensource': u'component/docs/index.html',
+    ...         'docview_generator': u'safe_html',
     ...         'views': [],
     ...     }),
     ...     ('component/docs/index.html', {
+    ...         'docview_gensource': None,
     ...         'docview_generator': u'safe_html',
     ...         'views': [],
     ...     }),
     ...     ('component/docs/index.rst', {
+    ...         'docview_gensource': None,
     ...         'docview_generator': u'rest_to_html',
     ...         'views': [],
     ...     }),
@@ -941,7 +970,7 @@ above, and call the utility that will make what we need.
     ...         'curation': {'key': ['value1', 'value2']},
     ...         'docview_generator': u'safe_html',
     ...         'docview_gensource': u'component/docs/index.html',
-    ...         'title': u'',
+    ...         'title': u'Simple HTML',
     ...         'workspace': u'rdfmodel',
     ...     })
     ... ]
