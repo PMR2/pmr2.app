@@ -832,6 +832,8 @@ For the HTML file
     ...     })
     >>> view = exposure.ExposureDocViewGenForm(filectx, request)
     >>> result = view()
+    >>> filectx.Title()
+    'Simple HTML'
     >>> filectx.getText()
     '\n<p>Lorem ipsum dolar sit amet</p>\n'
     >>> filectx.docview_generator
@@ -968,7 +970,7 @@ above, and call the utility that will make what we need.
     ...         'curation': {'key': ['value1', 'value2']},
     ...         'docview_generator': u'safe_html',
     ...         'docview_gensource': u'component/docs/index.html',
-    ...         'title': u'',
+    ...         'title': u'Simple HTML',
     ...         'workspace': u'rdfmodel',
     ...     })
     ... ]
