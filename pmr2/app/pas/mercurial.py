@@ -25,7 +25,16 @@ def addHgAuthPlugin(self, id, title='', REQUEST=None):
             self.absolute_url())
 
 def hgSniffer(request):
-    return request.environ['HTTP_ACCEPT'].startswith('application/mercurial-')
+    # standard Mercurial compatible client
+    if 'HTTP_ACCEPT' in request.environ:
+        return request.environ['HTTP_ACCEPT'].startswith(
+            'application/mercurial-')
+    # older Mercurial client
+    agent = request.get_header('User-agent')
+    if agent:
+        return agent.startswith('mercurial/proto-')
+    # Assume not Mercurial
+    return False
 
 # XXX we could be doing this, but I am not sure if we need to hook into
 # protocol sniffer.  Hard-coding below works, for now.
