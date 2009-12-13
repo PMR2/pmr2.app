@@ -168,6 +168,12 @@ class Exposure(ATFolderDocument, TraversalCatchAll, ExposureContentIndexBase):
         TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
         ATFolder.__before_publishing_traverse__(self, ob, request)
 
+    # Provides the "correct" review_state to be indexed.
+    security.declareProtected(View, 'pmr2_review_state')
+    def pmr2_review_state(self):
+        wf = getToolByName(self, 'portal_workflow')
+        return wf.getInfoFor(self, 'review_state', '')
+
     security.declareProtected(View, 'get_authors_family_index')
     def get_authors_family_index(self):
         # XXX stub, do not know if we should get values from children

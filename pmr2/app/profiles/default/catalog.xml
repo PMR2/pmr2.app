@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <object name="portal_catalog" meta_type="Plone Catalog Tool">
 
+  <index name="pmr2_review_state" meta_type="FieldIndex">
+    <indexed_attr value="pmr2_review_state"/>
+  </index>
+
   <index name="pmr2_authors_family_name" meta_type="KeywordIndex">
     <indexed_attr value="get_authors_family_index"/>
   </index>
@@ -49,6 +53,7 @@
     <indexed_attr value="pmr1_citation_title"/>
   </index>
 
+  <column value="pmr2_review_state"/>
   <column value="pmr2_authors_family_name"/>
   <column value="pmr2_citation_title"/>
   <column value="pmr2_curation"/>

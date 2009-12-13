@@ -6,6 +6,13 @@
  -->
  <topic_indexes i18n:domain="pmr2.app">
   <index enabled="True" 
+      name="pmr2_review_state" 
+      friendlyName="PMR2 Exposure Review State"
+      description="The review state of the exposure.">
+   <criteria>ATSelectionCriterion</criteria>
+   <criteria>ATListCriterion</criteria>
+  </index>
+  <index enabled="True" 
       name="pmr2_authors_family_name" 
       friendlyName="PMR2 Authors Family Name"
       description="Family name of the authors of the citation of this model.">
@@ -60,6 +67,8 @@
   </index>
  </topic_indexes>
  <topic_metadata i18n:domain="pmr2.app">
+  <metadata name="pmr2_review_state" enabled="True" description=""
+      friendlyName="PMR2 Review State"/>
   <metadata name="pmr2_authors_family_name" enabled="True" description=""
       friendlyName="PMR2 Author Family Name"/>
   <metadata name="pmr2_citation_title" enabled="True" description=""
