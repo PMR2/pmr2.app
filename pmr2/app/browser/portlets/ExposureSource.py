@@ -72,6 +72,10 @@ class Renderer(base.Renderer):
     def available(self):
         return IExposureObject.providedBy(self.context)
 
+    @memoize
+    def expired(self):
+        return self.exposure.pmr2_review_state() == 'expired'
+
     def render(self):
         return self._template()
 

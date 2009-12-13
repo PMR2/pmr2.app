@@ -207,8 +207,8 @@ class ExposureColumn(ItemKeyColumn):
         items = self.getItem(item)
         if items:
             return u'<br />\n'.join([
-                u'<a href="%s">%s</a>' % (i.getURL(),
-                    i.Title or i.id) for i in items
+                u'<a class="state-%s" href="%s">%s</a>' % (i.pmr2_review_state, 
+                i.getURL(), i.Title or i.id) for i in items
             ])
         return u'(none)'
 

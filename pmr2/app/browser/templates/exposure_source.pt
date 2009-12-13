@@ -8,4 +8,7 @@
     tal:content="source/manifest/label"
   >workspace</a>.
   </dd>
+  <dd tal:condition="view/expired">
+    <span class="state-expired">This exposure was expired</span>.
+  </dd>
 </dl>
