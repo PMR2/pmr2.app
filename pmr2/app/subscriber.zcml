@@ -15,6 +15,12 @@
       />
 
   <subscriber
+      for=".interfaces.IExposure
+          Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+      handler=".content.recursive_recatalog_content"
+      />
+
+  <subscriber
       for=".interfaces.IExposureFile
           zope.app.event.interfaces.IObjectModifiedEvent"
       handler=".content.catalog_content"

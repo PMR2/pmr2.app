@@ -31,6 +31,10 @@ class WorkspaceMenuProvider(ContentMenuProvider):
         workspace = self.context.id
         title = self.context.title or self.context.id
 
+        if not rev:
+            # there is nothing to create an exposure from.
+            return []
+
         actionRootUri = self.context.absolute_url()
         args = tuple(map(urllib.quote_plus, (workspace, rev, title)))
         queryStr = '&workspace=%s&rev=%s&title=%s' % args
