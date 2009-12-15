@@ -96,6 +96,9 @@ def obfuscate(input):
 def short(input):
     return pmr2.mercurial.utils.filter(input, 'short')
 
+def isodate(input):
+    return pmr2.mercurial.utils.filter(input, 'isodate')
+
 def normal_kw(input):
     """\
     Method to normalize keywords so we don't have to deal with cases

@@ -9,7 +9,7 @@
     <tal:main-macro metal:define-macro="main">
         <div tal:replace="structure provider:plone.abovecontenttitle" />
 
-        <h1 class="documentFirstHeading" tal:content="here/title"> 
+        <h1 class="documentFirstHeading" tal:content="here/title_or_id"> 
             Title
         </h1>
 
