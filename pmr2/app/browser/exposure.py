@@ -193,8 +193,8 @@ class ExposureTraversalPage(page.TraversePage):
     def uri_resolver(self):
         if not hasattr(self, '_uri_resolver'):
             self._uri_resolver = zope.component.queryMultiAdapter(
-                (self.workspace,),
-                name="PMR2StorageURIResolver"
+                (self.context,),
+                name="PMR2ExposureStorageURIResolver"
             )
         return self._uri_resolver
 
@@ -203,8 +203,7 @@ class ExposureTraversalPage(page.TraversePage):
         return portal.absolute_url()
 
     def redirect_to_uri(self, filepath):
-        redir_uri = self.uri_resolver.path_to_uri(
-            self.context.commit_id, filepath)
+        redir_uri = self.uri_resolver.path_to_uri(filepath)
         if redir_uri is None:
             raise HTTPNotFound(filepath)
         return self.request.response.redirect(redir_uri)
@@ -299,25 +298,21 @@ class ExposurePMR1Metadoc(ExposureTraversalPage):
         result = []
         resolver = self.uri_resolver
 
-        download_uri = resolver.path_to_uri(
-            self.context.commit_id, self.context.origin)
+        download_uri = resolver.path_to_uri(self.context.origin)
         if download_uri:
             result.append({'label': u'Download CellML File', 
                 'href': download_uri})
-            run_uri = resolver.path_to_uri(
-                self.context.commit_id, self.context.origin, '@@pcenv', False)
+            run_uri = resolver.path_to_uri(self.context.origin, '@@pcenv', False)
             result.append({'label': u'Solve using OpenCell', 'href': run_uri})
 
         # using resolver to "resolve" a gzip download path.
-        archive_uri = resolver.path_to_uri(
-            self.context.commit_id, 'gz', '@@archive', False)
+        archive_uri = resolver.path_to_uri('gz', '@@archive', False)
         result.append({'label': u'Download (tgz)', 'href': archive_uri})
 
         # since session files were renamed into predictable patterns, we
         # can guess here.
         session_path = splitext(self.context.origin)[0] + '.session.xml'
-        s_uri = resolver.path_to_uri(
-            self.context.commit_id, session_path, '@@pcenv')
+        s_uri = resolver.path_to_uri(session_path, '@@pcenv')
         if s_uri:
             result.append({'label': u'Solve using OpenCell Session File', 
                            'href': s_uri})
@@ -326,9 +321,8 @@ class ExposurePMR1Metadoc(ExposureTraversalPage):
     @memoize
     def derive_from_uri(self):
         resolver = self.uri_resolver
-        workspace_uri = resolver.path_to_uri(self.context.commit_id)
-        manifest_uri = resolver.path_to_uri(
-            self.context.commit_id, '', '@@file', False)
+        workspace_uri = resolver.path_to_uri()
+        manifest_uri = resolver.path_to_uri('', '@@file', False)
         result = {
             'workspace': {
                 'label': self.workspace.Title,
@@ -515,6 +509,31 @@ class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
 ExposureFileNoteEditFormView = layout.wrap_form(ExposureFileNoteEditForm, 
     __wrapper_class=PlainTraverseLayoutWrapper,
     label="Edit an Exposure File Note.")
+
+
+class ExposureFileNoteArrangeForm(form.EditForm):
+    """\
+    Form to allow rearrangement of notes
+    """
+
+    #zope.interface.implements(IExposureFileNoteArrangeForm)
+    fields = z3c.form.field.Fields(IExposureFile).select('views')
+    fields['views'].widgetFactory = widget.TextLineListTextAreaWidgetFactory
+
+    def update(self):
+        """\
+        Call update as per normal, and then filter out the resulting
+        values.
+        """
+
+        result = super(ExposureFileNoteArrangeForm, self).update()
+        views = [i for i in self.context.views if
+                    zope.component.queryAdapter(self.context, name=i)]
+        self.context.views = views
+        return result
+
+ExposureFileNoteArrangeFormView = layout.wrap_form(ExposureFileNoteArrangeForm, 
+    label="Arrange Exposure File Notes.")
 
 
 class ExposureDocViewGenForm(form.BaseAnnotationForm):

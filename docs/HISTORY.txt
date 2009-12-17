@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.2rc5 - Unreleased
+-------------------
+
+* Allow the editing/rearrangement of views in ExposureFile
+* Documentation pages within an exposure can now reference files in
+  embedded workspaces.
+
 0.2rc4 - Unreleased
 -------------------
 

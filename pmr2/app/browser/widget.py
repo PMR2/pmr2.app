@@ -17,6 +17,8 @@ __all__ = [
     'WorkspaceListingWidgetFactory',
     'TextAreaWidget',
     'TextAreaWidgetFactory',
+    'ExposureFileAnnotationWidget',
+    'ExposureFileAnnotationWidgetFactory',
 ]
 
 
@@ -66,3 +68,14 @@ class CurationWidget(TextAreaWidget):
 def CurationWidgetFactory(field, request):
     """IFieldWidget factory for the above TextWidget."""
     return FieldWidget(field, CurationWidget(request))
+
+
+class TextLineListTextAreaWidget(TextAreaWidget):
+    """Customize the rows/cols to something usable."""
+
+@zope.component.adapter(zope.schema.interfaces.IField,
+        z3c.form.interfaces.IFormLayer)
+@zope.interface.implementer(z3c.form.interfaces.IFieldWidget)
+def TextLineListTextAreaWidgetFactory(field, request):
+    """IFieldWidget factory for the above TextWidget."""
+    return FieldWidget(field, TextLineListTextAreaWidget(request))

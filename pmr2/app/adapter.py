@@ -17,6 +17,7 @@ from pmr2.mercurial.adapter import PMR2StorageFixedRevAdapter
 from pmr2.mercurial.adapter import PMR2StorageRequestAdapter
 from pmr2.mercurial.exceptions import PathNotFoundError
 from pmr2.mercurial import WebStorage
+import pmr2.mercurial.utils
 
 from pmr2.processor.cmeta import Cmeta
 from pmr2.app.interfaces import *
@@ -57,7 +58,7 @@ class PMR2ExposureStorageAdapter(PMR2StorageFixedRevAdapter):
 
     def __init__(self, context):
 
-        self.context = context
+        self.exposure = context
         self.workspace = zope.component.queryMultiAdapter(
             (context,),
             name='ExposureToWorkspace',
@@ -65,12 +66,7 @@ class PMR2ExposureStorageAdapter(PMR2StorageFixedRevAdapter):
         self._rev = context.commit_id
         self._path = ()
         PMR2StorageFixedRevAdapter.__init__(self, self.workspace, self._rev)
-
-
-class PMR2ExposureStorageURIResolver(PMR2ExposureStorageAdapter):
-
-    def __init__(self, context):
-        pass
+        self.context = context
 
 
 class PMR2ExposureDocStorageAdapter(PMR2StorageFixedRevAdapter):
@@ -105,6 +101,14 @@ class PMR2StorageURIResolver(PMR2StorageAdapter):
     """\
     Storage class that supports resolution of URIs.
     """
+
+    @property
+    def base_frag(self):
+        """
+        The base fragment would be the workspace's absolute url.
+        """
+
+        return self.context.absolute_url(),
 
     def path_to_uri(self, rev=None, filepath=None, view=None, validate=True):
         """
@@ -141,8 +145,6 @@ class PMR2StorageURIResolver(PMR2StorageAdapter):
             Default: True
         """
 
-        frag = self.context.absolute_url(),
-
         if filepath is not None:
             # we only need to resolve the rest of the path here.
             if not view:
@@ -159,7 +161,60 @@ class PMR2StorageURIResolver(PMR2StorageAdapter):
                 except PathNotFoundError:
                     return None
 
-            frag += (view, rev, filepath,)
+            frag = self.base_frag + (view, rev, filepath,)
+        else:
+            frag = self.base_frag
+
+        result = '/'.join(frag)
+        return result
+
+
+class PMR2ExposureStorageURIResolver(
+        PMR2ExposureStorageAdapter, PMR2StorageURIResolver):
+
+    def __init__(self, *a, **kw):
+        PMR2ExposureStorageAdapter.__init__(self, *a, **kw)
+
+    @property
+    def base_frag(self):
+        """
+        The base fragment would be the workspace's absolute url.
+        """
+
+        return self.workspace.absolute_url(),
+
+    def path_to_uri(self, filepath=None, view=None, validate=True):
+        """
+        Same as above class
+        """
+
+        # XXX find ways to remove premature optmization and unify this
+        # and the above.
+
+        rev = self.context.commit_id
+        if filepath is not None:
+            # we only need to resolve the rest of the path here.
+            if not view:
+                # XXX magic?
+                view = '@@rawfile'
+
+            if not rev:
+                self._changectx()
+                rev = self.rev 
+
+            if validate:
+                try:
+                    test = self.fileinfo(filepath).next()
+                except PathNotFoundError:
+                    # attempt to resolve subrepos
+                    result = pmr2.mercurial.utils.match_subrepo(
+                        self.ctx.substate, filepath)
+                    if not result:
+                        return None
+
+            frag = self.base_frag + (view, rev, filepath,)
+        else:
+            frag = self.base_frag
 
         result = '/'.join(frag)
         return result

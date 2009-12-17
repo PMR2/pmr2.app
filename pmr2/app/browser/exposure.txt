@@ -77,16 +77,17 @@ is the default view, with no request_subpath fragments.
     ...     commit_id = '000000000'
     ...
     >>> class Resolver(object):
-    ...     def path_to_uri(self, 
-    ...             rev=None, filepath=None, view=None, validate=True):
+    ...     def __init__(self, context):
+    ...         self.context = context
+    ...     def path_to_uri(self, filepath=None, view=None, validate=True):
     ...         if filepath not in testpaths:
     ...             return None
-    ...         return 'workspace/%s/%s' % (rev, filepath)
+    ...         return 'workspace/%s/%s' % (self.context.commit_id, filepath)
     ...
     >>> class TestPage(exposure.ExposureTraversalPage):
     ...     @property
     ...     def uri_resolver(self):
-    ...         return Resolver()
+    ...         return Resolver(self.context)
     ...     def render(self):
     ...         return u'render'
     ...
@@ -1038,6 +1039,40 @@ Need to test this with the catalog, such that the results can still be
 queried.
 
 Also need to filter out incompatible objects.
+
+------------------
+Note Rearrangement
+------------------
+
+There is also an edit view that will allow users to rearrange and/or
+remove views.  It will remove any bad views.  First we render the form
+::
+
+    >>> ef = new_ex['example_model.cellml']
+    >>> ef.views
+    [u'rdfturtle', u'rdfxml', u'cmeta', u'opencellsession']
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((ef, request), 
+    ...                                         name='arrange_views')
+    >>> result = view.form_instance()
+    >>> '>rdfturtle\nrdfxml\ncmeta\nopencellsession</textarea>' in result
+    True
+
+Now for the actual request to change values
+::
+
+    >>> request = TestRequest(form={
+    ...    'form.widgets.views': u'cmeta\n'
+    ...                           'rdfxml\n'
+    ...                           'baddata\n'
+    ...                           'opencellsession\n',
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((ef, request), 
+    ...                                         name='arrange_views')
+    >>> result = view.form_instance()
+    >>> ef.views
+    [u'cmeta', u'rdfxml', u'opencellsession']
 
 ======================
 Notes/Question to Self

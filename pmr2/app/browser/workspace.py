@@ -28,7 +28,8 @@ from pmr2.mercurial import Storage
 
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
-from pmr2.app.util import set_xmlbase, fix_pcenv_externalurl, obfuscate
+from pmr2.app.util import set_xmlbase, fix_pcenv_externalurl, obfuscate, \
+                          isodate
 
 from pmr2.app.browser import interfaces
 from pmr2.app.browser import widget
@@ -516,6 +517,9 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
 
         if self._structure[''] == 'filerevision':
             self.fileinfo = self._structure
+            # XXX should figure out how to set date format in structure
+            # rather than rebuilding
+            self.fileinfo['date'] = isodate(self.fileinfo['date'])
         elif self._structure[''] == 'manifest':
             self.manifest = self._structure
         elif self._structure[''] == '_subrepo':
