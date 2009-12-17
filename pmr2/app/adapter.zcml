@@ -34,6 +34,13 @@
 
   <adapter
       for="pmr2.app.interfaces.IExposure"
+      factory=".adapter.PMR2ExposureStorageURIResolver"
+      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
+      name="PMR2ExposureStorageURIResolver"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposure"
       factory=".adapter.ExposureToWorkspaceAdapter"
       provides="pmr2.app.interfaces.IWorkspace"
       name="ExposureToWorkspace"
