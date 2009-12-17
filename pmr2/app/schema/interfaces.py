@@ -21,6 +21,12 @@ class IWorkspaceList(zope.schema.interfaces.IList):
     """
 
 
+class ITextLineList(zope.schema.interfaces.IList):
+    """\
+    A list of TextLine.
+    """
+
+
 class ICurationDict(zope.schema.interfaces.IDict):
     """\
     Curation dictionary.

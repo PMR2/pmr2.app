@@ -70,3 +70,29 @@ class CurationTextAreaConverter(z3c.form.converter.BaseDataConverter):
                 result.append('%s:%s' % (k, i))
         result.sort()
         return u'\n'.join(result)
+
+
+class TextLineListTextAreaConverter(z3c.form.converter.BaseDataConverter):
+    """\
+    Calls an accessor as a method to get the data within.
+    """
+    zope.component.adapts(
+        interfaces.ITextLineList, z3c.form.interfaces.ITextAreaWidget
+    )
+
+    def toWidgetValue(self, value):
+        """\
+        >>> f = zope.schema.List()
+        >>> # no need to test widget here
+        >>> c = TextLineListTextAreaConverter(f, None)  
+        >>> c.toWidgetValue(None)
+        u''
+        >>> c.toWidgetValue([])
+        u''
+        >>> c.toWidgetValue([u'test', u'test2'])
+        u'test\\ntest2'
+        """
+
+        if not value:
+            return u''
+        return u'\n'.join(value)

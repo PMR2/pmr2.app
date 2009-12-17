@@ -4,7 +4,7 @@ import zope.interface
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
-from pmr2.app.schema import ObjectId, WorkspaceList, CurationDict
+from pmr2.app.schema import ObjectId, WorkspaceList, CurationDict, TextLineList
 
 
 # FIXME I am HUEG.
@@ -603,7 +603,7 @@ class IExposureFile(zope.interface.Interface):
     will have the id after the object.
     """
 
-    views = zope.schema.List(
+    views = TextLineList(
         title=u'Views',
         description=u'List of views available.',
         required=False,

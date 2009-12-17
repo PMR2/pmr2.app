@@ -517,6 +517,31 @@ ExposureFileNoteEditFormView = layout.wrap_form(ExposureFileNoteEditForm,
     label="Edit an Exposure File Note.")
 
 
+class ExposureFileNoteArrangeForm(form.EditForm):
+    """\
+    Form to allow rearrangement of notes
+    """
+
+    #zope.interface.implements(IExposureFileNoteArrangeForm)
+    fields = z3c.form.field.Fields(IExposureFile).select('views')
+    fields['views'].widgetFactory = widget.TextLineListTextAreaWidgetFactory
+
+    def update(self):
+        """\
+        Call update as per normal, and then filter out the resulting
+        values.
+        """
+
+        result = super(ExposureFileNoteArrangeForm, self).update()
+        views = [i for i in self.context.views if
+                    zope.component.queryAdapter(self.context, name=i)]
+        self.context.views = views
+        return result
+
+ExposureFileNoteArrangeFormView = layout.wrap_form(ExposureFileNoteArrangeForm, 
+    label="Arrange Exposure File Notes.")
+
+
 class ExposureDocViewGenForm(form.BaseAnnotationForm):
     """\
     Form to generate the default view of the base exposure.

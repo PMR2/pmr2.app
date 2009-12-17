@@ -321,6 +321,13 @@
 
   <browser:page
       for="pmr2.app.content.ExposureFile"
+      name="arrange_views"
+      class=".exposure.ExposureFileNoteArrangeFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
       name="docviewgen"
       class=".exposure.ExposureDocViewGenFormView"
       permission="cmf.ModifyPortalContent"

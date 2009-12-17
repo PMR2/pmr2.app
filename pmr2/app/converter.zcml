@@ -4,5 +4,6 @@
 
   <adapter factory=".converter.AccessorCallConverter"/>
   <adapter factory=".converter.CurationTextAreaConverter"/>
+  <adapter factory=".converter.TextLineListTextAreaConverter"/>
 
 </configure> 
