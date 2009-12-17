@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: pmr2.app
-Version: 0.2rc4
+Version: 0.2rc5
 Summary: The PMR2 Application
 Home-page: http://www.cellml.org/
 Author: Tommy Yu
@@ -13,6 +13,13 @@ Description: Introduction
         
         Changelog
         =========
+        
+        0.2rc5 - Unreleased
+        -------------------
+        
+        * Allow the editing/rearrangement of views in ExposureFile
+        * Documentation pages within an exposure can now reference files in
+        embedded workspaces.
         
         0.2rc4 - Unreleased
         -------------------
