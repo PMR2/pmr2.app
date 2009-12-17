@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: pmr2.app
-Version: 0.2rc3
+Version: 0.2rc4
 Summary: The PMR2 Application
 Home-page: http://www.cellml.org/
 Author: Tommy Yu
@@ -13,6 +13,20 @@ Description: Introduction
         
         Changelog
         =========
+        
+        0.2rc4 - Unreleased
+        -------------------
+        
+        * The pmr2 review state is now correctly reindexes all subobject of an
+        exposure when its state changes.
+        * Freshly created workspace will have its empty file list correctly
+        rendered.
+        
+        0.2rc3 - Unreleased
+        -------------------
+        
+        * Shows the review state of an exposure to normal users by color coding
+        them in the workspace changelog listing, and in the exposure views.
         
         0.2rc2 - Unreleased
         -------------------
