@@ -1,0 +1,8 @@
+<h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
+<div tal:content="structure view/content"/>
+<div tal:condition="exists:view/render_subrepo">
+<ul>
+<li tal:repeat="i view/subrepo">
+</li>
+</ul>
+</div>

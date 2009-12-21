@@ -491,6 +491,7 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     
     zope.interface.implements(interfaces.IWorkspaceFilePageView)
 
+    template = ViewPageTemplateFile('workspace_file_page.pt')
     filetemplate = ViewPageTemplateFile('file.pt')
 
     def __init__(self, *a, **kw):
@@ -522,6 +523,9 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
             self.fileinfo['date'] = isodate(self.fileinfo['date'])
         elif self._structure[''] == 'manifest':
             self.manifest = self._structure
+            # XXX hacks, because this class is trying to render more
+            # than one data source.
+            self.render_subrepo = True
         elif self._structure[''] == '_subrepo':
             uri = '%s/@@%s/%s/%s' % (
                 self._structure['location'],
@@ -626,6 +630,22 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     def fullpath(self):
         """permanent uri."""
         return '/'.join(self._getpath(path=self.storage.path))
+
+    @property
+    def subrepo(self):
+        # XXX directly using internals?
+        try:
+            substate = self.storage.ctx.substate
+        except:
+            # XXX catchall
+            return []
+        result = []
+        for location, subrepo in substate.iteritems():
+            source, rev = subrepo
+            result.append((location, source, rev))
+        result.sort()
+        result = [dict(zip(('location', 'source', 'rev'), i)) for i in result]
+        return result
 
 WorkspaceFilePageView = layout.wrap_form(
     WorkspaceFilePage,
