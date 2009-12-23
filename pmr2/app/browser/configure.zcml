@@ -289,20 +289,6 @@
       permission="cmf.ModifyPortalContent"
       />
 
-  <browser:page
-      for="pmr2.app.content.Exposure"
-      name="upgrade-pmr1"
-      class=".exposure.ExposurePortPMR1FormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureContainer"
-      name="upgrade-pmr1"
-      class=".exposure.ExposurePortPMR1BulkFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
   <!-- Exposure File -->
 
   <browser:page
@@ -374,58 +360,6 @@
       for="pmr2.app.content.ExposureFile"
       name="opencellsession"
       class=".exposure.OpenCellSessionNoteView"
-      permission="zope2.View"
-      />
-
-  <!-- Exposure Document -->
-
-  <browser:page
-      for="pmr2.app.content.ExposureDocument"
-      name="exposure_document_view"
-      class=".exposure.ExposureDocumentView"
-      permission="zope2.View"
-      />
-
-  <!-- Exposure Math Document -->
-
-  <browser:page
-      for="pmr2.app.content.ExposureMathDocument"
-      name="exposure_document_view"
-      class=".exposure.ExposureMathMLWrapperView"
-      permission="zope2.View"
-      />
-
-  <!-- Exposure CellML Metadata Document -->
-
-  <browser:page
-      for="pmr2.app.content.ExposureCmetaDocument"
-      name="exposure_document_view"
-      class=".exposure.ExposureCmetaDocumentView"
-      permission="zope2.View"
-      />
-
-  <!-- Exposure CellML Code Document -->
-
-  <browser:page
-      for="pmr2.app.content.ExposureCodeDocument"
-      name="exposure_document_view"
-      class=".exposure.ExposureCodeWrapperView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureCodeDocument"
-      name="raw_code"
-      class=".exposure.ExposureRawCodeView"
-      permission="zope2.View"
-      />
-
-  <!-- Exposure PMR1 Metadoc -->
-
-  <browser:page
-      for="pmr2.app.content.ExposurePMR1Metadoc"
-      name="exposure_document_view"
-      class=".exposure.ExposurePMR1MetadocView"
       permission="zope2.View"
       />
 

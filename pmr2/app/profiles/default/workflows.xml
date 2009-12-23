@@ -6,18 +6,9 @@
     <type type_id="PMR2">
       <bound-workflow workflow_id="pmr2_root_workflow"/>
     </type>
-    <!--
     <type type_id="Exposure">
       <bound-workflow workflow_id="pmr2_exposure_workflow"/>
     </type>
-    -->
-    <!-- These still need workflows for now...
-    <type type_id="ExposureCodeDocument" />
-    <type type_id="ExposureCmetaDocument" />
-    <type type_id="ExposureMathDocument" />
-    <type type_id="ExposurePMR1Metadoc" />
-    <type type_id="ExposureDocument" />
-    -->
     <type type_id="ExposureFile" />
     <type type_id="ExposureFolder" />
   </bindings>

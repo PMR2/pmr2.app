@@ -14,7 +14,6 @@
 
   <include file="subscriber.zcml" />
   <include file="adapter.zcml" />
-  <include file="content.zcml" />
   <include file="converter.zcml" />
   <include file="factory.zcml" />
   <include file="profiles.zcml" />

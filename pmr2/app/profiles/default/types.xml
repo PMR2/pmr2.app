@@ -19,17 +19,6 @@
   <object name="ExposureFolder"
       meta_type="Factory-based Type Information with dynamic views" />
 
-  <object name="ExposureDocument"
-      meta_type="Factory-based Type Information with dynamic views" />
-  <object name="ExposureMathDocument"
-      meta_type="Factory-based Type Information with dynamic views" />
-  <object name="ExposureCmetaDocument"
-      meta_type="Factory-based Type Information with dynamic views" />
-  <object name="ExposureCodeDocument"
-      meta_type="Factory-based Type Information with dynamic views" />
-  <object name="ExposurePMR1Metadoc"
-      meta_type="Factory-based Type Information with dynamic views" />
-
   <object name="PMR2Search"
       meta_type="Factory-based Type Information with dynamic views" />
 </object>
