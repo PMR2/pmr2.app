@@ -539,6 +539,7 @@ class PMR1ExposurePortDataProvider(BaseExposurePortDataProvider):
             views.append((u'opencellsession', {'filename': session_file,},))
 
         return (filename, {
+            'docview_gensource': unicode(filename),
             'docview_generator': docview_generator,
             'views': views,
         })
