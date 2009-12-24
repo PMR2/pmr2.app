@@ -9,16 +9,14 @@ the test environment.
     >>> from pmr2.app.browser import workspace
     >>> from pmr2.app.tests.base import TestRequest
     >>> from plone.z3cform.tests import setup_defaults
-    >>> setup_defaults()
-    >>> request = TestRequest()
     >>> from pmr2.app.content import *
-    >>> self.folder['repo'] = PMR2('repo')
     >>> self.folder.repo['workspace'] = WorkspaceContainer()
     >>> self.folder.repo.workspace
     <WorkspaceContainer at ...repo/workspace>
     >>> self.folder.repo.workspace['eggs'] = Workspace('eggs')
     >>> self.folder.repo.workspace.eggs
     <Workspace at ...repo/workspace/eggs>
+    >>> request = TestRequest()
 
 We will test the Repository Listing form first.  As the root object is
 not configured, the listing will raise an exception which should not be
@@ -233,5 +231,61 @@ Main page should render fine, too.
     >>> '<th>Log</th>' in result
     True
 
-More tests to be done when I figure out how to test push so we have 
-data.
+-----------
+Actual Data
+-----------
+
+Here we will use data from a real repository with actual data.  The
+method to extract archive of the test repo will be called.
+::
+
+    >>> self.createRepo()
+    >>> request = TestRequest()
+    >>> wkspc = self.folder.repo.workspace.pmr2hgtest
+    >>> testpage = workspace.WorkspacePage(wkspc, request)
+    >>> result = testpage()
+    >>> '<th>Log</th>' in result
+    True
+    >>> len([i for i in self.pmr2hgtest_revs if i in result]) == len(
+    ...     self.pmr2hgtest_revs)
+    True
+
+Now for a file listing.
+::
+
+    >>> request = TestRequest()
+    >>> testpage = workspace.WorkspaceFilePage(wkspc, request)
+    >>> testpage.update()
+    >>> result = testpage()
+    >>> label = u'Manifest: pmr2hgtest @ %s / ' % self.pmr2hgtest_revs[-1][:10]
+    >>> testpage.label == label
+    True
+    >>> 'file1' in result
+    True
+    >>> 'file2' in result
+    True
+    >>> 'README' in result
+    True
+
+Subdirectories should work.  We use a different repo for this that has
+the subdirectories in place, and we do need a proper revision for the
+request_subpath.
+::
+
+    >>> wkspc = self.folder.repo.workspace.rdfmodel
+    >>> subpath = self.rdfmodel_revs[-1:] + ['component']
+    >>> request = TestRequest()
+    >>> testpage = workspace.WorkspaceFilePage(wkspc, request)
+    >>> testpage.traverse_subpath = subpath  
+    >>> testpage.update()
+    >>> result = testpage()
+    >>> label = u'Manifest: rdfmodel @ %s / %s' % (subpath[0][:10], subpath[1])
+    >>> testpage.label == label
+    True
+    >>> 'module.cellml' in result
+    True
+
+More tests to be done when I figure out how to test interactions with
+Mercurial client for complete test.  This can be manually driven at this
+point, since during deployment this functionality is vital and may be
+hindered by network access failures.

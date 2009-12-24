@@ -52,7 +52,7 @@ def test_suite():
         # Workspace and related object form usage tests.
         ztc.ZopeDocFileSuite(
             'browser/workspace.txt', package='pmr2.app',
-            test_class=base.DocTestCase,
+            test_class=base.WorkspaceDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
