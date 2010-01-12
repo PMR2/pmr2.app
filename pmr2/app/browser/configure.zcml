@@ -431,6 +431,29 @@
       permission="zope2.View"
       />
 
+  <!-- Exposure Folder -->
+
+  <browser:page
+      for="pmr2.app.content.ExposureFolder"
+      name="docviewgen"
+      class=".exposure.ExposureDocViewGenFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFolder"
+      name="exposure_info"
+      class=".exposure.ExposureInfoView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFolder"
+      name="exposure_folder_listing"
+      class=".exposure.ExposureFolderListing"
+      permission="zope2.View"
+      />
+
   <!-- PMR2 Custom Search object -->
 
   <browser:page

@@ -164,59 +164,30 @@ class ExposureTraversalPage(page.TraversePage):
     need to implement this in all methods.
     """
 
-    @property
-    def workspace(self):
-        context = aq_inner(self.context)
-        while context is not None:
-            obj = zope.component.queryMultiAdapter(
-                (context,), 
-                name='ExposureToWorkspace',
-            )
-            if obj is not None:
-                return obj
-            context = aq_parent(context)
-
-    @property
-    def storage(self):
-        """
-        Updates the local values.
-        """
-
-        if not hasattr(self, '_storage'):
-            self._storage = zope.component.queryMultiAdapter(
-                (self.workspace, self.request, self),
-                name="PMR2StorageRequestView"
-            )
-        return self._storage
-
-    @property
-    def uri_resolver(self):
-        if not hasattr(self, '_uri_resolver'):
-            self._uri_resolver = zope.component.queryMultiAdapter(
-                (self.context,),
-                name="PMR2ExposureStorageURIResolver"
-            )
-        return self._uri_resolver
+    target_view = 'rawfile'
 
     def portal_url(self):
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         return portal.absolute_url()
 
-    def redirect_to_uri(self, filepath):
-        redir_uri = self.uri_resolver.path_to_uri(filepath)
-        if redir_uri is None:
-            raise HTTPNotFound(filepath)
-        return self.request.response.redirect(redir_uri)
-
     def render(self):
         raise NotImplementedError
 
+    def path_to_uri(self):
+        helper = zope.component.queryAdapter(
+            self.context, IExposureSourceAdapter)
+        exposure, workspace, path = helper.source()
+        filepath = '/'.join([path] + self.request['request_subpath'])
+        target_uri = '%s/@@%s/%s/%s' % (workspace.absolute_url(), 
+            self.target_view, exposure.commit_id, filepath)
+        return target_uri
+
     def __call__(self, *args, **kwargs):
 
-        if 'request_subpath' in self.request:
-            filepath = '/'.join(self.request['request_subpath'])
-            return self.redirect_to_uri(filepath)
-        return self.render()
+        if not 'request_subpath' in self.request:
+            return self.render()
+        target_uri = self.path_to_uri()
+        return self.request.response.redirect(target_uri)
 
 
 class ExposureFolderListing(ExposureTraversalPage):
