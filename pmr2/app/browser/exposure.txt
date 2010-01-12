@@ -529,12 +529,11 @@ they are just data (should not really be part of code).
     ...
 
 Of course assignment to this new set of data, it will not overwrite the
-other note class because it has a distinct annotation key.  We can even
-reuse the same instance of the view if the name is reassigned (in
-practice this will not happen, but this is a demonstration of how all
-the data is keyed by the identifier of the view).
+other note class because it has a distinct annotation key.
 ::
 
+    >>> request = TestRequest()
+    >>> view = exposure.RawTextNote(filectx, request)
     >>> view.__name__ = 'rdfturtle'
     >>> print view()
     <h3>...</h3>

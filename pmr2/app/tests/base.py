@@ -42,8 +42,17 @@ class TestRequest(z3c.form.testing.TestRequest):
     """
 
     zope.interface.implements(IAnnotations)
+    def __init__(self, *a, **kw):
+        super(TestRequest, self).__init__(*a, **kw)
+
     def __setitem__(self, key, value):
-        pass
+        self.form[key] = value
+
+    def __getitem__(self, key):
+        try:
+            return super(TestRequest, self).__getitem__(key)
+        except KeyError:
+            return self.form[key]
 
 
 class TestCase(ptc.PloneTestCase):
@@ -64,6 +73,45 @@ class DocTestCase(ptc.FunctionalTestCase):
     def tearDown(self):
         super(DocTestCase, self).tearDown()
         shutil.rmtree(self.tmpdir, ignore_errors=True)
+
+
+class WorkspaceDocTestCase(DocTestCase):
+
+    def setUp(self):
+        """\
+        Sets up the environment that the exposure doctest needs.
+        """
+
+        DocTestCase.setUp(self)
+        from plone.z3cform.tests import setup_defaults
+        from pmr2.app.content import PMR2
+        from pmr2.app.tests import utils
+        setup_defaults()
+        self.folder['repo'] = PMR2('repo')
+
+    def createRepo(self):
+        # create real Hg repos, to be called only after workspace is
+        # created and model root path is assigned
+        import pmr2.mercurial.tests
+        from pmr2.app.content import Workspace
+        from pmr2.mercurial.tests import util
+        # pmr2.mercurial
+        util.extract_archive(self.folder.repo.workspace.get_path())
+        # pmr2.app
+        p2a_test = join(dirname(__file__), 'pmr2.app.testdata.tgz')
+        util.extract_archive(self.folder.repo.workspace.get_path(), p2a_test)
+        self.folder.repo.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
+        self.folder.repo.workspace['rdfmodel'] = Workspace('rdfmodel')
+        self.pmr2hgtest_revs = util.ARCHIVE_REVS
+        self.rdfmodel_revs = [
+            'b94d1701154be42acf63ee6b4bd4a99d09ba043c',
+            '2647d4389da6345c26d168bbb831f6512322d4f9',
+            '006f11cd9211abd2a879df0f6c7f27b9844a8ff2',
+        ]
+
+    def tearDown(self):
+        DocTestCase.tearDown(self)
+
 
 class ExposureDocTestCase(DocTestCase):
 
@@ -94,7 +142,6 @@ class ExposureDocTestCase(DocTestCase):
         p2a_test = join(dirname(__file__), 'pmr2.app.testdata.tgz')
         util.extract_archive(self.folder.repo.workspace.get_path(), p2a_test)
 
-        util.extract_archive(self.folder.repo.workspace.get_path())
         self.archive_revs = util.ARCHIVE_REVS
         self.folder.repo.workspace['import1'] = Workspace('import1')
         self.folder.repo.workspace['import2'] = Workspace('import2')
