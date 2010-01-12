@@ -1,4 +1,12 @@
+/* For the expired workflow state for anonymous users 
+ * - copied from members.css
+ */
+.state-expired {
+    color: Red !important;
+}
+
 /* some basic styles for PMR2 */
+
 #pmr1_ex_header dl {
   width: 48%
 }
