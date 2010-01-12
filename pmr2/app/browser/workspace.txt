@@ -285,6 +285,19 @@ request_subpath.
     >>> 'module.cellml' in result
     True
 
+Bad revision results in not found.
+::
+
+    >>> subpath = ['abcdef1234567890', 'component']
+    >>> request = TestRequest()
+    >>> testpage = workspace.WorkspaceFilePage(wkspc, request)
+    >>> testpage.traverse_subpath = subpath  
+    >>> testpage.update()
+    Traceback (most recent call last):
+    ...
+    HTTPNotFound: 404 Not Found
+    ...
+
 More tests to be done when I figure out how to test interactions with
 Mercurial client for complete test.  This can be manually driven at this
 point, since during deployment this functionality is vital and may be
