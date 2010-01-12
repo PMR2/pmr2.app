@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.2.1 - Released (2010-01-12)
+-----------------------------
+
+* Added missing function in ExposureFolder, now it will not block
+  redirection of files that are in the workspace, and can now have
+  documentation generated for it
+* Removed file existence check in Exposures, such that all URIs that
+  do not exist in Plone are redirected to the source workspace
+* For Exposures, @@viewgen is renamed to @@docviewgen for consistency.
+* Expired state now is coloured red for all users
+
 0.2 - Released (2009-12-21)
 ---------------------------
 
