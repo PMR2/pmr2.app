@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.2'
+version = '0.2.1'
 
 setup(name='pmr2.app',
       version=version,
