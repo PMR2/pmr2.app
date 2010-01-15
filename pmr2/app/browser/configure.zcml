@@ -254,22 +254,6 @@
       permission="cmf.ModifyPortalContent"
       />
 
-  <!-- XXX Deprecated -->
-  <browser:page
-      for="pmr2.app.content.Exposure"
-      name="docgen"
-      class=".exposure.ExposureDocGenFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <!-- XXX Deprecated -->
-  <browser:page
-      for="pmr2.app.content.Exposure"
-      name="metadocgen"
-      class=".exposure.ExposureMetadocGenFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
   <browser:page
       for="pmr2.app.content.Exposure"
       name="filegen"
