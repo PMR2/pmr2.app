@@ -32,10 +32,10 @@ def named_factory(klass):
             self.label = klass.label
             self.description = klass.description
         def __call__(self, context):
-            # instantiate annotator and calls it.
-            generator = klass(context)
-            generator.__name__ = self.__name__
-            generator()
+            # returns an instantiated factory with a context
+            factory = klass(context)
+            factory.__name__ = self.__name__
+            return factory
     # create/return instance of the factory that instantiates the 
     # classes below.
     return _factory()
@@ -73,45 +73,79 @@ class PortalTransformGenBase(object):
         return stream.getData()
 
 
-class ExposureFileAnnotatorBase(NamedUtilBase):
+class ExposureFileEditableAnnotatorBase(NamedUtilBase):
+    """
+    An editable annotator.
+    """
+
+    def __init__(self, context):
+        # Lock the context - should never be changed.  Instantiate
+        # another annotator class with another context if it is needed
+        # on another one.
+        self.__context = context
+
+    @property
+    def context(self):
+        return self.__context
+
+    @property
+    def note(self):
+        return zope.component.getAdapter(self.context, name=self.name)
+
+    def generate(self):
+        raise NotImplementedError
+
+    def _append_view(self):
+        # Append the name of this view since this must be registered 
+        # with the same name as the annotator class.
+        if self.name not in self.context.views:
+            # going to be defensive here as we need to append to a list
+            views = self.context.views or []  
+            views.append(self.name)
+            # write: to generate this view, this annonator was used
+            self.context.views = views
+
+    def _annotate(self, data):
+        note = self.note
+        try:
+            for a, v in data:
+                # XXX should validate field/value by schema somehow
+                setattr(note, a, v)
+        except TypeError:
+            raise TypeError('%s.generate failed to return a list of ' \
+                            'tuple(key, value)' % self.__class__)
+        except ValueError:
+            raise ValueError('%s.generate returned invalid values (not ' \
+                             'list of tuple(key, value)' % self.__class__)
+
+    def __call__(self, data=None):
+        """
+        If it's an editable note data is ignored, however in the future 
+        there may be a need for a mixture of generated and user
+        specified data.
+        """
+
+        if not IExposureFileEditableNote.providedBy(self.note):
+            data = self.generate()
+        if data:
+            self._annotate(data)
+            self._append_view()
+        else:
+            # XXX should a warning be raised about that no data had 
+            # been provided and nothing was done?
+            pass
+
+
+class ExposureFileAnnotatorBase(ExposureFileEditableAnnotatorBase):
+    """\
+    The original standard annotator, defined to be uneditable thus 
+    require the source file.
+    """
 
     def __init__(self, context):
         super(ExposureFileAnnotatorBase, self).__init__(context)
         self.input = zope.component.getAdapter(
             self.context, IExposureSourceAdapter).file()
-
-    def generate(self):
-        raise NotImplementedError
-
-    def __call__(self):
-        # XXX return a data struture instead
-        context = self.context
-        note = zope.component.getAdapter(context, name=self.name)
-
-        # if it is meant to be a user editable note, don't generate the
-        # data.  however this will need revisiting later, maybe another
-        # type that allows generation on first try, marker added if user
-        # edits later.
-        if not IExposureFileEditableNote.providedBy(note):
-            data = self.generate()
-            try:
-                for a, v in data:
-                    # XXX should validate field/value by schema somehow
-                    setattr(note, a, v)
-            except TypeError:
-                raise TypeError('%s.generate failed to return a list of ' \
-                                'tuple(key, value)' % self.__class__)
-            except ValueError:
-                raise ValueError('%s.generate returned invalid values (not ' \
-                                 'list of tuple(key, value)' % self.__class__)
-        # as this utility is registered with the same name as the view
-        # that this reader/writer is for, append it the context to
-        # mark the view as generated.
-        if self.name not in context.views:
-            views = context.views or []  # need a list
-            views.append(self.name)
-            # write: to generate this view, this annonator was used
-            context.views = views
 
 
 class PortalTransformAnnotatorBase(
@@ -160,7 +194,7 @@ class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
         )
 
 
-class OpenCellSessionAnnotator(ExposureFileAnnotatorBase):
+class OpenCellSessionAnnotator(ExposureFileEditableAnnotatorBase):
     zope.interface.implements(IExposureFileAnnotator)
     title = u'OpenCell Session Link'
     label = u'OpenCell Session'

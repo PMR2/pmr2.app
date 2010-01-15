@@ -234,7 +234,7 @@ class ExposureFileAnnotatorForm(form.BaseAnnotationForm):
             IExposureFileAnnotator,
             name=self._data['annotators']
         )
-        annotator(self.context)
+        annotator(self.context)()
 
     def nextURL(self):
         # if there are multiple choices, redirect to default view.
@@ -269,6 +269,17 @@ class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
 
     def getContent(self):
         return self.note
+
+    def applyChanges(self, data):
+        results = super(ExposureFileNoteEditForm, self).applyChanges(data)
+        # since this form already assigns the data, the annotator
+        # is only used to append the name of the note to the list of
+        # available views.
+        name = '/'.join(self.traverse_subpath)
+        annotator = zope.component.getUtility(
+            IExposureFileAnnotator, name=name)
+        annotator(self.context)._append_view()
+        return results
 
     def update(self):
         """\
@@ -362,7 +373,7 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
             IDocViewGen,
             name=self._data['docview_generator']
         )
-        viewgen(self.context)
+        viewgen(self.context)()
         self.context.reindexObject()
 
     def nextURL(self):
@@ -601,6 +612,10 @@ class ExposurePort(form.Form):
     ignoreContext = True
     ignoreReadonly = True
 
+    def __init__(self, *a, **kw):
+        super(ExposurePort, self).__init__(*a, **kw)
+        self.errors = []
+
     def _export(self, cur, prefix=''):
 
         def fieldvalues(obj):
@@ -719,7 +734,7 @@ class ExposurePort(form.Form):
                         IDocViewGen,
                         name=fields['docview_generator'],
                     )
-                    viewgen(ctxobj)
+                    viewgen(ctxobj)()
 
                 for view, view_fields in fields['views']:
                     # generate views
@@ -727,12 +742,11 @@ class ExposurePort(form.Form):
                         IExposureFileAnnotator,
                         name=view,
                     )
-                    annotator(ctxobj)
-                    # XXX assume editable still
-                    if view_fields:
-                        note = zope.component.getAdapter(ctxobj, name=view)
-                        for key, value in view_fields.iteritems():
-                            setattr(note, key, value)
+                    # pass in the view_fields regardless whether it is
+                    # editable or not because editable notes will have
+                    # data ignored.
+                    data = view_fields and view_fields.items() or None
+                    annotator(ctxobj)(data)
                 ctxobj.reindexObject()
             else:
                 # generate views.
@@ -749,7 +763,7 @@ class ExposurePort(form.Form):
                         IDocViewGen,
                         name=fields['docview_generator']
                     )
-                    viewgen(container)
+                    viewgen(container)()
 
                 if IExposure.providedBy(container):
                     # only copy curation over, until this becomes an
