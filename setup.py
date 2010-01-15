@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.0'
+version = open(os.path.join('pmr2', 'app', 'version.txt')).read().strip()
 
 setup(name='pmr2.app',
       version=version,
