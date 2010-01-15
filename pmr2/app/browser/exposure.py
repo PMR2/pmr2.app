@@ -548,7 +548,15 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
     def nextURL(self):
         # return to the root, because we will only have one default view
         # that generally will work.
-        return self.context.absolute_url()
+        uri = self.context.absolute_url()
+        propsTool = getToolByName(self.context, 'portal_properties')
+        siteProperties = getattr(propsTool, 'site_properties')
+        views_req = list(siteProperties.getProperty(
+                         'typesUseViewActionInListings'))
+        if self.context.portal_type in views_req:
+            # assumption
+            uri += '/view'
+        return uri
 
 ExposureDocViewGenFormView = layout.wrap_form(
     ExposureDocViewGenForm, 
