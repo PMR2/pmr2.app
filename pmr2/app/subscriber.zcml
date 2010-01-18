@@ -3,12 +3,6 @@
     i18n_domain="pmr2">
 
   <subscriber
-      for=".interfaces.IExposureCmetaDocument
-          zope.app.event.interfaces.IObjectModifiedEvent"
-      handler=".content.catalog_content"
-      />
-
-  <subscriber
       for=".interfaces.IExposure
           zope.app.event.interfaces.IObjectModifiedEvent"
       handler=".content.catalog_content"

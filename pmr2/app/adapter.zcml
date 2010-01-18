@@ -19,13 +19,6 @@
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposureDocument"
-      factory=".adapter.PMR2ExposureDocStorageAdapter"
-      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
-      name="PMR2ExposureDocStorageAdapter"
-      />
-
-  <adapter
       for="pmr2.app.interfaces.IWorkspace"
       factory=".adapter.PMR2StorageURIResolver"
       provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
@@ -104,14 +97,6 @@
       factory=".adapter.OpenCellSessionNoteFactory"
       provides="pmr2.app.interfaces.IOpenCellSessionNote"
       name="opencellsession"
-      />
-
-  <!-- export data provider -->
-
-  <adapter
-      for="pmr2.app.interfaces.IExposurePMR1Metadoc"
-      factory=".adapter.PMR1ExposurePortDataProvider"
-      provides="pmr2.app.interfaces.IExposurePortDataProvider"
       />
 
 </configure> 
