@@ -2,12 +2,17 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="pmr2">
 
+  <!-- this only applies to the exposure -->
   <subscriber
       for=".interfaces.IExposure
           zope.app.event.interfaces.IObjectModifiedEvent"
       handler=".content.catalog_content"
       />
 
+  <!-- 
+    During workflow transition, the subobjects need to be recatalogged
+    as they use the parent variable for workflow state.
+  -->
   <subscriber
       for=".interfaces.IExposure
           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
