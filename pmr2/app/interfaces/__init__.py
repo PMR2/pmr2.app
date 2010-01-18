@@ -4,49 +4,9 @@ import zope.interface
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
-from pmr2.app.schema import ObjectId, WorkspaceList, CurationDict, TextLineList
-
-
-# FIXME I am HUEG.
-
-# General exceptions.
-
-class PathLookupError(LookupError):
-    """cannot calculate the path to some resource.."""
-
-
-# Validation errors
-
-class ObjectIdExistsError(zope.schema.ValidationError):
-    __doc__ = _("""The specified id is already in use.""")
-
-
-class StorageExistsError(zope.schema.ValidationError):
-    __doc__ = _("""A previous workspace may have used this id but is not fully removed from the system.  Please use another id.""")
-
-
-class InvalidPathError(zope.schema.ValidationError):
-    __doc__ = _("""The value specified is not a valid path.""")
-
-
-class RepoRootNotExistsError(zope.schema.ValidationError):
-    __doc__ = _("""The repository root at the specified path does not exist.""")
-
-
-class RepoNotExistsError(zope.schema.ValidationError):
-    __doc__ = _("""The repository at the specified path does not exist.""")
-
-
-class RepoPathUndefinedError(zope.schema.ValidationError):
-    __doc__ = _("""The repository path is undefined.""")
-
-
-class WorkspaceDirNotExistsError(zope.schema.ValidationError):
-    __doc__ = _("""The workspace directory does not exist.""")
-
-
-class WorkspaceObjNotFoundError(zope.schema.ValidationError):
-    __doc__ = _("""The workspace object is not found.""")
+from pmr2.app.schema import ObjectId
+from pmr2.app.content.interfaces import *
+from pmr2.app.interfaces.exceptions import *
 
 
 # Interfaces
@@ -61,28 +21,6 @@ class IObjectIdMixin(zope.interface.Interface):
         title=u'Id',
         description=u'The identifier of the object, used for URI.',
     )
-
-
-class IPMR2(zope.interface.Interface):
-    """\
-    Interface for the root container for the entire model repository.
-    """
-
-    title = zope.schema.TextLine(
-        title=u'Title',
-        description=u'The title or name given to this repository.',
-    )
-
-    repo_root = zope.schema.BytesLine(
-        title=u'Repository Path',
-        description=u'The working directory of this repository. This '
-                     'directory contains the raw VCS repositories of the '
-                     'models.',
-        readonly=False,
-    )
-
-    # workspace_path is 'workspace'
-    # sandbox_path is 'sandbox'
 
 
 class IPMR2Add(IObjectIdMixin, IPMR2):
@@ -103,63 +41,6 @@ class IPMR2GetPath(zope.interface.Interface):
 
         Need to raises PathLookupError if the path cannot be calculated.
         """
-
-
-class IWorkspaceContainer(zope.interface.Interface):
-    """\
-    Container for the model workspaces.
-    """
-
-    title = zope.schema.TextLine(
-        title=u'Title',
-        default=u'Workspace',
-    )
-
-    get_repository_list, = zope.schema.accessors(WorkspaceList(
-        title=u'Repository List',
-        readonly=True,
-    ))
-
-
-class ISandboxContainer(zope.interface.Interface):
-    """\
-    Container for the sandboxes (working copies).
-    """
-
-    title = zope.schema.TextLine(
-        title=u'Title',
-        default=u'Sandbox',
-    )
-
-
-class IExposureContainer(zope.interface.Interface):
-    """\
-    Container for all exposure pages.
-    """
-
-    title = zope.schema.TextLine(
-        title=u'Title',
-        default=u'Exposure',
-    )
-
-
-class IWorkspace(zope.interface.Interface):
-    """\
-    Model workspace.
-    """
-
-    # id would be the actual path on filesystem
-
-    title = zope.schema.TextLine(
-        title=u'Title',
-        required=False,
-    )
-
-    description = zope.schema.Text(
-        title=u'Description',
-        required=False,
-    )
-
 
 class IWorkspaceAdd(IObjectIdMixin, IWorkspace):
     """\
@@ -190,97 +71,6 @@ class IWorkspaceBulkAdd(zope.interface.Interface):
         description=u'List of Mercurial Repositories created by pmr2_mkhg ' \
                      'that are already moved into the workspace directory.',
         required=True,
-    )
-
-
-class ISandbox(zope.interface.Interface):
-    """\
-    Container for the sandboxes (working copies).
-    """
-
-    title = zope.schema.TextLine(
-        title=u'Title',
-    )
-
-    description = zope.schema.Text(
-        title=u'Description',
-    )
-
-    status = zope.schema.Text(
-        title=u'Status Messages',
-        description=u'Status output from VCS',
-    )
-
-
-class IExposureObject(zope.interface.Interface):
-    """\
-    Any object within an exposure need to implement this.
-    """
-
-
-class IExposure(zope.interface.Interface):
-    """\
-    Container for all exposure pages.
-    """
-
-    title = zope.schema.TextLine(
-        title=u'Title',
-        required=False,
-    )
-
-    workspace = zope.schema.TextLine(
-        title=u'Workspace',
-        description=u'The model workspace this exposure encapsulates.',
-    )
-
-    commit_id = zope.schema.TextLine(
-        title=u'Commit ID',
-        description=u'The specific commit identifier of the model.',
-    )
-
-    curation = CurationDict(
-        title=u'Curation',
-        description=u'Curation of this model.',
-        required=False,
-    )
-
-    # this is not a Choice because the manifest list generation can be
-    # a performance hit as this object gets hit a lot, and we don't have
-    # caching yet... not to mention users won't be changing this.
-    docview_gensource = zope.schema.TextLine(
-        title=u'Generated From',
-        description=u'The source file which the documentation or data is '
-                     'generated from.',
-        required=False,
-    )
-
-    # sometimes generator can become depcrecated and removed, thus no
-    # longer in the vocabulary, plain text field again.
-    docview_generator = zope.schema.TextLine(
-        title=u'Generator Name',
-        description=u'The name of the generator used to make this view.',
-        required=False,
-    )
-
-
-class IPMR2Search(zope.interface.Interface):
-    """\
-    Interface for the search objects.
-    """
-
-    title = zope.schema.TextLine(
-        title=u'Title',
-    )
-
-    description = zope.schema.Text(
-        title=u'Description',
-        required=False,
-    )
-
-    catalog_index = zope.schema.Choice(
-        title=u'Index',
-        description=u'The index to be use by this search object.',
-        vocabulary='PMR2IndexesVocab',
     )
 
 
@@ -330,27 +120,6 @@ class IExposureContentIndex(zope.interface.Interface):
         pass
 
 
-class IExposureFolder(zope.interface.Interface):
-    """\
-    Interface for a folder within an exposure (supports unknwon subpath
-    capturing for redirection to path within its workspace).
-    """
-
-    # for reason why these two fields are TextLine, please see IExposure
-    docview_gensource = zope.schema.TextLine(
-        title=u'Generated From',
-        description=u'The source file which the documentation or data is '
-                     'generated from.',
-        required=False,
-    )
-
-    docview_generator = zope.schema.TextLine(
-        title=u'Generator Name',
-        description=u'The name of the generator used to make this view.',
-        required=False,
-    )
-
-
 # New style exposure classes.
 
 class IExposureFileGenForm(zope.interface.Interface):
@@ -365,54 +134,6 @@ class IExposureFileGenForm(zope.interface.Interface):
                      'processing to be presentable in this exposure.',
         vocabulary='ManifestListVocab',
     )   # this will become the id of an ExposureFile object.
-
-
-class IExposureFile(zope.interface.Interface):
-    """\
-    Interface for a basic exposure page.
-
-    Compared to IExposureDocument, a lot less fields, because the object
-    will have the id after the object.
-    """
-
-    views = TextLineList(
-        title=u'Views',
-        description=u'List of views available.',
-        required=False,
-        default=[],
-    )
-
-    docview_gensource = zope.schema.TextLine(
-        title=u'Documentation File',
-        description=u'The file where the documentation for this file reside '
-                     'in, for files that do not have any method of specifying '
-                     'one.',
-        required=False,
-    )
-
-    docview_generator = zope.schema.TextLine(
-        title=u'Default View Generator',
-        description=u'The default view generator utility that was used to ' \
-                     'generate the contents viewed via document_view.',
-        required=False,
-    )
-
-    def raw_text():
-        """\
-        returns a concatenated string of all raw text, if it implements
-        IExposureFileRawText
-        """
-
-
-class IExposureFileRawText(zope.interface.Interface):
-    """\
-    Interface that will allow the returning of raw text.
-    """
-
-    def raw_text():
-        """\
-        returns a raw text representation of this adapter.
-        """
 
 
 class IExposureFileAnnotator(zope.interface.Interface):
