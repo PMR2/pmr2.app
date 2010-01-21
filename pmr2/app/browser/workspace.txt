@@ -10,11 +10,11 @@ the test environment.
     >>> from pmr2.app.tests.base import TestRequest
     >>> from plone.z3cform.tests import setup_defaults
     >>> from pmr2.app.content import *
-    >>> self.folder.repo['workspace'] = WorkspaceContainer()
-    >>> self.folder.repo.workspace
+    >>> self.portal.repo['workspace'] = WorkspaceContainer()
+    >>> self.portal.repo.workspace
     <WorkspaceContainer at ...repo/workspace>
-    >>> self.folder.repo.workspace['eggs'] = Workspace('eggs')
-    >>> self.folder.repo.workspace.eggs
+    >>> self.portal.repo.workspace['eggs'] = Workspace('eggs')
+    >>> self.portal.repo.workspace.eggs
     <Workspace at ...repo/workspace/eggs>
     >>> request = TestRequest()
 
@@ -24,7 +24,7 @@ passed to the client.
 ::
 
     >>> repolist_page = workspace.WorkspaceContainerRepoListing(
-    ...     self.folder.repo.workspace, request)
+    ...     self.portal.repo.workspace, request)
     >>> html = repolist_page()
     >>> 'Repository Path lookup failed.' in html
     True
@@ -33,7 +33,7 @@ The edit form for the Workspace should work.
 ::
 
     >>> testform = workspace.WorkspaceEditForm(
-    ...     self.folder.repo.workspace.eggs, request)
+    ...     self.portal.repo.workspace.eggs, request)
     >>> html = testform()
     >>> 'Title' in html
     True
@@ -50,26 +50,26 @@ Let's try to edit the Workspace with that form.
     ...         'form.buttons.apply': 1,
     ...     })
     >>> testform = workspace.WorkspaceEditForm(
-    ...     self.folder.repo.workspace.eggs, request)
+    ...     self.portal.repo.workspace.eggs, request)
     >>> testform.update()
 
 Workspace is updated
 ::
 
-    >>> self.folder.repo.workspace.eggs.title
+    >>> self.portal.repo.workspace.eggs.title
     u'Delicious Eggs'
-    >>> self.folder.repo.workspace.eggs.description
+    >>> self.portal.repo.workspace.eggs.description
     u'Test\nWorkspace'
 
 Now if we defined a temporary directory.  However, the workspace path
 has not been created yet.
 ::
 
-    >>> self.folder.repo.repo_root = self.tmpdir
-    >>> self.folder.repo.repo_root == self.tmpdir
+    >>> self.portal.repo.repo_root = self.tmpdir
+    >>> self.portal.repo.repo_root == self.tmpdir
     True
     >>> repolist_page = workspace.WorkspaceContainerRepoListing(
-    ...     self.folder.repo.workspace, request)
+    ...     self.portal.repo.workspace, request)
     >>> html = repolist_page()
     >>> 'Repository Path is undefined.' in html
     False
@@ -81,7 +81,7 @@ repository listing should render fine.
 ::
 
     >>> from pmr2.app.tests import utils
-    >>> utils.mkreporoot(self.folder.repo.repo_root)
+    >>> utils.mkreporoot(self.portal.repo.repo_root)
     >>> html = repolist_page()
     >>> 'eggs' in html
     True
@@ -94,7 +94,7 @@ As the VCS instances are added to the file system, they should also
 show up on the form.
 ::
 
-    >>> utils.mkrepo(self.folder.repo.workspace.get_path(), 'ham')
+    >>> utils.mkrepo(self.portal.repo.workspace.get_path(), 'ham')
     >>> html = repolist_page()
     >>> 'ham' in html
     True
@@ -105,7 +105,7 @@ Now we create the repository for eggs.  It should no longer appear
 broken.
 ::
 
-    >>> utils.mkrepo(self.folder.repo.workspace.get_path(), 'eggs')
+    >>> utils.mkrepo(self.portal.repo.workspace.get_path(), 'eggs')
     >>> html = repolist_page()
     >>> 'eggs' in html
     True
@@ -127,7 +127,7 @@ already exists.
     ...     })
     ... 
     >>> testform = workspace.WorkspaceStorageCreateForm(
-    ...     self.folder.repo.workspace, request)
+    ...     self.portal.repo.workspace, request)
     >>> html = testform()
     >>> 'A previous workspace' in html
     True
@@ -137,7 +137,7 @@ the workspace object and not the storage.
 ::
 
     >>> testform = workspace.WorkspaceAddForm(
-    ...     self.folder.repo.workspace, request)
+    ...     self.portal.repo.workspace, request)
     >>> testform.update()
 
 There should now be no repository objects without its respective
@@ -162,12 +162,12 @@ earlier.
     ...     })
     ... 
     >>> testform = workspace.WorkspaceStorageCreateForm(
-    ...     self.folder.repo.workspace, request)
+    ...     self.portal.repo.workspace, request)
     >>> testform.update()
-    >>> p = utils.join(self.folder.repo.workspace.get_path(), 'cake')
+    >>> p = utils.join(self.portal.repo.workspace.get_path(), 'cake')
     >>> utils.isdir(p)
     True
-    >>> p = utils.join(self.folder.repo.workspace.get_path(), 'cake', '.hg')
+    >>> p = utils.join(self.portal.repo.workspace.get_path(), 'cake', '.hg')
     >>> utils.isdir(p)
     True
 
@@ -193,7 +193,7 @@ See if the page renders with expected output.
 
     >>> request = TestRequest()
     >>> testpage = workspace.WorkspaceFilePage(
-    ...     self.folder.repo.workspace.cake, request)
+    ...     self.portal.repo.workspace.cake, request)
     >>> testpage.update()
     >>> result = testpage()
     >>> '<th>Filename</th>' in result
@@ -206,7 +206,7 @@ The log page should render, too.
 
     >>> request = TestRequest()
     >>> testpage = workspace.WorkspaceLog(
-    ...     self.folder.repo.workspace.cake, request)
+    ...     self.portal.repo.workspace.cake, request)
     >>> result = testpage()
     >>> '<th>Log</th>' in result
     True
@@ -216,7 +216,7 @@ Now the short log page should render, too.
 
     >>> request = TestRequest()
     >>> testpage = workspace.WorkspaceShortlog(
-    ...     self.folder.repo.workspace.cake, request)
+    ...     self.portal.repo.workspace.cake, request)
     >>> result = testpage()
     >>> '<th>Log</th>' in result
     True
@@ -226,7 +226,7 @@ Main page should render fine, too.
 
     >>> request = TestRequest()
     >>> testpage = workspace.WorkspacePage(
-    ...     self.folder.repo.workspace.cake, request)
+    ...     self.portal.repo.workspace.cake, request)
     >>> result = testpage()
     >>> '<th>Log</th>' in result
     True
@@ -241,7 +241,7 @@ method to extract archive of the test repo will be called.
 
     >>> self.createRepo()
     >>> request = TestRequest()
-    >>> wkspc = self.folder.repo.workspace.pmr2hgtest
+    >>> wkspc = self.portal.repo.workspace.pmr2hgtest
     >>> testpage = workspace.WorkspacePage(wkspc, request)
     >>> result = testpage()
     >>> '<th>Log</th>' in result
@@ -272,7 +272,7 @@ the subdirectories in place, and we do need a proper revision for the
 request_subpath.
 ::
 
-    >>> wkspc = self.folder.repo.workspace.rdfmodel
+    >>> wkspc = self.portal.repo.workspace.rdfmodel
     >>> subpath = self.rdfmodel_revs[-1:] + ['component']
     >>> request = TestRequest()
     >>> testpage = workspace.WorkspaceFilePage(wkspc, request)

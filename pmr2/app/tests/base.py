@@ -87,7 +87,7 @@ class WorkspaceDocTestCase(DocTestCase):
         from pmr2.app.content import PMR2
         from pmr2.app.tests import utils
         setup_defaults()
-        self.folder['repo'] = PMR2('repo')
+        self.portal['repo'] = PMR2('repo')
 
     def createRepo(self):
         # create real Hg repos, to be called only after workspace is
@@ -96,12 +96,12 @@ class WorkspaceDocTestCase(DocTestCase):
         from pmr2.app.content import Workspace
         from pmr2.mercurial.tests import util
         # pmr2.mercurial
-        util.extract_archive(self.folder.repo.workspace.get_path())
+        util.extract_archive(self.portal.repo.workspace.get_path())
         # pmr2.app
         p2a_test = join(dirname(__file__), 'pmr2.app.testdata.tgz')
-        util.extract_archive(self.folder.repo.workspace.get_path(), p2a_test)
-        self.folder.repo.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
-        self.folder.repo.workspace['rdfmodel'] = Workspace('rdfmodel')
+        util.extract_archive(self.portal.repo.workspace.get_path(), p2a_test)
+        self.portal.repo.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
+        self.portal.repo.workspace['rdfmodel'] = Workspace('rdfmodel')
         self.pmr2hgtest_revs = util.ARCHIVE_REVS
         self.rdfmodel_revs = [
             'b94d1701154be42acf63ee6b4bd4a99d09ba043c',
@@ -125,28 +125,28 @@ class ExposureDocTestCase(DocTestCase):
         from pmr2.app.content import *
         from pmr2.app.tests import utils
         setup_defaults()
-        self.folder['repo'] = PMR2('repo')
-        self.folder.repo['workspace'] = WorkspaceContainer()
-        self.folder.repo.workspace['eggs'] = Workspace('eggs')
-        self.folder.repo.repo_root = self.tmpdir
-        utils.mkreporoot(self.folder.repo.repo_root)
-        utils.mkrepo(self.folder.repo.workspace.get_path(), 'eggs')
+        self.portal['repo'] = PMR2('repo')
+        self.portal.repo['workspace'] = WorkspaceContainer()
+        self.portal.repo.workspace['eggs'] = Workspace('eggs')
+        self.portal.repo.repo_root = self.tmpdir
+        utils.mkreporoot(self.portal.repo.repo_root)
+        utils.mkrepo(self.portal.repo.workspace.get_path(), 'eggs')
 
         # create real Hg repos
 
         import pmr2.mercurial.tests
         from pmr2.mercurial.tests import util
         # pmr2.mercurial
-        util.extract_archive(self.folder.repo.workspace.get_path())
+        util.extract_archive(self.portal.repo.workspace.get_path())
         # pmr2.app
         p2a_test = join(dirname(__file__), 'pmr2.app.testdata.tgz')
-        util.extract_archive(self.folder.repo.workspace.get_path(), p2a_test)
+        util.extract_archive(self.portal.repo.workspace.get_path(), p2a_test)
 
         self.archive_revs = util.ARCHIVE_REVS
-        self.folder.repo.workspace['import1'] = Workspace('import1')
-        self.folder.repo.workspace['import2'] = Workspace('import2')
-        self.folder.repo.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
-        self.folder.repo.workspace['rdfmodel'] = Workspace('rdfmodel')
+        self.portal.repo.workspace['import1'] = Workspace('import1')
+        self.portal.repo.workspace['import2'] = Workspace('import2')
+        self.portal.repo.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
+        self.portal.repo.workspace['rdfmodel'] = Workspace('rdfmodel')
 
     def tearDown(self):
         DocTestCase.tearDown(self)
