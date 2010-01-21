@@ -27,6 +27,7 @@ import pmr2.mercurial.utils
 from pmr2.mercurial import Storage
 
 from pmr2.app.interfaces import *
+from pmr2.app.settings import IPMR2GlobalSettings
 from pmr2.app.content import *
 from pmr2.app.util import set_xmlbase, fix_pcenv_externalurl, obfuscate, \
                           isodate
@@ -371,7 +372,7 @@ class WorkspaceStorageCreateForm(WorkspaceAddForm):
         WorkspaceAddForm.add_data(self, ctxobj)
         # This creates the mercurial workspace, and will fail if storage
         # already exists.
-        rp = ctxobj.get_path()
+        rp = zope.component.getUtility(IPMR2GlobalSettings).find_path(ctxobj)
         Storage.create(rp, ffa=True)
 
 WorkspaceStorageCreateFormView = layout.wrap_form(

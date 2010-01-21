@@ -2,10 +2,12 @@ import re
 import os.path
 from lxml import etree
 
+from zope.component import getUtility
 from Acquisition import aq_inner, aq_parent
 
 import pmr2.mercurial.utils
 from pmr2.app.interfaces import IPMR2GetPath
+from pmr2.app.settings import IPMR2GlobalSettings
 
 CELLML_NSMAP = {
     'tmpdoc': 'http://cellml.org/tmp-documentation',
@@ -116,18 +118,8 @@ def simple_valid_date(input):
 
 def get_path(context, id):
     """\
-    Tries to find and call the parent's get_path method and join it as
-    a path on the filesystem, returns value.
+    Deprecated method to get the filesystem path of a given context.
     """
 
-    obj = aq_inner(context)
-    while obj is not None:
-        obj = aq_parent(obj)
-        if IPMR2GetPath.providedBy(obj):
-            p = obj.get_path()
-            if not p:
-                # it may be dangerous to fall through to the next object
-                # to search for the path, so we are done.
-                break
-            return os.path.join(p, id)
-    return None
+    p = getUtility(IPMR2GlobalSettings)
+    return p.has_dir(context)

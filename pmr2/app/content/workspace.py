@@ -1,5 +1,6 @@
 from zope import interface
 from zope.schema import fieldproperty
+import zope.component
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
@@ -12,6 +13,7 @@ from Products.Archetypes import atapi
 import pmr2.mercurial.interfaces
 import pmr2.mercurial.utils
 
+from pmr2.app.settings import IPMR2GlobalSettings
 from pmr2.app.interfaces import *
 from pmr2.app.mixin import TraversalCatchAll
 from pmr2.app.util import get_path
@@ -59,9 +61,9 @@ class WorkspaceContainer(ATBTreeFolder):
             system.
         """
 
-        reporoot = self.get_path()
-        if not reporoot:
-            raise RepoPathUndefinedError('repo path is undefined')
+        reporoot = zope.component.getUtility(IPMR2GlobalSettings).has_dir(self)
+        if reporoot is None:
+            raise WorkspaceDirNotExistsError()
 
         try:
             repodirs = pmr2.mercurial.utils.webdir(reporoot)
