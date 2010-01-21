@@ -3,20 +3,20 @@ from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 from Products.CMFCore.utils import getToolByName
 from StringIO import StringIO
 from pmr2.app.pas.mercurial import addHgAuthPlugin
+from pmr2.app.settings import IPMR2GlobalSettings, PMR2GlobalSettings
 
-def importVarious(context):
-    """Install the HgAuthPAS plugin"""
+def add_pas_plugin(site):
+    """Add our plugin into PAS"""
+
     out = StringIO()
-    portal = context.getSite()
-
-    uf = getToolByName(portal, 'acl_users')
+    uf = getToolByName(site, 'acl_users')
     installed = uf.objectIds()
 
     id_ = 'hgauthpas'
 
     if id_ not in installed:
         addHgAuthPlugin(uf, id_, 'HgAuth PAS')
-        activatePluginInterfaces(portal, id_, out)
+        activatePluginInterfaces(site, id_, out)
     else:
         print >> out, '%s already installed' % id_
 
@@ -32,4 +32,24 @@ def importVarious(context):
         uf.plugins.movePluginsDown(IChallengePlugin, activated_pn)
         print >> out, 'IChallengePlugin "%s" moved to top' % id_
 
-    print out.getvalue()
+    return out.getvalue()
+
+def add_pmr2(site):
+    """Add PMR2 settings utility to the site manager"""
+    sm = site.getSiteManager()
+    if not sm.queryUtility(IPMR2GlobalSettings):
+        sm.registerUtility(IPMR2GlobalSettings(site), IPMR2GlobalSettings)
+
+def remove_pmr2(site):
+    """Remove PMR2 settings utility from the site manager"""
+    sm = site.getSiteManager()
+    u = sm.queryUtility(IPMR2GlobalSettings)
+    if u:
+        sm.unregisterUtility(u, IPMR2GlobalSettings)
+
+def importVarious(context):
+    """Install the HgAuthPAS plugin"""
+
+    site = context.getSite()
+    print add_pas_plugin(site)
+    print add_pmr2(site)

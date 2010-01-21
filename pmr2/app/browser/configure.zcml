@@ -403,6 +403,17 @@
       />
 
   <!--
+    For the Plone Control Panel, to change PMR2 global settings.
+  -->
+
+  <browser:page
+      for="Products.CMFPlone.Portal.PloneSite"
+      name="pmr2-settings"
+      class=".settings.PMR2GlobalSettingsEditFormView"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--
     PMR1 Compatibility View
   -->
 

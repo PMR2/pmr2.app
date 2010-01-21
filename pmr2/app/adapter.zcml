@@ -99,4 +99,7 @@
       name="opencellsession"
       />
 
+  <!-- Global Configuration -->
+  <adapter factory=".settings.PMR2GlobalSettings" />
+
 </configure> 
