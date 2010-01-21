@@ -1,5 +1,5 @@
-from os import getenv
-from os.path import join
+from os import getenv, makedirs
+from os.path import join, exists, isdir
 
 from persistent import Persistent
 from zope.annotation import factory, IAttributeAnnotatable
@@ -11,12 +11,17 @@ from zope.app.component.hooks import getSite, getSiteManager
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory('pmr2')
 
+from OFS.interfaces import ITraversable
+
 try:
     from Products.CMFCore.interfaces import ISiteRoot
 except ImportError:
     ISiteRoot = None
 
-pmr2_settings = 'pmr2_settings'
+__all__ = [
+    'IPMR2GlobalSettings',
+    'PMR2GlobalSettings',
+]
 
 
 class IPMR2GlobalSettings(zope.interface.Interface):
@@ -30,8 +35,30 @@ class IPMR2GlobalSettings(zope.interface.Interface):
                        'that make up the workspaces will be stored.'),
     )
 
+    def find_path(obj=None):
+        """\
+        Returns the filesystem path for this object.
+        """
+
+    def has_dir(obj=None):
+        """\
+        Checks whether path exists.  Optionally an object can be passed,
+        which then the physical path will be computed for the object.
+
+        Returns the filesystem path if found, or None if not found.
+        """
+
+    def make_dir(obj=None):
+        """\
+        Creates the dir for the specified object.
+        """
+
 
 class PMR2GlobalSettingsAnnotation(Persistent):
+    """\
+    Please refer to IPMR2GlobalSettings
+    """
+
     zope.interface.implements(IPMR2GlobalSettings)
     zope.component.adapts(IAttributeAnnotatable)
 
@@ -40,6 +67,31 @@ class PMR2GlobalSettingsAnnotation(Persistent):
 
     def __init__(self):
         self.repo_root = _make_default_path()
+
+    def find_path(self, obj=None):
+        path = (self.repo_root,)
+        if obj is not None:
+            if not ITraversable.providedBy(obj):
+                raise TypeError('input is not traversable')
+            path = path + obj.getPhysicalPath()[1:]
+        return join(*path)
+
+    def has_dir(self, obj=None):
+        path = self.find_path(obj)
+        if isdir(path):
+            return path
+        return None
+
+    def make_dir(self, obj=None):
+        path = self.find_path(obj)
+        if isdir(path):
+            # If already dir, pretend we made it.
+            return path
+        if not isdir(path):
+            # if some file are in place or file access error, OSError
+            # is not trapped
+            makedirs(path)
+        return path
 
 PMR2GlobalSettings = factory(PMR2GlobalSettingsAnnotation)
 

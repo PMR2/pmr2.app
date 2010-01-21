@@ -20,10 +20,38 @@ how pmr2_settings created from above is not acquired again.
     >>> from pmr2.app.tests.base import TestRequest
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.repo_root': '/tmp',
+    ...         'form.widgets.repo_root': self.tmpdir,
     ...         'form.buttons.apply': 1,
     ...     })
     >>> f = PMR2GlobalSettingsEditForm(self.folder, request)
     >>> result = f()
-    >>> pmr2_settings.repo_root == '/tmp'
+    >>> pmr2_settings.repo_root == self.tmpdir
+    True
+
+The methods that compute/return path should return one.
+::
+
+    >>> pmr2_settings.find_path() == self.tmpdir
+    True
+    >>> pmr2_settings.has_dir() == self.tmpdir
+    True
+
+The portal object can have a path, however it does not exist yet.
+::
+
+    >>> from os.path import join
+    >>> result = pmr2_settings.find_path(self.portal)
+    >>> portal_path = join(self.tmpdir, self.portal.id)
+    >>> result == portal_path
+    True
+    >>> pmr2_settings.has_dir(self.portal) is None
+    True
+
+This utility can create a path for a specific object.
+::
+
+    >>> result = pmr2_settings.make_dir(self.portal)
+    >>> result == portal_path
+    True
+    >>> pmr2_settings.has_dir(self.portal) == portal_path
     True
