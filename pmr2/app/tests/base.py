@@ -8,6 +8,7 @@ from zope.component import testing
 from Testing import ZopeTestCase as ztc
 
 import zope.interface
+import zope.component
 from zope.annotation import IAnnotations
 import z3c.form.testing
 
@@ -86,8 +87,11 @@ class WorkspaceDocTestCase(DocTestCase):
         from plone.z3cform.tests import setup_defaults
         from pmr2.app.content import PMR2
         from pmr2.app.tests import utils
+        from pmr2.app.settings import IPMR2GlobalSettings
         setup_defaults()
-        self.portal['repo'] = PMR2('repo')
+        self.pmr2 = zope.component.getUtility(IPMR2GlobalSettings)
+        # force the repo_root unset
+        self.pmr2.repo_root = self.tmpdir
 
     def createRepo(self):
         # create real Hg repos, to be called only after workspace is
@@ -95,13 +99,13 @@ class WorkspaceDocTestCase(DocTestCase):
         import pmr2.mercurial.tests
         from pmr2.app.content import Workspace
         from pmr2.mercurial.tests import util
-        # pmr2.mercurial
-        util.extract_archive(self.portal.repo.workspace.get_path())
+        p = self.pmr2.make_dir(self.portal.workspace)
+        util.extract_archive(p)
         # pmr2.app
         p2a_test = join(dirname(__file__), 'pmr2.app.testdata.tgz')
-        util.extract_archive(self.portal.repo.workspace.get_path(), p2a_test)
-        self.portal.repo.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
-        self.portal.repo.workspace['rdfmodel'] = Workspace('rdfmodel')
+        util.extract_archive(p, p2a_test)
+        self.portal.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
+        self.portal.workspace['rdfmodel'] = Workspace('rdfmodel')
         self.pmr2hgtest_revs = util.ARCHIVE_REVS
         self.rdfmodel_revs = [
             'b94d1701154be42acf63ee6b4bd4a99d09ba043c',
@@ -113,40 +117,34 @@ class WorkspaceDocTestCase(DocTestCase):
         DocTestCase.tearDown(self)
 
 
-class ExposureDocTestCase(DocTestCase):
+class ExposureDocTestCase(WorkspaceDocTestCase):
 
     def setUp(self):
         """\
         Sets up the environment that the exposure doctest needs.
         """
 
-        DocTestCase.setUp(self)
-        from plone.z3cform.tests import setup_defaults
+        WorkspaceDocTestCase.setUp(self)
+        self.pmr2.repo_root = self.tmpdir
         from pmr2.app.content import *
         from pmr2.app.tests import utils
-        setup_defaults()
-        self.portal['repo'] = PMR2('repo')
-        self.portal.repo['workspace'] = WorkspaceContainer()
-        self.portal.repo.workspace['eggs'] = Workspace('eggs')
-        self.portal.repo.repo_root = self.tmpdir
-        utils.mkreporoot(self.portal.repo.repo_root)
-        utils.mkrepo(self.portal.repo.workspace.get_path(), 'eggs')
+        self.portal['workspace'] = WorkspaceContainer()
+        self.portal.workspace['eggs'] = Workspace('eggs')
+        utils.mkreporoot(self.pmr2.make_dir(self.portal))
+        utils.mkrepo(self.portal.workspace.get_path(), 'eggs')
 
         # create real Hg repos
 
         import pmr2.mercurial.tests
         from pmr2.mercurial.tests import util
         # pmr2.mercurial
-        util.extract_archive(self.portal.repo.workspace.get_path())
+        util.extract_archive(self.portal.workspace.get_path())
         # pmr2.app
         p2a_test = join(dirname(__file__), 'pmr2.app.testdata.tgz')
-        util.extract_archive(self.portal.repo.workspace.get_path(), p2a_test)
+        util.extract_archive(self.portal.workspace.get_path(), p2a_test)
 
         self.archive_revs = util.ARCHIVE_REVS
-        self.portal.repo.workspace['import1'] = Workspace('import1')
-        self.portal.repo.workspace['import2'] = Workspace('import2')
-        self.portal.repo.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
-        self.portal.repo.workspace['rdfmodel'] = Workspace('rdfmodel')
-
-    def tearDown(self):
-        DocTestCase.tearDown(self)
+        self.portal.workspace['import1'] = Workspace('import1')
+        self.portal.workspace['import2'] = Workspace('import2')
+        self.portal.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
+        self.portal.workspace['rdfmodel'] = Workspace('rdfmodel')

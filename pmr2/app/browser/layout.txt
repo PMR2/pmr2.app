@@ -78,7 +78,7 @@ wrapper class.  Since the dummy user has no roles, it will be blocked.
 
 On the other hand if the user with the correct role, it will be let in.
 However, it is an "unbound" workspace object so when storage tries to
-initialize, it will trigger the exception.
+initialize, it will trigger an exception.
 ::
 
     >>> request = make_request({'AUTHENTICATED_USER': pushableUser()})
@@ -89,7 +89,7 @@ initialize, it will trigger the exception.
     >>> form()
     Traceback (most recent call last):
     ...
-    PathLookupError: ...
+    AttributeError: getPhysicalPath
 
 Here are the two other wrapper types:
 ::

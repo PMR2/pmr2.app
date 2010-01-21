@@ -19,9 +19,9 @@ directories required should have been already set up by the script.
 Create the exposure container.
 ::
 
-    >>> self.portal.repo['exposure'] = ExposureContainer()
-    >>> self.portal.repo.exposure
-    <ExposureContainer at ...repo/exposure>
+    >>> self.portal['exposure'] = ExposureContainer()
+    >>> self.portal.exposure
+    <ExposureContainer at /plone/exposure>
 
 Exposure container creates new exposure, we test it here.  It should be
 a 32 byte long hex string.
@@ -34,18 +34,18 @@ a 32 byte long hex string.
     ...         'form.buttons.add': 1,
     ...     })
     >>> testform = exposure.ExposureAddForm(
-    ...     self.portal.repo.exposure, request)
+    ...     self.portal.exposure, request)
     >>> testform.update()
-    >>> oid = self.portal.repo.exposure.objectIds()[0]
+    >>> oid = self.portal.exposure.objectIds()[0]
     >>> len(oid)
     32
 
 Exposure object is created with fields properly populated.
 ::
 
-    >>> self.portal.repo.exposure[oid].workspace
+    >>> self.portal.exposure[oid].workspace
     u'eggs'
-    >>> self.portal.repo.exposure[oid].commit_id
+    >>> self.portal.exposure[oid].commit_id
     u'00000000'
 
 =======================
@@ -289,10 +289,10 @@ a workspace with actual data.
     ...         'form.buttons.add': 1,
     ...     })
     >>> testform = exposure.ExposureAddForm(
-    ...     self.portal.repo.exposure, request)
+    ...     self.portal.exposure, request)
     >>> testform.update()
     >>> exp_id = testform._data['id']
-    >>> context = self.portal.repo.exposure[exp_id]
+    >>> context = self.portal.exposure[exp_id]
     >>> context
     <Exposure at ...>
 
@@ -308,7 +308,7 @@ We need to wrap around one of the interesting files inside with the
 standard ExposureFile object.
 ::
 
-    >>> pmr2hgtest = self.portal.repo.workspace.pmr2hgtest
+    >>> pmr2hgtest = self.portal.workspace.pmr2hgtest
     >>> file1 = u'file1'
     >>> request = TestRequest(
     ...     form={
@@ -376,10 +376,10 @@ Now we do the same with our set of data, with more content.
     ...         'form.buttons.add': 1,
     ...     })
     >>> testform = exposure.ExposureAddForm(
-    ...     self.portal.repo.exposure, request)
+    ...     self.portal.exposure, request)
     >>> testform.update()
     >>> exp_id = testform._data['id']
-    >>> context = self.portal.repo.exposure[exp_id]
+    >>> context = self.portal.exposure[exp_id]
     >>> context
     <Exposure at ...>
 
@@ -412,7 +412,7 @@ We need to wrap around one of the interesting files inside with the
 standard ExposureFile object.
 ::
 
-    >>> rdfmodel = self.portal.repo.workspace.rdfmodel
+    >>> rdfmodel = self.portal.workspace.rdfmodel
     >>> file1 = u'example_model.cellml'
     >>> request = TestRequest(
     ...     form={
@@ -740,7 +740,7 @@ many cases where files will be nested within some directory level which
 we have not looked at yet.  Let's see what happens when we try that.
 ::
 
-    >>> rdfmodel = self.portal.repo.workspace.rdfmodel
+    >>> rdfmodel = self.portal.workspace.rdfmodel
     >>> path2 = (u'component', u'module.cellml')
     >>> file2 = '/'.join(path2)
     >>> request = TestRequest(
@@ -769,7 +769,7 @@ folder is already created, it should not be recreated and reused and
 remain accessible.
 ::
 
-    >>> rdfmodel = self.portal.repo.workspace.rdfmodel
+    >>> rdfmodel = self.portal.workspace.rdfmodel
     >>> path3 = (u'component', u'docs', u'index.html')
     >>> file3 = '/'.join(path3)
     >>> request = TestRequest(
@@ -799,7 +799,7 @@ One more time, with the other index file, and go straight to testing
 the redirection view.
 ::
 
-    >>> rdfmodel = self.portal.repo.workspace.rdfmodel
+    >>> rdfmodel = self.portal.workspace.rdfmodel
     >>> path4 = (u'component', u'docs', u'index.rst')
     >>> file4 = '/'.join(path4)
     >>> request = TestRequest(
@@ -1041,7 +1041,7 @@ First we need need a new exposure object.
 ::
 
     >>> old_ex = context
-    >>> eaf = exposure.ExposureAddForm(self.portal.repo.exposure, None)
+    >>> eaf = exposure.ExposureAddForm(self.portal.exposure, None)
     >>> rawrev = rawrevs[2]
     >>> rev = unicode(rawrev)
     >>> data = {
@@ -1051,7 +1051,7 @@ First we need need a new exposure object.
     ... }
     >>> obj = eaf.createAndAdd(data)
     >>> exp_id = data['id']
-    >>> new_ex = self.portal.repo.exposure[exp_id]
+    >>> new_ex = self.portal.exposure[exp_id]
     >>> new_ex
     <Exposure at /.../exposure/...>
     >>> new_ex == old_ex
@@ -1084,7 +1084,7 @@ supply an existing commit id.
     >>> print nextURL
     http://.../exposure/...
     >>> new_id = nextURL.split('/')[-1]
-    >>> new_ex = self.portal.repo.exposure[new_id]
+    >>> new_ex = self.portal.exposure[new_id]
     >>> newport = exposure.ExposurePort(new_ex, None)
     >>> result = list(newport.export())
     >>> if not result == answer:

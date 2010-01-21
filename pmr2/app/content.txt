@@ -55,61 +55,32 @@ Usage
 -----
 
 Here we will test out the content type classes and check out the methods
-they provide.  We first import the required modules and create the root
-object.
+they provide.  Before we start, we need the utility that will store the
+settings for PMR2 registered and add the container objects to the portal
+root.
 ::
 
+    >>> from zope.component import getUtility
     >>> from pmr2.app.content import *
-    >>> self.folder['repo'] = PMR2('repo')
-    >>> self.folder.repo
-    <PMR2 at ...repo>
-
-Now we have the main repository object, we can add the container objects
-to it.
-::
-
-    >>> self.folder.repo['workspace'] = WorkspaceContainer()
-    >>> self.folder.repo.workspace
-    <WorkspaceContainer at ...repo/workspace>
-    >>> self.folder.repo['sandbox'] = SandboxContainer()
-    >>> self.folder.repo.sandbox
-    <SandboxContainer at ...repo/sandbox>
-    >>> self.folder.repo['exposure'] = ExposureContainer()
-    >>> self.folder.repo.exposure
-    <ExposureContainer at ...repo/exposure>
-
-Since the path to the repository isn't assigned yet, the get_path method
-of the containers will fail.
-::
-
-    >>> self.folder.repo.workspace.get_path()
-    Traceback (most recent call last):
-    ...
-    PathLookupError: repo root is undefined
-    >>> self.folder.repo.sandbox.get_path()
-    Traceback (most recent call last):
-    ...
-    PathLookupError: repo root is undefined
-
-Now we assign the path.  We will use the temporary directory for the
-root.  Once the path is assigned the get_path methods now return a
-valid path.
-::
-
-    >>> self.folder.repo.repo_root = self.tmpdir
-    >>> workspace_root = self.folder.repo.workspace.get_path()
-    >>> workspace_root
-    '...workspace'
-    >>> sandbox_root = self.folder.repo.sandbox.get_path()
-    >>> sandbox_root
-    '...sandbox'
+    >>> from pmr2.app.settings import IPMR2GlobalSettings
+    >>> pmr2_settings = getUtility(IPMR2GlobalSettings)
+    >>> pmr2_settings.repo_root = self.tmpdir
+    >>> self.portal['workspace'] = WorkspaceContainer()
+    >>> self.portal.workspace
+    <WorkspaceContainer at /plone/workspace>
+    >>> self.portal['sandbox'] = SandboxContainer()
+    >>> self.portal.sandbox
+    <SandboxContainer at /plone/sandbox>
+    >>> self.portal['exposure'] = ExposureContainer()
+    >>> self.portal.exposure
+    <ExposureContainer at /plone/exposure>
 
 In the workspace object, there is a method that will return a list of
 repositories within.  Since the workspace directory does not currently
 exist, it will return an exception.
 ::
 
-    >>> self.folder.repo.workspace.get_repository_list()
+    >>> self.portal.workspace.get_repository_list()
     Traceback (most recent call last):
     ...
     WorkspaceDirNotExistsError
@@ -120,8 +91,8 @@ workspace objects, we get an empty list.
 ::
 
     >>> from pmr2.app.tests import utils
-    >>> utils.mkreporoot(self.folder.repo.repo_root)
-    >>> self.folder.repo.workspace.get_repository_list()
+    >>> utils.mkreporoot(pmr2_settings.make_dir(self.portal))
+    >>> self.portal.workspace.get_repository_list()
     []
 
 Time to populate the directory with some VCS instances.  The method now
@@ -131,9 +102,10 @@ object associated with any of them, as they have not been created.
 ::
 
     >>> testdirlist = ['test%d' % i for i in xrange(3)]
+    >>> workspace_root = pmr2_settings.has_dir(self.portal.workspace)
     >>> for i in testdirlist:
     ...     utils.mkrepo(workspace_root, i)
-    >>> self.folder.repo.workspace.get_repository_list()
+    >>> self.portal.workspace.get_repository_list()
     [('test0', None), ('test1', None), ('test2', None)]
 
 Now we create a couple Workspace objects with the same name to associate
@@ -143,16 +115,16 @@ value is now True for them.
 
     >>> ws_objs = ['test%d' % i for i in xrange(2)]
     >>> for i in ws_objs:
-    ...     self.folder.repo.workspace[i] = Workspace(i)
-    >>> self.folder.repo.workspace.get_repository_list()
+    ...     self.portal.workspace[i] = Workspace(i)
+    >>> self.portal.workspace.get_repository_list()
     [('test0', True), ('test1', True), ('test2', None)]
 
 If we have a workspace object without an associated repository directory
 on the file system, a False value will signify an inconsistency.
 ::
 
-    >>> self.folder.repo.workspace['zzz'] = Workspace('zzz')
-    >>> self.folder.repo.workspace.get_repository_list()
+    >>> self.portal.workspace['zzz'] = Workspace('zzz')
+    >>> self.portal.workspace.get_repository_list()
     [('test0', True), ('test1', True), ('test2', None), ('zzz', False)]
 
 Wrong object type will also result in a False value for an existing VCS
@@ -161,16 +133,6 @@ normal usage, because other object types have to be placed in here
 deliberately.
 ::
 
-    >>> self.folder.repo.workspace['test2'] = Sandbox('test2')
-    >>> self.folder.repo.workspace.get_repository_list()
+    >>> self.portal.workspace['test2'] = Sandbox('test2')
+    >>> self.portal.workspace.get_repository_list()
     [('test0', True), ('test1', True), ('test2', False), ('zzz', False)]
-
-
-----------------
-ExposureDocument
-----------------
-
-This class modifies the traversal.  On the case where the URI cannot be
-resolved, it will invoke the default view and pass on the extra URI
-fragment onto its default view (which should handle the extra fragments.
-::

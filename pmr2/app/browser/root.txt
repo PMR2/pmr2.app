@@ -2,6 +2,8 @@
 PMR2 Root Object Forms
 ======================
 
+The Root object is now deprecated.
+
 Before we get started, we need to import the required classes and set up
 the test environment.
 ::
@@ -115,11 +117,3 @@ The repository root should now be set.
 
     >>> self.folder.test.repo_root == tmproot
     True
-
-The workspace and sandbox containers should now have a path.
-::
-
-    >>> self.folder.test.workspace.get_path()
-    '...workspace'
-    >>> self.folder.test.sandbox.get_path()
-    '...sandbox'
