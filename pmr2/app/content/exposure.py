@@ -24,6 +24,7 @@ import pmr2.mercurial.interfaces
 
 from pmr2.processor.cmeta import Cmeta
 
+from pmr2.app.settings import IPMR2GlobalSettings
 from pmr2.app.interfaces import *
 from pmr2.app.atct import ATFolderDocument
 from pmr2.app.mixin import TraversalCatchAll
@@ -46,11 +47,9 @@ class ExposureContainer(ATBTreeFolder):
         # XXX quickie code
         #"""See IWorkspaceContainer"""
 
-        p = aq_parent(aq_inner(self)).repo_root
-        if not p:
-            return None
-        # XXX magic string
-        return os.path.join(p, 'workspace')
+        workspace = aq_parent(aq_inner(self)).workspace
+        u = zope.component.getUtility(IPMR2GlobalSetting)
+        return u.dirCreatedFor(workspace)
 
 
 class ExposureContentIndexBase(object):

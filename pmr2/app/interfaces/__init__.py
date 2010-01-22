@@ -12,19 +12,6 @@ from pmr2.app.interfaces.exceptions import *
 
 # Interfaces
 
-class IPMR2GetPath(zope.interface.Interface):
-    """\
-    Provides method to return a PMR2 related path on the filesystem
-    based on some configured value.
-    """
-
-    def get_path():
-        """\
-        Returns the root directory where all the workspaces are stored.
-
-        Need to raises PathLookupError if the path cannot be calculated.
-        """
-
 class IExposureContentIndex(zope.interface.Interface):
     """\
     Interface for methods that will return a workable index.  All 

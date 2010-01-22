@@ -6,7 +6,6 @@ from zope.component import getUtility
 from Acquisition import aq_inner, aq_parent
 
 import pmr2.mercurial.utils
-from pmr2.app.interfaces import IPMR2GetPath
 from pmr2.app.settings import IPMR2GlobalSettings
 
 CELLML_NSMAP = {

@@ -24,10 +24,7 @@ class WorkspaceContainer(ATBTreeFolder):
     Container for workspaces in PMR2.
     """
 
-    interface.implements(
-        IPMR2GetPath,
-        IWorkspaceContainer,
-    )
+    interface.implements(IWorkspaceContainer)
     security = ClassSecurityInfo()
 
     # title is defined by ATFolder
@@ -108,7 +105,6 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
     """
 
     interface.implements(
-        IPMR2GetPath,
         IWorkspace, 
         pmr2.mercurial.interfaces.IPMR2StorageBase,
     )
