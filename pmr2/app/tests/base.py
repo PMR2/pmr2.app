@@ -131,7 +131,7 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
         self.portal['workspace'] = WorkspaceContainer()
         self.portal.workspace['eggs'] = Workspace('eggs')
         utils.mkreporoot(self.pmr2.createDir(self.portal))
-        utils.mkrepo(self.portal.workspace.get_path(), 'eggs')
+        utils.mkrepo(self.pmr2.dirOf(self.portal.workspace.eggs))
 
         # create real Hg repos
 

@@ -101,10 +101,11 @@ the second value returns shows None, which signifies that it has no Zope
 object associated with any of them, as they have not been created.
 ::
 
+    >>> from os.path import join
     >>> testdirlist = ['test%d' % i for i in xrange(3)]
     >>> workspace_root = pmr2_settings.dirCreatedFor(self.portal.workspace)
     >>> for i in testdirlist:
-    ...     utils.mkrepo(workspace_root, i)
+    ...     utils.mkrepo(join(workspace_root, i))
     >>> self.portal.workspace.get_repository_list()
     [('test0', None), ('test1', None), ('test2', None)]
 

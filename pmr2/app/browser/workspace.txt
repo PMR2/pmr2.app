@@ -88,10 +88,11 @@ repository listing should render fine.
     False
 
 As the VCS instances are added to the file system, they should also
-show up on the form.
+show up on the table.
 ::
 
-    >>> utils.mkrepo(self.portal.workspace.get_path(), 'ham')
+    >>> from os.path import join
+    >>> utils.mkrepo(join(self.portal.workspace.get_path(), 'ham'))
     >>> html = repolist_page()
     >>> 'ham' in html
     True
@@ -102,7 +103,7 @@ Now we create the repository for eggs.  It should no longer appear
 broken.
 ::
 
-    >>> utils.mkrepo(self.portal.workspace.get_path(), 'eggs')
+    >>> utils.mkrepo(self.pmr2.dirOf(self.portal.workspace.eggs))
     >>> html = repolist_page()
     >>> 'eggs' in html
     True
