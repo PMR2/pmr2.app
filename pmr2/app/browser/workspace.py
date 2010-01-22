@@ -370,9 +370,10 @@ class WorkspaceStorageCreateForm(WorkspaceAddForm):
 
     def add_data(self, ctxobj):
         WorkspaceAddForm.add_data(self, ctxobj)
+        # path shouldn't exist, but don't make it
+        rp = zope.component.getUtility(IPMR2GlobalSettings).dirOf(ctxobj)
         # This creates the mercurial workspace, and will fail if storage
         # already exists.
-        rp = zope.component.getUtility(IPMR2GlobalSettings).find_path(ctxobj)
         Storage.create(rp, ffa=True)
 
 WorkspaceStorageCreateFormView = layout.wrap_form(

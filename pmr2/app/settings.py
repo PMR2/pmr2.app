@@ -35,12 +35,12 @@ class IPMR2GlobalSettings(zope.interface.Interface):
                        'that make up the workspaces will be stored.'),
     )
 
-    def find_path(obj=None):
+    def dirOf(obj=None):
         """\
         Returns the filesystem path for this object.
         """
 
-    def has_dir(obj=None):
+    def dirCreatedFor(obj=None):
         """\
         Checks whether path exists.  Optionally an object can be passed,
         which then the physical path will be computed for the object.
@@ -48,7 +48,7 @@ class IPMR2GlobalSettings(zope.interface.Interface):
         Returns the filesystem path if found, or None if not found.
         """
 
-    def make_dir(obj=None):
+    def createDir(obj=None):
         """\
         Creates the dir for the specified object.
         """
@@ -68,7 +68,7 @@ class PMR2GlobalSettingsAnnotation(Persistent):
     def __init__(self):
         self.repo_root = _make_default_path()
 
-    def find_path(self, obj=None):
+    def dirOf(self, obj=None):
         path = (self.repo_root,)
         if obj is not None:
             if not ITraversable.providedBy(obj):
@@ -76,14 +76,14 @@ class PMR2GlobalSettingsAnnotation(Persistent):
             path = path + obj.getPhysicalPath()[1:]
         return join(*path)
 
-    def has_dir(self, obj=None):
-        path = self.find_path(obj)
+    def dirCreatedFor(self, obj=None):
+        path = self.dirOf(obj)
         if isdir(path):
             return path
         return None
 
-    def make_dir(self, obj=None):
-        path = self.find_path(obj)
+    def createDir(self, obj=None):
+        path = self.dirOf(obj)
         if isdir(path):
             # If already dir, pretend we made it.
             return path

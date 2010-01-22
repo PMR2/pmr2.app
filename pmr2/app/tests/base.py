@@ -99,7 +99,7 @@ class WorkspaceDocTestCase(DocTestCase):
         import pmr2.mercurial.tests
         from pmr2.app.content import Workspace
         from pmr2.mercurial.tests import util
-        p = self.pmr2.make_dir(self.portal.workspace)
+        p = self.pmr2.createDir(self.portal.workspace)
         util.extract_archive(p)
         # pmr2.app
         p2a_test = join(dirname(__file__), 'pmr2.app.testdata.tgz')
@@ -130,7 +130,7 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
         from pmr2.app.tests import utils
         self.portal['workspace'] = WorkspaceContainer()
         self.portal.workspace['eggs'] = Workspace('eggs')
-        utils.mkreporoot(self.pmr2.make_dir(self.portal))
+        utils.mkreporoot(self.pmr2.createDir(self.portal))
         utils.mkrepo(self.portal.workspace.get_path(), 'eggs')
 
         # create real Hg repos

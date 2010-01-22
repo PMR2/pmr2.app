@@ -78,7 +78,7 @@ repository listing should render fine.
 ::
 
     >>> from pmr2.app.tests import utils
-    >>> utils.mkreporoot(self.pmr2.make_dir(self.portal.workspace))
+    >>> utils.mkreporoot(self.pmr2.createDir(self.portal.workspace))
     >>> html = repolist_page()
     >>> 'eggs' in html
     True

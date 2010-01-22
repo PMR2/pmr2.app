@@ -61,7 +61,8 @@ class WorkspaceContainer(ATBTreeFolder):
             system.
         """
 
-        reporoot = zope.component.getUtility(IPMR2GlobalSettings).has_dir(self)
+        settings = zope.component.getUtility(IPMR2GlobalSettings)
+        reporoot = settings.dirCreatedFor(self)
         if reporoot is None:
             raise WorkspaceDirNotExistsError()
 

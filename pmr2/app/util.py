@@ -122,4 +122,4 @@ def get_path(context, id):
     """
 
     p = getUtility(IPMR2GlobalSettings)
-    return p.has_dir(context)
+    return p.dirCreatedFor(context)

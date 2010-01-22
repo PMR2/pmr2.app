@@ -31,27 +31,27 @@ how pmr2_settings created from above is not acquired again.
 The methods that compute/return path should return one.
 ::
 
-    >>> pmr2_settings.find_path() == self.tmpdir
+    >>> pmr2_settings.dirOf() == self.tmpdir
     True
-    >>> pmr2_settings.has_dir() == self.tmpdir
+    >>> pmr2_settings.dirCreatedFor() == self.tmpdir
     True
 
 The portal object can have a path, however it does not exist yet.
 ::
 
     >>> from os.path import join
-    >>> result = pmr2_settings.find_path(self.portal)
+    >>> result = pmr2_settings.dirOf(self.portal)
     >>> portal_path = join(self.tmpdir, self.portal.id)
     >>> result == portal_path
     True
-    >>> pmr2_settings.has_dir(self.portal) is None
+    >>> pmr2_settings.dirCreatedFor(self.portal) is None
     True
 
 This utility can create a path for a specific object.
 ::
 
-    >>> result = pmr2_settings.make_dir(self.portal)
+    >>> result = pmr2_settings.createDir(self.portal)
     >>> result == portal_path
     True
-    >>> pmr2_settings.has_dir(self.portal) == portal_path
+    >>> pmr2_settings.dirCreatedFor(self.portal) == portal_path
     True
