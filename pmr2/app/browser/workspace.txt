@@ -92,7 +92,7 @@ show up on the table.
 ::
 
     >>> from os.path import join
-    >>> utils.mkrepo(join(self.portal.workspace.get_path(), 'ham'))
+    >>> utils.mkrepo(join(self.pmr2.dirCreatedFor(portal.workspace), 'ham'))
     >>> html = repolist_page()
     >>> 'ham' in html
     True
@@ -162,10 +162,10 @@ earlier.
     >>> testform = workspace.WorkspaceStorageCreateForm(
     ...     self.portal.workspace, request)
     >>> testform.update()
-    >>> p = utils.join(self.portal.workspace.get_path(), 'cake')
+    >>> p = join(self.pmr2.dirCreatedFor(portal.workspace), 'cake')
     >>> utils.isdir(p)
     True
-    >>> p = utils.join(self.portal.workspace.get_path(), 'cake', '.hg')
+    >>> p = join(self.pmr2.dirCreatedFor(portal.workspace), 'cake', '.hg')
     >>> utils.isdir(p)
     True
 

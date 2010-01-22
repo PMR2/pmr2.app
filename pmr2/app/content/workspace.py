@@ -16,7 +16,6 @@ import pmr2.mercurial.utils
 from pmr2.app.settings import IPMR2GlobalSettings
 from pmr2.app.interfaces import *
 from pmr2.app.mixin import TraversalCatchAll
-from pmr2.app.util import get_path
 
 
 class WorkspaceContainer(ATBTreeFolder):
@@ -31,16 +30,6 @@ class WorkspaceContainer(ATBTreeFolder):
 
     def __init__(self, oid='workspace', **kwargs):
         super(WorkspaceContainer, self).__init__(oid, **kwargs)
-
-    security.declarePrivate('get_path')
-    def get_path(self):
-        """See IWorkspaceContainer"""
-
-        # XXX magic string 'workspace'
-        result = get_path(self, 'workspace')
-        if result is None:
-            raise PathLookupError('repo root is undefined')
-        return result
 
     security.declareProtected(View, 'get_repository_list')
     def get_repository_list(self):
@@ -111,14 +100,5 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
     security = ClassSecurityInfo()
 
     description = fieldproperty.FieldProperty(IWorkspace['description'])
-
-    security.declarePrivate('get_path')
-    def get_path(self):
-        """See IWorkspace"""
-
-        result = get_path(self, self.id) #XXX
-        if result is None:
-            raise PathLookupError('parent of workspace cannot calculate path')
-        return result
 
 atapi.registerType(Workspace, 'pmr2.app')

@@ -1,10 +1,12 @@
 import os.path
 
 import zope.interface
+import zope.component
 from  zope.schema import ValidationError
 import z3c.form.validator
 
 from pmr2.app import interfaces
+from pmr2.app.settings import IPMR2GlobalSettings
 
 
 class ObjectIdValidator(z3c.form.validator.SimpleFieldValidator):
@@ -25,7 +27,11 @@ class StorageExistsValidator(ObjectIdValidator):
     def validate(self, value):
         super(StorageExistsValidator, self).validate(value)
         # context assumed to be WorkspaceContainer
-        p = os.path.join(self.context.get_path(), value)
+        u = zope.component.getUtility(IPMR2GlobalSettings)
+        root = u.dirCreatedFor(self.context)
+        if root is None:
+            raise interfaces.WorkspaceDirNotExistsError()
+        p = os.path.join(root, value)
         if os.path.exists(p):
             raise interfaces.StorageExistsError()
 

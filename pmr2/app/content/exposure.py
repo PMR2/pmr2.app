@@ -42,15 +42,6 @@ class ExposureContainer(ATBTreeFolder):
     def __init__(self, oid='exposure', **kwargs):
         super(ExposureContainer, self).__init__(oid, **kwargs)
 
-    security.declarePrivate('get_path')
-    def get_path(self):
-        # XXX quickie code
-        #"""See IWorkspaceContainer"""
-
-        workspace = aq_parent(aq_inner(self)).workspace
-        u = zope.component.getUtility(IPMR2GlobalSetting)
-        return u.dirCreatedFor(workspace)
-
 
 class ExposureContentIndexBase(object):
     """\

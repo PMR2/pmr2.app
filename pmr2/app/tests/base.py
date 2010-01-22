@@ -138,10 +138,11 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
         import pmr2.mercurial.tests
         from pmr2.mercurial.tests import util
         # pmr2.mercurial
-        util.extract_archive(self.portal.workspace.get_path())
+        wdir = self.pmr2.createDir(self.portal.workspace)
+        util.extract_archive(wdir)
         # pmr2.app
         p2a_test = join(dirname(__file__), 'pmr2.app.testdata.tgz')
-        util.extract_archive(self.portal.workspace.get_path(), p2a_test)
+        util.extract_archive(wdir, p2a_test)
 
         self.archive_revs = util.ARCHIVE_REVS
         self.portal.workspace['import1'] = Workspace('import1')

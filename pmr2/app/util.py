@@ -2,11 +2,9 @@ import re
 import os.path
 from lxml import etree
 
-from zope.component import getUtility
 from Acquisition import aq_inner, aq_parent
 
 import pmr2.mercurial.utils
-from pmr2.app.settings import IPMR2GlobalSettings
 
 CELLML_NSMAP = {
     'tmpdoc': 'http://cellml.org/tmp-documentation',
@@ -114,11 +112,3 @@ def simple_valid_date(input):
         return re_simple_date.search(input)
     except:
         return False
-
-def get_path(context, id):
-    """\
-    Deprecated method to get the filesystem path of a given context.
-    """
-
-    p = getUtility(IPMR2GlobalSettings)
-    return p.dirCreatedFor(context)

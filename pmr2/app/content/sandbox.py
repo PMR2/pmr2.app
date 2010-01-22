@@ -13,7 +13,6 @@ import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
 from pmr2.app.browser.interfaces import IPublishTraverse
-from pmr2.app.util import get_path
 
 
 class SandboxContainer(ATBTreeFolder):
