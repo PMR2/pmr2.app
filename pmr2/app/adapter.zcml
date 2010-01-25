@@ -69,36 +69,6 @@
       provides="pmr2.app.interfaces.IExposureDocViewGenForm"
       />
 
-  <!-- for ExposureFile -->
-
-  <adapter
-      for="pmr2.app.interfaces.IExposureFile"
-      factory=".adapter.BasicMathMLNoteFactory"
-      provides="pmr2.app.interfaces.IRawTextNote"
-      name="basic_mathml"
-      />
-
-  <adapter
-      for="pmr2.app.interfaces.IExposureFile"
-      factory=".adapter.BasicCCodeNoteFactory"
-      provides="pmr2.app.interfaces.IRawTextNote"
-      name="basic_ccode"
-      />
-
-  <adapter
-      for="pmr2.app.interfaces.IExposureFile"
-      factory=".adapter.CmetaNoteFactory"
-      provides="pmr2.app.interfaces.ICmetaNote"
-      name="cmeta"
-      />
-
-  <adapter
-      for="pmr2.app.interfaces.IExposureFile"
-      factory=".adapter.OpenCellSessionNoteFactory"
-      provides="pmr2.app.interfaces.IOpenCellSessionNote"
-      name="opencellsession"
-      />
-
   <!-- Global Configuration -->
   <adapter factory=".settings.PMR2GlobalSettings" />
 

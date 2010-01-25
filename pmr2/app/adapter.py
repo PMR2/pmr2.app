@@ -1,13 +1,7 @@
-from os.path import splitext
-from cStringIO import StringIO
 import zope.interface
 import zope.component
 from zope.location import Location, locate
-from zope.app.container.contained import Contained
-from zope.annotation import factory
 from zope.schema import fieldproperty
-from zope.publisher.interfaces import IPublisherRequest
-from persistent import Persistent
 from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 
@@ -19,10 +13,17 @@ from pmr2.mercurial.exceptions import PathNotFoundError
 from pmr2.mercurial import WebStorage
 import pmr2.mercurial.utils
 
-from pmr2.processor.cmeta import Cmeta
 from pmr2.app.interfaces import *
 from pmr2.app.browser.interfaces import IPublishTraverse
-import pmr2.app.util
+
+# Deprecated import location compatability
+import zope.deprecation
+from pmr2.app.annotation.note import RawTextNote
+zope.deprecation.deprecated('RawTextNote', 
+    'Please recreate these notes before pmr2.app-0.4')
+from pmr2.app.annotation.cellml.note import CmetaNote
+zope.deprecation.deprecated('CmetaNote',
+    'Please recreate these notes before pmr2.app-0.4')
 
 
 class PMR2StorageRequestViewAdapter(PMR2StorageRequestAdapter):
@@ -319,157 +320,3 @@ class ExposureDocViewGenForm(Location):
         locate(self, context, '')
         self.docview_gensource = context.docview_gensource
         self.docview_generator = context.docview_generator
-
-
-# Basic support for ExposureFileNote annotation adapters.
-
-class ExposureFileNoteBase(Persistent, Contained):
-    """\
-    The base class for adapter to ExposureFile objects.  Both parent
-    classes are required.
-    """
-
-    zope.component.adapts(IExposureFile)
-    zope.interface.implements(IExposureFileNote)
-
-
-class ExposureFileEditableNoteBase(ExposureFileNoteBase):
-    """\
-    Base class for editable notes.
-    """
-
-    zope.interface.implements(IExposureFileEditableNote)
-
-
-class StandardExposureFile(ExposureFileNoteBase):
-    """\
-    A dummy of sort that will just reuse the ExposureFile that this
-    adapts.
-    """
-
-    zope.interface.implements(IStandardExposureFile)
-
-StandardExposureFileFactory = factory(StandardExposureFile)
-
-
-class RawTextNote(ExposureFileNoteBase):
-    """\
-    See IRawText interface.
-    """
-
-    zope.interface.implements(IRawTextNote)
-    text = fieldproperty.FieldProperty(IRawTextNote['text'])
-
-    def raw_text(self):
-        return self.text
-
-
-class GroupedNote(ExposureFileNoteBase):
-    """\
-    See IGroupedNote interface.
-    """
-
-    zope.interface.implements(IGroupedNote)
-    active_notes = fieldproperty.FieldProperty(IGroupedNote['active_notes']) 
-
-BasicMathMLNoteFactory = factory(RawTextNote, 'basic_mathml')
-BasicCCodeNoteFactory = factory(RawTextNote, 'basic_ccode')
-
-
-class CmetaNote(ExposureFileNoteBase):
-    """\
-    Contains a rendering of the CellML Metadata.
-    """
-    # XXX this class should be part of the metadata, and registered into
-    # some sort of database that will automatically load this up into
-    # one of the valid document types that can be added.
-
-    zope.interface.implements(ICmetaNote)
-
-    metadata = fieldproperty.FieldProperty(ICmetaNote['metadata'])
-
-    model_title = fieldproperty.FieldProperty(ICmetaNote['model_title'])
-    model_author = fieldproperty.FieldProperty(ICmetaNote['model_author'])
-    model_author_org = fieldproperty.FieldProperty(ICmetaNote['model_author_org'])
-
-    citation_authors = fieldproperty.FieldProperty(ICmetaNote['citation_authors'])
-    citation_title = fieldproperty.FieldProperty(ICmetaNote['citation_title'])
-    citation_bibliographicCitation = fieldproperty.FieldProperty(ICmetaNote['citation_bibliographicCitation'])
-    citation_id = fieldproperty.FieldProperty(ICmetaNote['citation_id'])
-    citation_issued = fieldproperty.FieldProperty(ICmetaNote['citation_issued'])
-    keywords = fieldproperty.FieldProperty(ICmetaNote['keywords'])
-
-    def citation_authors_string(self):
-        if not self.citation_authors:
-            return u''
-        middle = u'</li>\n<li>'.join(
-            ['%s, %s %s' % i for i in self.citation_authors])
-        return u'<ul>\n<li>%s</li>\n</ul>' % middle
-
-    def citation_id_html(self):
-        if not self.citation_id:
-            return u''
-        http = pmr2.app.util.uri2http(self.citation_id)
-        if http:
-            return '<a href="%s">%s</a>' % (http, self.citation_id)
-        return self.citation_id
-
-    def get_authors_family_index(self):
-        if self.citation_authors:
-            return [pmr2.app.util.normal_kw(i[0]) 
-                    for i in self.citation_authors]
-        else:
-            return []
-
-    def get_citation_title_index(self):
-        if self.citation_title:
-            return pmr2.app.util.normal_kw(self.citation_title)
-
-    def get_keywords_index(self):
-        if self.keywords:
-            results = [pmr2.app.util.normal_kw(i[1]) for i in self.keywords]
-            results.sort()
-            return results
-        else:
-            return []
-
-    def keywords_string(self):
-        return ', '.join(self.get_keywords_index())
-
-    def pmr1_citation_authors(self):
-        if self.citation_authors and self.citation_issued:
-            authors = u', '.join([i[0] for i in self.citation_authors])
-            return u'%s, %s' % (authors, self.citation_issued[:4])
-        else:
-            return u''
-
-    def pmr1_citation_title(self):
-        if self.citation_title:
-            return self.citation_title
-        else:
-            return u''
-
-CmetaNoteFactory = factory(CmetaNote, 'cmeta')
-
-
-class OpenCellSessionNote(ExposureFileEditableNoteBase):
-    """\
-    Points to the OpenCell session attached to this file.
-    """
-
-    zope.interface.implements(IOpenCellSessionNote)
-    filename = fieldproperty.FieldProperty(IOpenCellSessionNote['filename'])
-
-OpenCellSessionNoteFactory = factory(OpenCellSessionNote, 'opencellsession')
-
-
-# Exposure Port adapters
-
-class BaseExposurePortDataProvider(object):
-    """\
-    The base class for adapter to ExposureFile objects.  Both parent
-    classes are required.
-    """
-
-    def __init__(self, context):
-        self.context = context

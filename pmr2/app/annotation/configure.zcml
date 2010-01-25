@@ -1,0 +1,21 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <include package=".cellml"/>
+
+  <!-- default view generators -->
+
+  <utility
+      name="safe_html"
+      component=".viewgen.HTMLDocViewGenFactory"
+      provides=".interfaces.IDocViewGen"
+      />
+
+  <utility
+      name="rest_to_html"
+      component=".viewgen.RSTDocViewGenFactory"
+      provides=".interfaces.IDocViewGen"
+      />
+
+</configure>

@@ -8,14 +8,16 @@
 
   <include package="plone.z3cform" />
   <include package="z3c.table" />
+
+  <include file="subscriber.zcml" />
+
   <include package=".browser" />
   <include package=".validator" />
   <include package=".viewlets" />
+  <include package=".annotation" />
 
-  <include file="subscriber.zcml" />
   <include file="adapter.zcml" />
   <include file="converter.zcml" />
-  <include file="factory.zcml" />
   <include file="profiles.zcml" />
   <include file="vocab.zcml" />
 

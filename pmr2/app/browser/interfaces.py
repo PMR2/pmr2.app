@@ -165,6 +165,14 @@ class IExposureFileNoteEditForm(zope.interface.Interface):
     # of the note which is passed into via traversal subpath.
 
 
+class IExposureFileView(zope.interface.Interface):
+    """\
+    Interface that will view an exposure file.  Usually they will need/
+    acquire an ExposureFileNote object, and this is a marker interface
+    that will assist in doing so.
+    """
+
+
 class IExposureDocViewGenForm(zope.interface.Interface):
     """\
     For the form and utility that handles the generation of the text for
