@@ -18,4 +18,30 @@
       provides=".interfaces.IDocViewGen"
       />
 
+  <!-- adapters to make view generation easy -->
+
+  <adapter
+      for=".interfaces.IExposureFileNote"
+      factory=".viewgen.ExposureFileNoteSourceAdapter"
+      provides="pmr2.app.interfaces.IExposureSourceAdapter"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposureObject"
+      factory=".viewgen.ExposureDocViewGenSourceAdapter"
+      provides=".interfaces.IExposureDocViewGenSourceAdapter"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposureDocViewGenForm"
+      factory=".viewgen.ExposureDocViewGenFormSourceAdapter"
+      provides="pmr2.app.interfaces.IExposureSourceAdapter"
+      />
+
+  <adapter
+      for="pmr2.app.interfaces.IExposureObject"
+      factory=".viewgen.ExposureDocViewGenForm"
+      provides="pmr2.app.interfaces.IExposureDocViewGenForm"
+      />
+
 </configure>

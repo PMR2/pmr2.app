@@ -1,6 +1,5 @@
 import zope.interface
 import zope.component
-from zope.annotation import factory
 from zope.schema import fieldproperty
 
 from pmr2.processor.cmeta import Cmeta
@@ -13,10 +12,6 @@ import pmr2.app.util
 from interfaces import *
 
 # CellML Specific notes storage classes.
-
-
-BasicMathMLNoteFactory = factory(RawTextNote, 'basic_mathml')
-BasicCCodeNoteFactory = factory(RawTextNote, 'basic_ccode')
 
 
 class CmetaNote(ExposureFileNoteBase):
@@ -92,8 +87,6 @@ class CmetaNote(ExposureFileNoteBase):
         else:
             return u''
 
-CmetaNoteFactory = factory(CmetaNote, 'cmeta')
-
 
 class OpenCellSessionNote(ExposureFileEditableNoteBase):
     """\
@@ -102,5 +95,3 @@ class OpenCellSessionNote(ExposureFileEditableNoteBase):
 
     zope.interface.implements(IOpenCellSessionNote)
     filename = fieldproperty.FieldProperty(IOpenCellSessionNote['filename'])
-
-OpenCellSessionNoteFactory = factory(OpenCellSessionNote, 'opencellsession')

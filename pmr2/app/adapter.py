@@ -1,6 +1,5 @@
 import zope.interface
 import zope.component
-from zope.location import Location, locate
 from zope.schema import fieldproperty
 from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
@@ -32,10 +31,6 @@ __all__ = [
     'PMR2StorageURIResolver',
     'PMR2ExposureStorageURIResolver',
     'ExposureSourceAdapter',
-    'ExposureFileNoteSourceAdapter',
-    'ExposureDocViewGenSourceAdapter',
-    'ExposureDocViewGenFormSourceAdapter',
-    'ExposureDocViewGenForm',
 ]
 
 
@@ -290,46 +285,3 @@ class ExposureSourceAdapter(object):
             name='PMR2StorageFixedRev',
         )
         return storage.file(path)
-
-
-class ExposureFileNoteSourceAdapter(ExposureSourceAdapter):
-
-    def __init__(self, context):
-        self.context = context.__parent__
-        # Since an annotation note should have a parent that provides
-        # IExposureObject, this should pass
-        assert IExposureObject.providedBy(self.context)
-
-
-class ExposureDocViewGenSourceAdapter(ExposureSourceAdapter):
-
-    zope.interface.implements(IExposureDocViewGenSourceAdapter)
-
-    def source(self):
-        exposure, workspace, path = ExposureSourceAdapter.source(self)
-        # object could provide a source path
-        if hasattr(self.context, 'docview_gensource') and \
-                self.context.docview_gensource:
-            path = self.context.docview_gensource
-        return exposure, workspace, path
-
-
-class ExposureDocViewGenFormSourceAdapter(ExposureFileNoteSourceAdapter,
-        ExposureDocViewGenSourceAdapter):
-    """\
-    Data source for the class below.
-    """
-
-
-class ExposureDocViewGenForm(Location):
-
-    zope.interface.implements(IExposureDocViewGenForm)
-    docview_gensource = fieldproperty.FieldProperty(IExposureDocViewGenForm['docview_gensource'])
-    docview_generator = fieldproperty.FieldProperty(IExposureDocViewGenForm['docview_generator'])
-
-    def __init__(self, context):
-        # must locate itself into context the very first thing, as the
-        # vocabulary uses source adapter registered above.
-        locate(self, context, '')
-        self.docview_gensource = context.docview_gensource
-        self.docview_generator = context.docview_generator

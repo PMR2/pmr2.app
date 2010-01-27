@@ -1,11 +1,16 @@
 from cStringIO import StringIO
 
+from zope.schema import fieldproperty
+from zope.location import Location, locate
 import zope.interface
 import zope.component
 from elementtree import HTMLTreeBuilder
 
 from pmr2.app.interfaces import *
+from pmr2.app.adapter import ExposureSourceAdapter
 from pmr2.app.factory import NamedUtilBase, named_factory
+
+from pmr2.app.annotation.interfaces import *
 
 # XXX while this particular class should be imported from there, maybe
 # it shouldbe be defined there.
@@ -88,3 +93,52 @@ class RSTDocViewGen(PortalTransformDocViewGenBase):
                    'a Plone site.'
 
 RSTDocViewGenFactory = named_factory(RSTDocViewGen)
+
+
+# Supporting adapters
+
+class ExposureFileNoteSourceAdapter(ExposureSourceAdapter):
+
+    def __init__(self, context):
+        self.context = context.__parent__
+        # Since an annotation note should have a parent that provides
+        # IExposureObject, this should pass
+        assert IExposureObject.providedBy(self.context)
+
+class ExposureDocViewGenSourceAdapter(ExposureSourceAdapter):
+    """\
+    To make acquiring the contents of the file easier, we reuse the
+    ExposureSourceAdapter with a tweek to use the docview_gensource
+    attribute of the ExposureObject.
+    """
+
+    zope.interface.implements(IExposureDocViewGenSourceAdapter)
+
+    def source(self):
+        exposure, workspace, path = ExposureSourceAdapter.source(self)
+        # object could provide a source path
+        if hasattr(self.context, 'docview_gensource') and \
+                self.context.docview_gensource:
+            path = self.context.docview_gensource
+        return exposure, workspace, path
+
+
+class ExposureDocViewGenFormSourceAdapter(ExposureFileNoteSourceAdapter,
+        ExposureDocViewGenSourceAdapter):
+    """\
+    Data source for the class below.
+    """
+
+
+class ExposureDocViewGenForm(Location):
+
+    zope.interface.implements(IExposureDocViewGenForm)
+    docview_gensource = fieldproperty.FieldProperty(IExposureDocViewGenForm['docview_gensource'])
+    docview_generator = fieldproperty.FieldProperty(IExposureDocViewGenForm['docview_generator'])
+
+    def __init__(self, context):
+        # must locate itself into context the very first thing, as the
+        # vocabulary uses source adapter registered above.
+        locate(self, context, '')
+        self.docview_gensource = context.docview_gensource
+        self.docview_generator = context.docview_generator

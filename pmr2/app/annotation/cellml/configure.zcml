@@ -6,28 +6,28 @@
 
   <adapter
       for="pmr2.app.interfaces.IExposureFile"
-      factory=".note.BasicMathMLNoteFactory"
-      provides="pmr2.app.interfaces.IRawTextNote"
+      factory=".BasicMathMLNoteFactory"
+      provides="pmr2.app.annotation.interfaces.IRawTextNote"
       name="basic_mathml"
       />
 
   <adapter
       for="pmr2.app.interfaces.IExposureFile"
-      factory=".note.BasicCCodeNoteFactory"
-      provides="pmr2.app.interfaces.IRawTextNote"
+      factory=".BasicCCodeNoteFactory"
+      provides="pmr2.app.annotation.interfaces.IRawTextNote"
       name="basic_ccode"
       />
 
   <adapter
       for="pmr2.app.interfaces.IExposureFile"
-      factory=".note.CmetaNoteFactory"
+      factory=".CmetaNoteFactory"
       provides=".interfaces.ICmetaNote"
       name="cmeta"
       />
 
   <adapter
       for="pmr2.app.interfaces.IExposureFile"
-      factory=".note.OpenCellSessionNoteFactory"
+      factory=".OpenCellSessionNoteFactory"
       provides=".interfaces.IOpenCellSessionNote"
       name="opencellsession"
       />

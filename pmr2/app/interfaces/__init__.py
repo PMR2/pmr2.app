@@ -7,7 +7,6 @@ _ = MessageFactory("pmr2")
 from pmr2.app.schema import ObjectId
 from pmr2.app.content.interfaces import *
 from pmr2.app.browser.interfaces import *
-from pmr2.app.annotation.interfaces import *
 from pmr2.app.interfaces.exceptions import *
 
 

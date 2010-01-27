@@ -7,6 +7,7 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import *
+from pmr2.app.annotation.interfaces import *
 
 
 def vocab_factory(vocab):

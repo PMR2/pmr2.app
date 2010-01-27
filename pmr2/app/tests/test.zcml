@@ -6,39 +6,39 @@
   <utility
       name="rdfturtle"
       component="pmr2.app.tests.adapter.RDFTurtleAnnotatorFactory"
-      provides=".interfaces.IExposureFileAnnotator"
+      provides=".annotation.interfaces.IExposureFileAnnotator"
       />
 
   <utility
       name="rdfn3"
       component="pmr2.app.tests.adapter.RDFn3AnnotatorFactory"
-      provides=".interfaces.IExposureFileAnnotator"
+      provides=".annotation.interfaces.IExposureFileAnnotator"
       />
 
   <utility
       name="rdfxml"
       component="pmr2.app.tests.adapter.RDFxmlAnnotatorFactory"
-      provides=".interfaces.IExposureFileAnnotator"
+      provides=".annotation.interfaces.IExposureFileAnnotator"
       />
 
   <adapter
       for="pmr2.app.interfaces.IExposureFile"
       factory="pmr2.app.tests.adapter.RDFTurtleNoteFactory"
-      provides="pmr2.app.interfaces.IRawTextNote"
+      provides=".annotation.interfaces.IRawTextNote"
       name="rdfturtle"
       />
 
   <adapter
       for="pmr2.app.interfaces.IExposureFile"
       factory="pmr2.app.tests.adapter.RDFn3NoteFactory"
-      provides="pmr2.app.interfaces.IRawTextNote"
+      provides=".annotation.interfaces.IRawTextNote"
       name="rdfn3"
       />
 
   <adapter
       for="pmr2.app.interfaces.IExposureFile"
       factory="pmr2.app.tests.adapter.RDFxmlNoteFactory"
-      provides="pmr2.app.interfaces.IRawTextNote"
+      provides=".annotation.interfaces.IRawTextNote"
       name="rdfxml"
       />
 

@@ -36,16 +36,22 @@ def add_pas_plugin(site):
 
 def add_pmr2(site):
     """Add PMR2 settings utility to the site manager"""
+    out = StringIO()
     sm = site.getSiteManager()
     if not sm.queryUtility(IPMR2GlobalSettings):
+        print >> out, 'PMR2 Global Settings registered'
         sm.registerUtility(IPMR2GlobalSettings(site), IPMR2GlobalSettings)
+    return out.getvalue()
 
 def remove_pmr2(site):
     """Remove PMR2 settings utility from the site manager"""
+    out = StringIO()
     sm = site.getSiteManager()
     u = sm.queryUtility(IPMR2GlobalSettings)
     if u:
+        print >> out, 'PMR2 Global Settings unregistered'
         sm.unregisterUtility(u, IPMR2GlobalSettings)
+    return out.getvalue()
 
 def importVarious(context):
     """Install the HgAuthPAS plugin"""

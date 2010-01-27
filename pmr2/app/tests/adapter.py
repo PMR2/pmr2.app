@@ -3,6 +3,7 @@ import zope.annotation
 from pmr2.app.adapter import *
 from pmr2.app.factory import *
 from pmr2.app.interfaces import *
+from pmr2.app.annotation.interfaces import *
 from pmr2.app.annotation.annotator import RDFLibEFAnnotator
 from pmr2.app.annotation.note import RawTextNote
 from pmr2.app.annotation.note import GroupedNote

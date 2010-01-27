@@ -2,11 +2,15 @@ from cStringIO import StringIO
 
 import zope.interface
 import zope.component
+from zope.annotation.interfaces import IAnnotations
+from zope.annotation import factory
+
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 
 from pmr2.processor.cmeta import Cmeta
 from pmr2.app.interfaces import *
+from pmr2.app.annotation.interfaces import *
 from pmr2.app.factory import NamedUtilBase
 import pmr2.app.util
 
@@ -108,8 +112,13 @@ class PortalTransformAnnotatorBase(
 
 
 class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
+    """
+    An example annotator.
+    """
+
 
     def generate(self):
+        # XXX reimplement using plain rdflib.
         metadata = Cmeta(StringIO(self.input))
         return (
             ('text', unicode(metadata.graph.serialize(format=self.format))),
