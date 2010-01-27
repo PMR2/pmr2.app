@@ -5,7 +5,6 @@ from cStringIO import StringIO
 from zope import interface
 import zope.interface
 import zope.component
-import zope.annotation
 from zope.schema import fieldproperty
 from persistent import Persistent
 
@@ -21,7 +20,6 @@ from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.PortalTransforms.data import datastream
 
 import pmr2.mercurial.interfaces
-
 from pmr2.processor.cmeta import Cmeta
 
 from pmr2.app.settings import IPMR2GlobalSettings
@@ -244,7 +242,6 @@ class ExposureFile(ATDocument, ExposureContentIndexBase):
     interface.implements(
         IExposureObject,
         IExposureFile,
-        zope.annotation.interfaces.IAttributeAnnotatable,
     )
     views = fieldproperty.FieldProperty(IExposureFile['views'])
     docview_gensource = fieldproperty.FieldProperty(IExposureFile['docview_gensource'])
