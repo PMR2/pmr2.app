@@ -26,6 +26,19 @@ zope.deprecation.deprecated('CmetaNote',
     'Please recreate these notes before pmr2.app-0.4')
 
 
+__all__ = [
+    'PMR2StorageRequestViewAdapter',
+    'PMR2ExposureStorageAdapter',
+    'PMR2StorageURIResolver',
+    'PMR2ExposureStorageURIResolver',
+    'ExposureSourceAdapter',
+    'ExposureFileNoteSourceAdapter',
+    'ExposureDocViewGenSourceAdapter',
+    'ExposureDocViewGenFormSourceAdapter',
+    'ExposureDocViewGenForm',
+]
+
+
 class PMR2StorageRequestViewAdapter(PMR2StorageRequestAdapter):
     """\
     This adapter is more suited from within views that implment
