@@ -24,6 +24,7 @@ from pmr2.processor.cmeta import Cmeta
 
 from pmr2.app.settings import IPMR2GlobalSettings
 from pmr2.app.interfaces import *
+from pmr2.app.content.interfaces import *
 from pmr2.app.atct import ATFolderDocument
 from pmr2.app.mixin import TraversalCatchAll
 import pmr2.app.util

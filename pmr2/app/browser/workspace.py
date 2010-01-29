@@ -28,6 +28,7 @@ from pmr2.mercurial import Storage
 
 from pmr2.app.interfaces import *
 from pmr2.app.settings import IPMR2GlobalSettings
+from pmr2.app.content.interfaces import *
 from pmr2.app.content import *
 from pmr2.app.util import set_xmlbase, fix_pcenv_externalurl, obfuscate, \
                           isodate
@@ -260,9 +261,9 @@ WorkspaceShortlogView = layout.wrap_form(
 class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
 
     # more suitable interface name needed?
-    zope.interface.implements(IExposureRolloverForm)
+    zope.interface.implements(interfaces.IExposureRolloverForm)
     _finishedAdd = False
-    fields = z3c.form.field.Fields(IExposureRolloverForm)
+    fields = z3c.form.field.Fields(interfaces.IExposureRolloverForm)
 
     shortlog = True
     tbl = table.ExposureRolloverLogTable
@@ -349,7 +350,7 @@ class WorkspaceAddForm(form.AddForm):
     Workspace add form.
     """
 
-    fields = z3c.form.field.Fields(IWorkspaceAdd)
+    fields = z3c.form.field.Fields(interfaces.IWorkspaceAdd)
     clsobj = Workspace
 
     def add_data(self, ctxobj):
@@ -365,7 +366,7 @@ class WorkspaceStorageCreateForm(WorkspaceAddForm):
     Workspace add form.  This also creates the storage object.
     """
 
-    fields = z3c.form.field.Fields(IWorkspaceStorageCreate).select(
+    fields = z3c.form.field.Fields(interfaces.IWorkspaceStorageCreate).select(
         'id', 'title', 'description',)
 
     def add_data(self, ctxobj):
@@ -387,7 +388,7 @@ class WorkspaceBulkAddForm(z3c.form.form.AddForm):
 
     @property
     def fields(self):
-        fields = z3c.form.field.Fields(IWorkspaceBulkAdd)
+        fields = z3c.form.field.Fields(interfaces.IWorkspaceBulkAdd)
         fields['workspace_list'].widgetFactory[
             z3c.form.interfaces.INPUT_MODE] = widget.TextAreaWidgetFactory
         return fields

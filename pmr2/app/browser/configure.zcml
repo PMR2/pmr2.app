@@ -45,7 +45,7 @@
   -->
   <browser:page
       name="ploneform-macros"
-      for="pmr2.app.interfaces.IExposureFile"
+      for="pmr2.app.content.interfaces.IExposureFile"
       class=".layout.Macros"
       allowed_interface="zope.interface.common.mapping.IItemMapping"
       permission="zope.Public" />
@@ -56,13 +56,13 @@
   -->
 
   <adapter 
-      for="pmr2.app.interfaces.IExposureRolloverForm
+      for="pmr2.app.browser.interfaces.IExposureRolloverForm
            zope.publisher.interfaces.IPublisherRequest"
       factory=".layout.rollover_form_factory" />
 
   <browser:page
       name="rollover-macros"
-      for="pmr2.app.interfaces.IWorkspace"
+      for="pmr2.app.content.interfaces.IWorkspace"
       class=".layout.RolloverMacros"
       allowed_interface="zope.interface.common.mapping.IItemMapping"
       permission="zope.Public" />
@@ -409,7 +409,7 @@
 
   <browser:view
       name="+"
-      for="..interfaces.IPMR2"
+      for="..content.interfaces.IPMR2"
       permission="pmr2.app.security.ManagePMR2"
       class=".adding.Adding">
     <browser:page name="addPMR2Search" attribute="addPMR2Search" />
@@ -417,7 +417,7 @@
 
   <browser:view
       name="+"
-      for="..interfaces.IWorkspaceContainer"
+      for="..content.interfaces.IWorkspaceContainer"
       permission="cmf.ModifyPortalContent"
       class=".adding.Adding">
     <browser:page name="addWorkspace" attribute="addWorkspace" />
@@ -450,7 +450,7 @@
   -->
 
   <adapter
-      for="pmr2.app.interfaces.IWorkspace
+      for="pmr2.app.content.interfaces.IWorkspace
            zope.publisher.interfaces.browser.IDefaultBrowserLayer
            .interfaces.IWorkspaceActionsViewlet"
       factory=".menu.WorkspaceMenuProvider"

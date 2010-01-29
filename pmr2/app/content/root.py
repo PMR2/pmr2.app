@@ -5,7 +5,7 @@ from zope.component import queryAdapter
 from Products.ATContentTypes.content.folder import ATFolder
 from Products.Archetypes import atapi
 
-from pmr2.app.interfaces import *
+from pmr2.app.content.interfaces import *
 from pmr2.app.mixin import TraversalCatchAll
 
 

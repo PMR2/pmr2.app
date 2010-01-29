@@ -4,7 +4,7 @@ from zope.schema import fieldproperty
 from Products.Archetypes import atapi
 from Products.ATContentTypes import atct
 
-from pmr2.app.interfaces import *
+from pmr2.app.content.interfaces import *
 from pmr2.app.mixin import TraversalCatchAll
 
 

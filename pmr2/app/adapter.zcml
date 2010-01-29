@@ -12,35 +12,35 @@
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposure"
+      for="pmr2.app.content.interfaces.IExposure"
       factory=".adapter.PMR2ExposureStorageAdapter"
       provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
       name="PMR2ExposureStorageAdapter"
       />
 
   <adapter
-      for="pmr2.app.interfaces.IWorkspace"
+      for="pmr2.app.content.interfaces.IWorkspace"
       factory=".adapter.PMR2StorageURIResolver"
       provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
       name="PMR2StorageURIResolver"
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposure"
+      for="pmr2.app.content.interfaces.IExposure"
       factory=".adapter.PMR2ExposureStorageURIResolver"
       provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
       name="PMR2ExposureStorageURIResolver"
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposure"
+      for="pmr2.app.content.interfaces.IExposure"
       factory=".adapter.ExposureToWorkspaceAdapter"
-      provides="pmr2.app.interfaces.IWorkspace"
+      provides="pmr2.app.content.interfaces.IWorkspace"
       name="ExposureToWorkspace"
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposureObject"
+      for="pmr2.app.content.interfaces.IExposureObject"
       factory=".adapter.ExposureSourceAdapter"
       provides="pmr2.app.interfaces.IExposureSourceAdapter"
       />

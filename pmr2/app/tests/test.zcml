@@ -28,28 +28,28 @@
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposureFile"
+      for="pmr2.app.content.interfaces.IExposureFile"
       factory="pmr2.app.tests.adapter.RDFTurtleNoteFactory"
       provides=".annotation.interfaces.IRawTextNote"
       name="rdfturtle"
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposureFile"
+      for="pmr2.app.content.interfaces.IExposureFile"
       factory="pmr2.app.tests.adapter.RDFn3NoteFactory"
       provides=".annotation.interfaces.IRawTextNote"
       name="rdfn3"
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposureFile"
+      for="pmr2.app.content.interfaces.IExposureFile"
       factory="pmr2.app.tests.adapter.RDFxmlNoteFactory"
       provides=".annotation.interfaces.IRawTextNote"
       name="rdfxml"
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposureFile"
+      for="pmr2.app.content.interfaces.IExposureFile"
       factory="pmr2.app.tests.adapter.EditedNoteFactory"
       provides="pmr2.app.tests.content.IEditedNote"
       name="edited_note"

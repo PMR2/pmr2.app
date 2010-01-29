@@ -14,7 +14,8 @@ import pmr2.mercurial.interfaces
 import pmr2.mercurial.utils
 
 from pmr2.app.settings import IPMR2GlobalSettings
-from pmr2.app.interfaces import *
+from pmr2.app.content.interfaces import *
+from pmr2.app.interfaces.exceptions import *
 from pmr2.app.mixin import TraversalCatchAll
 
 

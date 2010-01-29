@@ -25,21 +25,21 @@
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposureObject"
+      for="pmr2.app.content.interfaces.IExposureObject"
       factory=".viewgen.ExposureDocViewGenSourceAdapter"
       provides=".interfaces.IExposureDocViewGenSourceAdapter"
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposureDocViewGenForm"
+      for="pmr2.app.browser.interfaces.IExposureDocViewGenForm"
       factory=".viewgen.ExposureDocViewGenFormSourceAdapter"
       provides="pmr2.app.interfaces.IExposureSourceAdapter"
       />
 
   <adapter
-      for="pmr2.app.interfaces.IExposureObject"
+      for="pmr2.app.content.interfaces.IExposureObject"
       factory=".viewgen.ExposureDocViewGenForm"
-      provides="pmr2.app.interfaces.IExposureDocViewGenForm"
+      provides="pmr2.app.browser.interfaces.IExposureDocViewGenForm"
       />
 
 </configure>

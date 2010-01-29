@@ -3,6 +3,7 @@ import zope.interface
 from Products.Archetypes import atapi
 
 from pmr2.app.interfaces import *
+from pmr2.app.content.interfaces import *
 
 from pmr2.app.content.root import PMR2
 

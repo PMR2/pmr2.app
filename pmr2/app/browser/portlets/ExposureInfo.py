@@ -13,6 +13,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import *
+from pmr2.app.content.interfaces import *
 from pmr2.app.browser.page import ViewPageTemplateFile
 from pmr2.app.util import short
 

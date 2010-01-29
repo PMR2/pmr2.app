@@ -13,6 +13,7 @@ from pmr2.mercurial import WebStorage
 import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
+from pmr2.app.content.interfaces import *
 from pmr2.app.browser.interfaces import IPublishTraverse
 
 # Deprecated import location compatability

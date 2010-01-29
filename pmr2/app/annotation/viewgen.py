@@ -7,6 +7,7 @@ import zope.component
 from elementtree import HTMLTreeBuilder
 
 from pmr2.app.interfaces import *
+from pmr2.app.browser.interfaces import *
 from pmr2.app.adapter import ExposureSourceAdapter
 from pmr2.app.factory import NamedUtilBase, named_factory
 

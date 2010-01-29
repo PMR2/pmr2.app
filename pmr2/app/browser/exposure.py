@@ -18,6 +18,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 
 from pmr2.app.interfaces import *
+from pmr2.app.content.interfaces import *
+from pmr2.app.browser.interfaces import *
 from pmr2.app.annotation.interfaces import *
 from pmr2.app.content import *
 from pmr2.app.util import *

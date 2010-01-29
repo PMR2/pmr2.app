@@ -6,7 +6,8 @@ import z3c.form.form
 
 from plone.z3cform import layout
 
-from pmr2.app.interfaces import IPMR2Search, IPMR2SearchAdd
+from pmr2.app.browser.interfaces import IPMR2SearchAdd
+from pmr2.app.content.interfaces import IPMR2Search
 from pmr2.app.content import PMR2Search
 
 from Products.CMFCore.utils import getToolByName

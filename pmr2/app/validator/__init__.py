@@ -6,6 +6,10 @@ from  zope.schema import ValidationError
 import z3c.form.validator
 
 from pmr2.app import interfaces
+
+from pmr2.app.interfaces import exceptions
+from pmr2.app.content.interfaces import IPMR2
+from pmr2.app.browser.interfaces import IObjectIdMixin, IWorkspaceStorageCreate
 from pmr2.app.settings import IPMR2GlobalSettings
 
 
@@ -14,11 +18,11 @@ class ObjectIdValidator(z3c.form.validator.SimpleFieldValidator):
     def validate(self, value):
         super(ObjectIdValidator, self).validate(value)
         if value in self.context:
-            raise interfaces.ObjectIdExistsError()
+            raise exceptions.ObjectIdExistsError()
 
 z3c.form.validator.WidgetValidatorDiscriminators(
     ObjectIdValidator, 
-    field=interfaces.IObjectIdMixin['id'],
+    field=IObjectIdMixin['id'],
 )
 
 
@@ -30,14 +34,14 @@ class StorageExistsValidator(ObjectIdValidator):
         u = zope.component.getUtility(IPMR2GlobalSettings)
         root = u.dirCreatedFor(self.context)
         if root is None:
-            raise interfaces.WorkspaceDirNotExistsError()
+            raise exceptions.WorkspaceDirNotExistsError()
         p = os.path.join(root, value)
         if os.path.exists(p):
-            raise interfaces.StorageExistsError()
+            raise exceptions.StorageExistsError()
 
 z3c.form.validator.WidgetValidatorDiscriminators(
     StorageExistsValidator, 
-    field=interfaces.IWorkspaceStorageCreate['id'],
+    field=IWorkspaceStorageCreate['id'],
 )
 
 
@@ -46,9 +50,9 @@ class RepoPathValidator(z3c.form.validator.SimpleFieldValidator):
     def validate(self, value):
         super(RepoPathValidator, self).validate(value)
         if not os.path.exists(value):
-            raise interfaces.InvalidPathError()
+            raise exceptions.InvalidPathError()
 
 z3c.form.validator.WidgetValidatorDiscriminators(
     RepoPathValidator, 
-    field=interfaces.IPMR2['repo_root'],
+    field=IPMR2['repo_root'],
 )

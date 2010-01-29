@@ -12,6 +12,7 @@ from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import *
 from pmr2.app.content import *
+from pmr2.app.browser.interfaces import *
 
 from pmr2.app.browser import form
 from pmr2.app.browser import exposure
