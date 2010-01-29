@@ -116,7 +116,6 @@ class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
     An example annotator.
     """
 
-
     def generate(self):
         # XXX reimplement using plain rdflib.
         metadata = Cmeta(StringIO(self.input))

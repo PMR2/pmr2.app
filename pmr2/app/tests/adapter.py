@@ -1,12 +1,15 @@
 from zope.interface import alsoProvides
-import zope.annotation
 from pmr2.app.adapter import *
 from pmr2.app.factory import *
 from pmr2.app.interfaces import *
+from pmr2.app.annotation import note_factory
 from pmr2.app.annotation.interfaces import *
 from pmr2.app.annotation.annotator import RDFLibEFAnnotator
+from pmr2.app.annotation.annotator import ExposureFileEditableAnnotatorBase
 from pmr2.app.annotation.note import RawTextNote
 from pmr2.app.annotation.note import GroupedNote
+
+from content import EditedNote
 
 
 class RDFTurtleAnnotator(RDFLibEFAnnotator):
@@ -32,13 +35,21 @@ class RDFxmlAnnotator(RDFLibEFAnnotator):
                    'file) into xml format for display.'
     format = 'xml'
 
+class EditedNoteAnnotator(ExposureFileEditableAnnotatorBase):
+    zope.interface.implements(IExposureFileAnnotator)
+    title = u'Edited Note'
+    description = u'This is a simple edited note annotator for testing.'
+
+
 RDFTurtleAnnotatorFactory = named_factory(RDFTurtleAnnotator)
 RDFn3AnnotatorFactory = named_factory(RDFn3Annotator)
 RDFxmlAnnotatorFactory = named_factory(RDFxmlAnnotator)
+EditedNoteAnnotatorFactory = named_factory(EditedNoteAnnotator)
 
 
-RDFTurtleNoteFactory = zope.annotation.factory(RawTextNote, 'rdfturtle')
-RDFn3NoteFactory = zope.annotation.factory(RawTextNote, 'rdfn3')
-RDFxmlNoteFactory = zope.annotation.factory(RawTextNote, 'rdfxml')
+RDFTurtleNoteFactory = note_factory(RawTextNote, 'rdfturtle')
+RDFn3NoteFactory = note_factory(RawTextNote, 'rdfn3')
+RDFxmlNoteFactory = note_factory(RawTextNote, 'rdfxml')
+EditedNoteFactory = note_factory(EditedNote, 'edited_note')
 
-RDFGroupNoteFactory = zope.annotation.factory(GroupedNote, 'rdf')
+RDFGroupNoteFactory = note_factory(GroupedNote, 'rdf')

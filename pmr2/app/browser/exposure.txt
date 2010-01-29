@@ -594,75 +594,14 @@ If we define a valid subpath, it will give what we expect.
     &lt;rdf:RDF
     ...
 
-In PMR2 v0.1, the Cmeta views was implemented as a separate type, now
-it is reimplemented as an annotator.  We can test whether this works.
-First we make the note using the form, then we view the output using
-the view registered.
+There are cases where user-edited notes are desired.  Here we test out 
+editing first on the note editor/annotator
 ::
 
     >>> filectx = context[file1]
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.annotators': [u'cmeta'],
-    ...         'form.buttons.apply': 1,
-    ...     })
-    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
-    >>> result = view()
-    >>> result == ''
-    True
-
-That should have generated all the data needed for the cmeta view.
-::
-
-    >>> filectx = context[file1]
-    >>> request = TestRequest()
-    >>> view = zope.component.queryMultiAdapter(
-    ...     (filectx, request), name='cmeta')
-    >>> view = view.form_instance
-    >>> print view()
-    <h1>Model Metadata</h1>
-    <h3>CellML Model Authorship</h3>
-    <dl>
-    <dt>Title:</dt>
-    <dd></dd>
-    <dt>Author:</dt>
-    <dd>Given Family</dd>
-    <dt>Organisation:</dt>
-    <dd>Example Subsidary, Example Organization</dd>
-    </dl>
-    <h3>Citation</h3>
-    <dl>
-    <dt>Authors:</dt>
-    <dd><ul>
-    <li>Family1, Given1 ...</li>
-    <li>Family2, G </li>
-    <li>Family2, H W</li>
-    </ul></dd>
-    <dt>Title:</dt>
-    <dd>One Example Paper</dd>
-    <dt>Source:</dt>
-    <dd>Journal of Example Subject</dd>
-    <dt>Identifier:</dt>
-    <dd><a href="http://www.ncbi.nlm.nih.gov/pubmed/1111111111">urn:miriam:pubmed:1111111111</a></dd>
-    <dt>Model Keywords:</dt>
-    <dd>cardiac, electrophysiology, ventricular_myocyte</dd>
-    </dl>
-
-Session files are kind of different, since currently there isn't a way
-to determine one as they are not linked (not strictly true, it can be
-determined by parsing all session files, but it is currently not within
-the scope to do so).  So we allow the user to specify one and attached
-to the file as a note.  However, some notes are not meant for users to
-edit for some content are not compatible with sanitization after the
-generation was done, so we have the editable note implement a marker
-interface of some sort.  Anyway, we test out editing first on the
-session file note/annotator.
-::
-
-    >>> filectx = context[file1]
-    >>> request = TestRequest(
-    ...     form={
-    ...         'form.widgets.annotators': [u'opencellsession'],
+    ...         'form.widgets.annotators': [u'edited_note'],
     ...         'form.buttons.apply': 1,
     ...     })
     >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
@@ -670,7 +609,7 @@ session file note/annotator.
     >>> result == ''
     True
     >>> request.response.getHeader('Location')
-    'http://.../example_model.cellml/@@note_editor/opencellsession'
+    'http://.../example_model.cellml/@@note_editor/edited_note'
 
 We should have been a redirect to the edit view.  The editor view is
 defined without any default fields, so it must figure out the correct
@@ -680,16 +619,15 @@ what the request would see here and render the note edit view.
 
     >>> request = TestRequest()
     >>> view = exposure.ExposureFileNoteEditForm(filectx, request)
-    >>> view.traverse_subpath = ['opencellsession']
+    >>> view.traverse_subpath = ['edited_note']
     >>> result = view()
-    >>> 'filename' in result
-    True
-    >>> 'component/docs/index.html' in result
+    >>> 'note' in result
     True
 
-The filename field is rendered.  Whereas the other notes that are not
-meant to be user editable will result in a not found error.  Likewise
-for the lack of input.
+The form is rendered correctly when a defined subpath is supplied.  If
+no subpath or one is not meant to be user editable is supplied, it will
+result in a not found error.
+::
 
     >>> request = TestRequest()
     >>> view = exposure.ExposureFileNoteEditForm(filectx, request)
@@ -699,7 +637,7 @@ for the lack of input.
     ...
     HTTPNotFound: 404 Not Found
     ...
-    >>> view.traverse_subpath = ['cmeta']
+    >>> view.traverse_subpath = ['rdf']
     >>> view()
     Traceback (most recent call last):
     ...
@@ -710,26 +648,26 @@ Then apply on the edit form for the note, and the note will have its
 field updated.
 ::
 
-    >>> session_path = u'component/docs/index.html'
+    >>> note = u'This is a test note'
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.filename': [session_path],
+    ...         'form.widgets.note': note,
     ...         'form.buttons.apply': 1,
     ...     })
     >>> view = exposure.ExposureFileNoteEditForm(filectx, request)
-    >>> view.traverse_subpath = ['opencellsession']
+    >>> view.traverse_subpath = ['edited_note']
     >>> result = view()
 
-Now if we call the OpenCell session note view for the file, it will
-redirect to the session file.
+Now if we call the edited_note view for the file, the page will be
+rendered.
 ::
 
     >>> request = TestRequest()
     >>> view = zope.component.queryMultiAdapter((filectx, request), 
-    ...                                         name='opencellsession')
+    ...                                         name='edited_note')
     >>> result = view()
-    >>> print request.response.getHeader('Location')
-    http://...rdfmodel/@@pcenv/.../component/docs/index.html
+    >>> print result
+    Edited Note is: [This is a test note]
 
 ------------------------
 Files within Directories
@@ -993,9 +931,8 @@ utility defined for this task.
     ...         'views': [
     ...             (u'rdfturtle', None),
     ...             (u'rdfxml', None),
-    ...             (u'cmeta', None),
-    ...             (u'opencellsession', {
-    ...                 'filename': u'component/docs/index.html',
+    ...             (u'edited_note', {
+    ...                 'note': u'This is a test note',
     ...             }),
     ...         ]
     ...     }),
@@ -1106,29 +1043,29 @@ remove views.  It will remove any bad views.  First we render the form
 
     >>> ef = new_ex['example_model.cellml']
     >>> ef.views
-    [u'rdfturtle', u'rdfxml', u'cmeta', u'opencellsession']
+    [u'rdfturtle', u'rdfxml', u'edited_note']
     >>> request = TestRequest()
     >>> view = zope.component.queryMultiAdapter((ef, request), 
     ...                                         name='arrange_views')
     >>> result = view.form_instance()
-    >>> '>rdfturtle\nrdfxml\ncmeta\nopencellsession</textarea>' in result
+    >>> '>rdfturtle\nrdfxml\nedited_note</textarea>' in result
     True
 
 Now for the actual request to change values
 ::
 
     >>> request = TestRequest(form={
-    ...    'form.widgets.views': u'cmeta\n'
+    ...    'form.widgets.views': u'edited_note\n'
     ...                           'rdfxml\n'
     ...                           'baddata\n'
-    ...                           'opencellsession\n',
+    ...                           'rdfturtle\n',
     ...    'form.buttons.apply': 1,
     ... })
     >>> view = zope.component.queryMultiAdapter((ef, request), 
     ...                                         name='arrange_views')
     >>> result = view.form_instance()
     >>> ef.views
-    [u'cmeta', u'rdfxml', u'opencellsession']
+    [u'edited_note', u'rdfxml', u'rdfturtle']
 
 ======================
 Notes/Question to Self
