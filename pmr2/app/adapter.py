@@ -23,7 +23,7 @@ zope.deprecation.deprecated('RawTextNote',
     'Please recreate these notes before pmr2.app-0.4')
 
 try:
-    from pmr2.app.annotation.cellml.note import CmetaNote
+    from cellml.pmr2.note import CmetaNote
     zope.deprecation.deprecated('CmetaNote',
         'CmetaNote has been moved to cellml.pmr2.  Please install that '
         'product if you wish to continue to use it, and also recreate these '
