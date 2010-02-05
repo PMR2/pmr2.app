@@ -14,6 +14,16 @@ Description: Introduction
         Changelog
         =========
         
+        0.2.2 - Released (2010-02-02)
+        -----------------------------
+        
+        * Finishing the document view generation step will no longer trigger a
+        file download.
+        * Added in opencell:externalurl rewriting, much like PCEnv as the
+        specification states that the URL for an external file is a literal,
+        so it cannot take advantage of the xml:base attribute for the
+        normalization of URL to kick in.
+        
         0.2.1 - Released (2010-01-12)
         -----------------------------
         
@@ -31,6 +41,7 @@ Description: Introduction
         With the following changes:
         
         0.2rc1
+        
         * Rewrote how Exposures are done.  The pages have been made deprecated
         and replaced with Exposure Files, which are wrappers around the files
         that can be referenced by the exposure.  The views are now annotations
@@ -46,6 +57,7 @@ Description: Introduction
         * Various UI refinements.
         
         0.2rc2
+        
         * Document view generation no longer generates empty title and
         description if it's unknown.
         * HTML document view now generates title from head/title.
@@ -53,16 +65,19 @@ Description: Introduction
         * Fixed authentication issue for Mercurial v0.9.5
         
         0.2rc3
+        
         * Shows the review state of an exposure to normal users by color coding
         them in the workspace changelog listing, and in the exposure views.
         
         0.2rc4
+        
         * The pmr2 review state is now correctly reindexes all subobject of an
         exposure when its state changes.
         * Freshly created workspace will have its empty file list correctly
         rendered.
         
         0.2rc5
+        
         * Allow the editing/rearrangement of views in ExposureFile
         * Documentation pages within an exposure can now reference files in
         embedded workspaces.
