@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<action-icons>
+ <action-icon category="controlpanel" action_id="pmr2-settings" 
+    title="PMR2 Core Configuration" priority="0" 
+    icon_expr="++resource++pmr2.app.images/icon-iups-physiome.png"/>
+</action-icons>
