@@ -768,7 +768,29 @@ class ExposurePort(form.Form):
                     # editable or not because editable notes will have
                     # data ignored.
                     data = view_fields and view_fields.items() or None
-                    annotator(ctxobj)(data)
+                    try:
+                        annotator(ctxobj)(data)
+                    except RequiredMissing:
+                        # this does not cover cases where schema have
+                        # changed.
+                        note = zope.component.queryAdapter(
+                            ctxobj,
+                            name=view
+                        )
+                        if note:
+                            # This editable note is missing some data,
+                            # probably because it never existed, bad
+                            # export data, updated schema or other
+                            # errors.  We ignore it for now, and purge
+                            # the stillborn note from the new object.
+                            del_note(ctxobj, view)
+                        else:
+                            # However, the automatic generated ones we
+                            # will continue to raise errors.  Maybe in
+                            # the future we group these together, or
+                            # make some way to adapt this to something
+                            # that will handle the migration case.
+                            raise
 
                 # only ExposureFiles have this
                 if IExposureFile.providedBy(ctxobj):
