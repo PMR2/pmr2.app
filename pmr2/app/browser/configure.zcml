@@ -224,6 +224,13 @@
       permission="cmf.AddPortalContent"
       />
 
+  <browser:page
+      for="pmr2.app.content.ExposureContainer"
+      name="exposure_bulk_regeneration"
+      class=".exposure.ExposureFileBulkRegenerateFormView"
+      permission="pmr2.app.security.ManagePMR2"
+      />
+
   <!-- Exposure -->
 
   <browser:page

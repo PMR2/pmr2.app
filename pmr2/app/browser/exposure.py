@@ -5,6 +5,8 @@ import zope.interface
 import zope.component
 import zope.event
 import zope.lifecycleevent
+from zope.schema.interfaces import RequiredMissing
+from zope.annotation.interfaces import IAnnotations
 from zope.publisher.browser import BrowserPage
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
@@ -23,6 +25,7 @@ from pmr2.app.interfaces import *
 from pmr2.app.content.interfaces import *
 from pmr2.app.browser.interfaces import *
 from pmr2.app.annotation.interfaces import *
+from pmr2.app.annotation.factory import del_note
 from pmr2.app.content import *
 from pmr2.app.util import *
 
@@ -166,11 +169,27 @@ class ExposureFileGenForm(form.AddForm):
         # XXX this could probably also do annotation from a list
         return result
 
+    def resolve_file(self, path):
+        # XXX move to separate class?
+        if not path:
+            path = []
+        if isinstance(path, basestring):
+            path = path.split('/')
+        path.reverse()
+        context = self.context
+        while path:
+            name = path.pop()
+            if name in context:
+                # reusing existing context.
+                context = context[name]
+                continue
+            raise ValueError('%s is not in context' % name)
+        return context
+
     def resolve_folder(self, path):
         if not path:
             path = []
         if isinstance(path, basestring):
-            # XXX not sure if it's "right" to make this easy/shortcut
             path = path.split('/')
         path.reverse()
         return self._resolve_folder(path)
@@ -739,15 +758,21 @@ class ExposurePort(form.Form):
             if 'views' in fields:
                 # XXX assume this specifies an ExposureFile
                 fgen = ExposureFileGenForm(target, None)
-                d = {
-                    'filename': path,
-                }
-                fgen.createAndAdd(d)
-                # XXX using something that is magic in nature
-                # <form>.ctxobj is created by our customized object
-                # creation method for the form, and we are using 
-                # this informally declared object.
-                ctxobj = fgen.ctxobj
+                # since we may use this in a regenerative context, check
+                # whether file had been created.
+                try:
+                    ctxobj = fgen.resolve_file(path)
+                except ValueError:
+                    # I guess not.
+                    d = {
+                        'filename': path,
+                    }
+                    fgen.createAndAdd(d)
+                    # XXX using something that is magic in nature
+                    # <form>.ctxobj is created by our customized object
+                    # creation method for the form, and we are using 
+                    # this informally declared object.
+                    ctxobj = fgen.ctxobj
 
                 # generate docview
                 if fields['docview_generator']:
@@ -873,3 +898,91 @@ class ExposurePortCommitIdForm(ExposurePort):
 ExposurePortCommitIdFormView = layout.wrap_form(ExposurePortCommitIdForm, 
     label="Exposure Port to new commit id")
 
+
+class ExposureFileRegenerateForm(ExposurePort):
+    """\
+    This is to regenerate all exposure file notes.
+    """
+
+    # this just have commit id, create exposure.
+
+    formErrorsMessage = _('There are errors with regeneration.')
+    _finishedAdd = False
+
+    def export(self):
+        """\
+        Generate and save structure, delete all objects, rebuild.
+        """
+
+        if hasattr(self, 'exported'):
+            return self.exported
+
+        cur = self.export_source()
+        # we need the actual data, now.
+        self.exported = list(self._export(cur))
+
+        # delete all existing annotations
+        notes = IAnnotations(cur)
+        for key, obj in notes.items():
+            if IExposureFileNote.providedBy(obj):
+                del notes[key]
+
+        return self.exported
+
+    @button.buttonAndHandler(_('Migrate'), name='apply')
+    def handleMigrate(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        try:
+            self.migrate()
+        except:
+            self.status = self.formErrorsMessage
+            return
+
+    def migrate(self):
+        target = self.context
+        self.mold(target)
+
+    def nextURL(self):
+        return self.target.absolute_url()
+
+    def render(self):
+        if self._finishedAdd:
+            self.request.response.redirect(self.nextURL())
+            return ""
+        return super(ExposureFileRegenerateForm, self).render()
+
+ExposureFileRegenerateFormView = layout.wrap_form(ExposureFileRegenerateForm, 
+    label="Exposure Regeneration")
+
+
+class ExposureFileBulkRegenerateForm(form.Form):
+    """\
+    Exposure bulk regeneration form.
+    """
+
+    @button.buttonAndHandler(_('Migrate'), name='apply')
+    def handleMigrate(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        # search for all exposures
+        catalog = getToolByName(self.context, 'portal_catalog')
+        q = {
+            'path': self.context.getPhysicalPath(),
+            'portal_type': 'Exposure',
+        }
+
+        for b in catalog(**q):
+            ctx = b.getObject()
+            f = ExposureFileRegenerateForm(ctx, None)
+            f.migrate()
+
+ExposureFileBulkRegenerateFormView = layout.wrap_form(
+    ExposureFileBulkRegenerateForm, 
+    label="Exposure File Bulk Regeneration")

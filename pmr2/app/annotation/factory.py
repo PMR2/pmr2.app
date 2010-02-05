@@ -23,6 +23,13 @@ def get_annotated(context):
         if IExposureFileNote.providedBy(i[1])]
     return items
 
+def del_note(context, key):
+    # purges ExposureFileNotes
+    ann = IAnnotations(context)
+    k = PREFIX + key
+    if k in ann and IExposureFileNote.providedBy(ann[k]):
+        del ann[k]
+
 def rebuild_note(context):
     """\
     Cleans up exposure file notes.
