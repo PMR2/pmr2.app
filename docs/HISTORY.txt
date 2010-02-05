@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.2.2 - Released (2010-02-02)
+-----------------------------
+
+* Finishing the document view generation step will no longer trigger a
+  file download.
+* Added in opencell:externalurl rewriting, much like PCEnv as the
+  specification states that the URL for an external file is a literal,
+  so it cannot take advantage of the xml:base attribute for the
+  normalization of URL to kick in.
+
 0.2.1 - Released (2010-01-12)
 -----------------------------
 
