@@ -953,8 +953,8 @@ edited_note.
     >>> result = view()
     >>> 'Lorem ipsum dolar sit amet' in result
     False
-    >>> print result
-    Edited Note is: [This is a test note]
+    >>> request.response.getHeader('Location')
+    'http://.../example_model.cellml/@@edited_note'
 
 -----------------
 Exposure Rollover

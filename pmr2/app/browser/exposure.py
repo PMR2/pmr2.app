@@ -483,7 +483,11 @@ class ExposureFileDocumentView(page.TraversePage):
                 name=selected_view,
             )
             if view:
-                return view()
+                # XXX can't do this yet because of plonehead.html fail
+                #return view()
+                target_uri = '%s/@@%s' % (self.context.absolute_url(), 
+                    selected_view)
+                return self.request.response.redirect(target_uri)
         # nothing can be done, default treatment
         return self.context.document_view()
 
