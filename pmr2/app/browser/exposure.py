@@ -3,6 +3,8 @@ from random import getrandbits
 
 import zope.interface
 import zope.component
+import zope.event
+import zope.lifecycleevent
 from zope.publisher.browser import BrowserPage
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
@@ -427,6 +429,65 @@ ExposureFileInfoView = layout.wrap_form(ExposureFileInfo,
     __wrapper_class=PlainLayoutWrapper)
 
 
+class ExposureFileSelectViewForm(form.EditForm):
+    """\
+    Form to select a note view for exposure files.
+    """
+
+    fields = z3c.form.field.Fields(IExposureFileSelectView).select(
+        'selected_view')
+
+    def getContent(self):
+        # since we are not using the same interface as the exposure
+        # object as it does not use choice, to populate the values here
+        # will require an adapter.
+        return zope.component.getAdapter(self.context, 
+                                         IExposureFileSelectView)
+
+    def applyChanges(self, data):
+        # Since we only have one field, and the default method doesn't
+        # quite suit our needs here, we bypass the datamanager and 
+        # manually assign the fields.
+        content = self.context
+        if content.selected_view == data['selected_view']:
+            return {}
+        content.selected_view = data['selected_view']
+        changes = {
+            IExposureFile: ['selected_view'],
+        }
+        # Construct change-descriptions for the object-modified event
+        descriptions = []
+        for interface, names in changes.items():
+            descriptions.append(
+                zope.lifecycleevent.Attributes(interface, *names))
+        # Send out a detailed object-modified event
+        zope.event.notify(
+            zope.lifecycleevent.ObjectModifiedEvent(content, *descriptions))
+        return changes
+
+ExposureFileSelectViewFormView = layout.wrap_form(ExposureFileSelectViewForm, 
+    label="Select Default View")
+
+
+class ExposureFileDocumentView(page.TraversePage):
+    """\
+    View for document.
+    """
+
+    def __call__(self):
+        selected_view = self.context.selected_view
+        # make sure the data is set correctly
+        if selected_view in self.context.views:
+            view = zope.component.queryMultiAdapter(
+                (self.context, self.request), 
+                name=selected_view,
+            )
+            if view:
+                return view()
+        # nothing can be done, default treatment
+        return self.context.document_view()
+
+
 class ExposureFileRedirectView(BrowserPage):
     """\
     This view redirects to the original file.
@@ -622,6 +683,7 @@ class ExposurePort(form.Form):
                 d = {}
                 d['docview_gensource'] = obj.docview_gensource
                 d['docview_generator'] = obj.docview_generator
+                d['selected_view'] = obj.selected_view
                 # now query the each views.
                 d['views'] = viewinfo(obj)
                 yield (p, d,)
@@ -703,6 +765,11 @@ class ExposurePort(form.Form):
                     # data ignored.
                     data = view_fields and view_fields.items() or None
                     annotator(ctxobj)(data)
+
+                # only ExposureFiles have this
+                if IExposureFile.providedBy(ctxobj):
+                    ctxobj.selected_view = fields['selected_view']
+
                 ctxobj.reindexObject()
             else:
                 # generate views.

@@ -45,6 +45,12 @@
       provides="pmr2.app.interfaces.IExposureSourceAdapter"
       />
 
+  <adapter
+      for="pmr2.app.content.interfaces.IExposureFile"
+      factory=".adapter.ExposureFileSelectView"
+      provides="pmr2.app.browser.interfaces.IExposureFileSelectView"
+      />
+
   <!-- Global Configuration -->
   <adapter factory=".settings.PMR2GlobalSettings" />
 

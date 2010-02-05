@@ -54,6 +54,12 @@
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
+      component="pmr2.app.vocab.ExposureFileNotesAvailableVocabFactory"
+      name="ExposureFileNotesAvailableVocab"
+      />
+
+  <utility
+      provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.DocViewGenVocabFactory"
       name="DocViewGenVocab"
       />

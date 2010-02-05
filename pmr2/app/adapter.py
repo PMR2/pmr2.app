@@ -3,6 +3,7 @@ import zope.component
 from zope.schema import fieldproperty
 from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
+from zope.location import Location, locate
 
 from pmr2.mercurial.interfaces import IPMR2StorageBase, IPMR2HgWorkspaceAdapter
 from pmr2.mercurial.adapter import PMR2StorageAdapter
@@ -15,6 +16,7 @@ import pmr2.mercurial.utils
 from pmr2.app.interfaces import *
 from pmr2.app.content.interfaces import *
 from pmr2.app.browser.interfaces import IPublishTraverse
+from pmr2.app.browser.interfaces import IExposureFileSelectView
 
 # Deprecated import location compatability
 import zope.deprecation
@@ -292,3 +294,17 @@ class ExposureSourceAdapter(object):
             name='PMR2StorageFixedRev',
         )
         return storage.file(path)
+
+
+class ExposureFileSelectView(Location):
+
+    zope.interface.implements(IExposureFileSelectView)
+    selected_view = fieldproperty.FieldProperty(IExposureFileSelectView['selected_view'])
+    views = fieldproperty.FieldProperty(IExposureFileSelectView['views'])
+
+    def __init__(self, context):
+        # must locate itself into context the very first thing, as the
+        # vocabulary uses source adapter registered above.
+        locate(self, context, '')
+        self.selected_view = context.selected_view
+        self.views = context.views

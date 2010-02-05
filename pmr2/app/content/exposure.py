@@ -247,6 +247,7 @@ class ExposureFile(ATDocument, ExposureContentIndexBase):
     views = fieldproperty.FieldProperty(IExposureFile['views'])
     docview_gensource = fieldproperty.FieldProperty(IExposureFile['docview_gensource'])
     docview_generator = fieldproperty.FieldProperty(IExposureFile['docview_generator'])
+    selected_view = fieldproperty.FieldProperty(IExposureFile['selected_view'])
     security = ClassSecurityInfo()
 
     security.declareProtected(View, 'raw_text')

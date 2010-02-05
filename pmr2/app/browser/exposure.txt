@@ -900,6 +900,62 @@ Ditto for ExposureFolders.
     >>> edir1.docview_gensource == source_file
     True
 
+We could try to render it, and this will be done on the html file at
+`component/docs/index.html`.
+::
+
+    >>> filectx = efile3
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((filectx, request), 
+    ...                         name='exposure_file_document_view')
+    >>> result = view()
+    >>> 'Lorem ipsum dolar sit amet' in result
+    True
+
+So standard document view is rendered.  We can now select one of the
+annotations as the default view, using the form.  First we render the
+form and make sure the choices are all rendered.  The file we will use
+is `example_model.cellml`.
+::
+
+    >>> filectx = context[file1]
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((filectx, request), 
+    ...                                         name='select_view')
+    >>> result = view.form_instance()
+    >>> [i in result for i in filectx.views]
+    [True, True, True]
+
+Now select one of those views to change the default view from the
+document_view to one provided by the notes.
+::
+
+    >>> filectx = context[file1]
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.selected_view': [u'edited_note'],
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> view = zope.component.queryMultiAdapter((filectx, request), 
+    ...                                         name='select_view')
+    >>> result = view.form_instance()
+    >>> filectx.selected_view == u'edited_note'
+    True
+
+Now the same document view rendering will result in the same view as the
+edited_note.
+::
+
+    >>> filectx = context[file1]
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((filectx, request), 
+    ...                         name='exposure_file_document_view')
+    >>> result = view()
+    >>> 'Lorem ipsum dolar sit amet' in result
+    False
+    >>> print result
+    Edited Note is: [This is a test note]
+
 -----------------
 Exposure Rollover
 -----------------
@@ -935,22 +991,26 @@ utility defined for this task.
     ...             (u'edited_note', {
     ...                 'note': u'This is a test note',
     ...             }),
-    ...         ]
+    ...         ],
+    ...         'selected_view': u'edited_note',
     ...     }),
     ...     ('component/module.cellml', {
     ...         'docview_gensource': u'component/docs/index.html',
     ...         'docview_generator': u'safe_html',
     ...         'views': [],
+    ...         'selected_view': None,
     ...     }),
     ...     ('component/docs/index.html', {
     ...         'docview_gensource': None,
     ...         'docview_generator': u'safe_html',
     ...         'views': [],
+    ...         'selected_view': None,
     ...     }),
     ...     ('component/docs/index.rst', {
     ...         'docview_gensource': None,
     ...         'docview_generator': u'rest_to_html',
     ...         'views': [],
+    ...         'selected_view': None,
     ...     }),
     ...     ('component/docs', {
     ...         'docview_gensource': None,

@@ -198,8 +198,8 @@ class IExposureFile(zope.interface.Interface):
     """\
     Interface for a basic exposure page.
 
-    Compared to IExposureDocument, a lot less fields, because the object
-    will have the id after the object.
+    This has the use_view field because the default document view may
+    not be enough to describe/visualize the data present.
     """
 
     views = TextLineList(
@@ -221,6 +221,13 @@ class IExposureFile(zope.interface.Interface):
         title=u'Default View Generator',
         description=u'The default view generator utility that was used to ' \
                      'generate the contents viewed via document_view.',
+        required=False,
+    )
+
+    selected_view = zope.schema.TextLine(
+        title=u'Selected View',
+        description=u'Use this view as default instead of the generated ' \
+                     'by the generator.',
         required=False,
     )
 

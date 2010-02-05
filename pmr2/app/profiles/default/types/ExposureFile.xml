@@ -17,13 +17,14 @@
  <property name="view_methods">
   <element value="exposure_file_redirect"/>
   <element value="exposure_file_info"/>
+  <element value="exposure_file_document_view"/>
   <element value="document_view"/>
  </property>
 
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="atct_edit"/>
  <alias from="sharing" to="@@sharing"/>
- <alias from="view" to="document_view"/>
+ <alias from="view" to="exposure_file_document_view"/>
 
  <action title="View" action_id="view" category="object" condition_expr=""
     url_expr="string:${object_url}/view" visible="True" i18n:attributes="title">
@@ -43,6 +44,12 @@
 
  <action title="Set Default View" action_id="docviewgen" category="object" 
     url_expr="string:${object_url}/@@docviewgen" visible="True" 
+    i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+
+ <action title="Set Default Note" action_id="select_view" category="object" 
+    url_expr="string:${object_url}/@@select_view" visible="True" 
     i18n:attributes="title">
   <permission value="Modify portal content"/>
  </action>

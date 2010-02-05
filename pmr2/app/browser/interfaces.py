@@ -198,6 +198,27 @@ class IExposureDocViewGenForm(zope.interface.Interface):
     )
 
 
+class IExposureFileSelectView(zope.interface.Interface):
+    """\
+    Exposure files now have the option to select a generated view as the
+    default view that will be presented to users.
+    """
+
+    views = zope.schema.List(
+        title=u'Views',
+        required=False,
+    )
+
+    selected_view = zope.schema.Choice(
+        title=u'Selected View',
+        description=u'If specified, the selected note will be used as the '
+                     'landing page for this file, instead of the generated '
+                     'default view.',
+        vocabulary='ExposureFileNotesAvailableVocab',
+        required=False,
+    )
+
+
 class IExposureRolloverForm(zope.interface.Interface):
     """
     """

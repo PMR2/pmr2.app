@@ -207,6 +207,22 @@ class ExposureFileNoteViewVocab(ExposureFileAnnotatorVocab):
                 zope.component.getUtilitiesFor(IExposureFileAnnotator)]
 
 
+class ExposureFileNotesAvailableVocab(ExposureFileAnnotatorVocab):
+    """\
+    This is for an ExposureFile object, where it checks for the list of
+    views available within the note listing.
+    """
+
+    def _getValues(self):
+        views = self.context.views or []
+        return [(i[0], i[0], i[1].label) for i in 
+                zope.component.getUtilitiesFor(IExposureFileAnnotator) if
+                i[0] in views]
+
+ExposureFileNotesAvailableVocabFactory = \
+    vocab_factory(ExposureFileNotesAvailableVocab)
+
+
 class DocViewGenVocab(SimpleVocabulary):
 
     def __init__(self, context):
