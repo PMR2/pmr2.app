@@ -12,7 +12,7 @@ class TestProductInstall(TestCase):
             'ExposureContainer': None,
             'Workspace': None,
             'Sandbox': None,
-            'Exposure': None,
+            'Exposure': 'pmr2_exposure_workflow',
         }
 
     def testTypesInstalled(self):

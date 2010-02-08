@@ -50,7 +50,10 @@ __all__ = [
     'PMR2ExposureStorageAdapter',
     'PMR2StorageURIResolver',
     'PMR2ExposureStorageURIResolver',
+    'ExposureToWorkspaceAdapter',
+    'ExposureToWorkspaceTraverse',
     'ExposureSourceAdapter',
+    'ExposureFileSelectView',
 ]
 
 
