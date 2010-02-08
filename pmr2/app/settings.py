@@ -35,6 +35,20 @@ class IPMR2GlobalSettings(zope.interface.Interface):
                        'that make up the workspaces will be stored.'),
     )
 
+    default_workspace_subpath = zope.schema.TextLine(
+        title=_(u'Default Workspace Subpath'),
+        description=_(u'The location of default workspace container.'),
+        default=u'workspace',
+        required=True,
+    )
+
+    default_exposure_subpath = zope.schema.TextLine(
+        title=_(u'Default Exposure Subpath'),
+        description=_(u'The location of default exposure container.'),
+        default=u'exposure',
+        required=True,
+    )
+
     def dirOf(obj=None):
         """\
         Returns the filesystem path for this object.
@@ -64,6 +78,10 @@ class PMR2GlobalSettingsAnnotation(Persistent):
 
     repo_root = zope.schema.fieldproperty.FieldProperty(
         IPMR2GlobalSettings['repo_root'])
+    default_workspace_subpath = zope.schema.fieldproperty.FieldProperty(
+        IPMR2GlobalSettings['default_workspace_subpath'])
+    default_exposure_subpath = zope.schema.fieldproperty.FieldProperty(
+        IPMR2GlobalSettings['default_exposure_subpath'])
 
     def __init__(self):
         self.repo_root = _make_default_path()

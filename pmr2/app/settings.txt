@@ -21,6 +21,8 @@ how pmr2_settings created from above is not acquired again.
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.repo_root': self.tmpdir,
+    ...         'form.widgets.default_workspace_subpath': u'workspace',
+    ...         'form.widgets.default_exposure_subpath': u'exposure',
     ...         'form.buttons.apply': 1,
     ...     })
     >>> f = PMR2GlobalSettingsEditForm(self.folder, request)

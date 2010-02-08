@@ -4,6 +4,7 @@ from zope.schema import fieldproperty
 from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 from zope.location import Location, locate
+from zope.app.component.hooks import getSite
 
 from pmr2.mercurial.interfaces import IPMR2StorageBase, IPMR2HgWorkspaceAdapter
 from pmr2.mercurial.adapter import PMR2StorageAdapter
@@ -14,6 +15,7 @@ from pmr2.mercurial import WebStorage
 import pmr2.mercurial.utils
 
 from pmr2.app.interfaces import *
+from pmr2.app.settings import IPMR2GlobalSettings
 from pmr2.app.content.interfaces import *
 from pmr2.app.browser.interfaces import IPublishTraverse
 from pmr2.app.browser.interfaces import IExposureFileSelectView
@@ -221,38 +223,61 @@ class PMR2ExposureStorageURIResolver(
 
 def ExposureToWorkspaceAdapter(context):
     """\
-    Adapts an exposure object into workspace.
+    Adapts an exposure object into workspace via the catalog.
     """
 
-    # XXX magic string, at least until we support user created workspace
-    # root folders.
-    workspace_folder = ('workspace',)
+    # There are two methods in place, depending on whether or not 
+    # context.workspace starts with '/'.  Formerly the location of
+    # workspaces and exposures are assumed, so only the ids were stored
+    # and not the full path as it will be.
+
+    root_fragment = context.getPhysicalPath()[0:-2]
+    if context.workspace.startswith('/'):
+        # absolute path.
+        q = {'path': context.workspace,}
+    else:
+        settings = zope.component.getUtility(IPMR2GlobalSettings)
+        workspace = tuple(settings.default_workspace_subpath.split('/'))
+        path = '/'.join(root_fragment + workspace)
+        q = {
+            'id': context.workspace,
+            'path': {
+                'query': path,
+                'depth': len(workspace),
+            }
+        }
 
     catalog = getToolByName(context, 'portal_catalog')
-    path = '/'.join(context.getPhysicalPath()[0:-2] + workspace_folder)
 
-    # XXX path assumption.
-    q = {
-        'id': context.workspace,
-        'path': {
-            'query': path,
-            'depth': len(workspace_folder),
-        }
-    }
     result = catalog(**q)
-    if not result:
-        # okay, I guess the catalog is not going to help, we manually
-        # try to find this, based on the current assumption
-        try:
-            # it should be there...
-            result = aq_parent(aq_parent(aq_inner(context)))\
-                ['workspace'][context.workspace]
-            return result
-        except:
-            raise WorkspaceObjNotFoundError()
-    # there should be only one such id in the workspace for this
-    # unique result.
-    return result[0].getObject()
+    if result:
+        return result[0].getObject()
+
+    # no good, try the bruteforce way.
+    return ExposureToWorkspaceTraverse(context)
+
+def ExposureToWorkspaceTraverse(context):
+    # okay, I guess the catalog is not going to help, we manually
+    # try to find this, based on the current assumption
+    settings = zope.component.getUtility(IPMR2GlobalSettings)
+    root_fragment = context.getPhysicalPath()[0:-2]
+    if context.workspace.startswith('/'):
+        fullpath = context.workspace
+    else:
+        # still need to split workspace because of user workspaces.
+        workspace = tuple(settings.default_workspace_subpath.split('/'))
+        subpath = tuple(context.workspace.split('/'))
+        frags = root_fragment + workspace + subpath
+        fullpath = '/'.join(frags)
+
+    # XXX unicode to string path, might need to escape into hex (%XX)
+    # entities later.
+    fullpath = fullpath.encode('utf8')
+    sm = zope.component.getSiteManager(context)
+    result = sm.unrestrictedTraverse(fullpath, None)
+    if result is None:
+        raise WorkspaceObjNotFoundError()
+    return result
 
 
 class ExposureSourceAdapter(object):
