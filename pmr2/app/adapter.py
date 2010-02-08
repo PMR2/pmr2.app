@@ -33,6 +33,15 @@ try:
 except ImportError:
     pass
 
+try:
+    from cellml.pmr2.note import OpenCellSessionNote
+    zope.deprecation.deprecated('OpenCellSessionNote',
+        'OpenCellSessionNote has been moved to cellml.pmr2.  Please install '
+        'that product if you wish to continue to use it, and also recreate '
+        'these notes before pmr2.app-0.4')
+except ImportError:
+    pass
+
 
 __all__ = [
     'PMR2StorageRequestViewAdapter',

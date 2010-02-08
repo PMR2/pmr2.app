@@ -663,11 +663,20 @@ class ExposurePort(form.Form):
             # XXX no error notification on missing fields.
             return dict([(fn, getattr(obj, fn, None)) for fn in inf.names()])
 
+        def get_global_note(obj, key):
+            # related to migration from 0.2 to 0.3
+            notes = IAnnotations(obj)
+            if key in notes:
+                return notes[key]
+
         def viewinfo(obj):
             # maybe make this into generator in the future.
             v = []
             for vname in obj.views:
-                note = zope.component.queryAdapter(obj, name=vname)
+                # XXX this is related to migration from 0.2 to 0.3
+                note = get_global_note(obj, vname)
+                if note is None:
+                    note = zope.component.queryAdapter(obj, name=vname)
                 if not note:
                     # We can't export this
                     # do we need error reporting? the actual page
@@ -797,7 +806,7 @@ class ExposurePort(form.Form):
                         annotator(ctxobj)(data)
                     except RequiredMissing:
                         # this does not cover cases where schema have
-                        # changed.
+                        # changed, or the old scheme into the new scheme.
                         note = zope.component.queryAdapter(
                             ctxobj,
                             name=view
