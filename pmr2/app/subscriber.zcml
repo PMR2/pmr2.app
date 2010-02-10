@@ -37,4 +37,17 @@
       handler=".factory.name_utility"
       />
 
+  <!-- this help creates user workspace folders -->
+  <subscriber
+      for="Products.PlonePAS.plugins.ufactory.PloneUser
+          Products.PlonePAS.events.UserLoggedInEvent"
+      handler=".subscriber.create_user_workspace"
+      />
+
+  <subscriber
+      for="Products.PlonePAS.plugins.ufactory.PloneUser
+          Products.PlonePAS.events.UserInitialLoginInEvent"
+      handler=".subscriber.create_user_workspace"
+      />
+
 </configure>

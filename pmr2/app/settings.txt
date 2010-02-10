@@ -22,7 +22,9 @@ how pmr2_settings created from above is not acquired again.
     ...     form={
     ...         'form.widgets.repo_root': self.tmpdir,
     ...         'form.widgets.default_workspace_subpath': u'workspace',
+    ...         'form.widgets.user_workspace_subpath': u'w',
     ...         'form.widgets.default_exposure_subpath': u'exposure',
+    ...         'form.widgets.create_user_workspace': [u'false'],
     ...         'form.buttons.apply': 1,
     ...     })
     >>> f = PMR2GlobalSettingsEditForm(self.folder, request)
@@ -57,3 +59,67 @@ This utility can create a path for a specific object.
     True
     >>> pmr2_settings.dirCreatedFor(self.portal) == portal_path
     True
+
+Also specified is a method that returns the workspace container object 
+specified as the default.
+::
+
+    >>> from pmr2.app.content import WorkspaceContainer
+    >>> self.portal['workspace'] = WorkspaceContainer()
+    >>> result = pmr2_settings.getWorkspaceContainer()
+    >>> result == self.portal.workspace
+    True
+
+One exists for exposure container also.
+::
+
+    >>> from pmr2.app.content import ExposureContainer
+    >>> self.portal['exposure'] = ExposureContainer()
+    >>> result = pmr2_settings.getExposureContainer()
+    >>> result == self.portal.exposure
+    True
+
+There is a method to allow user workspace creation.  Since the default
+setting is disabled, nothing should have happened.
+::
+
+    >>> from Products.ATContentTypes.content.folder import ATFolder
+    >>> self.portal['w'] = ATFolder('w')
+    >>> userid = 'tester'
+    >>> pmr2_settings.createUserWorkspaceContainer(userid)
+    >>> userid in self.portal.w
+    False
+
+Of course there is a way to override this.
+
+    >>> pmr2_settings.createUserWorkspaceContainer(userid, True)
+    >>> userwc = self.portal.w[userid]
+    >>> userwc
+    <WorkspaceContainer at /plone/w/tester>
+    >>> pmr2_settings.dirCreatedFor(userwc) is not None
+    True
+
+The method `getWorkspaceContainer` also can be specified to return a
+specific user's workspace container.
+::
+
+    >>> result = pmr2_settings.getWorkspaceContainer(userid)
+    >>> userwc == result
+    True
+
+Attempt recreation of the WorkspaceContainer will not result in an error
+as this can be configured to be called every time a user logs in via
+the event subscriber.
+::
+
+    >>> pmr2_settings.createUserWorkspaceContainer(userid, True)
+
+If the default paths are set wrong resulting in an unexpected object,
+execption happens.
+::
+
+    >>> pmr2_settings.default_workspace_subpath = u'exposure'
+    >>> pmr2_settings.getWorkspaceContainer()
+    Traceback (most recent call last):
+    ...
+    TypeError: the content ... is not a workspace container

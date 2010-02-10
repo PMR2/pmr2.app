@@ -24,51 +24,24 @@ def create_user_workspace(user, event):
         ...     zope.interface.implements(IPMR2GlobalSettings)
         ...     create_user_workspace = True
         ...     workspace = {}
-        ...     def createWorkspaceContainer(self, name=None):
+        ...     def createUserWorkspaceContainer(self, name=None):
         ...         self.workspace[name] = WorkspaceContainer(name)
-        ...     def getWorkspaceContainer(self, name=None):
-        ...         if name is None:
-        ...             return self.workspace
-        ...         return self.workspace.get(name, None)
         ...
         >>> settings = Settings()
         >>> zope.component.getSiteManager().registerUtility(settings,
         ...     IPMR2GlobalSettings)
         >>> name = 'tester'
         >>> user = User(name)
-
-    Then call our method.
-
+        >>> # test
         >>> create_user_workspace(user, None)
         >>> settings.workspace[name].id
         'tester'
-
-    Should not crash on subsequent calls.
-
-        >>> create_user_workspace(user, None)
-        >>> settings.workspace[name].id
-        'tester'
-
-    Cleanup.
-
+        >>> # cleanup
         >>> zope.component.getSiteManager().unregisterUtility(settings,
         ...     IPMR2GlobalSettings)
         True
     """
 
     settings = queryUtility(IPMR2GlobalSettings)
-    if settings is None or not settings.create_user_workspace:
-        return
-    workspace = settings.getWorkspaceContainer()
-    if workspace is None:
-        # toss a warning?
-        return
     name = user.getName()
-    # check whether it's already created
-    userdir = settings.getWorkspaceContainer(name)
-    if userdir is not None:
-        # already exists, don't do anything, maybe check for type later.
-        return
-
-    # create the container
-    settings.createWorkspaceContainer(name)
+    settings.createUserWorkspaceContainer(name)
