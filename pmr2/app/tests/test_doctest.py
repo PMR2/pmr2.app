@@ -77,6 +77,8 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
+        ### inline doctests
+
         # test the fields.
         doctestunit.DocTestSuite(
             module='pmr2.app.schema.field',
@@ -86,6 +88,12 @@ def test_suite():
         # test the converters.
         doctestunit.DocTestSuite(
             module='pmr2.app.converter',
+            setUp=testing.setUp, tearDown=testing.tearDown
+        ),
+
+        # test the fields.
+        doctestunit.DocTestSuite(
+            module='pmr2.app.subscriber',
             setUp=testing.setUp, tearDown=testing.tearDown
         ),
 
