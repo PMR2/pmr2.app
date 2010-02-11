@@ -196,6 +196,8 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         userpath = str('%s/%s' % (self.user_workspace_subpath, user))
         userws = site.unrestrictedTraverse(userpath, None)
         self.createDir(userws)
+        # XXX also need to auto assign push role
+        userws.reindexObject()
 
     def getWorkspaceContainer(self, user=None):
         if user is None:
