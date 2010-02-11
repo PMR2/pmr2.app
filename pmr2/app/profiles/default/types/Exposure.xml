@@ -9,7 +9,7 @@
  <property name="content_meta_type">Exposure</property>
  <property name="product">pmr2.app</property>
  <property name="factory">addExposure</property>
- <property name="immediate_view">exposure_folder_listing</property>
+ <property name="immediate_view">exposure_info</property>
  <property name="global_allow">False</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types">
