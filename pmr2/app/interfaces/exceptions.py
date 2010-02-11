@@ -43,4 +43,6 @@ class WorkspaceObjNotFoundError(zope.schema.ValidationError):
     __doc__ = _("""The workspace object is not found.""")
 
 
+class ExposureContainerInaccessibleError(zope.schema.ValidationError):
+    __doc__ = _("""The exposure container cannot be accessed.""")
 

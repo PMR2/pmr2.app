@@ -195,6 +195,20 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <!--
+    Not really sure what the permission here should be as it really
+    depends on whether the user can add the exposure to the taget
+    container specified in the form.  Going with ModifyPortalContent
+    because if the user can't modify it, they shouldn't be making
+    Exposures in the first place.
+  -->
+  <browser:page
+      for="pmr2.app.content.Workspace"
+      name="create_exposure"
+      class=".workspace.CreateExposureFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <!-- 
     XXX we are not doing this for every single custom mime type 
     - one way around this is we implement annotations in the exposures
@@ -217,11 +231,15 @@
 
   <!-- Exposure Container -->
 
+  <!--
+  This form allows arbitrary exposures to be generated out of any
+  workspaces, thus it should be used with caution.
+  -->
   <browser:page
       for="pmr2.app.content.ExposureContainer"
       name="exposure_add_form"
       class=".exposure.ExposureAddFormView"
-      permission="cmf.AddPortalContent"
+      permission="pmr2.app.security.ManagePMR2"
       />
 
   <browser:page

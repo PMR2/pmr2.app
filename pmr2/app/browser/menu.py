@@ -41,7 +41,7 @@ class WorkspaceMenuProvider(ContentMenuProvider):
         baseUri = '%s/@@create?type=%s%s'
 
         mkSandboxUri = baseUri % (actionRootUri, 'sandbox', queryStr)
-        mkExposureUri = baseUri % (actionRootUri, 'exposure', queryStr)
+        mkExposureUri = '%s/@@create_exposure/%s' % (actionRootUri, rev)
 
         items = [{
             'title': u'Workspace Actions',

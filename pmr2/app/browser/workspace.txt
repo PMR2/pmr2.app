@@ -289,12 +289,56 @@ Bad revision results in not found.
     >>> subpath = ['abcdef1234567890', 'component']
     >>> request = TestRequest()
     >>> testpage = workspace.WorkspaceFilePage(wkspc, request)
-    >>> testpage.traverse_subpath = subpath  
+    >>> testpage.traverse_subpath = subpath
     >>> testpage.update()
     Traceback (most recent call last):
     ...
     HTTPNotFound: 404 Not Found
     ...
+
+-----------------
+Exposure creation
+-----------------
+
+Exposures can be created via the creation form defined here.
+::
+
+    >>> request = TestRequest(form={'form.buttons.add': 1,})
+    >>> form = workspace.CreateExposureForm(wkspc, request)
+    >>> commit_id = self.pmr2hgtest_revs[-1]
+    >>> form.traverse_subpath = [commit_id]
+    >>> result = form()
+    >>> result is not None
+    True
+
+Oops, we didn't have an exposure container created.  So we retry this
+again after creating the container at the expected location.
+::
+
+    >>> self.portal['exposure'] = ExposureContainer('exposure')
+    >>> request = TestRequest(form={'form.buttons.add': 1,})
+    >>> form = workspace.CreateExposureForm(wkspc, request)
+    >>> commit_id = self.pmr2hgtest_revs[-1]
+    >>> form.traverse_subpath = [commit_id]
+    >>> result = form()
+    >>> next = request.response.getHeader('Location')
+    >>> next
+    'http://.../exposure/...'
+
+The new exposure object should have the right values.
+::
+
+    >>> from zope.component import getUtility
+    >>> from pmr2.app.settings import IPMR2GlobalSettings
+    >>> settings = getUtility(IPMR2GlobalSettings)
+    >>> frags = next.split('/')
+    >>> eid = frags[-1]  # assume default_view == immediate_view in fti
+    >>> exposures = settings.getExposureContainer()
+    >>> exposure = exposures[eid]
+    >>> exposure.workspace == wkspc.absolute_url_path()
+    True
+    >>> exposure.commit_id == commit_id
+    True
 
 More tests to be done when I figure out how to test interactions with
 Mercurial client for complete test.  This can be manually driven at this
