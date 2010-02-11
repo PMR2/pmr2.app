@@ -340,6 +340,9 @@ The new exposure object should have the right values.
     >>> exposure.commit_id == commit_id
     True
 
+Need test on the exposure listing and the roll over forms, namely for
+user workspaces.
+
 More tests to be done when I figure out how to test interactions with
 Mercurial client for complete test.  This can be manually driven at this
 point, since during deployment this functionality is vital and may be

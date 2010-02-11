@@ -300,10 +300,6 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
             self.status = self.formErrorsMessage
             return
 
-        exposure = obj
-        workspace = unicode(self.context.absolute_url_path())
-        commit_id = self.traverse_subpath[0]
-
         try:
             exposure_container = restrictedGetExposureContainer()
         except Unauthorized:
@@ -317,7 +313,7 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
 
         eaf = ExposureAddForm(exposure_container, None)
         data = {
-            'workspace': unicode(self.context.id),  # should be fine
+            'workspace': unicode(self.context.absolute_url_path()),
             'curation': None,  # to be copied later
             'commit_id': data['commit_id'],
         }
