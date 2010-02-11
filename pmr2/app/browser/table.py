@@ -199,7 +199,10 @@ class ExposureColumn(ItemKeyColumn):
         pt = getToolByName(workspace, 'portal_catalog')
         query = {}
         query['portal_type'] = 'Exposure'  # XXX this may need changing
-        query['pmr2_exposure_workspace'] = workspace.id
+        query['pmr2_exposure_workspace'] = [
+            workspace.id,
+            workspace.absolute_url_path(),
+        ]
         query['pmr2_exposure_commit_id'] = item['node']
         return pt(**query)
 
