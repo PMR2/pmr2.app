@@ -1,6 +1,4 @@
 from os.path import splitext
-from random import getrandbits
-
 import zope.interface
 import zope.component
 import zope.event
@@ -55,7 +53,7 @@ class ExposureAddForm(form.AddForm):
         # different versions of same model) will use the same title
         # Tagging will be used and another search page will return
         # nice models.
-        data['id'] = '%032x' % getrandbits(128)
+        data['id'] = generate_exposure_id()
         return form.AddForm.create(self, data)
 
     def add_data(self, ctxobj):

@@ -1,3 +1,4 @@
+from random import getrandbits
 import re
 from lxml import etree
 
@@ -107,3 +108,7 @@ def simple_valid_date(input):
         return re_simple_date.search(input)
     except:
         return False
+
+def generate_exposure_id():
+    return '%032x' % getrandbits(128)
+
