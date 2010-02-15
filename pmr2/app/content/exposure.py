@@ -22,7 +22,7 @@ from Products.PortalTransforms.data import datastream
 import pmr2.mercurial.interfaces
 from pmr2.processor.cmeta import Cmeta
 
-from pmr2.app.settings import IPMR2GlobalSettings
+from pmr2.app.interfaces import IPMR2GlobalSettings
 from pmr2.app.interfaces import *
 from pmr2.app.content.interfaces import *
 from pmr2.app.atct import ATFolderDocument

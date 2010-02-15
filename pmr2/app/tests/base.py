@@ -87,7 +87,7 @@ class WorkspaceDocTestCase(DocTestCase):
         from plone.z3cform.tests import setup_defaults
         from pmr2.app.content import PMR2
         from pmr2.app.tests import utils
-        from pmr2.app.settings import IPMR2GlobalSettings
+        from pmr2.app.interfaces import IPMR2GlobalSettings
         setup_defaults()
         self.pmr2 = zope.component.getUtility(IPMR2GlobalSettings)
         # force the repo_root unset

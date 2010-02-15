@@ -20,91 +20,11 @@ except ImportError:
     ISiteRoot = None
 
 from pmr2.app.content.interfaces import IWorkspaceContainer
+from pmr2.app.interfaces import IPMR2GlobalSettings
 
 __all__ = [
-    'IPMR2GlobalSettings',
     'PMR2GlobalSettings',
 ]
-
-
-class IPMR2GlobalSettings(zope.interface.Interface):
-    """\
-    Interface to hold global configuration settings.
-    """
-
-    repo_root = zope.schema.BytesLine(
-        title=_(u'Repository Root'),
-        description=_(u'The working root directory for PMR2, where the files '
-                       'that make up the workspaces will be stored.'),
-    )
-
-    default_workspace_subpath = zope.schema.TextLine(
-        title=_(u'Default Workspace Subpath'),
-        description=_(u'The location of default workspace container.'),
-        default=u'workspace',
-        required=True,
-    )
-
-    user_workspace_subpath = zope.schema.TextLine(
-        title=_(u'User Workspace Subpath'),
-        description=_(u'The root for the user workspace containers.'),
-        required=False,
-    )
-
-    default_exposure_subpath = zope.schema.TextLine(
-        title=_(u'Default Exposure Subpath'),
-        description=_(u'The location of default exposure container.'),
-        default=u'exposure',
-        required=True,
-    )
-
-    create_user_workspace = zope.schema.Bool(
-        title=_(u'Create User Workspaces'),
-        description=_(u'Create a user workspace folder within the default '
-                       'workspace specified above automatically upon user '
-                       'logging in, to let them add their own private '
-                       'workspaces.'),
-        default=False,
-    )
-
-    def dirOf(obj=None):
-        """\
-        Returns the filesystem path for this object.
-        """
-
-    def dirCreatedFor(obj=None):
-        """\
-        Checks whether path exists.  Optionally an object can be passed,
-        which then the physical path will be computed for the object.
-
-        Returns the filesystem path if found, or None if not found.
-        """
-
-    def createDir(obj=None):
-        """\
-        Creates the dir for the specified object.
-        """
-
-    def createUserWorkspaceContainer(user, override=False):
-        """\
-        Create a user workspace container at the location specified at
-        the default_workspace_subpath, if enabled or override is True.
-
-        Will fail silently if the root container does not exist.
-        """
-
-    def getWorkspaceContainer(user=None):
-        """\
-        Returns the workspace container specified at
-        default_workspace_subpath.  User may be specified and its
-        container will be returned instead.
-        """
-
-    def getExposureContainer():
-        """\
-        Returns the default exposure container specified at
-        default_exposure_subpath.
-        """
 
 
 class PMR2GlobalSettingsAnnotation(Persistent, Contained):

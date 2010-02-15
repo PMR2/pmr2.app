@@ -62,7 +62,7 @@ root.
 
     >>> from zope.component import getUtility
     >>> from pmr2.app.content import *
-    >>> from pmr2.app.settings import IPMR2GlobalSettings
+    >>> from pmr2.app.interfaces import IPMR2GlobalSettings
     >>> pmr2_settings = getUtility(IPMR2GlobalSettings)
     >>> pmr2_settings.repo_root = self.tmpdir
     >>> self.portal['workspace'] = WorkspaceContainer()

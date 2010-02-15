@@ -10,7 +10,7 @@ from pmr2.app import interfaces
 from pmr2.app.interfaces import exceptions
 from pmr2.app.content.interfaces import IPMR2
 from pmr2.app.browser.interfaces import IObjectIdMixin, IWorkspaceStorageCreate
-from pmr2.app.settings import IPMR2GlobalSettings
+from pmr2.app.interfaces import IPMR2GlobalSettings
 
 
 class ObjectIdValidator(z3c.form.validator.SimpleFieldValidator):

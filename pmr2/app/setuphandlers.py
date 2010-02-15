@@ -3,7 +3,8 @@ from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 from Products.CMFCore.utils import getToolByName
 from StringIO import StringIO
 from pmr2.app.pas.mercurial import addHgAuthPlugin
-from pmr2.app.settings import IPMR2GlobalSettings, PMR2GlobalSettings
+from pmr2.app.interfaces import IPMR2GlobalSettings
+from pmr2.app.settings import PMR2GlobalSettings
 
 def add_pas_plugin(site):
     """Add our plugin into PAS"""

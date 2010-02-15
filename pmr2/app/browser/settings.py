@@ -5,7 +5,7 @@ _ = MessageFactory('pmr2')
 
 import z3c.form
 from plone.z3cform import layout
-from pmr2.app.settings import IPMR2GlobalSettings #, get_pmr2_settings
+from pmr2.app.interfaces import IPMR2GlobalSettings #, get_pmr2_settings
 from pmr2.app.browser import form
 
 
