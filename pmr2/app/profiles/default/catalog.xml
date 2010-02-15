@@ -14,7 +14,7 @@
   </index>
 
   <index name="pmr2_curation" meta_type="KeywordIndex">
-    <indexed_attr value="get_curation_index"/>
+    <indexed_attr value="pmr2_curation"/>
   </index>
 
   <index name="pmr2_keyword" meta_type="KeywordIndex">
@@ -26,7 +26,7 @@
   </index>
 
   <index name="pmr2_exposure_workspace" meta_type="KeywordIndex">
-    <indexed_attr value="get_exposure_workspace_index"/>
+    <indexed_attr value="pmr2_exposure_workspace"/>
   </index>
 
   <index name="pmr2_exposure_root_title" meta_type="FieldIndex">

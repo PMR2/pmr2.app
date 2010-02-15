@@ -1,0 +1,17 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <adapter 
+      factory=".catalog.pmr2_review_state" 
+      name="pmr2_review_state" />
+
+  <adapter 
+      factory=".catalog.pmr2_curation" 
+      name="pmr2_curation" />
+
+  <adapter 
+      factory=".catalog.pmr2_exposure_workspace" 
+      name="pmr2_exposure_workspace" />
+
+</configure> 

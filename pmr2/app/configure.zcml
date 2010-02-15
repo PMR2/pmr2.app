@@ -9,6 +9,10 @@
   <include package="plone.z3cform" />
   <include package="z3c.table" />
 
+  <!-- 
+    Subscribers need to be registered first so the registrations that
+    will happen below will be handled as intended.
+  -->
   <include file="subscriber.zcml" />
 
   <include package=".browser" />
@@ -17,6 +21,7 @@
   <include package=".annotation" />
 
   <include file="adapter.zcml" />
+  <include file="catalog.zcml" />
   <include file="converter.zcml" />
   <include file="profiles.zcml" />
   <include file="vocab.zcml" />

@@ -6,6 +6,14 @@ import z3c.form.interfaces
 from pmr2.app.schema import interfaces
 
 
+def curation_to_textline_list(value):
+    result = []
+    for k, v in value.iteritems():
+        for i in v:
+            result.append('%s:%s' % (k, i))
+    result.sort()
+    return result
+
 class AccessorCallConverter(z3c.form.converter.BaseDataConverter):
     """\
     Calls an accessor as a method to get the data within.
@@ -63,12 +71,7 @@ class CurationTextAreaConverter(z3c.form.converter.BaseDataConverter):
 
         if not value:
             return u''
-
-        result = []
-        for k, v in value.iteritems():
-            for i in v:
-                result.append('%s:%s' % (k, i))
-        result.sort()
+        result = curation_to_textline_list(value)
         return u'\n'.join(result)
 
 

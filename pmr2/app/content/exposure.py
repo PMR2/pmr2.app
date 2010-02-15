@@ -127,7 +127,7 @@ class ExposureContentIndexBase(object):
         return ''
 
 
-class Exposure(ATFolderDocument, TraversalCatchAll, ExposureContentIndexBase):
+class Exposure(ATFolderDocument, TraversalCatchAll):
     """\
     PMR Exposure object is used to encapsulate a single version of any
     given workspace and will allow more clear presentation to users of
@@ -157,12 +157,6 @@ class Exposure(ATFolderDocument, TraversalCatchAll, ExposureContentIndexBase):
         TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
         ATFolder.__before_publishing_traverse__(self, ob, request)
 
-    # Provides the "correct" review_state to be indexed.
-    security.declareProtected(View, 'pmr2_review_state')
-    def pmr2_review_state(self):
-        wf = getToolByName(self, 'portal_workflow')
-        return wf.getInfoFor(self, 'review_state', '')
-
     security.declareProtected(View, 'get_authors_family_index')
     def get_authors_family_index(self):
         # XXX stub, do not know if we should get values from children
@@ -174,28 +168,10 @@ class Exposure(ATFolderDocument, TraversalCatchAll, ExposureContentIndexBase):
         # XXX stub, see get_authors_family_index
         return ()
 
-    security.declareProtected(View, 'get_curation_index')
-    def get_curation_index(self):
-        # FIXME this should really be sharing code with the converter 
-        # class
-        result = []
-        if not self.curation:
-            return result
-        result.extend(self.curation.keys())
-        for k, v in self.curation.iteritems():
-            for i in v:
-                result.append('%s:%s' % (k, i))
-                result.sort()
-        return result
-
     security.declareProtected(View, 'get_keywords_index')
     def get_keywords_index(self):
         # XXX stub, see get_authors_family_index
         return ()
-
-    security.declareProtected(View, 'get_exposure_workspace_index')
-    def get_exposure_workspace_index(self):
-        return self.workspace
 
     security.declareProtected(View, 'get_exposure_root_title')
     def get_exposure_root_title(self):

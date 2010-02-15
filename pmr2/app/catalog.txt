@@ -1,0 +1,47 @@
+===============
+Catalog Indexes
+===============
+
+Plone 3.3 introduced a nice way that allows separation of the methods
+that generates the values for indexing from the objects themselves.
+This will let annotations and other addons to implement their custom
+indexes built off the Exposure (and/or Workspace) objects.
+
+Tests are done in this separate doctest text file rather than inside
+the doctext of the module functions because I couldn't figure out how
+Products.CMFPlone.CatalogTool works to get the decorated methods to be
+tested without causing `DocTestFinder` to raise `ValueError(module, 
+"has no tests")`.
+
+-----
+Tests
+-----
+
+Curation Flags Index.
+::
+
+    >>> import zope.interface
+    >>> from pmr2.app.catalog import pmr2_curation
+    >>> from pmr2.app.content.interfaces import *
+    >>> class ExposureDummy(object):
+    ...     zope.interface.implements(IExposureObject)
+    ...     curation = {
+    ...         u'key1': [u'value1'],
+    ...         u'key2': [u'value2', u'value3'],
+    ...     }
+    >>> dummy = ExposureDummy()
+    >>> results = pmr2_curation(dummy)()
+    >>> results.sort()
+    >>> results
+    [u'key1', u'key1:value1', u'key2', u'key2:value2', u'key2:value3']
+
+Exposure Workspace Index.
+::
+
+    >>> from pmr2.app.catalog import pmr2_exposure_workspace
+    >>> class ExposureDummy(object):
+    ...     zope.interface.implements(IExposureObject)
+    ...     workspace = u'Workspace'
+    >>> dummy = ExposureDummy()
+    >>> pmr2_exposure_workspace(dummy)()
+    u'Workspace'
