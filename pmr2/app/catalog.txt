@@ -13,18 +13,19 @@ Products.CMFPlone.CatalogTool works to get the decorated methods to be
 tested without causing `DocTestFinder` to raise `ValueError(module, 
 "has no tests")`.
 
------
-Tests
------
+-------------
+Basic Indexes
+-------------
 
-Curation Flags Index.
+First the setup.
 ::
 
     >>> import zope.interface
+    >>> import zope.component
     >>> from pmr2.app.catalog import pmr2_curation
     >>> from pmr2.app.content.interfaces import *
     >>> class ExposureDummy(object):
-    ...     zope.interface.implements(IExposureObject)
+    ...     zope.interface.implements(IExposure, IExposureObject)
     ...     curation = {
     ...         u'key1': [u'value1'],
     ...         u'key2': [u'value2', u'value3'],
@@ -32,10 +33,6 @@ Curation Flags Index.
     ...     workspace = u'Workspace'
     ...     commit_id = u'12345'
     >>> dummy = ExposureDummy()
-    >>> results = pmr2_curation(dummy)()
-    >>> results.sort()
-    >>> results
-    [u'key1', u'key1:value1', u'key2', u'key2:value2', u'key2:value3']
 
 Exposure Workspace Index.
 ::
@@ -50,3 +47,85 @@ Exposure Commit id.
     >>> from pmr2.app.catalog import pmr2_exposure_commit_id
     >>> pmr2_exposure_commit_id(dummy)()
     u'12345'
+
+Curation Index just calls another method, but it is still fairly 
+standard.
+::
+
+    >>> results = pmr2_curation(dummy)()
+    >>> results.sort()
+    >>> results
+    [u'key1', u'key1:value1', u'key2', u'key2:value2', u'key2:value3']
+
+------------------
+PMR2 Keyword Index
+------------------
+
+Since PMR2 intends to support different file types, there too will be
+different ways to extract keywords from them also.  We achieve this 
+through passing the object into the set of utilities registered with
+the keyword provider interface.
+
+To began testing, create a dummy `ExposureFile` (since that's what this
+index will work on) and a few of keyword providers classes.
+::
+
+    >>> from pmr2.app.interfaces import IPMR2KeywordProvider
+    >>> from pmr2.app.catalog import pmr2_keyword
+    >>> class ExposureFileDummy(object):
+    ...     zope.interface.implements(IExposureFile, IExposureObject)
+    ...     def word(self):
+    ...         return [u'word1', u'word2']
+    ...     def text(self):
+    ...         return u'hello world'
+    ... 
+    >>> def WordProvider(context):
+    ...     return context.word()
+    ...     
+    >>> def TextProvider(context):
+    ...     return context.text().split()
+    ...     
+    >>> dummy = ExposureFileDummy()
+
+Since the utility registration has not been done, the keyword method
+should return nothing.
+::
+
+    >>> pmr2_keyword(dummy)()
+    []
+
+The `WordProvider` will be registered with its own name, and now 
+`pmr2_keyword` will return some values.
+::
+
+    >>> sm = zope.component.getSiteManager()
+    >>> sm.registerUtility(WordProvider, IPMR2KeywordProvider, 
+    ...     name='word')
+    >>> results = pmr2_keyword(dummy)()
+    >>> results
+    [u'word1', u'word2']
+
+Register the remaining one with another name, and now the other values 
+will also be returned.
+::
+
+    >>> sm.registerUtility(TextProvider, IPMR2KeywordProvider,
+    ...     name='text')
+    >>> results = pmr2_keyword(dummy)()
+    >>> results.sort()
+    >>> results
+    [u'hello', u'word1', u'word2', u'world']
+
+In practice, the actual values will be stored in `ExposureNote` objects
+as the files themselves don't contain or provide much, and so the
+keyword provider must be written to capture and return the intended data
+from them.
+
+--------
+Untested
+--------
+
+Review state could use a test that involves the hierarchy of exposure
+objects, such that the indexed value is intended (either through the
+standard traversal mechanism (if it works) or manually captured though
+the use of adapters).

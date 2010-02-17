@@ -94,14 +94,6 @@ def short(input):
 def isodate(input):
     return pmr2.mercurial.utils.filter(input, 'isodate')
 
-def normal_kw(input):
-    """\
-    Method to normalize keywords so we don't have to deal with cases
-    when searching and allow the usage of spaces to delimit terms.
-    """
-
-    return input.strip().replace(' ', '_').lower()
-
 re_simple_date = re.compile('^[0-9]{4}(-[0-9]{2}){0,2}')
 def simple_valid_date(input):
     try:

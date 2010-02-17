@@ -5,40 +5,41 @@
     <indexed_attr value="pmr2_review_state"/>
   </index>
 
-  <index name="pmr2_authors_family_name" meta_type="KeywordIndex">
-    <indexed_attr value="get_authors_family_index"/>
-  </index>
-
-  <index name="pmr2_citation_title" meta_type="KeywordIndex">
-    <indexed_attr value="get_citation_title_index"/>
-  </index>
-
   <index name="pmr2_curation" meta_type="KeywordIndex">
     <indexed_attr value="pmr2_curation"/>
   </index>
 
   <index name="pmr2_keyword" meta_type="KeywordIndex">
-    <indexed_attr value="get_keywords_index"/>
-  </index>
-
-  <index name="pmr2_exposure_commit_id" meta_type="FieldIndex">
-    <indexed_attr value="pmr2_exposure_commit_id"/>
+    <indexed_attr value="pmr2_keyword"/>
   </index>
 
   <index name="pmr2_exposure_workspace" meta_type="KeywordIndex">
     <indexed_attr value="pmr2_exposure_workspace"/>
   </index>
 
+  <index name="pmr2_exposure_commit_id" meta_type="FieldIndex">
+    <indexed_attr value="pmr2_exposure_commit_id"/>
+  </index>
+
   <index name="pmr2_exposure_root_title" meta_type="FieldIndex">
-    <indexed_attr value="get_exposure_root_title"/>
+    <indexed_attr value="pmr2_exposure_root_title"/>
   </index>
 
   <index name="pmr2_exposure_root_path" meta_type="FieldIndex">
-    <indexed_attr value="get_exposure_root_path"/>
+    <indexed_attr value="pmr2_exposure_root_path"/>
   </index>
 
   <index name="pmr2_exposure_root_id" meta_type="FieldIndex">
-    <indexed_attr value="get_exposure_root_id"/>
+    <indexed_attr value="pmr2_exposure_root_id"/>
+  </index>
+
+  <!-- moved to cellml.pmr2 -->
+  <index name="pmr2_authors_family_name" meta_type="KeywordIndex">
+    <indexed_attr value="get_authors_family_index"/>
+  </index>
+
+  <index name="pmr2_citation_title" meta_type="KeywordIndex">
+    <indexed_attr value="get_citation_title_index"/>
   </index>
 
   <index name="pmr1_citation_authors" meta_type="FieldIndex">
@@ -54,8 +55,6 @@
   </index>
 
   <column value="pmr2_review_state"/>
-  <column value="pmr2_authors_family_name"/>
-  <column value="pmr2_citation_title"/>
   <column value="pmr2_curation"/>
   <column value="pmr2_keyword"/>
   <column value="pmr2_exposure_workspace"/>
@@ -63,6 +62,10 @@
   <column value="pmr2_exposure_root_title"/>
   <column value="pmr2_exposure_root_path"/>
   <column value="pmr2_exposure_root_id"/>
+
+  <!-- moved to cellml.pmr2 -->
+  <column value="pmr2_authors_family_name"/>
+  <column value="pmr2_citation_title"/>
   <column value="pmr1_citation_authors"/>
   <column value="pmr1_citation_authors_sortable"/>
   <column value="pmr1_citation_title"/>

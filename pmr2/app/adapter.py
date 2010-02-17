@@ -297,13 +297,15 @@ class ExposureSourceAdapter(object):
 
         self.context = context
 
-    def source(self):
+    def source(self, _with_workspace=True):
         # this could be nested in some folders, so we need to acquire
         # the parents up to the Exposure object.
         obj = aq_inner(self.context)
         paths = []
         while obj is not None:
             if IExposure.providedBy(obj):
+                if not _with_workspace:
+                    return obj, None, None
                 # as paths were appended...
                 paths.reverse()
                 workspace = zope.component.queryMultiAdapter(
@@ -315,6 +317,9 @@ class ExposureSourceAdapter(object):
             obj = aq_parent(obj)
         # XXX could benefit from a better exception type?
         raise ValueError('cannot acquire Exposure object')
+
+    def exposure(self):
+        return self.source(False)[0]
 
     def file(self):
         """\

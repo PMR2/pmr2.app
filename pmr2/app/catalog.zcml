@@ -11,11 +11,27 @@
       name="pmr2_curation" />
 
   <adapter 
+      factory=".catalog.pmr2_keyword" 
+      name="pmr2_keyword" />
+
+  <adapter 
       factory=".catalog.pmr2_exposure_workspace" 
       name="pmr2_exposure_workspace" />
 
   <adapter 
       factory=".catalog.pmr2_exposure_commit_id" 
       name="pmr2_exposure_commit_id" />
+
+  <adapter 
+      factory=".catalog.pmr2_exposure_root_title" 
+      name="pmr2_exposure_root_title" />
+
+  <adapter 
+      factory=".catalog.pmr2_exposure_root_path" 
+      name="pmr2_exposure_root_path" />
+
+  <adapter 
+      factory=".catalog.pmr2_exposure_root_id" 
+      name="pmr2_exposure_root_id" />
 
 </configure> 

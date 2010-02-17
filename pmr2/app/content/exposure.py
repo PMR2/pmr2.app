@@ -42,91 +42,6 @@ class ExposureContainer(ATBTreeFolder):
         super(ExposureContainer, self).__init__(oid, **kwargs)
 
 
-class ExposureContentIndexBase(object):
-    """\
-    Provides default values for the indexes we use for plone catalog.
-
-    Also ZCatalog compatibility, see below.
-    """
-
-    interface.implements(IExposureContentIndex)
-
-    def get_authors_family_index(self):
-        return ()
-
-    def get_citation_title_index(self):
-        return ()
-
-    def get_curation_index(self):
-        return ()
-
-    def get_keywords_index(self):
-        return ()
-
-    def get_exposure_workspace_index(self):
-        return ()
-
-    def get_exposure_commit_id(self):
-        return ''
-
-    def get_exposure_root_title(self):
-        return ''
-
-    def get_exposure_root_path(self):
-        return ''
-
-    def get_exposure_root_id(self):
-        return ''
-
-    # ZCatalog compatibility hack to make mybrains objects returned from
-    # a catalog search to contain values we want indexed.  The method,
-    # Products.ZCatalog.Catalog.recordify, does not support index_attr, 
-    # so the # above methods will not be called and the index name 
-    # listed in the catalog.xml we defined in our default profile will 
-    # be used as the attribute instead, which will not exist unless they
-    # are defined in the objects.  So we have to do the deed here.
-
-    def pmr2_authors_family_name(self):
-        return self.get_authors_family_index()
-
-    def pmr2_citation_title(self):
-        return self.get_citation_title_index()
-
-    def pmr2_curation(self):
-        return self.get_curation_index()
-
-    def pmr2_keyword(self):
-        return self.get_keywords_index()
-
-    def pmr2_exposure_workspace(self):
-        return self.get_exposure_workspace_index()
-
-    def pmr2_exposure_root_title(self):
-        return self.get_exposure_root_title()
-
-    def pmr2_exposure_root_path(self):
-        return self.get_exposure_root_path()
-
-    def pmr2_exposure_root_id(self):
-        return self.get_exposure_root_id()
-
-    def pmr2_exposure_commit_id(self):
-        return self.get_exposure_commit_id()
-
-    # XXX PMR1 display mode compatibility hack
-    def pmr1_citation_authors(self):
-        return ''
-
-    def pmr1_citation_title(self):
-        return ''
-
-    def pmr1_citation_authors_sortable(self):
-        s = self.pmr1_citation_authors()
-        if isinstance(s, basestring):
-            return s.lower()
-        return ''
-
-
 class Exposure(ATFolderDocument, TraversalCatchAll):
     """\
     PMR Exposure object is used to encapsulate a single version of any
@@ -157,43 +72,6 @@ class Exposure(ATFolderDocument, TraversalCatchAll):
         TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
         ATFolder.__before_publishing_traverse__(self, ob, request)
 
-    security.declareProtected(View, 'get_authors_family_index')
-    def get_authors_family_index(self):
-        # XXX stub, do not know if we should get values from children
-        # or how should we implement this.
-        return ()
-
-    security.declareProtected(View, 'get_citation_title_index')
-    def get_citation_title_index(self):
-        # XXX stub, see get_authors_family_index
-        return ()
-
-    security.declareProtected(View, 'get_keywords_index')
-    def get_keywords_index(self):
-        # XXX stub, see get_authors_family_index
-        return ()
-
-    security.declareProtected(View, 'get_exposure_root_title')
-    def get_exposure_root_title(self):
-        return self.Title()
-
-    security.declareProtected(View, 'get_exposure_root_path')
-    def get_exposure_root_path(self):
-        return self.absolute_url_path()
-
-    security.declareProtected(View, 'get_exposure_root_id')
-    def get_exposure_root_id(self):
-        return self.id
-
-    # XXX PMR1 display mode compatibility hack
-    security.declareProtected(View, 'pmr1_citation_authors')
-    def pmr1_citation_authors(self):
-        return self.Title()
-
-    security.declareProtected(View, 'pmr1_citation_title')
-    def pmr1_citation_title(self):
-        return self.Description()
-
 
 class ExposureFolder(ATFolderDocument, TraversalCatchAll):
 
@@ -206,7 +84,7 @@ class ExposureFolder(ATFolderDocument, TraversalCatchAll):
         ATFolder.__before_publishing_traverse__(self, ob, request)
 
 
-class ExposureFile(ATDocument, ExposureContentIndexBase):
+class ExposureFile(ATDocument):
     """\
     Generic object within an exposure that represents a file in the
     workspace, and as an anchor for adapted content.
@@ -234,54 +112,3 @@ class ExposureFile(ATDocument, ExposureContentIndexBase):
             if ctxobj is not None:
                 results.append(ctxobj.raw_text())
         return '\n'.join(results)
-
-    # and then we have to deal with being compatible with features that
-    # comptability that can't be cleanly decoupled at all.
-
-    def get_authors_family_index(self):
-        # @@metadata
-        note = zope.component.queryAdapter(self, name='cmeta')
-        if not (note and note.citation_authors):
-            return []
-        return [pmr2.app.util.normal_kw(i[0]) for i in note.citation_authors]
-
-    def get_citation_title_index(self):
-        # @@metadata
-        note = zope.component.queryAdapter(self, name='cmeta')
-        if not (note and note.citation_title):
-            return []
-        return pmr2.app.util.normal_kw(note.citation_title)
-
-    def get_keywords_index(self):
-        # @@metadata
-        note = zope.component.queryAdapter(self, name='cmeta')
-        if not (note and note.keywords):
-            return []
-        results = [pmr2.app.util.normal_kw(i[1]) for i in note.keywords]
-        results.sort()
-        return results
-
-    # ... of course, PMR1.
-    security.declareProtected(View, 'pmr1_citation_authors')
-    def pmr1_citation_authors(self):
-        note = zope.component.queryAdapter(self, name='cmeta')
-        if not (note and note.citation_authors and note.citation_issued):
-            # grab the workspace id (from exposure) and fix it
-            # XXX can't do this, because this is a catalog function.
-            #sa = zope.component.getAdapter(self, IExposureSourceAdapter)
-            #exposure, workspace, p = sa.source()
-            ctx = aq_parent(self)
-            while ctx is not None:
-                if IExposure.providedBy(ctx):
-                    return ctx.workspace.replace('_', ', ').title()
-                ctx = aq_parent(ctx)
-            return ''
-        authors = u', '.join([i[0] for i in note.citation_authors])
-        return u'%s, %s' % (authors, note.citation_issued[:4])
-
-    security.declareProtected(View, 'pmr1_citation_title')
-    def pmr1_citation_title(self):
-        note = zope.component.queryAdapter(self, name='cmeta')
-        if not (note and note.citation_title):
-            return self.Title()
-        return note.citation_title
