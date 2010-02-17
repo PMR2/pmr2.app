@@ -29,6 +29,8 @@ Curation Flags Index.
     ...         u'key1': [u'value1'],
     ...         u'key2': [u'value2', u'value3'],
     ...     }
+    ...     workspace = u'Workspace'
+    ...     commit_id = u'12345'
     >>> dummy = ExposureDummy()
     >>> results = pmr2_curation(dummy)()
     >>> results.sort()
@@ -39,9 +41,12 @@ Exposure Workspace Index.
 ::
 
     >>> from pmr2.app.catalog import pmr2_exposure_workspace
-    >>> class ExposureDummy(object):
-    ...     zope.interface.implements(IExposureObject)
-    ...     workspace = u'Workspace'
-    >>> dummy = ExposureDummy()
     >>> pmr2_exposure_workspace(dummy)()
     u'Workspace'
+
+Exposure Commit id.
+::
+
+    >>> from pmr2.app.catalog import pmr2_exposure_commit_id
+    >>> pmr2_exposure_commit_id(dummy)()
+    u'12345'

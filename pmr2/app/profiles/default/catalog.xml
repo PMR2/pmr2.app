@@ -22,7 +22,7 @@
   </index>
 
   <index name="pmr2_exposure_commit_id" meta_type="FieldIndex">
-    <indexed_attr value="get_exposure_commit_id"/>
+    <indexed_attr value="pmr2_exposure_commit_id"/>
   </index>
 
   <index name="pmr2_exposure_workspace" meta_type="KeywordIndex">

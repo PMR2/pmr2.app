@@ -185,10 +185,6 @@ class Exposure(ATFolderDocument, TraversalCatchAll):
     def get_exposure_root_id(self):
         return self.id
 
-    security.declareProtected(View, 'get_exposure_commit_id')
-    def get_exposure_commit_id(self):
-        return self.commit_id
-
     # XXX PMR1 display mode compatibility hack
     security.declareProtected(View, 'pmr1_citation_authors')
     def pmr1_citation_authors(self):

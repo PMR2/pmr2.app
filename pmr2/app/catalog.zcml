@@ -14,4 +14,8 @@
       factory=".catalog.pmr2_exposure_workspace" 
       name="pmr2_exposure_workspace" />
 
+  <adapter 
+      factory=".catalog.pmr2_exposure_commit_id" 
+      name="pmr2_exposure_commit_id" />
+
 </configure> 

@@ -30,3 +30,7 @@ def pmr2_curation(self):
 @indexer(IExposureObject)
 def pmr2_exposure_workspace(self):
     return self.workspace
+
+@indexer(IExposureObject)
+def pmr2_exposure_commit_id(self):
+    return self.commit_id
