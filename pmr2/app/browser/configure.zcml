@@ -209,19 +209,6 @@
       permission="cmf.ModifyPortalContent"
       />
 
-  <!-- 
-    XXX we are not doing this for every single custom mime type 
-    - one way around this is we implement annotations in the exposures
-      based on specific files that require this, not at the workspace
-      level
-  -->
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="pcenv"
-      class=".workspace.WorkspaceRawfileXmlBasePCEnvView"
-      permission="zope2.View"
-      />
-
   <browser:page
       for="pmr2.app.content.Workspace"
       name="create"

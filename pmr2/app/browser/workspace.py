@@ -34,8 +34,7 @@ from pmr2.app.interfaces import *
 from pmr2.app.interfaces import IPMR2GlobalSettings
 from pmr2.app.content.interfaces import *
 from pmr2.app.content import *
-from pmr2.app.util import set_xmlbase, fix_pcenv_externalurl, obfuscate, \
-                          isodate, generate_exposure_id
+from pmr2.app.util import set_xmlbase, obfuscate, isodate, generate_exposure_id
 
 from pmr2.app.browser import interfaces
 from pmr2.app.browser import widget
@@ -699,8 +698,12 @@ class WorkspaceRawfileView(WorkspaceFilePage):
 class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
 
     def find_type(self):
+        # XXX should really hook into mimetype registry and not hard
+        # coded in here.
         if self.storage.path.endswith('session.xml'):
             return 'application/x-pcenv-cellml+xml'
+        elif self.storage.path.endswith('.cellml'):
+            return 'application/cellml+xml'
 
     def __call__(self):
         data = WorkspaceRawfileView.__call__(self)
@@ -713,11 +716,6 @@ class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
         xmlroot = '/'.join((self.xmlrooturi, s_path, '',))
         data = set_xmlbase(data, xmlroot)
 
-        if self.storage.path.endswith('session.xml'):
-            # See pmr2.app.util.fix_pcenv_externalurl and
-            # https://tracker.physiomeproject.org/show_bug.cgi?id=1079
-            data = fix_pcenv_externalurl(data, self.rooturi)
-
         # all done, now set headers.
         contentType = self.find_type()
         if contentType:
@@ -728,14 +726,6 @@ class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
         self.request.response.setHeader('Content-Length', len(data))
 
         return data
-
-
-class WorkspaceRawfileXmlBasePCEnvView(WorkspaceRawfileXmlBaseView):
-
-    def find_type(self):
-        # XXX we are not doing this for every single type, alternate
-        # solution will be done.
-        return 'application/x-pcenv-cellml+xml'
 
 
 class CreateForm(z3c.form.form.Form):
