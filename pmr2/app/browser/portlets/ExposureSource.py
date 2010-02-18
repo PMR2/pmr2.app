@@ -75,7 +75,9 @@ class Renderer(base.Renderer):
 
     @memoize
     def expired(self):
-        return self.exposure.pmr2_review_state() == 'expired'
+        wf = getToolByName(self.exposure, 'portal_workflow')
+        state = wf.getInfoFor(self.exposure, 'review_state', '')
+        return state == 'expired'
 
     def render(self):
         return self._template()
