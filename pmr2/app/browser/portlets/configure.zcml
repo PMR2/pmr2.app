@@ -7,35 +7,6 @@
   <include package="plone.app.portlets" />
 
   <plone:portlet
-      name="portlets.SubPMR1"
-      interface=".subpmr1.ISubPMR1Portlet"
-      assignment=".subpmr1.Assignment"
-      renderer=".subpmr1.Renderer"
-      addview=".subpmr1.AddForm"
-      editview=".subpmr1.EditForm"
-      />
-
-  <plone:portlet
-      name="portlets.ExposureNav"
-      interface=".ExposureNav.IExposureNavPortlet"
-      assignment=".ExposureNav.Assignment"
-      renderer=".ExposureNav.Renderer"
-      addview=".ExposureNav.AddForm"
-      editview=".ExposureNav.EditForm"
-      />
-
-  <plone:portlet
-      name="portlets.ExposureMetadocNav"
-      interface=".ExposureMetadocNav.IExposureMetadocNavPortlet"
-      assignment=".ExposureMetadocNav.Assignment"
-      renderer=".ExposureMetadocNav.Renderer"
-      addview=".ExposureMetadocNav.AddForm"
-      editview=".ExposureMetadocNav.EditForm"
-      />
-
-  <!-- v0.2 -->
-
-  <plone:portlet
       name="pmr2.portlets.ExposureInfo"
       interface=".ExposureInfo.IExposureInfoPortlet"
       assignment=".ExposureInfo.Assignment"
@@ -79,13 +50,5 @@
       addview=".ExposureDownload.AddForm"
       editview=".ExposureDownload.EditForm"
       />
-
-  <!--
-  <plone:portletRenderer
-      portlet=".subpmr1.ISubPMR1Portlet"
-      layer=".interfaces.IThemeSpecific"
-      for="pmr2.app.interfaces.IExposurePMR1Metadoc"
-      />
-  -->
 
 </configure>
