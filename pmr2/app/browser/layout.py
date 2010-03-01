@@ -14,6 +14,7 @@ from paste.httpexceptions import HTTPFound, HTTPNotFound, HTTPForbidden
 
 from Acquisition import aq_inner
 from AccessControl import Unauthorized
+from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
 from Products.PythonScripts.standard import url_quote
 
@@ -168,7 +169,13 @@ class StorageFormWrapper(FormWrapper):
         try:
             # Note: this method can be used to manipulate the repo, use
             # with caution.
-            return storage.process_request(self.request)
+            results = storage.process_request(self.request)
+            if self.request.REQUEST_METHOD in ['POST']:
+                # update modification date if it was one of 
+                # modification methods.
+                self.context.setModificationDate(DateTime())
+                self.context.reindexObject()
+            return results
         except pmr2.mercurial.exceptions.UnsupportedCommandError:
             return super(StorageFormWrapper, self).__call__(*a, **kw)
 

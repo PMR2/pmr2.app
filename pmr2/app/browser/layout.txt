@@ -65,7 +65,8 @@ We need to emulate some of the fields that gets set and used by our
 wrapper class.  Since the dummy user has no roles, it will be blocked.
 ::
 
-    >>> context = Workspace('test')
+    >>> self.portal['test'] = Workspace('test')
+    >>> context = self.portal.test
     >>> request = make_request({'AUTHENTICATED_USER': dummyUser()})
     >>> request.REQUEST_METHOD = 'POST'
     >>> form = getMultiAdapter((context, request), name=u"storage-form")
@@ -77,19 +78,43 @@ wrapper class.  Since the dummy user has no roles, it will be blocked.
     Unauthorized: You are unauthorized to push to this workspace
 
 On the other hand if the user with the correct role, it will be let in.
-However, it is an "unbound" workspace object so when storage tries to
-initialize, it will trigger an exception.
+
+In order to rely on an actual Mercurial repo on disk for these tests, we
+are going to register our own dummies.
 ::
 
+    >>> import zope.interface
+    >>> from pmr2.mercurial.interfaces import IPMR2HgWorkspaceAdapter
+    >>> class IDummyWorkspace(zope.interface.Interface):
+    ...     pass
+    >>> class DummyStorage(object):
+    ...     zope.interface.implements(IPMR2HgWorkspaceAdapter)
+    ...     def __init__(self, context):
+    ...         pass
+    ...     def process_request(self, request):
+    ...         pass
+    >>> zope.interface.directlyProvides(context, IDummyWorkspace)
+    >>> sm = self.portal.getSiteManager()
+    >>> sm.registerAdapter(DummyStorage, required=(IDummyWorkspace,),
+    ...                    name=u'PMR2Storage')
+
+Now the test.  Before the form is called, we set the modificate date to
+a value that is way in the past (as this test almost always finish 
+within a millisecond) so we can verify that this value is updated on any
+POST requests.
+::
+
+    >>> from DateTime import DateTime
+    >>> moddate = DateTime(0)
+    >>> context.setModificationDate(moddate)
     >>> request = make_request({'AUTHENTICATED_USER': pushableUser()})
     >>> request.REQUEST_METHOD = 'POST'
     >>> form = getMultiAdapter((context, request), name=u"storage-form")
     >>> form
     <pmr2.app.browser.layout.StorageFormWrapper object ...>
     >>> form()
-    Traceback (most recent call last):
-    ...
-    AttributeError: getPhysicalPath
+    >>> moddate == context.ModificationDate()
+    False
 
 Here are the two other wrapper types:
 ::
