@@ -71,3 +71,19 @@ math > mrow {
     width: 0;  
     font-size: 100%;
 }
+
+/* styles for the shjs plugin */
+#shjs-view {
+    border: 1px #ccc solid;
+}
+
+#shjs-view div {
+    overflow: auto;
+    height: 60em;
+    width: 100%;
+}
+
+#shjs-view pre {
+    padding: 0.5em;
+    border: 0;
+}
