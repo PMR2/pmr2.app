@@ -8,7 +8,6 @@ from zope.annotation import factory
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 
-from pmr2.processor.cmeta import Cmeta
 from pmr2.app.interfaces import *
 from pmr2.app.annotation.interfaces import *
 from pmr2.app.factory import NamedUtilBase
@@ -118,6 +117,7 @@ class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
 
     def generate(self):
         # XXX reimplement using plain rdflib.
+        from pmr2.processor.cmeta import Cmeta
         metadata = Cmeta(StringIO(self.input))
         return (
             ('text', unicode(metadata.graph.serialize(format=self.format))),
