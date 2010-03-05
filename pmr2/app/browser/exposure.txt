@@ -670,6 +670,42 @@ rendered.
     >>> print result
     Edited Note is: [This is a test note]
 
+This should also be available as a new view that is attached to filectx.
+::
+
+    >>> 'edited_note' in filectx.views
+    True
+
+There are cases where user intervention is required for generating a
+note from the file.  This example shows that a user may select the
+number of characters from the original file to include in the resulting
+note.  We will do this on a new file.
+::
+
+    >>> context['README'] = ExposureFile('README')
+    >>> readmectx = context['README']
+    >>> chars = u'15'
+    >>> text = u'This will be replaced'
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.chars': chars,
+    ...         'form.widgets.text': text,
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> view = exposure.ExposureFileNoteEditForm(readmectx, request)
+    >>> view.traverse_subpath = ['post_edited_note']
+    >>> result = view()
+
+The data should have been generated correctly and the view rendered.
+::
+
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((readmectx, request), 
+    ...                                         name='post_edited_note')
+    >>> result = view()
+    >>> print result
+    Post Edited Note is: [15:This is an exam]
+
 ------------------------
 Files within Directories
 ------------------------
@@ -993,6 +1029,17 @@ utility defined for this task.
     ...             }),
     ...         ],
     ...         'selected_view': u'edited_note',
+    ...     }),
+    ...     ('README', {
+    ...         'docview_gensource': None,
+    ...         'docview_generator': None,
+    ...         'views': [
+    ...             (u'post_edited_note', {
+    ...                 'chars': 15,
+    ...                 'text': u'This is an exam',
+    ...             }),
+    ...         ],
+    ...         'selected_view': None,
     ...     }),
     ...     ('component/module.cellml', {
     ...         'docview_gensource': u'component/docs/index.html',

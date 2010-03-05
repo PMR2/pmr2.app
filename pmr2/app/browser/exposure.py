@@ -294,13 +294,13 @@ class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
 
     def applyChanges(self, data):
         results = super(ExposureFileNoteEditForm, self).applyChanges(data)
-        # since this form already assigns the data, the annotator
-        # is only used to append the name of the note to the list of
-        # available views.
         name = '/'.join(self.traverse_subpath)
         annotator = zope.component.getUtility(
             IExposureFileAnnotator, name=name)
-        annotator(self.context)._append_view()
+        # since this form already assigns the data, we don't need to
+        # pass in data for the call method for assignment, but we need
+        # an empty tuple (for now)
+        annotator(self.context)(())
         return results
 
     def update(self):

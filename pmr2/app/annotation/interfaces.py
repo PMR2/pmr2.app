@@ -32,6 +32,14 @@ class IExposureFileAnnotator(zope.interface.Interface):
         """
 
 
+class IExposureFilePostEditAnnotator(IExposureFileAnnotator):
+    """\
+    Interface for the ExposureFile annotation utility for editable notes
+    that require further automated processing (i.e. notes that had been
+    edited (post-edit) to contain data such as preferences).
+    """
+
+
 class IExposureFileNote(zope.interface.Interface):
     """\
     Interface for notes attached to ExposureFile objects.

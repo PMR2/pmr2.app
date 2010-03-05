@@ -27,6 +27,12 @@
       provides=".annotation.interfaces.IExposureFileAnnotator"
       />
 
+  <utility
+      name="post_edited_note"
+      component="pmr2.app.tests.adapter.PostEditedNoteAnnotatorFactory"
+      provides=".annotation.interfaces.IExposureFileAnnotator"
+      />
+
   <adapter
       for="pmr2.app.content.interfaces.IExposureFile"
       factory="pmr2.app.tests.adapter.RDFTurtleNoteFactory"
@@ -53,6 +59,13 @@
       factory="pmr2.app.tests.adapter.EditedNoteFactory"
       provides="pmr2.app.tests.content.IEditedNote"
       name="edited_note"
+      />
+
+  <adapter
+      for="pmr2.app.content.interfaces.IExposureFile"
+      factory="pmr2.app.tests.adapter.PostEditedNoteFactory"
+      provides="pmr2.app.tests.content.IPostEditedNote"
+      name="post_edited_note"
       />
 
   <browser:page
@@ -87,6 +100,13 @@
       for="pmr2.app.content.ExposureFile"
       name="edited_note"
       class="pmr2.app.tests.browser.EditedNoteView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="post_edited_note"
+      class="pmr2.app.tests.browser.PostEditedNoteView"
       permission="zope2.View"
       />
 

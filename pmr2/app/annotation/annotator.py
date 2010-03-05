@@ -14,9 +14,9 @@ from pmr2.app.factory import NamedUtilBase
 import pmr2.app.util
 
 
-class ExposureFileEditableAnnotatorBase(NamedUtilBase):
+class ExposureFileAnnotatorBase(NamedUtilBase):
     """
-    An editable annotator.
+    The base annotator.
     """
 
     def __init__(self, context):
@@ -24,6 +24,13 @@ class ExposureFileEditableAnnotatorBase(NamedUtilBase):
         # another annotator class with another context if it is needed
         # on another one.
         self.__context = context
+
+    @property
+    def input(self):
+        if not hasattr(self, '__input'):
+            self.__input = zope.component.getAdapter(
+                self.context, IExposureSourceAdapter).file()
+        return self.__input
 
     @property
     def context(self):
@@ -60,33 +67,49 @@ class ExposureFileEditableAnnotatorBase(NamedUtilBase):
                              'list of tuple(key, value)' % self.__class__)
 
     def __call__(self, data=None):
-        """
-        If it's an editable note data is ignored, however in the future 
-        there may be a need for a mixture of generated and user
-        specified data.
+        """\
+        Puts data into the note, depending on the nature of the note
+        and this annotator.
+
+        If the target note is not editable (i.e. one that does not
+        implement IExposureFileEditableNote) all data will be generated.
+
+        If the target note is editable (i.e. implements 
+        IExposureFileEditableNote), the result is dependent on what this
+        annotator implements.
+        
+        If the annotator only implements IExposureFileAnnotator, the 
+        data parameter will provide the data which will be assigned to
+        the note.  The method generate will not be called.
+        
+        If the annotator also implements IExposureFileEditableAnnotator,
+        the data attribute provides the data, which is assigned, and
+        the method generate will be called.
         """
 
         if not IExposureFileEditableNote.providedBy(self.note):
             data = self.generate()
-        if data:
+            self._annotate(data)
+            self._append_view()
+            return
+
+        # this must be editable notes.
+
+        if data is not None:
             self._annotate(data)
             self._append_view()
         else:
-            # XXX should a warning be raised about that no data had 
-            # been provided and nothing was done?
+            # Q: Sould a warning be raised about that no data had been
+            # provided and nothing was done?
+            # A: Maybe, but this may be used by the form that starts the
+            # process.  Could use a test case.
             pass
 
-
-class ExposureFileAnnotatorBase(ExposureFileEditableAnnotatorBase):
-    """\
-    The original standard annotator, defined to be uneditable thus 
-    require the source file.
-    """
-
-    def __init__(self, context):
-        super(ExposureFileAnnotatorBase, self).__init__(context)
-        self.input = zope.component.getAdapter(
-            self.context, IExposureSourceAdapter).file()
+        if IExposureFilePostEditAnnotator.providedBy(self):
+            # The subclass that implements generate must vadlidate any
+            # data which may (or not) be annotated above.
+            data = self.generate()
+            self._annotate(data)
 
 
 class PortalTransformGenBase(object):

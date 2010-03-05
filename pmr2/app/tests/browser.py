@@ -21,3 +21,10 @@ class EditedNoteView(ExposureFileViewBase):
 
     def __call__(self):
         return 'Edited Note is: [%s]' % self.note.note
+
+
+class PostEditedNoteView(ExposureFileViewBase):
+
+    def __call__(self):
+        return 'Post Edited Note is: [%d:%s]' % (
+            self.note.chars, self.note.text)
