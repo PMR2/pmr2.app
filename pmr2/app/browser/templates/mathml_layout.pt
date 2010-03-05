@@ -9,6 +9,37 @@
 &lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN&quot; &quot;http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd&quot;&gt;"/>
 <tal:structure tal:content="structure view/xml_stylesheet"/>
     </metal:slot>
+
+<metal:slot metal:fill-slot="javascript_head_slot"
+    i18n:domain="pmr2.app">
+  <script type="text/javascript">
+  //<![CDATA[
+    function resizeMainView() {
+        var minHeight = 300;
+        var mainView = jq("#cellml-mathml");
+        var winHeight = jq(window).height();
+        var viewTop = mainView.offset().top;
+
+        var rawHeight = winHeight - viewTop;
+        var newHeight = Math.max(minHeight, rawHeight);
+
+        mainView.css('height', newHeight);
+    };
+
+    var resizeTimer = null;
+    jq(window).bind('resize', function() {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resizeMainView, 100);
+    });
+
+    jq(window).bind('load', function(){
+      resizeMainView();
+    });
+
+  //]]>
+  </script>
+</metal:slot>
+
 <body>
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default">

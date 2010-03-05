@@ -59,7 +59,7 @@
 
 #cellml-mathml {
     overflow: auto;
-    max-height: 400px;
+    height: 400px;
 }
 
 math > mrow {
