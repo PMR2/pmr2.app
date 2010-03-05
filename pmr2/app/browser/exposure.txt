@@ -367,6 +367,7 @@ Now we do the same with our set of data, with more content.
     ...     'b94d1701154be42acf63ee6b4bd4a99d09ba043c',
     ...     '2647d4389da6345c26d168bbb831f6512322d4f9',
     ...     '006f11cd9211abd2a879df0f6c7f27b9844a8ff2',
+    ...     'eef1e9af39a79b2fc47ef978f8e61e853bad54e2',
     ... ]
     >>> rawrev = rawrevs[2]
     >>> rev = unicode(rawrev)
@@ -1135,6 +1136,44 @@ supply an existing commit id.
     >>> if not result == answer:
     ...     pp(answer)
     ...     pp(result)
+
+It should work for all other commits.  The only difference would be the
+edited note.  We will need to make a deep copy of the original answer
+and change.
+::
+
+    >>> from copy import deepcopy
+    >>> rev2_answer = answer
+    >>> rev = unicode(rawrevs[3])
+    >>> answer = deepcopy(answer)
+    >>> answer[-1][1]['commit_id'] = rev
+    >>> answer[1][1]['views'] = [
+    ...         (u'post_edited_note', {
+    ...             'chars': 15,
+    ...             'text': u'README for this',
+    ...         }),
+    ...     ]
+    ...
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': rev,
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                         name='rollover')
+    >>> result = view.form_instance()
+    >>> nextURL = request.response.getHeader('Location')
+    >>> print nextURL
+    http://.../exposure/...
+    >>> new_id = nextURL.split('/')[-1]
+    >>> new_ex = self.portal.exposure[new_id]
+    >>> newport = exposure.ExposurePort(new_ex, None)
+    >>> result = list(newport.export())
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
+
+Need a test case to handle file name changes, either through move or
+delete.
 
 Need to test this with the catalog, such that the results can still be
 queried.
