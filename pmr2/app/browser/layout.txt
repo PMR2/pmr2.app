@@ -61,26 +61,8 @@ Now we build our adapters.
     ...                name=u"mathml-layout")
     ... 
 
-We need to emulate some of the fields that gets set and used by our
-wrapper class.  Since the dummy user has no roles, it will be blocked.
-::
-
-    >>> self.portal['test'] = Workspace('test')
-    >>> context = self.portal.test
-    >>> request = make_request({'AUTHENTICATED_USER': dummyUser()})
-    >>> request.REQUEST_METHOD = 'POST'
-    >>> form = getMultiAdapter((context, request), name=u"storage-form")
-    >>> form
-    <pmr2.app.browser.layout.StorageFormWrapper object ...>
-    >>> form()
-    Traceback (most recent call last):
-    ...
-    Unauthorized: You are unauthorized to push to this workspace
-
-On the other hand if the user with the correct role, it will be let in.
-
-In order to rely on an actual Mercurial repo on disk for these tests, we
-are going to register our own dummies.
+In order to not rely on a real Mercurial repo on disk for these tests,
+we are going to register our own dummies.
 ::
 
     >>> import zope.interface
@@ -92,16 +74,46 @@ are going to register our own dummies.
     ...     def __init__(self, context):
     ...         pass
     ...     def process_request(self, request):
-    ...         pass
+    ...         return 'Success'
+    >>> self.portal['test'] = Workspace('test')
+    >>> context = self.portal.test
     >>> zope.interface.directlyProvides(context, IDummyWorkspace)
     >>> sm = self.portal.getSiteManager()
     >>> sm.registerAdapter(DummyStorage, required=(IDummyWorkspace,),
     ...                    name=u'PMR2Storage')
 
-Now the test.  Before the form is called, we set the modificate date to
-a value that is way in the past (as this test almost always finish 
-within a millisecond) so we can verify that this value is updated on any
-POST requests.
+We need to emulate some of the fields that gets set and used by our
+wrapper class.  Since the dummy user has no roles, it will be blocked
+from making POST requests.
+::
+
+    >>> request = make_request({'AUTHENTICATED_USER': dummyUser()})
+    >>> request.REQUEST_METHOD = 'POST'
+    >>> form = getMultiAdapter((context, request), name=u"storage-form")
+    >>> form
+    <pmr2.app.browser.layout.StorageFormWrapper object ...>
+    >>> form()
+    Traceback (most recent call last):
+    ...
+    Unauthorized: You are unauthorized to push to this workspace
+
+However, this will not affect GETs.  Since the dummy method does not
+raise an exception, what it returns will be rendered instead.
+::
+
+    >>> request = make_request({'AUTHENTICATED_USER': dummyUser()})
+    >>> request.REQUEST_METHOD = 'GET'
+    >>> form = getMultiAdapter((context, request), name=u"storage-form")
+    >>> form
+    <pmr2.app.browser.layout.StorageFormWrapper object ...>
+    >>> form()
+    'Success'
+
+On the other hand if the user with the correct role, it will be allowed
+to POST.  Before the form is called, we set the modificate date to a 
+value that is way in the past (as this test almost always finish within
+a millisecond) so we can verify that this value is updated on any POST 
+requests.
 ::
 
     >>> from DateTime import DateTime
@@ -113,6 +125,7 @@ POST requests.
     >>> form
     <pmr2.app.browser.layout.StorageFormWrapper object ...>
     >>> form()
+    'Success'
     >>> moddate == context.ModificationDate()
     False
 
