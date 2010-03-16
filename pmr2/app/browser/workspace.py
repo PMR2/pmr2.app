@@ -239,8 +239,14 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
         return self._log
 
     def navlist(self):
-        nav = self.log['changenav']
-        for i in nav():
+        # XXX we are merging before/after together.
+        nav = self.log['changenav'][0]
+        for i in nav['before']():
+            yield {
+                'href': i['node'],
+                'label': i['label'],
+            }
+        for i in nav['after']():
             yield {
                 'href': i['node'],
                 'label': i['label'],
@@ -663,7 +669,7 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
             return []
         result = []
         for location, subrepo in substate.iteritems():
-            source, rev = subrepo
+            source, rev, kind = subrepo
             result.append((location, source, rev))
         result.sort()
         result = [dict(zip(('location', 'source', 'rev'), i)) for i in result]
