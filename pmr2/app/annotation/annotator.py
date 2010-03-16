@@ -97,6 +97,8 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
 
         if data is not None:
             self._annotate(data)
+            # XXX there may be cases a view is undefined.  Migration will
+            # have to take note of this.
             self._append_view()
         else:
             # Q: Sould a warning be raised about that no data had been

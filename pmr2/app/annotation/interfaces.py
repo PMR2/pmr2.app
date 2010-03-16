@@ -24,6 +24,14 @@ class IExposureFileAnnotator(zope.interface.Interface):
         required=False,
     )
 
+    # we may need an annotator that is defined to NOT have a view, but
+    # serve as a "hidden" value store for other views.
+    # omit_view = zope.schema.Bool
+
+    # alternately, the view is generated but it should not be listed on
+    # the portlet panel.
+    # no_view_entry = zope.schema.Bool
+
     def generate(context):
         """\
         Process the input context to return a list of tuples in the

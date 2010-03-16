@@ -321,6 +321,12 @@ class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
             # links to the editable notes.
             raise HTTPNotFound()
         self.note = note
+
+        # This might be worth some thought.
+        # So the note exists, we now determine whether a default editor
+        # had been registered for this note to redirect to.  If not, we
+        # use this default note editor for it.
+
         # assign the field
         # XXX this appears to work, we only want the interface that is
         # directly implemented by the class, which this appears to 
