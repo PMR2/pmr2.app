@@ -1,33 +1,16 @@
-import re
-import os.path
-from cStringIO import StringIO
-
 from zope import interface
-import zope.interface
 import zope.component
 from zope.schema import fieldproperty
-from persistent import Persistent
 
 from AccessControl import ClassSecurityInfo
-from Acquisition import aq_parent, aq_inner
-from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
-from Products.ATContentTypes.atct import ATCTContent
 from Products.ATContentTypes.atct import ATFolder, ATBTreeFolder
 from Products.ATContentTypes.atct import ATDocument
-from Products.Archetypes.atapi import BaseContent
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.permissions import View, ModifyPortalContent
-from Products.PortalTransforms.data import datastream
+from Products.CMFCore.permissions import View
 
-import pmr2.mercurial.interfaces
-from pmr2.processor.cmeta import Cmeta
-
-from pmr2.app.interfaces import IPMR2GlobalSettings
 from pmr2.app.interfaces import *
 from pmr2.app.content.interfaces import *
 from pmr2.app.atct import ATFolderDocument
 from pmr2.app.mixin import TraversalCatchAll
-import pmr2.app.util
 
 
 class ExposureContainer(ATBTreeFolder):
