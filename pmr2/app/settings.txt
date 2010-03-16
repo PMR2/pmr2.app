@@ -27,7 +27,7 @@ how pmr2_settings created from above is not acquired again.
     ...         'form.widgets.create_user_workspace': [u'false'],
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> f = PMR2GlobalSettingsEditForm(self.folder, request)
+    >>> f = PMR2GlobalSettingsEditForm(self.portal, request)
     >>> result = f()
     >>> pmr2_settings.repo_root == self.tmpdir
     True
@@ -123,3 +123,96 @@ execption happens.
     Traceback (most recent call last):
     ...
     TypeError: the content ... is not a workspace container
+
+-----------
+Subsettings
+-----------
+
+Modules may have their own settings.  Since they are probably trivial
+and in the interest to keep pollution away from the global space, we
+define a dictionary within our setting object that will hold these other
+settings.  Our form will also render these fields so repository admins
+can have a single form where all trivial settings for plugins can be
+edited.
+
+In order for plugins to take advantage of the subgroups, it has to first
+define the interface and persistent object and set up the utility that
+will fetch the setting object.
+::
+
+    >>> import zope.component
+    >>> import zope.interface
+    >>> import zope.schema
+    >>> from persistent import Persistent
+    >>> from pmr2.app.interfaces import IPMR2PluggableSettings
+    >>> from pmr2.app.settings import settings_factory
+    >>> from pmr2.app.factory import named_factory
+    >>> class IPluginSetting(zope.interface.Interface):
+    ...     dummy = zope.schema.TextLine(title=u'Dummy',)
+    ...
+    >>> class PluginSetting(Persistent):
+    ...     zope.interface.implements(IPluginSetting)
+    ...     zope.component.adapts(IPMR2GlobalSettings)
+    ...     title = u'Plugin Settings'
+    ...     dummy = zope.schema.fieldproperty.FieldProperty(
+    ...         IPluginSetting['dummy'])
+    ...
+    >>> PluginSettingFactory = settings_factory(PluginSetting, 
+    ...                                         'pluginsetting')
+    >>> zope.component.provideAdapter(PluginSettingFactory)
+    >>> sm = zope.component.getSiteManager()
+    >>> sm.registerUtility(PluginSettingFactory, IPMR2PluggableSettings,
+    ...     name='pluginsetting')
+
+Now we get the pluggable settings utility with the same name, 
+instantiate against the global settings object to get back our data.
+
+While the actual class/data can be directly accessed through the 
+internal subsettings dictionary, it's best to do it through this method
+via the component registry for consistency (much like zope annotations).
+::
+
+Now we get the pluggable settings utility with the same name, 
+instantiate against the global settings object to get back our data.
+
+While the actual class/data can be directly accessed through the 
+internal subsettings dictionary, it's best to do it through this method
+via the component registry for consistency (much like zope annotations).
+::
+
+    >>> ps = IPluginSetting(pmr2_settings)
+    >>> ps
+    <PluginSetting ...>
+    >>> ps.title
+    u'Plugin Settings'
+    >>> ps.dummy = u'Test value'
+
+Now we have the settings object defined, the settings editor form should
+have this newly adpated setting class rendered along with this value.
+::
+
+    >>> from pmr2.app.browser.settings import PMR2GlobalSettingsEditForm
+    >>> from pmr2.app.tests.base import TestRequest
+    >>> request = TestRequest()
+    >>> f = PMR2GlobalSettingsEditForm(self.portal, request)
+    >>> result = f()
+    >>> u'Test value' in result
+    True
+
+Try to update the value.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.repo_root': self.tmpdir,
+    ...         'form.widgets.default_workspace_subpath': u'workspace',
+    ...         'form.widgets.user_workspace_subpath': u'w',
+    ...         'form.widgets.default_exposure_subpath': u'exposure',
+    ...         'form.widgets.create_user_workspace': [u'false'],
+    ...         'form.widgets.pluginsetting.dummy': u'SMRT',
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> f = PMR2GlobalSettingsEditForm(self.portal, request)
+    >>> result = f()
+    >>> ps.dummy
+    u'SMRT'

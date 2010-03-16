@@ -155,6 +155,13 @@ class IPMR2GlobalSettings(zope.interface.Interface):
         """
 
 
+class IPMR2PluggableSettings(zope.interface.Interface):
+    """\
+    Auxilary settings that are defined by plugins to PMR2 that are
+    pluggable into the main settings.
+    """
+
+
 class IPMR2KeywordProvider(zope.interface.Interface):
     """\
     A provider of keywords that are captured from the object.

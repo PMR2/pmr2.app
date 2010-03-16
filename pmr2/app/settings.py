@@ -3,11 +3,11 @@ from os.path import join, exists, isdir
 
 from persistent import Persistent
 from zope.annotation import factory, IAttributeAnnotatable
-from zope.component import getUtility
 from zope.app.container.contained import Contained
+from zope.app.component.hooks import getSite, getSiteManager
 import zope.schema
 import zope.interface
-from zope.app.component.hooks import getSite, getSiteManager
+import zope.component
 
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory('pmr2')
@@ -20,7 +20,8 @@ except ImportError:
     ISiteRoot = None
 
 from pmr2.app.content.interfaces import IWorkspaceContainer
-from pmr2.app.interfaces import IPMR2GlobalSettings
+from pmr2.app.interfaces import IPMR2GlobalSettings, IPMR2PluggableSettings
+from pmr2.app.factory import NamedUtilBase
 
 __all__ = [
     'PMR2GlobalSettings',
@@ -32,7 +33,7 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
     Please refer to IPMR2GlobalSettings
     """
 
-    zope.interface.implements(IPMR2GlobalSettings)
+    zope.interface.implements(IPMR2GlobalSettings, IAttributeAnnotatable)
     zope.component.adapts(IAttributeAnnotatable)
 
     repo_root = zope.schema.fieldproperty.FieldProperty(
@@ -163,3 +164,14 @@ def _make_default_path():
 
     # This should never happen, but None does not make a path.
     return ''
+
+
+PREFIX = 'pmr2.app.settings-'
+def settings_factory(klass, name, title=None):
+    key = PREFIX + name
+    result = factory(klass, key)
+    result.name = result.title = name
+    if title is not None:
+        result.title = title
+    return result
+
