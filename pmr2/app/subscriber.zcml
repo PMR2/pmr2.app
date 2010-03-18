@@ -6,7 +6,7 @@
   <subscriber
       for="pmr2.app.content.interfaces.IExposure
           zope.app.event.interfaces.IObjectModifiedEvent"
-      handler=".content.catalog_content"
+      handler=".subscriber.catalog_content"
       />
 
   <!-- 
@@ -16,19 +16,19 @@
   <subscriber
       for="pmr2.app.content.interfaces.IExposure
           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-      handler=".content.recursive_recatalog_content"
+      handler=".subscriber.recursive_recatalog_content"
       />
 
   <subscriber
       for="pmr2.app.content.interfaces.IExposureFile
           zope.app.event.interfaces.IObjectModifiedEvent"
-      handler=".content.catalog_content"
+      handler=".subscriber.catalog_content"
       />
 
   <subscriber
       for="pmr2.app.content.interfaces.IExposureFolder
           zope.app.event.interfaces.IObjectModifiedEvent"
-      handler=".content.catalog_content"
+      handler=".subscriber.catalog_content"
       />
 
   <subscriber
