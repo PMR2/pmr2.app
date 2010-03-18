@@ -52,12 +52,15 @@ class PMR2PluginSettingsExtender(extensible.FormExtender):
     def update(self):
         utilities = zope.component.getUtilitiesFor(IPMR2PluggableSettings)
         for name, utility in utilities:
-            # Assumption
-            interface = list(zope.interface.implementedBy(utility.factory))[0]
             prefix = utility.name
             title = utility.title
-            fields = z3c.form.field.Fields(interface, prefix=prefix)
-            self.add(interface, prefix=prefix)
+            if utility.fields:
+                fields = utility.fields
+            else:
+                # Assumption
+                interface = list(zope.interface.implementedBy(
+                    utility.factory))[0]
+                fields = z3c.form.field.Fields(interface, prefix=prefix)
             self.add(fields, group=title)
 
 zope.component.provideAdapter(factory=PMR2PluginSettingsExtender, name=u"pmr2.plugin.extender")

@@ -192,9 +192,10 @@ have this newly adpated setting class rendered along with this value.
 ::
 
     >>> from pmr2.app.browser.settings import PMR2GlobalSettingsEditForm
-    >>> from pmr2.app.tests.base import TestRequest
+    >>> from pmr2.app.tests.browser import GroupTemplate
     >>> request = TestRequest()
     >>> f = PMR2GlobalSettingsEditForm(self.portal, request)
+    >>> f.template = GroupTemplate(f)
     >>> result = f()
     >>> u'Test value' in result
     True

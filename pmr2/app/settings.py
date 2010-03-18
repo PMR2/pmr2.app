@@ -167,11 +167,12 @@ def _make_default_path():
 
 
 PREFIX = 'pmr2.app.settings-'
-def settings_factory(klass, name, title=None):
+def settings_factory(klass, name, title=None, fields=None):
     key = PREFIX + name
     result = factory(klass, key)
     result.name = result.title = name
     if title is not None:
         result.title = title
+    result.fields = fields
     return result
 
