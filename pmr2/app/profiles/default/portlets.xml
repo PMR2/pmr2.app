@@ -49,7 +49,7 @@
  <portlet 
      addview="pmr2.portlets.exposure_source"
      title="Exposure Source"
-     description="A portlet that shows the source of the expsoure.">
+     description="A portlet that shows the source of the exposure.">
  </portlet>
 
  <portlet 
