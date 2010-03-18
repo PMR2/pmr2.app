@@ -3,6 +3,7 @@ from zope.annotation.interfaces import IAnnotations
 from zope.annotation import factory
 from zope.location import Location, locate
 from pmr2.app.interfaces import INamedUtilBase
+from pmr2.app.content.interfaces import IExposureObject
 from pmr2.app.annotation.interfaces import IExposureFileNote
 
 PREFIX = 'pmr2.annotation.notes-'
@@ -22,6 +23,14 @@ def get_annotated(context):
     items = [i for i in IAnnotations(of).items() 
         if IExposureFileNote.providedBy(i[1])]
     return items
+
+def has_note(context, key):
+    # purges ExposureFileNotes
+    if not IExposureObject.providedBy(context):
+        return False
+    ann = IAnnotations(context)
+    k = PREFIX + key
+    return k in ann
 
 def del_note(context, key):
     # purges ExposureFileNotes
