@@ -49,79 +49,6 @@ Exposure object is created with fields properly populated.
     >>> self.portal.exposure[oid].commit_id
     u'00000000'
 
-=======================
-Exposure Traversal Page
-=======================
-
-Files within the workspace may link to other resources within it using 
-relative links, with those links being incorporated into the resulting 
-exposure pages, those links will become broken within Plone as they will
-not exist in there.  Since creating every object within Plone is not
-practical as they can be found from the workspace object, we redirect
-requests to those relative links using the path fragments captured using
-the pre-traversal hook in the exposure container object.
-
-Here is an example of how it may work.  We have to mock up some objects
-as we are only demonstrating how this view can work.  This first example
-is the default view, with no request_subpath fragments.
-::
-
-    >>> class TestExposure(object):
-    ...     interface.implements(IExposure)
-    ...     commit_id = '000000000'
-    ...
-    >>> class TestPage(exposure.ExposureTraversalPage):
-    ...     def render(self):
-    ...         return u'render'
-    ...     def path_to_uri(self):
-    ...         filepath = '/'.join(self.request['request_subpath'])
-    ...         return 'workspace/%s/%s' % (self.context.commit_id, filepath)
-    ...
-    >>> context = TestExposure()
-    >>> request = TestRequest()
-    >>> view = TestPage(context, request)
-    >>> view()
-    u'render'
-
-Now if the ExposureContainer object has trapped a request_subpath
-fragment, it should do a redirect.
-::
-
-    >>> request = TestRequest(request_subpath=['test.png'])
-    >>> view = TestPage(context, request)
-    >>> view()
-    'workspace/000000000/test.png'
-    >>> request.response.getHeader('Location')
-    'workspace/000000000/test.png'
-
-If a request_subpath does not resolve to a valid resource, redirects
-are generated anyway since workspace can resolve it (no need to check
-twice).
-::
-
-    >>> request = TestRequest(request_subpath=['fail.path'])
-    >>> view = TestPage(context, request)
-    >>> view()
-    'workspace/000000000/fail.path'
-
-Of course within the workspace, an HTTP Not Found would be triggered.
-
-There are some caveats, it has to do with existing objects:
-
-- Resolved views (@@, ++resource++) and existing objects in Plone have 
-  priority, so those relative links will actually point to those views
-  (note: traversal path is resolved not here, but in context; see
-  pmr2.app.mixin).  This can cause security issues if those views are 
-  not built with security in mind (they should be built to resist CSRF 
-  anyway).
-
-- Folders in Plone will definitely break the subpath resolution as they 
-  prevent ExposureContainer (which implements the mixin class mentioned
-  above) from doing its job.  A customized Folder class will need to be
-  implemented to use that mixin and do its own resolution (or pass that
-  job the ExposureContainer parent).
-
-
 ------------------------------------------------------------------------
 
 ========================
@@ -385,33 +312,8 @@ Now we do the same with our set of data, with more content.
     >>> context
     <Exposure at ...>
 
-Before we use the builder on our set of data, we test that the redirect
-works.  Redirects are required because images or imports may be linked
-relatively within the resulting text of a generated ExposureFile.  Since
-the other object may not exist, the redirect exists to connect it back
-to the source file which lives in the workspace.
-::
-
-    >>> request = TestRequest(request_subpath=['README'])
-    >>> view = exposure.ExposureFolderListing(context, request)
-    >>> result = view()
-    >>> request.response.getHeader('Location')
-    '.../workspace/rdfmodel/.../README'
-
-Should work for other files within directories, too.
-::
-
-    >>> request = TestRequest(request_subpath=['component', 'README'])
-    >>> view = exposure.ExposureFolderListing(context, request)
-    >>> result = view()
-    >>> request.response.getHeader('Location')
-    '.../workspace/rdfmodel/.../component/README'
-
-Redirection will work differently after the builder is used to generate
-folders and files.  There are few examples of this after.
-
-We need to wrap around one of the interesting files inside with the
-standard ExposureFile object.
+In order to annotate views to a file, we need to wrap around the target 
+files with the standard ExposureFile object.
 ::
 
     >>> rdfmodel = self.portal.workspace.rdfmodel
@@ -425,15 +327,6 @@ standard ExposureFile object.
     >>> testform.update()
     >>> context[file1]
     <ExposureFile at ...>
-
-Redirect view will work on this.
-::
-
-    >>> request = TestRequest()
-    >>> view = exposure.ExposureFileRedirectView(context[file1], request)
-    >>> result = view()
-    >>> request.response.getHeader('Location')
-    'http://.../workspace/rdfmodel/@@rawfile/.../example_model.cellml'
 
 We will use the annotation form, which will get the annotator and 
 annotate our ExposureFile content object.  Of course, first we have to
@@ -792,25 +685,6 @@ the redirection view.
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/docs/index.rst'
 
-For the other files that do not have the note adapter in place, there
-should be a view defined such that they will still get redirected back
-to it.  In this case, the path 'component/README' used to be accessible,
-but now a folder had been created by some steps above.  Since the folder
-object will be resolved, its default view should be acquired with a
-proper request_subpath component added.  The request_subpath key within
-request is generated by the mixin class, it is captured from traversal 
-to this non-existent path by the user agent.  Please see ../mixin.py.
-::
-
-    >>> edir1 = context[path4[0]]
-    >>> edir1
-    <ExposureFolder at /.../component>
-    >>> request = TestRequest(request_subpath=['README'])
-    >>> view = exposure.ExposureFolderListing(edir1, request)
-    >>> result = view()
-    >>> request.response.getHeader('Location')
-    '.../component/README'
-
 It is possible to define a custom note adapter with its own view and
 annotator to store custom-defined values, and this is the preferred
 method for it allows plugin writers to define exactly how the data is
@@ -925,6 +799,7 @@ Ditto for ExposureFolders.
     ...         'form.widgets.docview_generator': [u'safe_html'],
     ...         'form.buttons.apply': 1,
     ...     })
+    >>> edir1 = context[path4[0]]
     >>> view = zope.component.queryMultiAdapter((edir1, request), 
     ...                                         name='docviewgen')
     >>> result = view.form_instance()

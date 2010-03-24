@@ -16,9 +16,7 @@
  <property name="default_view">exposure_file_redirect</property>
  <property name="view_methods">
   <element value="exposure_file_redirect"/>
-  <element value="exposure_file_info"/>
   <element value="exposure_file_document_view"/>
-  <element value="document_view"/>
  </property>
 
  <alias from="(Default)" to="(dynamic view)"/>

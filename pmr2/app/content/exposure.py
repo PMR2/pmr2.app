@@ -10,7 +10,6 @@ from Products.CMFCore.permissions import View
 from pmr2.app.interfaces import *
 from pmr2.app.content.interfaces import *
 from pmr2.app.atct import ATFolderDocument
-from pmr2.app.mixin import TraversalCatchAll
 
 
 class ExposureContainer(ATBTreeFolder):
@@ -25,7 +24,7 @@ class ExposureContainer(ATBTreeFolder):
         super(ExposureContainer, self).__init__(oid, **kwargs)
 
 
-class Exposure(ATFolderDocument, TraversalCatchAll):
+class Exposure(ATFolderDocument):
     """\
     PMR Exposure object is used to encapsulate a single version of any
     given workspace and will allow more clear presentation to users of
@@ -40,7 +39,7 @@ class Exposure(ATFolderDocument, TraversalCatchAll):
     have classes defined for them.
     """
 
-    interface.implements(IExposure, IExposureObject)
+    interface.implements(IExposure, IExposureFolder, IExposureObject)
     security = ClassSecurityInfo()
     # XXX the get_ methods are similar to IWorkspace.
     # best to define a common interface.
@@ -51,20 +50,12 @@ class Exposure(ATFolderDocument, TraversalCatchAll):
     docview_gensource = fieldproperty.FieldProperty(IExposure['docview_gensource'])
     docview_generator = fieldproperty.FieldProperty(IExposure['docview_generator'])
 
-    def __before_publishing_traverse__(self, ob, request):
-        TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
-        ATFolder.__before_publishing_traverse__(self, ob, request)
 
-
-class ExposureFolder(ATFolderDocument, TraversalCatchAll):
+class ExposureFolder(ATFolderDocument):
 
     interface.implements(IExposureFolder, IExposureObject)
     docview_gensource = fieldproperty.FieldProperty(IExposureFolder['docview_gensource'])
     docview_generator = fieldproperty.FieldProperty(IExposureFolder['docview_generator'])
-
-    def __before_publishing_traverse__(self, ob, request):
-        TraversalCatchAll.__before_publishing_traverse__(self, ob, request)
-        ATFolder.__before_publishing_traverse__(self, ob, request)
 
 
 class ExposureFile(ATDocument):

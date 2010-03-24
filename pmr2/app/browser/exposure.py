@@ -99,45 +99,6 @@ ExposureEditCurationFormView = layout.wrap_form(ExposureEditCurationForm,
     label="Curation Editor")
 
 
-class ExposureTraversalPage(page.TraversePage):
-    """\
-    Since any exposure page can become the root for whatever reason, we
-    need to implement this in all methods.
-    """
-
-    target_view = 'rawfile'
-
-    def portal_url(self):
-        portal = getToolByName(self.context, 'portal_url').getPortalObject()
-        return portal.absolute_url()
-
-    def render(self):
-        raise NotImplementedError
-
-    def path_to_uri(self):
-        helper = zope.component.queryAdapter(
-            self.context, IExposureSourceAdapter)
-        exposure, workspace, path = helper.source()
-        filepath = '/'.join([path] + self.request['request_subpath'])
-        target_uri = '%s/@@%s/%s/%s' % (workspace.absolute_url(), 
-            self.target_view, exposure.commit_id, filepath)
-        return target_uri
-
-    def __call__(self, *args, **kwargs):
-
-        if not 'request_subpath' in self.request:
-            return self.render()
-        target_uri = self.path_to_uri()
-        return self.request.response.redirect(target_uri)
-
-
-class ExposureFolderListing(ExposureTraversalPage):
-
-    def render(self):
-        # directly calling the intended python script.
-        return self.context.folder_listing()
-
-
 class ExposureFileGenForm(form.AddForm):
     """\
     Form to generate an exposure file (encapsulates an actual file in a
@@ -422,7 +383,7 @@ ExposureDocViewGenFormView = layout.wrap_form(
     label="Generate Default View for Exposure.")
 
 
-class ExposureInfo(ExposureTraversalPage):
+class ExposureInfo(page.SimplePage):
     """\
     Inheriting from the TraversalPage because this will be the main view
     wrapping around exposure.
@@ -494,7 +455,8 @@ ExposureFileSelectViewFormView = layout.wrap_form(ExposureFileSelectViewForm,
 
 class ExposureFileDocumentView(page.TraversePage):
     """\
-    View for document.
+    ExposureFile is based on ATDocument, but we implemented a custom
+    view selection, which this view handles.
     """
 
     def __call__(self):
@@ -517,7 +479,10 @@ class ExposureFileDocumentView(page.TraversePage):
 
 class ExposureFileRedirectView(BrowserPage):
     """\
-    This view redirects to the original file.
+    The view that redirects to the original file.  This should be the
+    default view for all ExposureFiles as they should have been anchored
+    to specific files, thus resolved to be original content within its
+    workspace and revision.
     """
 
     target_view = 'rawfile'

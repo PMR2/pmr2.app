@@ -29,6 +29,11 @@ class SimplePage(BrowserPage):
         return '%s/@@%s' % (self.context.absolute_url(), self.__name__)
 
     @property
+    def portal_url(self):
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        return portal.absolute_url()
+
+    @property
     def label(self):
         return self.context.title_or_id()
 

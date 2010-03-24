@@ -9,7 +9,7 @@
  <property name="content_meta_type">PMR2</property>
  <property name="product">pmr2.app</property>
  <property name="factory">addPMR2</property>
- <property name="immediate_view">root_folder_listing</property>
+ <property name="immediate_view">folder_listing</property>
  <property name="global_allow">False</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types">
@@ -19,12 +19,12 @@
   <element value="Topic"/>
  </property>
  <property name="allow_discussion">False</property>
- <property name="default_view">root_folder_listing</property>
+ <property name="default_view">folder_listing</property>
  <property name="view_methods">
   <element value="folder_summary_view"/>
   <element value="folder_tabular_view"/>
   <element value="atct_album_view"/>
-  <element value="root_folder_listing"/>
+  <element value="folder_listing"/>
  </property>
 
  <alias from="(Default)" to="(dynamic view)"/>

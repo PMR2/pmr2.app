@@ -67,7 +67,6 @@
       allowed_interface="zope.interface.common.mapping.IItemMapping"
       permission="zope.Public" />
 
-
   <!-- pages -->
 
   <browser:page
@@ -82,13 +81,6 @@
       name="edit_repository"
       class=".root.PMR2EditFormView"
       permission="pmr2.app.security.ManagePMR2"
-      />
-
-  <browser:page
-      for="pmr2.app.content.PMR2"
-      name="root_folder_listing"
-      class=".root.RootFolderListing"
-      permission="zope2.View"
       />
 
   <!-- Workspace Container -->
@@ -247,13 +239,6 @@
 
   <browser:page
       for="pmr2.app.content.Exposure"
-      name="exposure_folder_listing"
-      class=".exposure.ExposureFolderListing"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Exposure"
       name="exposure_edit"
       class=".exposure.ExposureEditFormView"
       permission="cmf.ModifyPortalContent"
@@ -367,13 +352,6 @@
       for="pmr2.app.content.ExposureFolder"
       name="exposure_info"
       class=".exposure.ExposureInfoView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFolder"
-      name="exposure_folder_listing"
-      class=".exposure.ExposureFolderListing"
       permission="zope2.View"
       />
 
