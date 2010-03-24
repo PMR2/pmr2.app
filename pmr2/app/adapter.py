@@ -348,5 +348,11 @@ class ExposureFileSelectView(Location):
         # must locate itself into context the very first thing, as the
         # vocabulary uses source adapter registered above.
         locate(self, context, '')
-        self.selected_view = context.selected_view
+        # have to assign the views
         self.views = context.views
+        # before we can try to assign the selected views do to usage of
+        # constrained vocabulary.
+        try:
+            self.selected_view = context.selected_view
+        except:
+            pass

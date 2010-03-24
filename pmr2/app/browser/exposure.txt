@@ -854,6 +854,30 @@ document_view to one provided by the notes.
     >>> filectx.selected_view == u'edited_note'
     True
 
+The view should render with the edited_note as selected.
+::
+
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((filectx, request), 
+    ...                                         name='select_view')
+    >>> result = view.form_instance()
+    >>> u'selected="selected">edited_note</option>' in result
+    True
+
+What if the views that are saved had been changed or removed?  The form
+should not break because the selection is no longer there.
+::
+
+    >>> views = filectx.views  # save original value
+    >>> filectx.views = []
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((filectx, request), 
+    ...                                         name='select_view')
+    >>> result = view.form_instance()
+    >>> u'edited_note' not in result
+    True
+    >>> filectx.views = views  # reset original value
+
 Now the same document view rendering will result in the same view as the
 edited_note.
 ::
