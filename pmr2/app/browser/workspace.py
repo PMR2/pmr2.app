@@ -660,6 +660,11 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
         return '/'.join(self._getpath(path=self.storage.path))
 
     @property
+    def viewpath(self):
+        """view uri."""
+        return '/'.join(self._getpath(view='file', path=self.storage.path))
+
+    @property
     def subrepo(self):
         # XXX directly using internals?
         try:
@@ -690,7 +695,13 @@ class WorkspaceRawfileView(WorkspaceFilePage):
         if self.structure:
             # not supporting resuming download
             # XXX large files will eat RAM
-            data = self.storage.rawfile
+            try:
+                data = self.storage.rawfile
+            except pmr2.mercurial.exceptions.PathNotFoundError:
+                # this is a rawfile view, this can be triggered by 
+                # attempting to access a directory.  we redirect to the
+                # standard file view.
+                raise HTTPFound(self.viewpath)
             mt = mimetypes.guess_type(self.storage.path)[0]
             if mt is None or (data and '\0' in data[:4096]):
                 mt = mt or 'application/octet-stream'
