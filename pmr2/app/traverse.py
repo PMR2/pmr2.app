@@ -1,4 +1,3 @@
-from paste.httpexceptions import HTTPNotFound, HTTPFound
 from zope.component import queryAdapter, adapts
 from zope.publisher.interfaces import IRequest
 from ZPublisher.BaseRequest import DefaultPublishTraverse
@@ -33,5 +32,6 @@ class ExposureTraverser(DefaultPublishTraverse):
         path = '/'.join(cpf + [name] + request['TraversalRequestNameStack'])
         target_uri = '%s/@@%s/%s/%s' % (workspace.absolute_url(),
             self.target_view, exposure.commit_id, path)
-        raise HTTPFound(target_uri)
+        request['TraversalRequestNameStack'] = []
+        return request.response.redirect(target_uri)
 
