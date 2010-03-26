@@ -56,5 +56,6 @@
 
   <!-- Traversal Customization -->
   <adapter factory=".traverse.ExposureTraverser" />
+  <adapter factory=".traverse.ExposureContainerTraverser" />
 
 </configure> 

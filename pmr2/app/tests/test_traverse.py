@@ -3,12 +3,13 @@ from zope.interface import implements
 from zope.component import provideAdapter
 from zope.interface.verify import verifyClass
 from zope.publisher.interfaces import IPublishTraverse
+from paste.httpexceptions import HTTPNotFound, HTTPFound
 
 from pmr2.app.interfaces import *
 from pmr2.app.content.interfaces import *
-from pmr2.app.traverse import ExposureTraverser
-from pmr2.app.tests.base import TestRequest
-from paste.httpexceptions import HTTPNotFound, HTTPFound
+from pmr2.app.content import ExposureContainer, Exposure
+from pmr2.app.traverse import *
+from pmr2.app.tests.base import TestRequest, ExposureDocTestCase
 
 
 class MockWorkspace:
@@ -84,8 +85,73 @@ class TestExposureTraverser(TestCase):
         self.traverseTester(traverser, request, 'fail',
             'http://nohost/mw/@@rawfile/123/valid/fail')
 
+
+class TestExposureContainerTraverser(ExposureDocTestCase):
+
+    def afterSetUp(self):
+        ids = ['abcded', 'abcdee', 'abcdef', 'abcccf', '111111']
+        def traverse(self, request, name):
+            if name not in ids:
+                raise AttributeError
+            return name
+
+        ExposureContainerTraverser.o_defaultTraverse = \
+            ExposureContainerTraverser.defaultTraverse
+        ExposureContainerTraverser.o_base_query = \
+            ExposureContainerTraverser.base_query
+
+        ExposureContainerTraverser.defaultTraverse = traverse
+        ExposureContainerTraverser.base_query = {'portal_type': 'Exposure'}
+
+        self.portal['exposure'] = ExposureContainer('exposure')
+        for i in ids:
+            self.portal.exposure[i] = Exposure(i)
+            self.portal.exposure[i].reindexObject()
+
+        self.context = self.portal.exposure
+
+    def beforeTearDown(self):
+        ExposureContainerTraverser.defaultTraverse = \
+            ExposureContainerTraverser.o_defaultTraverse 
+        ExposureContainerTraverser.base_query = \
+            ExposureContainerTraverser.o_base_query 
+        del ExposureContainerTraverser.o_defaultTraverse 
+        del ExposureContainerTraverser.o_base_query 
+
+    def testInterface(self):
+        self.failUnless(verifyClass(IPublishTraverse, 
+            ExposureContainerTraverser))
+
+    def testExposureContainerTraverser_001_valid(self):
+        request = TestRequest(TraversalRequestNameStack=[])
+        traverser = ExposureContainerTraverser(self.context, request)
+        self.assertEqual(traverser.publishTraverse(request, 'abcded'), 
+            'abcded')
+
+    def testExposureContainerTraverser_002_toomany(self):
+        request = TestRequest(TraversalRequestNameStack=[])
+        traverser = ExposureContainerTraverser(self.context, request)
+        self.assertRaises(HTTPNotFound, traverser.publishTraverse, request,
+            'abcde')
+
+    def testExposureContainerTraverser_002_one(self):
+        request = TestRequest(TraversalRequestNameStack=[])
+        traverser = ExposureContainerTraverser(self.context, request)
+        traverser.publishTraverse(request, '1')
+        self.assertEqual(request.response.getHeader('location'), 
+            'http://nohost/plone/exposure/111111')
+
+    def testExposureContainerTraverser_003_fine_with_subpath(self):
+        request = TestRequest(TraversalRequestNameStack=['test'])
+        traverser = ExposureContainerTraverser(self.context, request)
+        traverser.publishTraverse(request, 'abcc')
+        self.assertEqual(request.response.getHeader('location'), 
+            'http://nohost/plone/exposure/abcccf/test')
+
+
 def test_suite():
     suite = TestSuite()
     suite.addTest(makeSuite(TestExposureTraverser))
+    suite.addTest(makeSuite(TestExposureContainerTraverser))
     return suite
 
