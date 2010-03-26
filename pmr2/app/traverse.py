@@ -31,10 +31,12 @@ class ExposureTraverser(DefaultPublishTraverse):
         helper = queryAdapter(self.context, IExposureSourceAdapter)
         exposure, workspace, ctxpath = helper.source()
         cpf = ctxpath and [ctxpath] or []
-        path = '/'.join(cpf + [name] + request['TraversalRequestNameStack'])
+        namestack = request['TraversalRequestNameStack']
+        request['TraversalRequestNameStack'] = []
+        namestack.reverse()
+        path = '/'.join(cpf + [name] + namestack)
         target_uri = '%s/@@%s/%s/%s' % (workspace.absolute_url(),
             self.target_view, exposure.commit_id, path)
-        request['TraversalRequestNameStack'] = []
         return request.response.redirect(target_uri)
 
 
@@ -106,9 +108,10 @@ class ExposureContainerTraverser(DefaultPublishTraverse):
             # exactly one result, we will redirect to this id, and 
             # include the remaining fragments in the namestack.
             fragments = [self.context.absolute_url(), results[0].id]
-            fragments.extend(request['TraversalRequestNameStack'])
-            # done traversing.
+            namestack = request['TraversalRequestNameStack']
             request['TraversalRequestNameStack'] = []
+            namestack.reverse()
+            fragments.extend(namestack)
             target = '/'.join(fragments)
             return request.response.redirect(target)
 

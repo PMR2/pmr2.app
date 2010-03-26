@@ -71,7 +71,8 @@ class TestExposureTraverser(TestCase):
             'http://nohost/mw/@@rawfile/123/trail')
 
     def testExposureTraverser_003_namestack(self):
-        request = TestRequest(TraversalRequestNameStack=['f', 'u', 'n'])
+        # note that namestack is usuall found reversed.
+        request = TestRequest(TraversalRequestNameStack=['n', 'u', 'f'])
         exposure = MockExposureFolder()
         traverser = ExposureTraverser(exposure, request)
         self.traverseTester(traverser, request, 'trail',
@@ -142,11 +143,11 @@ class TestExposureContainerTraverser(ExposureDocTestCase):
             'http://nohost/plone/exposure/111111')
 
     def testExposureContainerTraverser_003_fine_with_subpath(self):
-        request = TestRequest(TraversalRequestNameStack=['test'])
+        request = TestRequest(TraversalRequestNameStack=['@@view', 'test'])
         traverser = ExposureContainerTraverser(self.context, request)
         traverser.publishTraverse(request, 'abcc')
         self.assertEqual(request.response.getHeader('location'), 
-            'http://nohost/plone/exposure/abcccf/test')
+            'http://nohost/plone/exposure/abcccf/test/@@view')
 
 
 def test_suite():
