@@ -887,10 +887,8 @@ edited_note.
     >>> view = zope.component.queryMultiAdapter((filectx, request), 
     ...                         name='exposure_file_document_view')
     >>> result = view()
-    >>> 'Lorem ipsum dolar sit amet' in result
-    False
-    >>> request.response.getHeader('Location')
-    'http://.../example_model.cellml/@@edited_note'
+    >>> print result
+    Edited Note is: [This is a test note]
 
 -----------------
 Exposure Rollover
