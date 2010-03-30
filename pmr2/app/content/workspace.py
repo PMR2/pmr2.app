@@ -84,8 +84,6 @@ class WorkspaceContainer(ATBTreeFolder):
 
         return result
 
-atapi.registerType(WorkspaceContainer, 'pmr2.app')
-
 
 class Workspace(BrowserDefaultMixin, atapi.BaseContent):
     """\
@@ -100,5 +98,3 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
     security = ClassSecurityInfo()
 
     description = fieldproperty.FieldProperty(IWorkspace['description'])
-
-atapi.registerType(Workspace, 'pmr2.app')

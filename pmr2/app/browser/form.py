@@ -1,8 +1,11 @@
 import zope.component
 import zope.event
 import zope.lifecycleevent
+from zope.app.container.interfaces import IAdding
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
+
+from Acquisition import aq_parent, aq_inner
 
 import z3c.form.form
 from plone.i18n.normalizer.interfaces import IIDNormalizer
@@ -22,6 +25,19 @@ class AddForm(z3c.form.form.AddForm):
 
     # set clsobj to the object to be created.
     clsobj = None
+
+    def update(self):
+        """\
+        Since this could be instantiated as a subform of sort in the
+        adding view, we are going to rebase the context up one level if
+        that's the case.
+        """
+
+        context = self.context
+        while context and IAdding.providedBy(context):
+            context = aq_parent(context)
+        self.context = context
+        return super(AddForm, self).update()
 
     def create(self, data):
         """\

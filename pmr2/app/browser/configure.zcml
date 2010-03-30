@@ -70,13 +70,6 @@
   <!-- pages -->
 
   <browser:page
-      for="Products.CMFPlone.Portal.PloneSite"
-      name="repository_add_form"
-      class=".root.PMR2AddFormView"
-      permission="cmf.ManagePortal"
-      />
-
-  <browser:page
       for="pmr2.app.content.PMR2"
       name="edit_repository"
       class=".root.PMR2EditFormView"
@@ -408,26 +401,6 @@
       />
 
   <!--
-    view for the adding.
-  -->
-
-  <browser:view
-      name="+"
-      for="..content.interfaces.IPMR2"
-      permission="pmr2.app.security.ManagePMR2"
-      class=".adding.Adding">
-    <browser:page name="addPMR2Search" attribute="addPMR2Search" />
-  </browser:view>
-
-  <browser:view
-      name="+"
-      for="..content.interfaces.IWorkspaceContainer"
-      permission="cmf.ModifyPortalContent"
-      class=".adding.Adding">
-    <browser:page name="addWorkspace" attribute="addWorkspace" />
-  </browser:view>
-
-  <!--
     An override of contentactions for Workspace for the menus in the
     file page view (sandbox/exposure add dropdown menu).
   -->
@@ -467,18 +440,18 @@
   -->
 
   <adapter
-      for=".adding.Adding
+      for="Products.Five.browser.adding.ContentAdding
            *"
       name="addPMR2Search"
-      factory=".support.PMR2SearchAddForm"
+      factory=".support.PMR2SearchAddFormView"
       provides="z3c.form.interfaces.IAddForm"
       />
 
   <adapter
-      for=".adding.Adding
+      for="Products.Five.browser.adding.ContentAdding
            *"
       name="addWorkspace"
-      factory=".workspace.WorkspaceAddForm"
+      factory=".workspace.WorkspaceStorageCreateFormView"
       provides="z3c.form.interfaces.IAddForm"
       />
 

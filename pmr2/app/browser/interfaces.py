@@ -72,8 +72,7 @@ class IPublishTraverse(zope.publisher.interfaces.IPublishTraverse):
 
 class IObjectIdMixin(zope.interface.Interface):
     """\
-    For use by any interface that will be used by AddForm; this
-    basically gives an 'id' field for the user to input.
+    Provides a generic id field attribute for use by AddForm.
     """
 
     id = ObjectId(
@@ -82,19 +81,7 @@ class IObjectIdMixin(zope.interface.Interface):
     )
 
 
-class IPMR2Add(IObjectIdMixin, IPMR2):
-    """\
-    Interface for the use by PMR2AddForm.
-    """
-
-
-class IWorkspaceAdd(IObjectIdMixin, IWorkspace):
-    """\
-    Interface for the use by WorkspaceAddForm.
-    """
-
-
-class IWorkspaceStorageCreate(IWorkspaceAdd):
+class IWorkspaceStorageCreate(zope.interface.Interface):
     """\
     Interface for the use by WorkspaceStorageCreateForm.
     """

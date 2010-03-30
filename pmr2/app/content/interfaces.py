@@ -231,12 +231,6 @@ class IExposureFile(zope.interface.Interface):
         required=False,
     )
 
-    def raw_text():
-        """\
-        returns a concatenated string of all raw text, if it implements
-        IExposureFileRawText
-        """
-
 
 class IExposureFileRawText(zope.interface.Interface):
     """\

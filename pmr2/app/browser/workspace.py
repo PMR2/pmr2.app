@@ -375,7 +375,8 @@ class WorkspaceAddForm(form.AddForm):
     Workspace add form.
     """
 
-    fields = z3c.form.field.Fields(interfaces.IWorkspaceAdd)
+    fields = z3c.form.field.Fields(interfaces.IObjectIdMixin) + \
+             z3c.form.field.Fields(IWorkspace)
     clsobj = Workspace
 
     def add_data(self, ctxobj):
@@ -391,8 +392,10 @@ class WorkspaceStorageCreateForm(WorkspaceAddForm):
     Workspace add form.  This also creates the storage object.
     """
 
-    fields = z3c.form.field.Fields(interfaces.IWorkspaceStorageCreate).select(
-        'id', 'title', 'description',)
+    # IWorkspaceStorageCreate has a validator attached to its id 
+    # attribute to verify that the workspace id has not been taken yet.
+    fields = z3c.form.field.Fields(interfaces.IWorkspaceStorageCreate) + \
+             z3c.form.field.Fields(IWorkspace)
 
     def add_data(self, ctxobj):
         WorkspaceAddForm.add_data(self, ctxobj)
