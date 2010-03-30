@@ -45,7 +45,6 @@ class ExposureAddForm(form.AddForm):
         'commit_id',
         'curation',
     )
-    fields['curation'].widgetFactory = widget.CurationWidgetFactory
     clsobj = Exposure
 
     def create(self, data):
@@ -79,7 +78,6 @@ class ExposureEditForm(z3c.form.form.EditForm):
         'title',
         'curation',
     )
-    fields['curation'].widgetFactory = widget.CurationWidgetFactory
 
 ExposureEditFormView = layout.wrap_form(ExposureEditForm, 
     label="Exposure Edit Form")
@@ -93,7 +91,6 @@ class ExposureEditCurationForm(z3c.form.form.EditForm):
     fields = z3c.form.field.Fields(IExposure).select(
         'curation',
     )
-    fields['curation'].widgetFactory = widget.CurationWidgetFactory
 
 ExposureEditCurationFormView = layout.wrap_form(ExposureEditCurationForm, 
     label="Curation Editor")
@@ -309,7 +306,6 @@ class ExposureFileNoteArrangeForm(form.EditForm):
 
     #zope.interface.implements(IExposureFileNoteArrangeForm)
     fields = z3c.form.field.Fields(IExposureFile).select('views')
-    fields['views'].widgetFactory = widget.TextLineListTextAreaWidgetFactory
 
     def update(self):
         """\

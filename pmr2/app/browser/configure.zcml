@@ -461,6 +461,29 @@
   <adapter factory=".layout.mathml_layout_factory" />
   <adapter factory=".layout.ploneview_layout_factory" />
 
+  <!-- widget adapters -->
+  
+  <adapter
+      for="pmr2.app.schema.TextLineList
+           z3c.form.interfaces.IFormLayer"
+      factory=".widget.TextLineListTextAreaWidgetFactory"
+      provides="z3c.form.interfaces.IFieldWidget"
+      />
+
+  <adapter
+      for="pmr2.app.schema.CurationDict
+           z3c.form.interfaces.IFormLayer"
+      factory=".widget.CurationWidgetFactory"
+      provides="z3c.form.interfaces.IFieldWidget"
+      />
+
+  <adapter
+      for="pmr2.app.schema.WorkspaceList
+           z3c.form.interfaces.IFormLayer"
+      factory=".widget.WorkspaceListingWidgetFactory"
+      provides="z3c.form.interfaces.IFieldWidget"
+      />
+
   <!-- extensible form adapters -->
 
   <adapter 

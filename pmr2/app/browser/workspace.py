@@ -414,12 +414,7 @@ class WorkspaceBulkAddForm(z3c.form.form.AddForm):
     Workspace Bulk Add Form
     """
 
-    @property
-    def fields(self):
-        fields = z3c.form.field.Fields(interfaces.IWorkspaceBulkAdd)
-        fields['workspace_list'].widgetFactory[
-            z3c.form.interfaces.INPUT_MODE] = widget.TextAreaWidgetFactory
-        return fields
+    fields = z3c.form.field.Fields(interfaces.IWorkspaceBulkAdd)
 
     result_base = """\
       <dt>%s</dt>
