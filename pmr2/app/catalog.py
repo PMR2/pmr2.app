@@ -69,3 +69,17 @@ def pmr2_keyword(self):
         # a partial stack trace.
         results.extend(provider(self))
     return results
+
+# ExposureFileType
+
+@indexer(IExposureFileType)
+def pmr2_eftype_views(self):
+    return self.views
+
+@indexer(IExposureFileType)
+def pmr2_eftype_select_view(self):
+    return self.select_view
+
+@indexer(IExposureFileType)
+def pmr2_eftype_tags(self):
+    return self.tags

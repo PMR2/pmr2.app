@@ -9,6 +9,7 @@ directories required should have been already set up by the script.
     >>> from pprint import pprint
     >>> from zope import interface
     >>> import zope.component
+    >>> from Products.CMFCore.utils import getToolByName
     >>> from plone.z3cform.tests import setup_defaults
     >>> from pmr2.app.browser import workspace, exposure
     >>> from pmr2.app.tests.base import TestRequest
@@ -16,6 +17,7 @@ directories required should have been already set up by the script.
     >>> from pmr2.app.interfaces import *
     >>> from pmr2.app.content.interfaces import *
     >>> pp = lambda x: pprint(x, indent=4, width=1)
+    >>> catalog = getToolByName(self.portal, 'portal_catalog')
 
 Create the exposure container.
 ::
@@ -1110,6 +1112,72 @@ Now for the actual request to change values
     >>> result = view.form_instance()
     >>> ef.views
     [u'edited_note', u'rdfxml', u'rdfturtle']
+
+------------------
+Exposure File Type
+------------------
+
+There are cases where specific types of files will always have the same
+views generated.  PMR2 also provides a content type that enables users
+to define a profile of sort for specific file types.  This allows the
+annotation form to generate the correct views and arrange them in the
+correct order, optinally select the right one, and tag the file with the
+tags specified.
+
+First we create one via the form.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.id': u'dummy_type',
+    ...         'form.widgets.title': u'Dummy Type',
+    ...         'form.widgets.views': u'edited_note\npost_edited_note',
+    ...         'form.widgets.select_view': u'edited_note',
+    ...         'form.widgets.tags': u'Notes',
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = exposure.ExposureFileTypeAddForm(self.portal, request)
+    >>> testform.update()
+    >>> self.portal.dummy_type
+    <ExposureFileType at /plone/dummy_type>
+    >>> self.portal.dummy_type.views
+    [u'edited_note', u'post_edited_note']
+    >>> self.portal.dummy_type.select_view
+    u'edited_note'
+
+This new data should have been indexed.
+::
+
+    >>> results = catalog(portal_type='ExposureFileType')
+    >>> results[0].pmr2_eftype_views
+    [u'edited_note', u'post_edited_note']
+
+The data could also be edited via the edit form
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.id': u'dummy_type',
+    ...         'form.widgets.title': u'Dummy Type',
+    ...         'form.widgets.views': u'post_edited_note\nedited_note',
+    ...         'form.widgets.select_view': u'post_edited_note',
+    ...         'form.widgets.tags': u'Notes',
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> testform = exposure.ExposureFileTypeEditForm(
+    ...     self.portal.dummy_type, request)
+    >>> testform.update()
+    >>> self.portal.dummy_type.views
+    [u'post_edited_note', u'edited_note']
+    >>> self.portal.dummy_type.select_view
+    u'post_edited_note'
+
+The cataloged data should have been updated also.
+::
+
+    >>> results = catalog(portal_type='ExposureFileType')
+    >>> results[0].pmr2_eftype_views
+    [u'post_edited_note', u'edited_note']
 
 ======================
 Notes/Question to Self

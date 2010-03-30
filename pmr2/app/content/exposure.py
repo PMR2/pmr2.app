@@ -3,6 +3,7 @@ import zope.component
 from zope.schema import fieldproperty
 
 from AccessControl import ClassSecurityInfo
+from Products.Archetypes import atapi
 from Products.ATContentTypes.atct import ATFolder, ATBTreeFolder
 from Products.ATContentTypes.atct import ATDocument
 from Products.CMFCore.permissions import View
@@ -69,6 +70,7 @@ class ExposureFile(ATDocument):
         IExposureFile,
     )
     views = fieldproperty.FieldProperty(IExposureFile['views'])
+    file_type = fieldproperty.FieldProperty(IExposureFile['file_type'])
     docview_gensource = fieldproperty.FieldProperty(IExposureFile['docview_gensource'])
     docview_generator = fieldproperty.FieldProperty(IExposureFile['docview_generator'])
     selected_view = fieldproperty.FieldProperty(IExposureFile['selected_view'])
@@ -86,3 +88,19 @@ class ExposureFile(ATDocument):
             if ctxobj is not None:
                 results.append(ctxobj.raw_text())
         return '\n'.join(results)
+
+
+class ExposureFileType(atapi.BaseContent):
+    """\
+    This allows types of file be defined for an ExposureFile.  This is
+    basically a profile that for a file type that defines which views to
+    generate and tags to attached to a file.
+    """
+
+    interface.implements(IExposureFileType)
+    security = ClassSecurityInfo()
+
+    title = fieldproperty.FieldProperty(IExposureFileType['title'])
+    views = fieldproperty.FieldProperty(IExposureFileType['views'])
+    select_view = fieldproperty.FieldProperty(IExposureFileType['select_view'])
+    tags = fieldproperty.FieldProperty(IExposureFileType['tags'])

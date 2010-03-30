@@ -26,6 +26,12 @@
       />
 
   <subscriber
+      for="pmr2.app.content.interfaces.IExposureFileType
+          zope.app.event.interfaces.IObjectModifiedEvent"
+      handler=".subscriber.catalog_content"
+      />
+
+  <subscriber
       for="pmr2.app.content.interfaces.IExposureFolder
           zope.app.event.interfaces.IObjectModifiedEvent"
       handler=".subscriber.catalog_content"

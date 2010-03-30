@@ -7,6 +7,8 @@ from zope.schema.interfaces import RequiredMissing
 from zope.annotation.interfaces import IAnnotations
 from zope.publisher.browser import BrowserPage
 from zope.i18nmessageid import MessageFactory
+from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.app.container.interfaces import IContainer
 _ = MessageFactory("pmr2")
 
 from paste.httpexceptions import HTTPNotFound
@@ -14,6 +16,7 @@ import z3c.form.field
 from z3c.form import button
 from plone.memoize.view import memoize
 from plone.z3cform import layout
+from plone.z3cform.fieldsets import group, extensible
 
 from Acquisition import aq_parent, aq_inner
 from Products.CMFCore.utils import getToolByName
@@ -231,6 +234,51 @@ class ExposureFileAnnotatorForm(form.BaseAnnotationForm):
 
 ExposureFileAnnotatorFormView = layout.wrap_form(ExposureFileAnnotatorForm, 
     label="Add an annotation to an Exposure File.")
+
+
+class ExposureFileTypeAddForm(form.AddForm):
+    """\
+    ExposureFileType creation form.
+    """
+
+    fields = z3c.form.field.Fields(IObjectIdMixin) + \
+             z3c.form.field.Fields(IExposureFileType)
+    clsobj = ExposureFileType
+
+    def add_data(self, ctxobj):
+        ctxobj.title = self._data['title']
+        ctxobj.views = self._data['views']
+        ctxobj.select_view = self._data['select_view']
+        ctxobj.tags = self._data['tags']
+        
+
+ExposureFileTypeAddFormView = layout.wrap_form(ExposureFileTypeAddForm, 
+    label="Exposure File Type creator")
+
+
+class ExposureFileTypeEditForm(z3c.form.form.EditForm):
+    """\
+    ExposureFileType editing form.
+    """
+
+    fields = z3c.form.field.Fields(IExposureFileType)
+
+    def update(self):
+        super(ExposureFileTypeEditForm, self).update()
+
+ExposureFileTypeEditFormView = layout.wrap_form(ExposureFileTypeEditForm, 
+    label="Exposure File Type editor")
+
+
+class ExposureFileTypeDisplayForm(form.DisplayForm):
+    """\
+    ExposureFileType creation form.
+    """
+
+    fields = z3c.form.field.Fields(IExposureFileType)
+
+ExposureFileTypeDisplayFormView = layout.wrap_form(ExposureFileTypeDisplayForm, 
+    label="Exposure File Type viewer")
 
 
 class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):

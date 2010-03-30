@@ -34,4 +34,16 @@
       factory=".catalog.pmr2_exposure_root_id" 
       name="pmr2_exposure_root_id" />
 
+  <adapter 
+      factory=".catalog.pmr2_eftype_views" 
+      name="pmr2_eftype_views" />
+
+  <adapter 
+      factory=".catalog.pmr2_eftype_select_view" 
+      name="pmr2_eftype_select_view" />
+
+  <adapter 
+      factory=".catalog.pmr2_eftype_tags" 
+      name="pmr2_eftype_tags" />
+
 </configure> 

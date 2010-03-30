@@ -16,6 +16,8 @@
       meta_type="Factory-based Type Information with dynamic views" />
   <object name="ExposureFile"
       meta_type="Factory-based Type Information with dynamic views" />
+  <object name="ExposureFileType"
+      meta_type="Factory-based Type Information with dynamic views" />
   <object name="ExposureFolder"
       meta_type="Factory-based Type Information with dynamic views" />
 

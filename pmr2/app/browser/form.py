@@ -1,5 +1,6 @@
 import zope.component
 import zope.event
+from zope.schema.fieldproperty import FieldProperty
 import zope.lifecycleevent
 from zope.app.container.interfaces import IAdding
 from zope.i18nmessageid import MessageFactory
@@ -10,6 +11,18 @@ from Acquisition import aq_parent, aq_inner
 import z3c.form.form
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from z3c.form.form import Form, EditForm
+
+
+class DisplayForm(z3c.form.form.DisplayForm):
+    """\
+    A very generic display form.
+    """
+
+    enctype = FieldProperty(z3c.form.interfaces.IInputForm['enctype'])
+
+    def __call__(self):
+        self.update()
+        return self.render()
 
 
 class AddForm(z3c.form.form.AddForm):

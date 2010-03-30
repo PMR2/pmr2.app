@@ -209,6 +209,13 @@ class IExposureFile(zope.interface.Interface):
         default=[],
     )
 
+    file_type = zope.schema.TextLine(
+        title=u'File Type',
+        description=u'File type also determines which views to generate or to '
+                     'be made available.',
+        required=False,
+    )
+
     docview_gensource = zope.schema.TextLine(
         title=u'Documentation File',
         description=u'The file where the documentation for this file reside '
@@ -218,8 +225,8 @@ class IExposureFile(zope.interface.Interface):
     )
 
     docview_generator = zope.schema.TextLine(
-        title=u'Default View Generator',
-        description=u'The default view generator utility that was used to ' \
+        title=u'Documentation Generator',
+        description=u'The documentation generator utility that was used to ' \
                      'generate the contents viewed via document_view.',
         required=False,
     )
@@ -241,3 +248,36 @@ class IExposureFileRawText(zope.interface.Interface):
         """\
         returns a raw text representation of this adapter.
         """
+
+
+class IExposureFileType(zope.interface.Interface):
+    """\
+    Profile to use for Exposure File Views.
+    """
+
+    title = zope.schema.TextLine(
+        title=u'Title',
+        required=False,
+    )
+
+    views = TextLineList(
+        title=u'Views',
+        description=u'The list of views to be created.',
+        required=False,
+        default=[],
+    )
+
+    select_view = zope.schema.TextLine(
+        title=u'Select View',
+        description=u'If defined, select this view if the generation is '
+                     'successful.',
+        required=False,
+    )
+
+    tags = TextLineList(
+        title=u'Tags',
+        description=u'List of tags to be assigned to this file.',
+        required=False,
+        default=[],
+    )
+

@@ -13,6 +13,7 @@ from pmr2.app.content.sandbox import Sandbox
 from pmr2.app.content.exposure import ExposureContainer
 from pmr2.app.content.exposure import Exposure
 from pmr2.app.content.exposure import ExposureFile
+from pmr2.app.content.exposure import ExposureFileType
 from pmr2.app.content.exposure import ExposureFolder
 
 from pmr2.app.content.support import PMR2Search
@@ -25,6 +26,7 @@ atapi.registerType(Workspace, 'pmr2.app')
 atapi.registerType(ExposureContainer, 'pmr2.app')
 atapi.registerType(Exposure, 'pmr2.app')
 atapi.registerType(ExposureFile, 'pmr2.app')
+atapi.registerType(ExposureFileType, 'pmr2.app')
 atapi.registerType(ExposureFolder, 'pmr2.app')
 
 __all__ = [
@@ -36,6 +38,7 @@ __all__ = [
     'ExposureContainer',
     'Exposure',
     'ExposureFile',
+    'ExposureFileType',
     'ExposureFolder',
     'PMR2Search',
 ]

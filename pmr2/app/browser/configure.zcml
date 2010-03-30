@@ -323,6 +323,22 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <!-- Exposure File Type -->
+
+  <browser:page
+      for="pmr2.app.content.ExposureFileType"
+      name="eftype_edit"
+      class=".exposure.ExposureFileTypeEditFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFileType"
+      name="eftype_view"
+      class=".exposure.ExposureFileTypeDisplayFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <!-- Exposure Notes -->
 
   <browser:page
@@ -452,6 +468,14 @@
            *"
       name="addWorkspace"
       factory=".workspace.WorkspaceStorageCreateFormView"
+      provides="z3c.form.interfaces.IAddForm"
+      />
+
+  <adapter
+      for="Products.Five.browser.adding.ContentAdding
+           *"
+      name="addExposureFileType"
+      factory=".exposure.ExposureFileTypeAddFormView"
       provides="z3c.form.interfaces.IAddForm"
       />
 
