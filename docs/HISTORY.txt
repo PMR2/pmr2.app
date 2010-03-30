@@ -1,6 +1,31 @@
 Changelog
 =========
 
+0.3 - Unreleased
+----------------
+
+* Added a global settings object, and added hooks to allow modules of
+  PMR2 to have their own subforms.
+* Added user workspaces - users can have their own folder to add
+  their personal workspaces to.
+* Added semi-edited note.  Allowed a use case where users can fill in
+  fields and then generate output based on what was entered and content
+  of the anchor file.
+* Added partial exposure id resolution, where a partial id entered can
+  resolve to its full id.
+* Pushes to workspace now updates the modified date, so RSS feeds based
+  on updates to workspaces can be generated.
+* Redone the exposure creation form as it gave too much control to the
+  user.
+* Simplfied redirection from relative links to files in exposures to
+  workspace and refactored how this was done.
+* Refactored catalog/indexing code.
+* Removed nearly all CellML specific code, with the exception of some 
+  OpenCell specific workarounds.
+* Removed the ExposureFilePage type.
+* Removed the stale portlets for the above type.
+* Removed nearly all methods from content type objects.
+
 0.2.2 - Released (2010-02-02)
 -----------------------------
 
