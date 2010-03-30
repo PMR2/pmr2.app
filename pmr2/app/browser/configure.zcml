@@ -482,9 +482,18 @@
       provides="z3c.form.interfaces.IAddForm"
       />
 
+  <!-- layout adapters -->
+
   <adapter factory=".layout.plain_layout_factory" />
   <adapter factory=".layout.mathml_layout_factory" />
   <adapter factory=".layout.ploneview_layout_factory" />
+
+  <!-- extensible form adapters -->
+
+  <adapter 
+      factory=".settings.PMR2PluginSettingsExtender"
+      name="pmr2.plugin.extender"
+      />
 
   <!-- 
     Resource declarations.

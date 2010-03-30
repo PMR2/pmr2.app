@@ -25,18 +25,6 @@ class PMR2GlobalSettingsEditForm(extensible.ExtensibleForm, form.EditForm):
         # use the parent class.
         self.groups = []
 
-    #def update(self):
-    #    self.groups = list(self.getGroups())
-    #    return super(PMR2GlobalSettingsEditForm, self).update()
-
-    def getGroups(self):
-        # we calculate our groups
-        utilities = zope.component.getUtilitiesFor(IPMR2PluggableSettings)
-        for u in utilities:
-            g = PMR2GlobalSettingsGroup(self.context,
-                self.request, self, u[0])
-            yield g
-
     def getContent(self):
         # ensure we get the one annotated to the site manager.
         return zope.component.getUtility(IPMR2GlobalSettings)
@@ -62,5 +50,3 @@ class PMR2PluginSettingsExtender(extensible.FormExtender):
                     utility.factory))[0]
                 fields = z3c.form.field.Fields(interface, prefix=prefix)
             self.add(fields, group=title)
-
-zope.component.provideAdapter(factory=PMR2PluginSettingsExtender, name=u"pmr2.plugin.extender")
