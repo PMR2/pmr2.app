@@ -64,7 +64,7 @@
   <permission value="Modify portal content"/>
  </action>
 
- <action title="View Gen" action_id="docviewgen" 
+ <action title="Documentation" action_id="docviewgen" 
     category="object" 
     url_expr="string:${object_url}/@@docviewgen" visible="True"
     i18n:attributes="title">

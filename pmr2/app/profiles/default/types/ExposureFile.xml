@@ -40,13 +40,13 @@
   <permission value="Modify portal content"/>
  </action>
 
- <action title="Set Default View" action_id="docviewgen" category="object" 
+ <action title="Documentation" action_id="docviewgen" category="object" 
     url_expr="string:${object_url}/@@docviewgen" visible="True" 
     i18n:attributes="title">
   <permission value="Modify portal content"/>
  </action>
 
- <action title="Set Default Note" action_id="select_view" category="object" 
+ <action title="Set Default View" action_id="select_view" category="object" 
     url_expr="string:${object_url}/@@select_view" visible="True" 
     i18n:attributes="title">
   <permission value="Modify portal content"/>
