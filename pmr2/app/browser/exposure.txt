@@ -1038,7 +1038,8 @@ supply an existing commit id.
 
 It should work for all other commits.  The only difference would be the
 edited note.  We will need to make a deep copy of the original answer
-and change.
+and update the post edited note with the contents of the file in that
+commit.
 ::
 
     >>> from copy import deepcopy
@@ -1159,7 +1160,7 @@ The data could also be edited via the edit form
     ...     form={
     ...         'form.widgets.id': u'dummy_type',
     ...         'form.widgets.title': u'Dummy Type',
-    ...         'form.widgets.views': u'post_edited_note\nedited_note',
+    ...         'form.widgets.views': u'rot13\npost_edited_note\nedited_note',
     ...         'form.widgets.select_view': u'post_edited_note',
     ...         'form.widgets.tags': u'Notes',
     ...         'form.buttons.apply': 1,
@@ -1168,7 +1169,7 @@ The data could also be edited via the edit form
     ...     self.portal.dummy_type, request)
     >>> testform.update()
     >>> self.portal.dummy_type.views
-    [u'post_edited_note', u'edited_note']
+    [u'rot13', u'post_edited_note', u'edited_note']
     >>> self.portal.dummy_type.select_view
     u'post_edited_note'
 

@@ -22,6 +22,12 @@
       />
 
   <utility
+      name="rot13"
+      component="pmr2.app.tests.adapter.Rot13NoteAnnotatorFactory"
+      provides=".annotation.interfaces.IExposureFileAnnotator"
+      />
+
+  <utility
       name="edited_note"
       component="pmr2.app.tests.adapter.EditedNoteAnnotatorFactory"
       provides=".annotation.interfaces.IExposureFileAnnotator"
@@ -52,6 +58,13 @@
       factory="pmr2.app.tests.adapter.RDFxmlNoteFactory"
       provides=".annotation.interfaces.IRawTextNote"
       name="rdfxml"
+      />
+
+  <adapter
+      for="pmr2.app.content.interfaces.IExposureFile"
+      factory="pmr2.app.tests.adapter.Rot13NoteFactory"
+      provides=".annotation.interfaces.IRawTextNote"
+      name="rot13"
       />
 
   <adapter
@@ -92,6 +105,13 @@
   <browser:page
       for="pmr2.app.content.ExposureFile"
       name="rdfxml"
+      class="pmr2.app.browser.exposure.RawTextNoteView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="rot13"
       class="pmr2.app.browser.exposure.RawTextNoteView"
       permission="zope2.View"
       />

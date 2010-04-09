@@ -89,6 +89,12 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
 
         if not IExposureFileEditableNote.providedBy(self.note):
             data = self.generate()
+            # XXX could verify all the data is generated based on what
+            # is in self.for_interface.names()
+            if not hasattr(self, 'for_interface'):
+                import warnings
+                warnings.warn(
+                    '`for_interface` not specified for %s' % self.__class__)
             self._annotate(data)
             self._append_view()
             return

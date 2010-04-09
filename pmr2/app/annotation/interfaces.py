@@ -7,7 +7,11 @@ _ = MessageFactory("pmr2")
 
 class IExposureFileAnnotator(zope.interface.Interface):
     """\
-    Interface for the ExposureFile annotation utility.
+    Interface for the ExposureFile annotation utility, which provides
+    automated generation of data to be added to the note.
+
+    It will annotate standard notes, but must not be used to annotate
+    editable notes.
     """
 
     # ef_note is the name/key of storage class to use
@@ -22,6 +26,11 @@ class IExposureFileAnnotator(zope.interface.Interface):
         title=u'Description',
         description=u'A brief note about what this annotator does.',
         required=False,
+    )
+
+    for_interface = zope.schema.InterfaceField(
+        title=u'For Interface',
+        description=u'This annotator is for this interface',
     )
 
     # we may need an annotator that is defined to NOT have a view, but
@@ -46,6 +55,11 @@ class IExposureFilePostEditAnnotator(IExposureFileAnnotator):
     that require further automated processing (i.e. notes that had been
     edited (post-edit) to contain data such as preferences).
     """
+
+    edited_names = zope.schema.Set(
+        title=u'Names that are edited',
+        value_type=zope.schema.TextLine(),
+    )
 
 
 class IExposureFileNote(zope.interface.Interface):

@@ -209,10 +209,10 @@ class IExposureFile(zope.interface.Interface):
         default=[],
     )
 
-    file_type = zope.schema.TextLine(
+    file_type = zope.schema.ASCIILine(
         title=u'File Type',
-        description=u'File type also determines which views to generate or to '
-                     'be made available.',
+        description=u'The path to the ExposureFileType that was used to '
+                     'generate this file.',
         required=False,
     )
 
