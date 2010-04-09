@@ -12,6 +12,7 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFPlone import PloneMessageFactory as _
 
 from pmr2.app.content.interfaces import IExposureFile
+from pmr2.app.annotation.factory import has_note
 
 
 class IExposureFileNotesPortlet(IPortletDataProvider):
@@ -43,15 +44,12 @@ class Renderer(base.Renderer):
 
     @property
     def links(self):
-        result = []
         vocab = zope.component.queryUtility(zope.schema.interfaces.IVocabulary,
                                             name='ExposureFileAnnotatorVocab')
-
-        for view in self.context.views:
-            result.append({
-                'href': '%s/@@%s' % (self.context.absolute_url(), view),
-                'title': vocab.getTerm(view).title,
-            })
+        result = [{
+            'href': '%s/@@%s' % (self.context.absolute_url(), view),
+            'title': vocab.getTerm(view).title,
+        } for view in self.context.views if has_note(self.context, view)]
         return result
 
     def render(self):
