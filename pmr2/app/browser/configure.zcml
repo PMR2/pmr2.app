@@ -276,6 +276,20 @@
 
   <browser:page
       for="pmr2.app.content.ExposureFile"
+      name="filetype"
+      class=".exposure.ExposureFileTypeChoiceFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
+      name="edit_annotations"
+      class=".exposure.ExposureFileTypeAnnotatorFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.content.ExposureFile"
       name="note_editor"
       class=".exposure.ExposureFileNoteEditFormView"
       permission="cmf.ModifyPortalContent"
@@ -513,6 +527,11 @@
   <adapter 
       factory=".settings.PMR2PluginSettingsExtender"
       name="pmr2.plugin.extender"
+      />
+
+  <adapter 
+      factory=".exposure.ExposureFileTypeAnnotatorExtender"
+      name="pmr2.eft_annotator.extender"
       />
 
   <!-- 

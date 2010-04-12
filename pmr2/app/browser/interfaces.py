@@ -142,6 +142,31 @@ class IExposureFileAnnotatorForm(zope.interface.Interface):
     )
 
 
+class IExposureFileTypeChoiceForm(zope.interface.Interface):
+    """\
+    Interface for the form and utility that that allows notes to be
+    annotated to the ExposureFile based on an ExposureFileType
+    """
+
+    eftypes = zope.schema.Choice(
+        title=u'File Type',
+        description=u'Select the appropriate type for this file if one had '
+                     'been defined.  Will override the choices below.',
+        vocabulary='EFTypeVocab',
+        required=False,
+    )
+
+    annotators = zope.schema.Set(
+        title=u'Annotators Enabled',
+        description=u'The selected views will be enabled if the data has been '
+                     'generated its annotator.',
+        value_type=zope.schema.Choice(
+            vocabulary='ExposureFileAnnotatorVocab',
+        ),
+        required=False,
+    )
+
+
 class IExposureFileNoteEditForm(zope.interface.Interface):
     """\
     Interface for the note edit form.

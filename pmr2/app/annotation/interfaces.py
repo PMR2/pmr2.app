@@ -58,8 +58,15 @@ class IExposureFilePostEditAnnotator(IExposureFileAnnotator):
 
     edited_names = zope.schema.Set(
         title=u'Names that are edited',
-        value_type=zope.schema.TextLine(),
+        value_type=zope.schema.ASCIILine(),
     )
+
+
+class IExposureFileEditAnnotator(IExposureFileAnnotator):
+    """\
+    Marker interface for the ExposureFile annotation utility for fully 
+    editable notes.
+    """
 
 
 class IExposureFileNote(zope.interface.Interface):

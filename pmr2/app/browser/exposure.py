@@ -281,6 +281,196 @@ ExposureFileTypeDisplayFormView = layout.wrap_form(ExposureFileTypeDisplayForm,
     label="Exposure File Type viewer")
 
 
+class ExposureFileTypeChoiceForm(form.Form):
+    """\
+    This form chooses the views available for this page, based on either
+    the file type or selecting the list of views to be made available.
+
+    It will also tag the context with the tag as specified by the
+    choosen file type.
+    """
+
+    ignoreContext = True
+    ignoreReadonly = True
+    formErrorsMessage = _('There were some errors.')
+    group_names = None
+
+    def __init__(self, *a, **kw):
+        super(ExposureFileTypeChoiceForm, self).__init__(*a, **kw)
+        # since this can change, we instantiate a copy of the fields for
+        # each form
+        self.fields = z3c.form.field.Fields(IExposureFileTypeChoiceForm)
+
+    @button.buttonAndHandler(_('Next'), name='next')
+    def handleNext(self, action):
+        data, errors = self.extractData()
+        group_names = None
+        if 'annotators' in data and data['annotators']:
+            group_names = data['annotators']
+
+        if 'eftypes' in data and data['eftypes']:
+            catalog = getToolByName(self.context, 'portal_catalog')
+            if not catalog:
+                # abort, since there really is no catalog, let the user
+                # know.
+                self.status = _('Catalog not found.')
+                return
+
+            results = catalog(
+                portal_type='ExposureFileType',
+                review_state='published',
+                path=data['eftypes'],
+            )
+            if results:
+                # we have what we want.
+                group_names = results[0].pmr2_eftype_views
+                self.context.setSubject(results[0].pmr2_eftype_tags)
+                self.context.file_type = data['eftypes']
+                self.status = _('File type assigned. Please select views '
+                                'to add to this file.')
+
+        self.context.views = self.group_names = group_names
+        if group_names:
+            # we have more views, redirect
+            return self.request.response.redirect(
+                self.context.absolute_url() + '/@@edit_annotations')
+
+        # since there was no fields selected and the file type supplied 
+        # had no views defined, we prompt the form again without the
+        # types enabled.
+        self.fields.omit('eftypes')
+
+ExposureFileTypeChoiceFormView = layout.wrap_form(
+    ExposureFileTypeChoiceForm, 
+    label="Add an annotation to an Exposure File.")
+
+
+class ExposureFileTypeAnnotatorForm(
+        extensible.ExtensibleForm, 
+        form.BaseAnnotationForm):
+    """\
+    Form to add a group of notes to an ExposureFile.  Specific notes
+    involved are retrievable via querying for IExposureFileType with
+    its specific name (e.g. cellml, fieldml).  Then a form is generated
+    with all the required fields.  The sets of file types and views that
+    will be generated are currently defined by packages, but in the
+    future it may be possible that a mixture of user-defined and package
+    provided profiles can be used.
+
+    However, the current implementation can result in a rather 
+    inconsistent view for the users of this form if she submitted this
+    as someone else changed the views that are available for this form -
+    the resulting data will be inconsistent.
+    """
+
+    def __init__(self, *a, **kw):
+        super(ExposureFileTypeAnnotatorForm, self).__init__(*a, **kw)
+        self.groups = []
+        self.fields = z3c.form.field.Fields()
+
+    @button.buttonAndHandler(_('Annotate'), name='apply')
+    def handleAnnotate(self, action):
+        self.baseAnnotate(action)
+
+    def annotate(self):
+        """
+        Goes through the notes and adapt to each specifc annotator.
+
+        XXX this assumes nobody changed what this form had and what the
+        self.context.views contains now.
+        """
+
+        # have to process the data as it's merged between all the forms.
+        groups = {}
+        for k, value in self._data.iteritems():
+            group, key = k.split('.', 1)
+            if not group in groups:
+                groups[group] = []
+            groups[group].append((key, value,))
+
+        # now iterate through the views that had been selected for this
+        # form.
+        for name in self.context.views:
+            annotatorFactory = zope.component.queryUtility(
+                IExposureFileAnnotator,
+                name=name,
+            )
+
+            if not annotatorFactory:
+                # self.context.views somehow included invalid values, we
+                # should log it and continue (something somewhere messed
+                # with it.
+                continue
+
+            annotator = annotatorFactory(self.context)
+            if IExposureFileEditAnnotator.providedBy(annotator) or \
+                    IExposureFilePostEditAnnotator.providedBy(annotator):
+                # The edited annotator will need the fields.
+                if name not in groups:
+                    # well, it looks like somehow the set of views that
+                    # this form submittal was based upon is no longer
+                    # same as the set of views stored now.  We should 
+                    # raise a validation error of sort, but for now we 
+                    # ignore it.
+                    continue
+                annotator(groups[name])
+            else:
+                # This annotator fully generates its data, we do not
+                # need to pass in extra data (as there are none).
+                annotator()
+
+        # The tagging should have been done in the previous form.
+
+    def nextURL(self):
+        return '%s/view' % self.context.absolute_url() 
+
+ExposureFileTypeAnnotatorFormView = layout.wrap_form(
+    ExposureFileTypeAnnotatorForm, 
+    label="Add an annotation to an Exposure File.")
+
+
+class ExposureFileTypeAnnotatorExtender(extensible.FormExtender):
+    zope.component.adapts(
+        IExposureFile, IBrowserRequest, ExposureFileTypeAnnotatorForm)
+
+    def update(self):
+        for name in self.context.views:
+            # XXX self.context.views should be a tuple of ascii values
+            # taken from the constraint vocabulary of installed views.
+            name = name.encode('ascii', 'replace')
+            a_factory = zope.component.queryUtility(IExposureFileAnnotator, 
+                                                    name=name)
+            if not a_factory:
+                # silently ignore missing fields.
+                continue
+
+            annotator = a_factory(self.context)
+            fields = z3c.form.field.Fields(annotator.for_interface, 
+                                           prefix=name)
+            if IExposureFileEditAnnotator.providedBy(annotator):
+                # add all fields if it's completely edited
+                self.add(fields, group=annotator.title)
+            elif IExposureFilePostEditAnnotator.providedBy(annotator):
+                # add just the edited fields if partially edited
+                sel = ['%s.%s' % (name, n) for n in annotator.edited_names]
+                fields = fields.select(*sel)
+                self.add(fields, group=annotator.title)
+            else:
+                # add an empty group because this is fully generated.
+                fields = z3c.form.field.Fields(prefix=name)
+                self.add(fields, group=annotator.title)
+                # Since the above method instanitates the group and we
+                # did not supply an index, the new group should be the
+                # last element.  We append this description to it.
+                # If an index is specified, the element to change this
+                # description must then be specified.  Likewise below.
+                self.form.groups[-1].description = \
+                    u'There are no editable attributes for this note as ' \
+                     'values for this annotation are automatically generated.'
+
+            self.form.groups[-1].label = annotator.title
+
+
 class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
     """\
     Some notes need to be user editable rather than generated.  They 

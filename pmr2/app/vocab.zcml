@@ -38,6 +38,12 @@
       name="ExposureMetadocFactoryVocab"
       />
 
+  <utility
+      provides="zope.schema.interfaces.IVocabularyFactory"
+      component="pmr2.app.vocab.EFTypeVocabFactory"
+      name="EFTypeVocab"
+      />
+
   <!-- need factory method to make class because schemas depend on this -->
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"

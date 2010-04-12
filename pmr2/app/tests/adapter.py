@@ -50,7 +50,8 @@ class Rot13NoteAnnotator(ExposureFileAnnotatorBase):
 
 
 class EditedNoteAnnotator(ExposureFileAnnotatorBase):
-    zope.interface.implements(IExposureFileAnnotator)
+    zope.interface.implements(IExposureFileAnnotator, 
+                              IExposureFileEditAnnotator)
     title = u'Edited Note'
     description = u'This is a simple edited note annotator for testing.'
     for_interface = IEditedNote
@@ -62,6 +63,7 @@ class PostEditedNoteAnnotator(ExposureFileAnnotatorBase):
     title = u'Post Edited Note'
     description = u'This is a simple edited note annotator for testing.'
     for_interface = IPostEditedNote
+    edited_names = ('chars',)
 
     def generate(self):
         if self.note.chars is not None:

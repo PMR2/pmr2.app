@@ -242,3 +242,41 @@ class DocViewGenVocab(SimpleVocabulary):
             return SimpleTerm(value)
 
 DocViewGenVocabFactory = vocab_factory(DocViewGenVocab)
+
+
+class EFTypeVocab(SimpleVocabulary):
+
+    def __init__(self, context):
+        self.context = context
+        self.pt = None
+        try:
+            self.pt = getToolByName(context, 'portal_catalog')
+            results = self.pt(
+                portal_type='ExposureFileType',
+                review_state='published',
+            )
+        except AttributeError:
+            terms = []
+        else:
+            terms = [SimpleTerm(i.getPath(), i.Title) for i in results]
+        super(EFTypeVocab, self).__init__(terms)
+
+    def getTerm(self, value):
+        if self.pt is None:
+            # no portal tool, see __init__
+            return SimpleTerm(value)
+        else:
+            return super(EFTypeVocab, self).getTerm(value)
+
+    def __contains__(self, terms):
+        if self.pt is None:
+            # no portal tool as  __init__ didn't initialize.  Since
+            # there may be cases where one might test where the term
+            # that had already been assigned is in the vocab, we use
+            # this assumption as the fallback.
+            return True
+        else:
+            return super(EFTypeVocab, self).__contains__(terms)
+
+EFTypeVocabFactory = vocab_factory(EFTypeVocab)
+

@@ -1153,7 +1153,7 @@ This new data should have been indexed.
     >>> results[0].pmr2_eftype_views
     [u'edited_note', u'post_edited_note']
 
-The data could also be edited via the edit form
+The data could also be edited via the edit form.
 ::
 
     >>> request = TestRequest(
@@ -1178,35 +1178,94 @@ The cataloged data should have been updated also.
 
     >>> results = catalog(portal_type='ExposureFileType')
     >>> results[0].pmr2_eftype_views
-    [u'post_edited_note', u'edited_note']
+    [u'rot13', u'post_edited_note', u'edited_note']
 
-======================
-Notes/Question to Self
-======================
+Before the next test, we need to publish the dummy type to make it
+available for use.
+::
 
-Name to get to the notes (the annotations) can be different from the
-name of the view that will use it because there are multiple annotators
-(the generators) that may use the same EFNote class.  For instance, code
-generation (view: /@@code/lang; data: note(context).code['lang'])*, 
-document to html (which uses a marker as it reuses parent, which is an
-ATDocument).  The note adapters manage the storage, the
-view would need to figure out which one it is supposed to use.
+    >>> self.setRoles(('Manager',))
+    >>> wft = getToolByName(self.portal, 'portal_workflow')
+    >>> wft.doActionFor(self.portal.dummy_type, 'publish')
 
-* Code gen
+They will populate the selections available within the annotation by
+filetype form.
+::
 
-  - could have different APIs to generate code, but somehow reuses the
-  same storage adapter.
+    >>> request = TestRequest()
+    >>> efile_new = new_ex.component.docs['index.html']
+    >>> form = exposure.ExposureFileTypeChoiceForm(efile_new, request)
+    >>> result = form()
+    >>> 'Dummy Type' in result
+    True
+    >>> '/plone/dummy_type' in result
+    False
 
-  - reuse the same storage class, but it could be stored under different 
-  keys
+Submitting this will result in the redirection to the next form.
+::
 
-Quick Usage Notes
------------------
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.eftypes': [u'Dummy Type'],
+    ...         'form.buttons.next': 1,
+    ...     })
+    >>> form = exposure.ExposureFileTypeChoiceForm(efile_new, request)
+    >>> result = form()
+    >>> request.response.getHeader('Location')
+    'http://nohost/plone/.../@@edit_annotations'
 
-Someone wants to create a new view for a file.  Let's call it 'simple',
-which will be accessible by http://.../fileobj/@@simple.  To register
-the browser class, one can reuse/create an applicable subclass of the
-ExposureFileViewBase browser class.
+The fields and the views selected should have been applied to our 
+context.
+::
 
-The storage of the final data will need to be defined also.  It is as
-simple as defining a new factory with the same key as the view.
+    >>> efile_new.views
+    [u'rot13', u'post_edited_note', u'edited_note']
+    >>> efile_new.file_type
+    '/plone/dummy_type'
+
+The next form should contain all the fields specified for editing.
+::
+
+    >>> request = TestRequest()
+    >>> form = exposure.ExposureFileTypeAnnotatorForm(efile_new, request)
+    >>> form.update()
+    >>> [g.fields.keys() for g in form.groups]
+    [[], ['post_edited_note.chars'], ['edited_note.note']]
+
+When this form is sucessfully submitted, the annotations will be
+generated and added.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.post_edited_note.chars': u'15',
+    ...         'form.widgets.edited_note.note': u'User Edited Data.',
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> form = exposure.ExposureFileTypeAnnotatorForm(efile_new, request)
+    >>> result = form()
+
+All three annotations should have worked, with its appropriate notes
+generated.
+
+    >>> n = zope.component.queryAdapter(efile_new, name='rot13')
+    >>> n.text
+    u'<ugzy>...
+    >>> n = zope.component.queryAdapter(efile_new, name='post_edited_note')
+    >>> n.chars
+    15
+    >>> n.text
+    u'<html>\n<head><t'
+    >>> n = zope.component.queryAdapter(efile_new, name='edited_note')
+    >>> n.note
+    u'User Edited Data.'
+
+When requesting this form again, the edited widgets should have the
+values assigned above filled in.
+::
+
+    >>> request = TestRequest()
+    >>> form = exposure.ExposureFileTypeAnnotatorForm(efile_new, request)
+    >>> result = form()
+    >>> u'User Edited Data.' in result
+    True
