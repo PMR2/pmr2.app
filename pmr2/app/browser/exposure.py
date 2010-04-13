@@ -438,7 +438,6 @@ class ExposureFileTypeAnnotatorExtender(extensible.FormExtender):
             # XXX self.context.views should be a tuple of ascii values
             # taken from the constraint vocabulary of installed views.
             name = name.encode('ascii', 'replace')
-            description = None
             a_factory = zope.component.queryUtility(IExposureFileAnnotator, 
                                                     name=name)
             if not a_factory:
@@ -446,38 +445,52 @@ class ExposureFileTypeAnnotatorExtender(extensible.FormExtender):
                 continue
 
             annotator = a_factory(self.context)
-            if IExposureFileEditAnnotator.providedBy(annotator) or \
-                    IExposureFilePostEditAnnotator.providedBy(annotator):
-                # edited fields
-                fields = z3c.form.field.Fields(annotator.for_interface, 
-                                               prefix=name)
-                if IExposureFilePostEditAnnotator.providedBy(annotator):
-                    # select just the fields that will be edited.
-                    sel = ['%s.%s' % (name, n) for n in annotator.edited_names]
-                    fields = fields.select(*sel)
-            else:
-                # no edited fields available.
-                fields = z3c.form.field.Fields(prefix=name)
-                description = u''\
-                    'There are no editable attributes for this note as ' \
-                    'values for this annotation are automatically generated.'
-            
-            # instantiate the group.
-            context = self.context
-            ignoreContext = True
-            # since the adapter results in a factory that instantiates
-            # the annotation, this side effect must be avoided.
-            if has_note(context, name):
-                ignoreContext = False
-                context = zope.component.getAdapter(
-                    context, annotator.for_interface, name=name)
-            g = form.Group(context, self.request, self.form)
-            g.__name__ = annotator.title
-            g.label = annotator.title
-            g.description = description
-            g.fields = fields
-            g.ignoreContext = ignoreContext
-            self.form.groups.append(g)
+            self.add(annotator)
+
+    def add(self, annotator):
+        fields = self.makeField(annotator)
+        name = str(annotator.__name__)
+        context = self.context
+        ignoreContext = True
+
+        # since the adapter results in a factory that instantiates
+        # the annotation, this side effect must be avoided.
+        if has_note(context, name):
+            ignoreContext = False
+            context = zope.component.getAdapter(
+                context, annotator.for_interface, name=name)
+
+        # make the group and assign data.
+        g = form.Group(context, self.request, self.form)
+        g.__name__ = annotator.title
+        g.label = annotator.title
+        g.fields = fields
+        g.ignoreContext = ignoreContext
+        if not fields.keys():
+            g.description = u''\
+                'There are no editable attributes for this note as values ' \
+                'for this annotation are automatically generated.'
+
+        # finally append this group
+        self.form.groups.append(g)
+
+    def makeField(self, annotator):
+        # this method could potentially be refactored out into an 
+        # adapter.
+        name = str(annotator.__name__)
+        if IExposureFileEditAnnotator.providedBy(annotator) or \
+                IExposureFilePostEditAnnotator.providedBy(annotator):
+            # edited fields
+            fields = z3c.form.field.Fields(annotator.for_interface, 
+                                           prefix=name)
+            if IExposureFilePostEditAnnotator.providedBy(annotator):
+                # select just the fields that will be edited.
+                sel = ['%s.%s' % (name, n) for n in annotator.edited_names]
+                fields = fields.select(*sel)
+        else:
+            # no edited fields available.
+            fields = z3c.form.field.Fields(prefix=name)
+        return fields
 
 
 class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
