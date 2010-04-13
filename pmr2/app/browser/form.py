@@ -9,8 +9,10 @@ _ = MessageFactory("pmr2")
 from Acquisition import aq_parent, aq_inner
 
 import z3c.form.form
-from plone.i18n.normalizer.interfaces import IIDNormalizer
+from z3c.form.interfaces import IWidgets
 from z3c.form.form import Form, EditForm
+from plone.i18n.normalizer.interfaces import IIDNormalizer
+from plone.z3cform.fieldsets import group
 
 
 class DisplayForm(z3c.form.form.DisplayForm):
@@ -169,4 +171,21 @@ class BaseAnnotationForm(z3c.form.form.Form):
             self.request.response.redirect(self.nextURL())
             return ""
         return super(BaseAnnotationForm, self).render()
+
+
+class Group(group.Group):
+    def updateWidgets(self):
+        self.widgets = zope.component.getMultiAdapter(
+            (self, self.request, self.getContent()), IWidgets)
+        # difference with parent is we use this group's ignoreContext
+        # attribute rather than the parent form's setting
+        self.widgets.ignoreContext = self.ignoreContext
+        for attrName in ('mode', 'ignoreRequest', 'ignoreReadonly'):
+            value = getattr(self.parentForm.widgets, attrName)
+            setattr(self.widgets, attrName, value)
+        self.widgets.update()
+
+    def getContent(self):
+        # since context is manually set...
+        return self.context
 

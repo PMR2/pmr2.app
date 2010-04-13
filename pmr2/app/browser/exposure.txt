@@ -1232,6 +1232,14 @@ The next form should contain all the fields specified for editing.
     >>> [g.fields.keys() for g in form.groups]
     [[], ['post_edited_note.chars'], ['edited_note.note']]
 
+Rendering of the form should not cause side effects, which in this case
+add the annotation to the context before the values are ready.
+::
+
+    >>> from pmr2.app.annotation.factory import has_note
+    >>> True in [has_note(efile_new, name) for name in efile_new.views]
+    False
+
 When this form is sucessfully submitted, the annotations will be
 generated and added.
 ::
