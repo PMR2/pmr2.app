@@ -1222,6 +1222,8 @@ context.
     [u'rot13', u'post_edited_note', u'edited_note']
     >>> efile_new.file_type
     '/plone/dummy_type'
+    >>> efile_new.Subject()
+    ('Notes',)
 
 The next form should contain all the fields specified for editing.
 ::
