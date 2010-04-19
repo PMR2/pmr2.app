@@ -1,7 +1,7 @@
-<dl class="portlet" id="pmr_source">
-  <dt class="portletHeader">Download Methods:</dt>
+<dl class="portlet portletNavigationTree" id="pmr_source">
+  <dt class="portletHeader">Downloads</dt>
   <dd>
-    <ul>
+    <ul class="navTree">
       <li tal:repeat="i view/file_access_uris"
         ><a 
           tal:attributes="href i/href"

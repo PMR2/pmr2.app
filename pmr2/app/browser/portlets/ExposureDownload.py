@@ -70,16 +70,9 @@ class Renderer(base.Renderer):
             'label': u'Complete Archive as .tgz', 'href': archive_uri})
         if IExposureFile.providedBy(self.context):
             result.append({
-                'label': u'This File',
+                'label': u'Download This File',
                 'href': self.view_url(),
             })
-            # XXX CellML/OpenCell specific.
-            if self.path.endswith('.cellml') or \
-                    self.path.endswith('.session.xml'):
-                result.append({
-                    'label': u'Solve using OpenCell',
-                    'href': self.view_url('pcenv'),
-                })
         return result
 
     @property
