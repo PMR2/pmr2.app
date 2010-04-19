@@ -402,6 +402,11 @@ class ExposureFileTypeAnnotatorForm(
                 # with it.
                 continue
 
+            # Default annotator fully generates its data, we do not need 
+            # to pass in extra arguments.
+            args = ()
+
+            # Instantiate annotator with our context.
             annotator = annotatorFactory(self.context)
             if IExposureFileEditAnnotator.providedBy(annotator) or \
                     IExposureFilePostEditAnnotator.providedBy(annotator):
@@ -413,11 +418,10 @@ class ExposureFileTypeAnnotatorForm(
                     # raise a validation error of sort, but for now we 
                     # ignore it.
                     continue
-                annotator(groups[name])
-            else:
-                # This annotator fully generates its data, we do not
-                # need to pass in extra data (as there are none).
-                annotator()
+                args = (groups[name],)
+
+            # Call annotator to annotate our file.
+            annotator(*args)
 
         # The tagging should have been done in the previous form.
 
@@ -932,16 +936,13 @@ class ExposurePort(form.Form):
             # do stuff depend on type
 
             if IExposureFile.providedBy(obj):
-                # cannot use fieldvalues to automatically grab data,
-                # and not needed anyway because this type only has
-                # limited fields (i.e. manually exported here)
-                # get list of file notes
                 d = {}
-                d['docview_gensource'] = obj.docview_gensource
-                d['docview_generator'] = obj.docview_generator
-                d['selected_view'] = obj.selected_view
-                # now query the each views.
+                for n in IExposureFile.names():
+                    d[n] = getattr(obj, n)
+                # query each views manually.
                 d['views'] = viewinfo(obj)
+                # retain the subject.
+                d['Subject'] = obj.Subject()
                 yield (p, d,)
             elif IExposureFolder.providedBy(obj):
                 # we are ignorning other folder types, let an adapter
@@ -1053,6 +1054,8 @@ class ExposurePort(form.Form):
                 # only ExposureFiles have this
                 if IExposureFile.providedBy(ctxobj):
                     ctxobj.selected_view = fields['selected_view']
+                    ctxobj.file_type = fields['file_type']
+                    ctxobj.setSubject(fields['Subject'])
 
                 ctxobj.reindexObject()
             else:

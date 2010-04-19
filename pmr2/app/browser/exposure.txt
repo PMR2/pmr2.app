@@ -919,6 +919,7 @@ utility defined for this task.
     >>> result = list(porter.export())
     >>> answer = [
     ...     ('example_model.cellml', {
+    ...         'file_type': None,
     ...         'docview_gensource': None,
     ...         'docview_generator': None,
     ...         'views': [
@@ -929,8 +930,10 @@ utility defined for this task.
     ...             }),
     ...         ],
     ...         'selected_view': u'edited_note',
+    ...         'Subject': (),
     ...     }),
     ...     ('README', {
+    ...         'file_type': None,
     ...         'docview_gensource': None,
     ...         'docview_generator': None,
     ...         'views': [
@@ -940,24 +943,31 @@ utility defined for this task.
     ...             }),
     ...         ],
     ...         'selected_view': None,
+    ...         'Subject': (),
     ...     }),
     ...     ('component/module.cellml', {
+    ...         'file_type': None,
     ...         'docview_gensource': u'component/docs/index.html',
     ...         'docview_generator': u'safe_html',
     ...         'views': [],
     ...         'selected_view': None,
+    ...         'Subject': (),
     ...     }),
     ...     ('component/docs/index.html', {
+    ...         'file_type': None,
     ...         'docview_gensource': None,
     ...         'docview_generator': u'safe_html',
     ...         'views': [],
     ...         'selected_view': None,
+    ...         'Subject': (),
     ...     }),
     ...     ('component/docs/index.rst', {
+    ...         'file_type': None,
     ...         'docview_gensource': None,
     ...         'docview_generator': u'rest_to_html',
     ...         'views': [],
     ...         'selected_view': None,
+    ...         'Subject': (),
     ...     }),
     ...     ('component/docs', {
     ...         'docview_gensource': None,
@@ -1079,40 +1089,6 @@ Need to test this with the catalog, such that the results can still be
 queried.
 
 Also need to filter out incompatible objects.
-
-------------------
-Note Rearrangement
-------------------
-
-There is also an edit view that will allow users to rearrange and/or
-remove views.  It will remove any bad views.  First we render the form
-::
-
-    >>> ef = new_ex['example_model.cellml']
-    >>> ef.views
-    [u'rdfturtle', u'rdfxml', u'edited_note']
-    >>> request = TestRequest()
-    >>> view = zope.component.queryMultiAdapter((ef, request), 
-    ...                                         name='arrange_views')
-    >>> result = view.form_instance()
-    >>> '>rdfturtle\nrdfxml\nedited_note</textarea>' in result
-    True
-
-Now for the actual request to change values
-::
-
-    >>> request = TestRequest(form={
-    ...    'form.widgets.views': u'edited_note\n'
-    ...                           'rdfxml\n'
-    ...                           'baddata\n'
-    ...                           'rdfturtle\n',
-    ...    'form.buttons.apply': 1,
-    ... })
-    >>> view = zope.component.queryMultiAdapter((ef, request), 
-    ...                                         name='arrange_views')
-    >>> result = view.form_instance()
-    >>> ef.views
-    [u'edited_note', u'rdfxml', u'rdfturtle']
 
 ------------------
 Exposure File Type
@@ -1279,3 +1255,72 @@ values assigned above filled in.
     >>> result = form()
     >>> u'User Edited Data.' in result
     True
+
+Finally, we test that these data will also work with the migration.
+::
+
+    >>> rev = unicode(rawrevs[3])
+    >>> answer[3][1]['file_type'] = '/plone/dummy_type'
+    >>> answer[3][1]['Subject'] = ('Notes',)
+    >>> answer[3][1]['views'] = [
+    ...         (u'rot13', None),
+    ...         (u'post_edited_note', {
+    ...             'chars': 15,
+    ...             'text': u'<html>\n<head><t',
+    ...         }),
+    ...         (u'edited_note', {
+    ...             'note': u'User Edited Data.',
+    ...         }),
+    ...     ]
+    ...
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': rev,
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((new_ex, request), 
+    ...                                         name='rollover')
+    >>> result = view.form_instance()
+    >>> nextURL = request.response.getHeader('Location')
+    >>> print nextURL
+    http://.../exposure/...
+    >>> new_id = nextURL.split('/')[-1]
+    >>> new_ex2 = self.portal.exposure[new_id]
+    >>> newport = exposure.ExposurePort(new_ex2, None)
+    >>> result = list(newport.export())
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
+
+------------------
+Note Rearrangement
+------------------
+
+There is also an edit view that will allow users to rearrange and/or
+remove views.  It will remove any bad views.  First we render the form
+::
+
+    >>> ef = new_ex['example_model.cellml']
+    >>> ef.views
+    [u'rdfturtle', u'rdfxml', u'edited_note']
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((ef, request), 
+    ...                                         name='arrange_views')
+    >>> result = view.form_instance()
+    >>> '>rdfturtle\nrdfxml\nedited_note</textarea>' in result
+    True
+
+Now for the actual request to change values
+::
+
+    >>> request = TestRequest(form={
+    ...    'form.widgets.views': u'edited_note\n'
+    ...                           'rdfxml\n'
+    ...                           'baddata\n'
+    ...                           'rdfturtle\n',
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((ef, request), 
+    ...                                         name='arrange_views')
+    >>> result = view.form_instance()
+    >>> ef.views
+    [u'edited_note', u'rdfxml', u'rdfturtle']
