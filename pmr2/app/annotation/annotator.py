@@ -124,7 +124,7 @@ class PortalTransformGenBase(object):
     transform = None  # define this
 
     def convert(self, input):
-        pt = getToolByName(input, 'portal_transforms')
+        pt = getToolByName(self.context, 'portal_transforms')
         stream = datastream('pt_annotation')
         pt.convert(self.transform, input, stream)
         return stream.getData()
