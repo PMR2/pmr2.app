@@ -388,8 +388,11 @@ class ExposureFileTypeAnnotatorForm(
                 groups[group] = []
             groups[group].append((key, value,))
 
-        # now iterate through the views that had been selected for this
-        # form.
+        self._annotate(groups)
+
+    def _annotate(self, groups):
+        # iterate through the views that had been selected for this
+        # form, and use the data supplied by the groups parameter.
         for name in self.context.views:
             annotatorFactory = zope.component.queryUtility(
                 IExposureFileAnnotator,
