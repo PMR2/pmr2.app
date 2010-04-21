@@ -8,7 +8,7 @@
  <property name="content_meta_type">ExposureFile</property>
  <property name="product">pmr2.app</property>
  <property name="factory">addExposureFile</property>
- <property name="immediate_view">@@annotation</property>
+ <property name="immediate_view">@@filetype</property>
  <property name="global_allow">False</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types" />
@@ -34,8 +34,8 @@
   <permission value="Modify portal content"/>
  </action>
 
- <action title="Annotation" action_id="annotation" category="object" 
-    url_expr="string:${object_url}/@@annotation" visible="True" 
+ <action title="Set File Type" action_id="filetype" category="object" 
+    url_expr="string:${object_url}/@@filetype" visible="True" 
     i18n:attributes="title">
   <permission value="Modify portal content"/>
  </action>
