@@ -50,6 +50,13 @@
       allowed_interface="zope.interface.common.mapping.IItemMapping"
       permission="zope.Public" />
 
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.content.interfaces.IExposureFileType"
+      class=".layout.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public" />
+
   <!-- 
     these two are for the rollover.  I wish this isn't needed, will work
     on making this more reusable for other types when time permits.
