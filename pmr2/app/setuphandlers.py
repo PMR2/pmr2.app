@@ -60,3 +60,87 @@ def importVarious(context):
     site = context.getSite()
     print add_pas_plugin(site)
     print add_pmr2(site)
+
+def cellml_v0_2tov0_3(context):
+    """Migration script specific to models.cellml.org."""
+
+    import traceback
+    from logging import getLogger
+
+    from zope.annotation.interfaces import IAnnotations
+    from pmr2.app.annotation.interfaces import IExposureFileNote
+    from pmr2.app.browser.exposure import ExposureFileTypeAnnotatorForm
+    from pmr2.app.adapter import ExposureSourceAdapter
+
+    logger = getLogger('pmr2.app')
+    catalog = getToolByName(context, 'portal_catalog')
+    props = getToolByName(context, 'portal_properties')
+
+    # This is the path to the ExposureFileType object defined for the
+    # CellML type.  It needs to be set using the portal_properties tool.
+    cellml_type = props.site_properties.cellml_type_path
+    cellml_notes = set(['cmeta', 'basic_mathml', 'basic_ccode'])
+    cellml_type_notes = catalog(path=cellml_type)[0].getObject().views
+
+    def migrate(context, annotations, oldnotes):
+        # It can die here because something wrong with getting the 
+        # vocabulary from the manifest.
+        session_file = 'opencellsession' in oldnotes and \
+            annotations['opencellsession'].filename or \
+            None
+
+        groups = {}
+        groups['opencellsession'] = [('filename', session_file),]
+        if set(oldnotes) == cellml_notes:
+            context.file_type = cellml_type
+            # update views
+            context.views = cellml_type_notes
+            groups['license_citation'] = [('format', u'cellml_rdf_metadata')]
+            groups['source_text'] = [('langtype', u'xml')]
+        else:
+            # reuse the existing views, and unknown profile.
+            pass
+
+        # annotate using the form.
+        form = ExposureFileTypeAnnotatorForm(context, None)
+        # It can die here too because of various reasons (workspace
+        # missing, malformed input data, incompatibilities of existing
+        # data with new formatting scheme, stray electrons, etc.).
+        form._annotate(groups)
+
+    files = catalog(portal_type='ExposureFile')
+    for file in files:
+        context = file.getObject()
+        annotations = IAnnotations(context)
+        oldnotes = []
+
+        for k, v in annotations.iteritems():
+            if not IExposureFileNote.providedBy(v):
+                continue
+            # we only want annotations created in v0.2, which is 
+            # identified by the usage of non-prefixed keys.
+            if k in context.views:
+                oldnotes.append(k)
+
+        if not oldnotes:
+            # not doing anything since old notes are not found.
+            logger.info('`%s` has no pmr2.app v0.2 styled notes to migrate.' % 
+                        context.absolute_url_path())
+            continue
+
+        try:
+            migrate(context, annotations, oldnotes)
+        except:
+            logger.error('Failed to migrate `%s` - it may be left in an '
+                         'inconsistent state!' % context.absolute_url_path())
+            logger.warning(traceback.format_exc())
+            # naturally don't remove the old notes if we blew up.
+            continue
+
+        # remove old notes
+        for k in oldnotes:
+            del annotations[k]
+
+        logger.info('`%s` had its notes migrated successfully.' % 
+                    context.absolute_url_path())
+

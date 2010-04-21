@@ -12,4 +12,13 @@
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       />
 
+  <genericsetup:upgradeStep
+      title="PMR2 - Upgrade CellML Model Repository to v0.3"
+      description="This is used to upgrade CellML Model Repository from pmr2.app v0.2 to v0.3"
+      source="0.2"
+      destination="0.3"
+      handler="pmr2.app.setuphandlers.cellml_v0_2tov0_3"
+      profile="pmr2.app:default"
+      />
+
 </configure>
