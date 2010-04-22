@@ -83,15 +83,20 @@ def cellml_v0_2tov0_3(context):
     cellml_type_notes = catalog(path=cellml_type)[0].getObject().views
 
     def migrate(context, annotations, oldnotes):
-        # It can die here because something wrong with getting the 
-        # vocabulary from the manifest.
-        session_file = 'opencellsession' in oldnotes and \
-            annotations['opencellsession'].filename or \
-            None
+        # construct a set of old notes to verify whether or not to use
+        # the CellML profile.
+        oldnote_set = set(oldnotes)
+        session_file = None
+        if 'opencellsession' in oldnote_set:
+            # It can die here because something wrong with getting the 
+            # vocabulary from the manifest.
+            session_file = annotations['opencellsession'].filename
+            # discard this.
+            oldnote_set.remove('opencellsession')
 
         groups = {}
         groups['opencellsession'] = [('filename', session_file),]
-        if set(oldnotes) == cellml_notes:
+        if oldnote_set == cellml_notes:
             context.file_type = cellml_type
             # update views
             context.views = cellml_type_notes
