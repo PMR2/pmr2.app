@@ -1177,7 +1177,32 @@ filetype form.
     >>> '/plone/dummy_type' in result
     False
 
-Submitting this will result in the redirection to the next form.
+We can choose to not use the predefined type and assign views manually,
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.annotators': [u'rot13', u'post_edited_note'],
+    ...         'form.buttons.next': 1,
+    ...     })
+    >>> form = exposure.ExposureFileTypeChoiceForm(efile_new, request)
+    >>> result = form()
+    >>> request.response.getHeader('Location')
+    'http://nohost/plone/.../@@edit_annotations'
+
+The fields and the views selected should have been applied to our 
+context.
+::
+
+    >>> efile_new.views
+    [u'rot13', u'post_edited_note']
+    >>> efile_new.file_type
+    None
+    >>> efile_new.Subject()
+    ()
+
+Or chooose the defined type, which will assign the view, file type and
+tag the file with the appropriate subjects.
 ::
 
     >>> request = TestRequest(

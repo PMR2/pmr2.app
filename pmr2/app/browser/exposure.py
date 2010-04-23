@@ -306,7 +306,7 @@ class ExposureFileTypeChoiceForm(form.Form):
         data, errors = self.extractData()
         group_names = None
         if 'annotators' in data and data['annotators']:
-            group_names = data['annotators']
+            group_names = list(data['annotators'])
 
         if 'eftypes' in data and data['eftypes']:
             catalog = getToolByName(self.context, 'portal_catalog')
