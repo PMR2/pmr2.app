@@ -52,7 +52,7 @@ Changelog
 
 With the following changes:
 
-0.2rc1
+- 0.2rc1
 
 * Rewrote how Exposures are done.  The pages have been made deprecated
   and replaced with Exposure Files, which are wrappers around the files
@@ -68,7 +68,7 @@ With the following changes:
   (Pluggable Authentication System).
 * Various UI refinements.
 
-0.2rc2
+- 0.2rc2
 
 * Document view generation no longer generates empty title and 
   description if it's unknown.
@@ -76,19 +76,19 @@ With the following changes:
 * Files can also have a seprate source document like exposure root.
 * Fixed authentication issue for Mercurial v0.9.5
 
-0.2rc3
+- 0.2rc3
 
 * Shows the review state of an exposure to normal users by color coding
   them in the workspace changelog listing, and in the exposure views.
 
-0.2rc4
+- 0.2rc4
 
 * The pmr2 review state is now correctly reindexes all subobject of an
   exposure when its state changes.
 * Freshly created workspace will have its empty file list correctly
   rendered.
 
-0.2rc5
+- 0.2rc5
 
 * Allow the editing/rearrangement of views in ExposureFile
 * Documentation pages within an exposure can now reference files in
