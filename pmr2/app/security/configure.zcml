@@ -22,5 +22,4 @@
       factory=".roles.WorkspacePusherRole"
       />
 
-
 </configure>

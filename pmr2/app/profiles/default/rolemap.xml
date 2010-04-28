@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<rolemap>
+  <permissions>
+    <permission name="Mercurial Push" acquire="True">
+      <role name="Owner"/>
+    </permission>
+  </permissions>
+</rolemap>

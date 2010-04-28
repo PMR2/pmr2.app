@@ -24,14 +24,6 @@ plone.z3cform and added some more dummies of our own.
     ...     alsoProvides(request, IAttributeAnnotatable)
     ...     return request
     ...
-    >>> class dummyUser(object):
-    ...     def getRolesInContext(self, context):
-    ...         return []
-    ...
-    >>> class pushableUser(object):
-    ...     def getRolesInContext(self, context):
-    ...         return ['WorkspacePusher']
-    ...
 
 Now we build our adapters.
 ::
@@ -62,7 +54,8 @@ Now we build our adapters.
     ... 
 
 In order to not rely on a real Mercurial repo on disk for these tests,
-we are going to register our own dummies.
+we are going to register our own dummies.  We also add another user so
+permission check failures can be tested.
 ::
 
     >>> import zope.interface
@@ -81,13 +74,40 @@ we are going to register our own dummies.
     >>> sm = self.portal.getSiteManager()
     >>> sm.registerAdapter(DummyStorage, required=(IDummyWorkspace,),
     ...                    name=u'PMR2Storage')
+    >>> uf = self.folder.acl_users
+    >>> uf.userFolderAddUser('test_user_2_', 'password', [], [])
 
-We need to emulate some of the fields that gets set and used by our
-wrapper class.  Since the dummy user has no roles, it will be blocked
-from making POST requests.
+Standard GET should have no issues.
 ::
 
-    >>> request = make_request({'AUTHENTICATED_USER': dummyUser()})
+    >>> request = make_request()
+    >>> request.REQUEST_METHOD = 'GET'
+    >>> form = getMultiAdapter((context, request), name=u"storage-form")
+    >>> form
+    <pmr2.app.browser.layout.StorageFormWrapper object ...>
+    >>> form()
+    'Success'
+
+POST should not have issues for this user as it created the object above,
+hence it will authenticate as the owner, and despite it not having the
+push role, it will go fine.
+::
+
+    >>> request = make_request()
+    >>> request.REQUEST_METHOD = 'POST'
+    >>> form = getMultiAdapter((context, request), name=u"storage-form")
+    >>> form
+    <pmr2.app.browser.layout.StorageFormWrapper object ...>
+    >>> form()
+    'Success'
+
+If we change the user, we will have problems as it is not the owner of
+the workspace.
+::
+
+    >>> self.logout()
+    >>> self.login('test_user_2_')
+    >>> request = make_request()
     >>> request.REQUEST_METHOD = 'POST'
     >>> form = getMultiAdapter((context, request), name=u"storage-form")
     >>> form
@@ -95,14 +115,14 @@ from making POST requests.
     >>> form()
     Traceback (most recent call last):
     ...
-    Unauthorized: You are unauthorized to push to this workspace
+    Unauthorized: ...
 
-However, this will not affect GETs.  Since the dummy method does not
-raise an exception, what it returns will be rendered instead.
+Now if we grant the push role to this user, we can push.
 ::
 
-    >>> request = make_request({'AUTHENTICATED_USER': dummyUser()})
-    >>> request.REQUEST_METHOD = 'GET'
+    >>> context.manage_setLocalRoles('test_user_2_', ['WorkspacePusher'])
+    >>> request = make_request()
+    >>> request.REQUEST_METHOD = 'POST'
     >>> form = getMultiAdapter((context, request), name=u"storage-form")
     >>> form
     <pmr2.app.browser.layout.StorageFormWrapper object ...>
@@ -119,7 +139,7 @@ requests.
     >>> from DateTime import DateTime
     >>> moddate = DateTime(0)
     >>> context.setModificationDate(moddate)
-    >>> request = make_request({'AUTHENTICATED_USER': pushableUser()})
+    >>> request = make_request()
     >>> request.REQUEST_METHOD = 'POST'
     >>> form = getMultiAdapter((context, request), name=u"storage-form")
     >>> form

@@ -148,15 +148,29 @@ class StorageFormWrapper(FormWrapper):
     manual authentication.
     """
 
+    def authorized(self):
+        if self.request.REQUEST_METHOD == 'GET':
+            # This request method should have been authorized and not
+            # required further processing.
+            return True
+
+        pm = getToolByName(self.context, 'portal_membership')
+        if pm.isAnonymousUser():
+            # Definitely not allowing anonymous pushes.
+            return False
+
+        user = pm.getAuthenticatedMember() 
+        user_roles = user.getRolesInContext(self.context)
+        # user either requires a role granted via @@sharing or has the
+        # permission set manually under management.
+        return u'WorkspacePusher' in user_roles or \
+               user.has_permission('Mercurial Push', self.context)
+
     def __call__(self, *a, **kw):
 
         # XXX manual permissions checking.
-        if self.request.REQUEST_METHOD != 'GET':
-            user_roles = self.request['AUTHENTICATED_USER'].getRolesInContext(
-                self.context)
-            if u'WorkspacePusher' not in user_roles:
-                raise Unauthorized(
-                    'You are unauthorized to push to this workspace')
+        if not self.authorized():
+            raise Unauthorized('user unauthorized to push to this workspace')
 
         try:
             storage = getMultiAdapter((self.context,), name='PMR2Storage')
