@@ -123,7 +123,7 @@ class IExposureFileGenForm(zope.interface.Interface):
         title=u'File',
         description=u'The file within the workspace that requires special '\
                      'processing to be presentable in this exposure.',
-        vocabulary='ManifestListVocab',
+        vocabulary='pmr2.vocab.manifest',
     )   # this will become the id of an ExposureFile object.
 
 
@@ -137,7 +137,7 @@ class IExposureFileAnnotatorForm(zope.interface.Interface):
         title=u'Annotators Available',
         description=u'The selected annotators will annotate the current ' \
                      'file and enable the view.',
-        vocabulary='ExposureFileAnnotatorVocab',
+        vocabulary='pmr2.vocab.ExposureFileAnnotators',
         required=True,
     )
 
@@ -152,7 +152,7 @@ class IExposureFileTypeChoiceForm(zope.interface.Interface):
         title=u'File Type',
         description=u'Select the appropriate type for this file if one had '
                      'been defined.  Will override the choices below.',
-        vocabulary='EFTypeVocab',
+        vocabulary='pmr2.vocab.eftype',
         required=False,
     )
 
@@ -161,7 +161,7 @@ class IExposureFileTypeChoiceForm(zope.interface.Interface):
         description=u'The selected views will be enabled if the data has been '
                      'generated its annotator.',
         value_type=zope.schema.Choice(
-            vocabulary='ExposureFileAnnotatorVocab',
+            vocabulary='pmr2.vocab.ExposureFileAnnotators',
         ),
         required=False,
     )
@@ -197,7 +197,7 @@ class IExposureDocViewGenForm(zope.interface.Interface):
                      'object is already a file, leaving this field unselected '
                      'means the current file will provide the data from which '
                      'the document will be generated from.',
-        vocabulary='ManifestListVocab',
+        vocabulary='pmr2.vocab.manifest',
         required=False,
     )
 
@@ -205,7 +205,7 @@ class IExposureDocViewGenForm(zope.interface.Interface):
         title=u'View Generator',
         description=u'The selected generator will be used to attempt to ' \
                      'generate text for the default document view.',
-        vocabulary='DocViewGenVocab',
+        vocabulary='pmr2.vocab.DocViewGen',
         required=False,
     )
 
@@ -226,7 +226,7 @@ class IExposureFileSelectView(zope.interface.Interface):
         description=u'If specified, the selected note will be used as the '
                      'landing page for this file, instead of the generated '
                      'default view.',
-        vocabulary='ExposureFileNotesAvailableVocab',
+        vocabulary='pmr2.vocab.ExposureFileNotesAvailable',
         required=False,
     )
 

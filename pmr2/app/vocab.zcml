@@ -5,69 +5,57 @@
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.WorkspaceDirObjListVocabFactory"
-      name="WorkspaceDirObjVocab"
+      name="pmr2.vocab.workspace_dir_obj"
       />
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.ManifestListVocabFactory"
-      name="ManifestListVocab"
+      name="pmr2.vocab.manifest"
       />
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.PMR2TransformsVocabFactory"
-      name="PMR2TransformsVocab"
+      name="pmr2.vocab.transforms"
       />
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.PMR2IndexesVocabFactory"
-      name="PMR2IndexesVocab"
-      />
-
-  <utility
-      provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.PMR2ExposureDocumentFactoryVocabFactory"
-      name="ExposureDocumentFactoryVocab"
-      />
-
-  <utility
-      provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.PMR2ExposureMetadocFactoryVocabFactory"
-      name="ExposureMetadocFactoryVocab"
+      name="pmr2.vocab.indexes"
       />
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.EFTypeVocabFactory"
-      name="EFTypeVocab"
+      name="pmr2.vocab.eftype"
       />
 
   <!-- need factory method to make class because schemas depend on this -->
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.ExposureFileAnnotatorVocabFactory"
-      name="ExposureFileAnnotatorVocab"
+      name="pmr2.vocab.ExposureFileAnnotators"
       />
 
   <!-- factory is the class because we are reusing this without context -->
   <utility
       provides="zope.schema.interfaces.IVocabulary"
       factory="pmr2.app.vocab.ExposureFileNoteViewVocab"
-      name="ExposureFileAnnotatorVocab"
+      name="pmr2.vocab.ExposureFileAnnotators"
       />
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.ExposureFileNotesAvailableVocabFactory"
-      name="ExposureFileNotesAvailableVocab"
+      name="pmr2.vocab.ExposureFileNotesAvailable"
       />
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.DocViewGenVocabFactory"
-      name="DocViewGenVocab"
+      name="pmr2.vocab.DocViewGen"
       />
 
 </configure>

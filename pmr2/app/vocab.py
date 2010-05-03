@@ -107,36 +107,6 @@ class PMR2IndexesVocab(SimpleVocabulary):
 PMR2IndexesVocabFactory = vocab_factory(PMR2IndexesVocab)
 
 
-class PMR2ExposureDocumentFactoryVocab(SimpleVocabulary):
-
-    def __init__(self, context):
-        self.context = context
-        values = [(i[0], i[1].description) for i in 
-                  zope.component.getUtilitiesFor(IExposureDocumentFactory)]
-        # sort by description
-        values.sort(cmp=lambda x, y: cmp(x[1], y[1]))
-        terms = [SimpleTerm(*i) for i in values]
-        super(PMR2ExposureDocumentFactoryVocab, self).__init__(terms)
-
-PMR2ExposureDocumentFactoryVocabFactory = \
-    vocab_factory(PMR2ExposureDocumentFactoryVocab)
-
-
-class PMR2ExposureMetadocFactoryVocab(SimpleVocabulary):
-
-    def __init__(self, context):
-        self.context = context
-        values = [(i[0], i[1].description) for i in 
-                  zope.component.getUtilitiesFor(IExposureMetadocFactory)]
-        # sort by description
-        values.sort(cmp=lambda x, y: cmp(x[1], y[1]))
-        terms = [SimpleTerm(*i) for i in values]
-        super(PMR2ExposureMetadocFactoryVocab, self).__init__(terms)
-
-PMR2ExposureMetadocFactoryVocabFactory = \
-    vocab_factory(PMR2ExposureMetadocFactoryVocab)
-
-
 class ExposureFileAnnotatorVocab(SimpleVocabulary):
 
     zope.interface.implements(IVocabulary)

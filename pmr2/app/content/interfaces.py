@@ -169,7 +169,7 @@ class IPMR2Search(zope.interface.Interface):
     catalog_index = zope.schema.Choice(
         title=u'Index',
         description=u'The index to be use by this search object.',
-        vocabulary='PMR2IndexesVocab',
+        vocabulary='pmr2.vocab.indexes',
     )
 
 

@@ -44,8 +44,10 @@ class Renderer(base.Renderer):
 
     @property
     def links(self):
-        vocab = zope.component.queryUtility(zope.schema.interfaces.IVocabulary,
-                                            name='ExposureFileAnnotatorVocab')
+        vocab = zope.component.queryUtility(
+            zope.schema.interfaces.IVocabulary,
+            name='pmr2.vocab.ExposureFileAnnotators'
+        )
         result = [{
             'href': '%s/@@%s' % (self.context.absolute_url(), view),
             'title': vocab.getTerm(view).title,
