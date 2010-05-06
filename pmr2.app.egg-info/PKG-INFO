@@ -14,6 +14,40 @@ Description: Introduction
         Changelog
         =========
         
+        0.3 - Unreleased
+        ----------------
+        
+        * Streamlined exposure creation process.
+        - Added a exposure file type definition object, which allows
+        repository managers to define a profile for different files, such
+        that users can use it to generate consistent view listings with
+        the correct tags (subject) attached to the file.
+        - This also allows users to fill in all the data for all the views in
+        a single form, rather than loading forms for every view they want to
+        assign to the file if the file type is not defined for the file they
+        want to create an exposure of.
+        
+        * Added a global settings object, and added hooks to allow modules of
+        PMR2 to have their own subforms.
+        * Added user workspaces - users can have their own folder to add
+        their personal workspaces to.
+        * Added semi-edited note.  Enabled the use case where users can fill in
+        fields and then generate output based on what was entered and content
+        of the anchor file.
+        * Added partial exposure id resolution, where a partial id entered will
+        resolve to its full id and redirect to the complete link.
+        * Pushes to workspace now updates the modified date, so RSS feeds based
+        on updates to workspaces can be generated.
+        * Redone the exposure creation form as it was insecure against errors.
+        * Simplfied redirection from relative links to files in exposures to
+        workspace and refactored how this was done.
+        * Refactored catalog/indexing code.
+        * Removed nearly all CellML specific features.
+        * Removed the ExposureFilePage type (deprecated in v0.2).
+        * Removed the stale portlets for the above type.
+        * Removed nearly all methods from content type objects, mostly have to
+        do with the usage of the index/catalog adapters.
+        
         0.2.2 - Released (2010-02-02)
         -----------------------------
         
@@ -40,7 +74,7 @@ Description: Introduction
         
         With the following changes:
         
-        0.2rc1
+        - 0.2rc1
         
         * Rewrote how Exposures are done.  The pages have been made deprecated
         and replaced with Exposure Files, which are wrappers around the files
@@ -56,7 +90,7 @@ Description: Introduction
         (Pluggable Authentication System).
         * Various UI refinements.
         
-        0.2rc2
+        - 0.2rc2
         
         * Document view generation no longer generates empty title and
         description if it's unknown.
@@ -64,19 +98,19 @@ Description: Introduction
         * Files can also have a seprate source document like exposure root.
         * Fixed authentication issue for Mercurial v0.9.5
         
-        0.2rc3
+        - 0.2rc3
         
         * Shows the review state of an exposure to normal users by color coding
         them in the workspace changelog listing, and in the exposure views.
         
-        0.2rc4
+        - 0.2rc4
         
         * The pmr2 review state is now correctly reindexes all subobject of an
         exposure when its state changes.
         * Freshly created workspace will have its empty file list correctly
         rendered.
         
-        0.2rc5
+        - 0.2rc5
         
         * Allow the editing/rearrangement of views in ExposureFile
         * Documentation pages within an exposure can now reference files in
