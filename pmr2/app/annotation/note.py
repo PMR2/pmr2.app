@@ -8,7 +8,6 @@ from persistent import Persistent
 from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 
-from pmr2.processor.cmeta import Cmeta
 from pmr2.app.interfaces import *
 from pmr2.app.content.interfaces import *
 from pmr2.app.annotation.interfaces import *
