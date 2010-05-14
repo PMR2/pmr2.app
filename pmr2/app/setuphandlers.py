@@ -78,9 +78,11 @@ def cellml_v0_2tov0_3(context):
 
     # This is the path to the ExposureFileType object defined for the
     # CellML type.  It needs to be set using the portal_properties tool.
-    cellml_type = props.site_properties.cellml_type_path
+    cellml_type = props.site_properties.getProperty('cellml_type_path')
+    cellml_force = props.site_properties.getProperty('cellml_force_all')
     cellml_notes = set(['cmeta', 'basic_mathml', 'basic_ccode'])
-    cellml_type_notes = catalog(path=cellml_type)[0].getObject().views
+    cellml_type_notes = cellml_type and \
+        catalog(path=cellml_type)[0].getObject().views or None
 
     def migrate(context, annotations, oldnotes):
         # construct a set of old notes to verify whether or not to use
@@ -96,7 +98,7 @@ def cellml_v0_2tov0_3(context):
 
         groups = {}
         groups['opencellsession'] = [('filename', session_file),]
-        if oldnote_set == cellml_notes:
+        if cellml_force or (cellml_type_notes and oldnote_set == cellml_notes):
             context.file_type = cellml_type
             # update views
             context.views = cellml_type_notes
