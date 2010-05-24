@@ -6,7 +6,7 @@ Changelog
 
 Changes added in:
 
-- 0.2rc1
+- 0.3rc1
 
 * Streamlined exposure creation process.
   - Added a exposure file type definition object, which allows 
