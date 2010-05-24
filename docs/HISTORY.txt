@@ -4,6 +4,10 @@ Changelog
 0.3 - Unreleased
 ----------------
 
+Changes added in:
+
+- 0.2rc1
+
 * Streamlined exposure creation process.
   - Added a exposure file type definition object, which allows 
     repository managers to define a profile for different files, such
@@ -23,6 +27,7 @@ Changelog
   of the anchor file.
 * Added partial exposure id resolution, where a partial id entered will
   resolve to its full id and redirect to the complete link.
+* Added migration step, made available under under portal_setup.
 * Pushes to workspace now updates the modified date, so RSS feeds based
   on updates to workspaces can be generated.
 * Redone the exposure creation form as it was insecure against errors.
