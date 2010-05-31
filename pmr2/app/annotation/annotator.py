@@ -57,7 +57,8 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
         note = self.note
         try:
             for a, v in data:
-                # XXX should validate field/value by schema somehow
+                # XXX figure out how to gracefully handle schema errors
+                # (such as missing values).
                 setattr(note, a, v)
         except TypeError:
             raise TypeError('%s.generate failed to return a list of ' \

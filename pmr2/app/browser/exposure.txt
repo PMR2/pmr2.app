@@ -385,8 +385,8 @@ data (should not really be part of code).
     >>> print view()
     <h3>...</h3>
     <p>...
-    <pre><code>
-    @prefix : 
+    <pre><code>...
+    @prefix...
     ...
 
 We will do the same thing with the xml format.
@@ -445,8 +445,8 @@ other note class because it has a distinct annotation key.
     >>> print view()
     <h3>...</h3>
     <p>...
-    <pre><code>
-    @prefix : 
+    <pre><code>...
+    @prefix...
     ...
 
 This way it becomes a lot easier to provide new content and associated
@@ -1155,6 +1155,8 @@ The cataloged data should have been updated also.
     >>> results = catalog(portal_type='ExposureFileType')
     >>> results[0].pmr2_eftype_views
     [u'rot13', u'post_edited_note', u'edited_note']
+    >>> self.portal.dummy_type.select_view
+    u'post_edited_note'
 
 Before the next test, we need to publish the dummy type to make it
 available for use.
@@ -1257,6 +1259,7 @@ generated and added.
 
 All three annotations should have worked, with its appropriate notes
 generated.
+::
 
     >>> n = zope.component.queryAdapter(efile_new, name='rot13')
     >>> n.text
@@ -1269,6 +1272,12 @@ generated.
     >>> n = zope.component.queryAdapter(efile_new, name='edited_note')
     >>> n.note
     u'User Edited Data.'
+
+The other attributes to the exposure file should also have been set.
+::
+
+    >>> efile_new.selected_view
+    u'post_edited_note'
 
 When requesting this form again, the edited widgets should have the
 values assigned above filled in.
@@ -1286,6 +1295,7 @@ Finally, we test that these data will also work with the migration.
     >>> rev = unicode(rawrevs[3])
     >>> answer[3][1]['file_type'] = '/plone/dummy_type'
     >>> answer[3][1]['Subject'] = ('Notes',)
+    >>> answer[3][1]['selected_view'] = u'post_edited_note'
     >>> answer[3][1]['views'] = [
     ...         (u'rot13', None),
     ...         (u'post_edited_note', {

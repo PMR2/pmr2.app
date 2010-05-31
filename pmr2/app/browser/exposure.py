@@ -325,6 +325,9 @@ class ExposureFileTypeChoiceForm(form.Form):
                 # we have what we want.
                 group_names = results[0].pmr2_eftype_views
                 self.context.setSubject(results[0].pmr2_eftype_tags)
+                # XXX might consider setting following on the next form,
+                # which is when this particular view is generated.
+                self.context.selected_view = results[0].pmr2_eftype_select_view
                 self.context.file_type = data['eftypes']
                 self.status = _('File type assigned. Please select views '
                                 'to add to this file.')
