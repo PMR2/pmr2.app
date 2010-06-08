@@ -1,7 +1,7 @@
 from zope.component import queryAdapter, adapts
 from zope.publisher.interfaces import IRequest
 from ZPublisher.BaseRequest import DefaultPublishTraverse
-from paste.httpexceptions import HTTPNotFound
+from paste.httpexceptions import HTTPNotFound, HTTPFound
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import IExposureSourceAdapter
@@ -37,7 +37,7 @@ class ExposureTraverser(DefaultPublishTraverse):
         path = '/'.join(cpf + [name] + namestack)
         target_uri = '%s/@@%s/%s/%s' % (workspace.absolute_url(),
             self.target_view, exposure.commit_id, path)
-        return request.response.redirect(target_uri)
+        raise HTTPFound(target_uri)
 
 
 class ExposureContainerTraverser(DefaultPublishTraverse):

@@ -53,8 +53,14 @@ class TestExposureTraverser(TestCase):
         del ExposureTraverser.o_defaultTraverse 
 
     def traverseTester(self, traverser, request, name, location):
-        traverser.publishTraverse(request, name)
-        self.assertEqual(request.response.getHeader('location'), location)
+        try:
+            traverser.publishTraverse(request, name)
+        except HTTPFound, e:
+            self.assertEqual(e.location(), location)
+        except e:
+            self.fail('Unexpected exception thrown: ', e)
+        else:
+            self.fail('HTTPFound not thrown')
 
     def testInterface(self):
         self.failUnless(verifyClass(IPublishTraverse, ExposureTraverser))
