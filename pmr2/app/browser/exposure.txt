@@ -234,6 +234,30 @@ Now we have an exposure, try to use one of its default views on it.
     >>> print view.render()
     <div></div>
 
+As the exposure is a wrapper around the changeset of a workspace, all
+paths within it should map correctly back to its source.  We can test
+this feature using the testbrowser.  However, the testing stack does not
+work correctly due to the differences between this and the paste/wsgi
+framework that is used on an actual server, so an exception is raised
+instead, but we have enough information to figure out that the correct
+exception type (HTTPFound) is raised.
+
+The reason why we raise HTTPFound is to skip the rest of the 
+authentication steps for these nonexistential subpaths, not to mention
+it raises security error.  If the security error can be debugged, the
+standard way of using request.response.redirect(uri) can then be used.
+::
+
+    >>> from Products.Five.testbrowser import Browser
+    >>> browser = Browser()
+    >>> target = context.absolute_url() + '/file1'
+    >>> browser.open(target)
+    Traceback (most recent call last):
+    ...
+    HTTPError: HTTP Error 500: Internal Server Error
+    >>> browser.headers['bobo-exception-type']
+    'HTTPFound'
+
 We need to wrap around one of the interesting files inside with the
 standard ExposureFile object.
 ::
