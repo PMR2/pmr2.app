@@ -63,15 +63,19 @@ class Renderer(base.Renderer):
             ('pmr_jsim_star', u'JSim:'),
             ('pmr_cor_star', u'COR:'),
         )
+        required = ['pmr_curation_star']
         curation = self.exposure.curation or {}
         result = []
         for key, label in pairs:
             # first item or character
-            stars = key in curation and curation[key][0] or u'0'
-            result.append({
-                'label': label,
-                'stars': stars,
-            })
+            stars = key in curation and curation[key][0] or None
+            if key in required:
+                stars = stars or u'0'
+            if stars is not None:
+                result.append({
+                    'label': label,
+                    'stars': stars,
+                })
         return result
 
     @property
