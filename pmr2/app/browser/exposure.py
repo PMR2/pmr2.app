@@ -969,6 +969,8 @@ class ExposurePort(form.Form):
         # Then annotations can be assigned to them later, use viewinfo
         # to grab the relevant fields.
         fv = fieldvalues(cur)
+        # need the subject of the current folder.
+        fv['Subject'] = cur.Subject()
         if default_fv:
             # XXX legacy default values
             fv.update(default_fv)
@@ -1085,6 +1087,7 @@ class ExposurePort(form.Form):
                     # only copy curation over, until this becomes an
                     # annotation.
                     container.curation = fields['curation']
+                container.setSubject(fields['Subject'])
                 container.reindexObject()
 
 
