@@ -939,6 +939,7 @@ utility defined for this task.
     >>> context
     <Exposure at /.../exposure/...>
     >>> context.curation = {'key': ['value1', 'value2']}
+    >>> context.setSubject(('Test',))
     >>> porter = exposure.ExposurePort(context, None)
     >>> result = list(porter.export())
     >>> answer = [
@@ -996,10 +997,12 @@ utility defined for this task.
     ...     ('component/docs', {
     ...         'docview_gensource': None,
     ...         'docview_generator': None,
+    ...         'Subject': (),
     ...     }),
     ...     ('component', {
     ...         'docview_gensource': u'component/README',
     ...         'docview_generator': u'safe_html',
+    ...         'Subject': (),
     ...     }),
     ...     ('', {
     ...         'commit_id': u'006f11cd9211abd2a879df0f6c7f27b9844a8ff2',
@@ -1008,6 +1011,7 @@ utility defined for this task.
     ...         'docview_gensource': u'component/docs/index.html',
     ...         'title': u'Simple HTML',
     ...         'workspace': u'rdfmodel',
+    ...         'Subject': ('Test',),
     ...     })
     ... ]
     >>> if not result == answer:
