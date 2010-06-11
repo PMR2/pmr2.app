@@ -81,8 +81,9 @@ def cellml_v0_2tov0_3(context):
     cellml_type = props.site_properties.getProperty('cellml_type_path')
     cellml_force = props.site_properties.getProperty('cellml_force_all')
     cellml_notes = set(['cmeta', 'basic_mathml', 'basic_ccode'])
-    cellml_type_notes = cellml_type and \
-        catalog(path=cellml_type)[0].getObject().views or None
+    cellml_type_obj = cellml_type and catalog(path=cellml_type)[0].getObject()
+    cellml_type_notes = cellml_type_obj and cellml_type_obj.views
+    cellml_type_tags = cellml_type_obj and cellml_type_obj.tags or ()
 
     def migrate(context, annotations, oldnotes):
         # construct a set of old notes to verify whether or not to use
@@ -102,6 +103,7 @@ def cellml_v0_2tov0_3(context):
             context.file_type = cellml_type
             # update views
             context.views = cellml_type_notes
+            context.setSubject(cellml_type_tags)
             groups['license_citation'] = [('format', u'cellml_rdf_metadata')]
             groups['source_text'] = [('langtype', u'xml')]
         else:
