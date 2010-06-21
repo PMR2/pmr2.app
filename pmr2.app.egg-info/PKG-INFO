@@ -14,8 +14,8 @@ Description: Introduction
         Changelog
         =========
         
-        0.3 - Unreleased
-        ----------------
+        0.3 - Released (2010-06-21)
+        ---------------------------
         
         Changes added in:
         
@@ -46,6 +46,8 @@ Description: Introduction
         * Redone the exposure creation form as it was insecure against errors.
         * Simplfied redirection from relative links to files in exposures to
         workspace and refactored how this was done.
+        * Fixed the 'Views available' link to show the default view rather than
+        downloading the file.
         * Refactored catalog/indexing code.
         * Removed nearly all CellML specific features.
         * Removed the ExposureFilePage type (deprecated in v0.2).
