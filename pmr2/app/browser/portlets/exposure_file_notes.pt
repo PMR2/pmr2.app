@@ -6,7 +6,7 @@
        <a href="#" 
            class="title"
            tal:condition="view/title"
-           tal:attributes="href string:${context/absolute_url}"
+           tal:attributes="href string:${context/absolute_url}/view"
            tal:content="view/title">ExposureFileNotes</a>
         <span class="portletTopRight"></span>
     </dt>
