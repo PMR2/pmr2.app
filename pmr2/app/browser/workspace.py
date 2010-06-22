@@ -318,7 +318,7 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
 
         eaf = ExposureAddForm(exposure_container, None)
         data = {
-            'workspace': unicode(self.context.absolute_url_path()),
+            'workspace': u'/'.join(self.context.getPhysicalPath()),
             'curation': None,  # to be copied later
             'commit_id': data['commit_id'],
         }
@@ -800,7 +800,7 @@ class CreateExposureForm(form.AddForm, page.TraversePage):
             raise HTTPNotFound(self.context.title_or_id())
 
         exposure = obj
-        workspace = unicode(self.context.absolute_url_path())
+        workspace = u'/'.join(self.context.getPhysicalPath())
         commit_id = unicode(self.traverse_subpath[0])
 
         try:
