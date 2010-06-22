@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.3.1 - Released (2010-06-22)
+-----------------------------
+
+* Fixed bugs that manifested in a virtual host environment.
+  - exposure creation (both normal and rollover).
+  - listing of exposures in the workspace pages.
+
+* Removed placeholder subrepo list bullets.
+
 0.3 - Released (2010-06-21)
 ---------------------------
 
