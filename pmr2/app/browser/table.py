@@ -201,7 +201,7 @@ class ExposureColumn(ItemKeyColumn):
         query['portal_type'] = 'Exposure'  # XXX this may need changing
         query['pmr2_exposure_workspace'] = [
             workspace.id,
-            workspace.absolute_url_path(),
+            u'/'.join(workspace.getPhysicalPath()),
         ]
         query['pmr2_exposure_commit_id'] = item['node']
         return pt(**query)
