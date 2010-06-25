@@ -77,9 +77,6 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         return path
 
     def createUserWorkspaceContainer(self, user, override=False):
-        # import here to avoid circular imports
-        from pmr2.app.content import WorkspaceContainer
-
         if not (self.create_user_workspace or override):
             return
         try:
@@ -88,44 +85,46 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
                 return
         except TypeError:
             return
-        sm = getSiteManager(self)
-        root = str('../%s' % self.user_workspace_subpath)
-        folder = sm.unrestrictedTraverse(root, None)
+        self.createWorkspaceContainer(user, self.user_workspace_subpath)
+
+    def createWorkspaceContainer(self, name, root=None):
+        folder = self.siteUnrestrictedTraverse(root)
         if folder is None:
             # some error?  also check that this is a folderish type?
             return
-        folder[user] = WorkspaceContainer(user)
 
-        # Folder created, we need to create the dir on the filesystem
-        # and this is where it gets a bit magical.  Not at the creation,
-        # but at the part for the resolution of the object.  Basically
-        # we need to make sure that we get the site object that we want
-        # to have the properly traversable set of objects to get to our
-        # nely created one, and since the site managers acquired somehow
-        # don't provide it, we have this monstrosity until I find the
-        # documentation on how to properly acquire the local root that
-        # supports proper traversal and not rely on getSite which has
-        # returned unexpected sites at times, due to other registration
-        # or validation that has taken place elsewhere.
+        # import here to avoid circular imports
+        from pmr2.app.content import WorkspaceContainer
+        folder[name] = WorkspaceContainer(name)
 
-        if not sm == getSiteManager():
+        # WorkspaceContainer created, we need to create the dir on the 
+        # filesystem.
+        #
+        # We need the object that can be traversed using absolute paths,
+        # but the site manage acquired ones do not provide this.
+        # 
+        # So we work around using getSite, but with the caveat that it
+        # might not work because of how getSite may acquire the wrong
+        # object because this method may be called under a different
+        # context, which we will abort.
+
+        if not getSiteManager(self) == getSiteManager():
             # so we give up.
             return
 
         # Assume site is a Plone site.
         site = getSite()
-        userpath = str('%s/%s' % (self.user_workspace_subpath, user))
-        userws = site.unrestrictedTraverse(userpath, None)
-        self.createDir(userws)
-        userws.reindexObject()
+        newpath = str('%s/%s' % (root, name))
+        wc = site.unrestrictedTraverse(newpath, None)
+        self.createDir(wc)
+        wc.reindexObject()
 
     def getWorkspaceContainer(self, user=None):
         if user is None:
-            path = '../%s' % self.default_workspace_subpath
+            path = self.default_workspace_subpath
         else:
-            path = '../%s/%s' % (self.user_workspace_subpath, user)
-        sm = getSiteManager(self)
-        obj = sm.unrestrictedTraverse(str(path), None)
+            path = '%s/%s' % (self.user_workspace_subpath, user)
+        obj = self.siteUnrestrictedTraverse(path)
         if obj is not None and not IWorkspaceContainer.providedBy(obj):
             if user is None:
                 raise TypeError('the content at the workspace container '
@@ -136,10 +135,12 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         return obj
 
     def getExposureContainer(self):
+        return self.siteUnrestrictedTraverse(self.default_exposure_subpath)
+
+    def siteUnrestrictedTraverse(self, subpath):
         sm = getSiteManager(self)
-        path = '../%s' % self.default_exposure_subpath
-        obj = sm.unrestrictedTraverse(str(path), None)
-        return obj
+        path = '../%s' % subpath
+        return sm.unrestrictedTraverse(str(path), None)
 
 PMR2GlobalSettings = factory(PMR2GlobalSettingsAnnotation)
 
