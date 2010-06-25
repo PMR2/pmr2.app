@@ -60,12 +60,26 @@ This utility can create a path for a specific object.
     >>> pmr2_settings.dirCreatedFor(self.portal) == portal_path
     True
 
-Also specified is a method that returns the workspace container object 
+As the container objects do not exist yet, the form provides another
+action which site managers can used to create them.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.repo_root': self.tmpdir,
+    ...         'form.widgets.default_workspace_subpath': u'workspace',
+    ...         'form.widgets.user_workspace_subpath': u'w',
+    ...         'form.widgets.default_exposure_subpath': u'exposure',
+    ...         'form.widgets.create_user_workspace': [u'false'],
+    ...         'form.buttons.apply_and_create': 1,
+    ...     })
+    >>> f = PMR2GlobalSettingsEditForm(self.portal, request)
+    >>> result = f()
+
+Now we can test the method that returns the workspace container object 
 specified as the default.
 ::
 
-    >>> from pmr2.app.content import WorkspaceContainer
-    >>> self.portal['workspace'] = WorkspaceContainer()
     >>> result = pmr2_settings.getWorkspaceContainer()
     >>> result == self.portal.workspace
     True
@@ -73,8 +87,6 @@ specified as the default.
 One exists for exposure container also.
 ::
 
-    >>> from pmr2.app.content import ExposureContainer
-    >>> self.portal['exposure'] = ExposureContainer()
     >>> result = pmr2_settings.getExposureContainer()
     >>> result == self.portal.exposure
     True

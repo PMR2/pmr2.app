@@ -23,6 +23,8 @@ from pmr2.app.content.interfaces import IWorkspaceContainer
 from pmr2.app.interfaces import IPMR2GlobalSettings, IPMR2PluggableSettings
 from pmr2.app.factory import NamedUtilBase
 
+from pmr2.app.content import WorkspaceContainer, ExposureContainer
+
 __all__ = [
     'PMR2GlobalSettings',
 ]
@@ -76,6 +78,62 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
             makedirs(path)
         return path
 
+    def createContainer(self, container, name, root=None):
+        # We need a context that can be traversed using absolute paths,
+        # but the site manager acquired ones do not provide this.
+        # 
+        # So we work around using getSite, but with the caveat that it
+        # might not work because of how getSite may acquire the wrong
+        # object because this method may be called under a different
+        # context, which we will abort.
+
+        if not getSiteManager(self) == getSiteManager():
+            raise Exception('Site manager does not match context')
+
+        site = getSite()
+        if root:
+            folder = site.unrestrictedTraverse(str(root), None)
+            if folder is None:
+                # XXX exception type
+                raise ValueError('Target root not found')
+            # XXX check to make sure folder is folderish
+        else:
+            folder = site
+
+        existed = folder.unrestrictedTraverse(name, None)
+        if existed is not None:
+            return False
+
+        folder[name] = container(name)
+        self.createDir(folder[name])
+        folder[name].reindexObject()
+
+        return True
+
+    def parsePath(self, pathname):
+        value = pathname.rsplit('/', 1)
+        if not value:
+            return None, None
+        name = str(value.pop())
+        if not value:
+            return name, None
+        return name, value[0]
+
+    def createDefaultWorkspaceContainer(self):
+        # XXX will not create the associated ATFolder objects if path is
+        # nested.
+        workspace_args = self.parsePath(self.default_workspace_subpath)
+        return self.createWorkspaceContainer(*workspace_args)
+
+    def createDefaultExposureContainer(self):
+        # XXX will not create the associated ATFolder objects if path is
+        # nested.
+        exposure_args = self.parsePath(self.default_exposure_subpath)
+        return self.createExposureContainer(*exposure_args)
+
+    def createExposureContainer(self, name, root=None):
+        return self.createContainer(ExposureContainer, name, root)
+
     def createUserWorkspaceContainer(self, user, override=False):
         if not (self.create_user_workspace or override):
             return
@@ -88,43 +146,14 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         self.createWorkspaceContainer(user, self.user_workspace_subpath)
 
     def createWorkspaceContainer(self, name, root=None):
-        folder = self.siteUnrestrictedTraverse(root)
-        if folder is None:
-            # some error?  also check that this is a folderish type?
-            return
-
-        # import here to avoid circular imports
-        from pmr2.app.content import WorkspaceContainer
-        folder[name] = WorkspaceContainer(name)
-
-        # WorkspaceContainer created, we need to create the dir on the 
-        # filesystem.
-        #
-        # We need the object that can be traversed using absolute paths,
-        # but the site manage acquired ones do not provide this.
-        # 
-        # So we work around using getSite, but with the caveat that it
-        # might not work because of how getSite may acquire the wrong
-        # object because this method may be called under a different
-        # context, which we will abort.
-
-        if not getSiteManager(self) == getSiteManager():
-            # so we give up.
-            return
-
-        # Assume site is a Plone site.
-        site = getSite()
-        newpath = str('%s/%s' % (root, name))
-        wc = site.unrestrictedTraverse(newpath, None)
-        self.createDir(wc)
-        wc.reindexObject()
+        return self.createContainer(WorkspaceContainer, name, root)
 
     def getWorkspaceContainer(self, user=None):
         if user is None:
             path = self.default_workspace_subpath
         else:
             path = '%s/%s' % (self.user_workspace_subpath, user)
-        obj = self.siteUnrestrictedTraverse(path)
+        obj = self.siteManagerUnrestrictedTraverse(path)
         if obj is not None and not IWorkspaceContainer.providedBy(obj):
             if user is None:
                 raise TypeError('the content at the workspace container '
@@ -135,9 +164,10 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         return obj
 
     def getExposureContainer(self):
-        return self.siteUnrestrictedTraverse(self.default_exposure_subpath)
+        return self.siteManagerUnrestrictedTraverse(
+            self.default_exposure_subpath)
 
-    def siteUnrestrictedTraverse(self, subpath):
+    def siteManagerUnrestrictedTraverse(self, subpath):
         sm = getSiteManager(self)
         path = '../%s' % subpath
         return sm.unrestrictedTraverse(str(path), None)
