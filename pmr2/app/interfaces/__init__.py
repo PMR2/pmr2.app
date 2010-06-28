@@ -95,7 +95,8 @@ class IPMR2GlobalSettings(zope.interface.Interface):
 
     user_workspace_subpath = zope.schema.TextLine(
         title=_(u'User Workspace Subpath'),
-        description=_(u'The root for the user workspace containers.'),
+        description=_(u'The root folder for the user workspace containers; '
+                       'this folder should be created if not already exists.'),
         required=False,
     )
 
@@ -133,12 +134,38 @@ class IPMR2GlobalSettings(zope.interface.Interface):
         Creates the dir for the specified object.
         """
 
+    def createDefaultWorkspaceContainer():
+        """\
+        Creates the default workspace container object at the location
+        specified at default_workspace_subpath.  The directory to store
+        the workspaces will be created on the filesystem.
+        """
+
+    def createDefaultExposureContainer():
+        """\
+        Creates the default exposure container object at the location
+        specified at default_exposure_subpath.
+        """
+
+    def createExposureContainer(name, root=None):
+        """\
+        Creates an exposure container with the name `name` at the 
+        location `root`.
+        """
+
     def createUserWorkspaceContainer(user, override=False):
         """\
         Create a user workspace container at the location specified at
         the default_workspace_subpath, if enabled or override is True.
 
         Will fail silently if the root container does not exist.
+        """
+
+    def createWorkspaceContainer(name, root=None):
+        """\
+        Creates an workspace container with the name `name` at the 
+        location `root`.  The corresponding directory used for storage
+        of the workspace data will be created on the filesystem.
         """
 
     def getWorkspaceContainer(user=None):

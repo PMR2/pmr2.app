@@ -84,11 +84,24 @@ specified as the default.
     >>> result == self.portal.workspace
     True
 
+Directory should have been created on the filesystem.
+::
+
+    >>> pmr2_settings.dirCreatedFor(self.portal.workspace) is not None
+    True
+
 One exists for exposure container also.
 ::
 
     >>> result = pmr2_settings.getExposureContainer()
     >>> result == self.portal.exposure
+    True
+
+Exposures don't have any filesystem components so no directory should 
+have been created.
+::
+
+    >>> pmr2_settings.dirCreatedFor(self.portal.exposure) is None
     True
 
 There is a method to allow user workspace creation.  Since the default
