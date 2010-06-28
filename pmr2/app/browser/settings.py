@@ -57,7 +57,7 @@ class PMR2GlobalSettingsEditForm(extensible.ExtensibleForm, form.EditForm):
             raise
 
         try:
-            settings.createDefaultExposureContainer()
+            created = settings.createDefaultExposureContainer()
             if created:
                 results.append('Created Exposure Container.')
             else:
