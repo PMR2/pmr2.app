@@ -1,0 +1,51 @@
+The Physiome Model Repository 2 (PMR2) is copyright Auckland 
+Bioengineering Institute.
+
+The Physiome Model Repository 2 (PMR2) is released under the following
+licenses:
+
+ 1) The Mozilla Public License, Version 1.1 (MPL 1.1) and,
+ 2) The GNU General Public License, Version 2 (GPLv2), or at your 
+    option, any later version.
+ 3) The GNU Lesser General Public License, Version 2.1 (LGPLv2.1), or
+    at your option, any later version.
+
+You may only use PMR2 in compliance with one or more of these licenses.
+Please read the text of each of the above licenses carefully as they all
+apply to this software.
+
+Note that some parts of PMR2 links with third-party libraries that are
+not licensed under the same license as listed above.  Such libraries may
+affect how certain parts of PMR2 are licensed.  Such third-party 
+libraries includes:
+
+ 1) Plone (and libraries)
+  * Only the GNU GPLv2 offered for any works derived from Plone and
+     most libraries Plone provides.
+  * Modules within PMR2 that are link to and/or derived from parts of
+    Plone that are under the terms of the GPLv2:
+    - pmr2.app.atct
+    - pmr2.app.browser.portlets
+    - pmr2.app.content
+    - pmr2.app.portlets
+    - pmr2.app.viewlets
+    - pmr2.app.security
+
+  * Modules and classes within PMR2 that are link to and/or derived from
+    parts of Plone that are under the terms of the LGPLv2.1:
+    - pmr2.app.catalog
+
+  * This in turn affects the parts within PMR2 that directly links with
+    the modules listed above.  However, if the implementations of those
+    classes are modify to not link with code under the terms of the GPL
+    or the LGPL, the terms of the MPL can then apply also.
+
+ 2) Zope (and libraries)
+  * Zope is licensed under the Zope Public License, Version 2.1, which
+    has no restrictions on what license of the code that links against
+    it.
+
+ 3) lxml
+  * lxml is licensed under the BSD License, which has no restrictions on
+    what license of the code that links against it.
+
