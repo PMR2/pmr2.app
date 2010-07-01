@@ -1,6 +1,8 @@
 from unittest import TestSuite, makeSuite
 from base import TestCase
+from zope.app.component.hooks import getSite
 from Products.CMFCore.utils import getToolByName
+from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 
 class TestProductInstall(TestCase):
 
@@ -25,6 +27,12 @@ class TestProductInstall(TestCase):
                 self.failUnless(wf in self.portal.portal_workflow.objectIds(),
                                 'workflow `%s` not installed for `%s`' % 
                                     (wf, k))
+
+    def testChallengeInstalled(self):
+        site = getSite()
+        uf = getToolByName(site, 'acl_users')
+        activated_pn = uf.plugins.listPluginIds(IChallengePlugin)
+        self.assertEqual(activated_pn[0], 'hgauthpas')
 
 
 def test_suite():
