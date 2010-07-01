@@ -6,7 +6,6 @@ class TestProductInstall(TestCase):
 
     def afterSetUp(self):
         self.types = {
-            'PMR2': 'pmr2_root_workflow',
             'WorkspaceContainer': None,
             'SandboxContainer': None,
             'ExposureContainer': None,

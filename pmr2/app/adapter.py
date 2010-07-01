@@ -20,31 +20,6 @@ from pmr2.app.content.interfaces import *
 from pmr2.app.browser.interfaces import IPublishTraverse
 from pmr2.app.browser.interfaces import IExposureFileSelectView
 
-# Deprecated import location compatability
-import zope.deprecation
-from pmr2.app.annotation.note import RawTextNote
-zope.deprecation.deprecated('RawTextNote', 
-    'Please recreate these notes before pmr2.app-0.4')
-
-try:
-    from cellml.pmr2.note import CmetaNote
-    zope.deprecation.deprecated('CmetaNote',
-        'CmetaNote has been moved to cellml.pmr2.  Please install that '
-        'product if you wish to continue to use it, and also recreate these '
-        'notes before pmr2.app-0.4')
-except ImportError:
-    pass
-
-try:
-    from cellml.pmr2.note import OpenCellSessionNote
-    zope.deprecation.deprecated('OpenCellSessionNote',
-        'OpenCellSessionNote has been moved to cellml.pmr2.  Please install '
-        'that product if you wish to continue to use it, and also recreate '
-        'these notes before pmr2.app-0.4')
-except ImportError:
-    pass
-
-
 __all__ = [
     'PMR2StorageRequestViewAdapter',
     'PMR2ExposureStorageAdapter',

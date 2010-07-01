@@ -6,8 +6,6 @@
   <include package="pmr2.app.security" />
   <include package=".portlets" />
 
-  <!-- PMR2 Root -->
-
   <!-- PMR2 specific Zope 3 browser layer -->
 
   <!-- 
@@ -75,13 +73,6 @@
       permission="zope.Public" />
 
   <!-- pages -->
-
-  <browser:page
-      for="pmr2.app.content.PMR2"
-      name="edit_repository"
-      class=".root.PMR2EditFormView"
-      permission="pmr2.app.security.ManagePMR2"
-      />
 
   <!-- Workspace Container -->
 
@@ -386,13 +377,6 @@
       />
 
   <!-- PMR2 Custom Search object -->
-
-  <browser:page
-      for="pmr2.app.content.PMR2"
-      name="pmr2search_add_form"
-      class=".support.PMR2SearchAddFormView"
-      permission="pmr2.app.security.ManagePMR2"
-      />
 
   <browser:page
       for="pmr2.app.content.PMR2Search"

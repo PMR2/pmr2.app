@@ -85,7 +85,6 @@ class WorkspaceDocTestCase(DocTestCase):
 
         DocTestCase.setUp(self)
         from plone.z3cform.tests import setup_defaults
-        from pmr2.app.content import PMR2
         from pmr2.app.tests import utils
         from pmr2.app.interfaces import IPMR2GlobalSettings
         setup_defaults()
@@ -126,7 +125,7 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
 
         WorkspaceDocTestCase.setUp(self)
         self.pmr2.repo_root = self.tmpdir
-        from pmr2.app.content import *
+        from pmr2.app.content import WorkspaceContainer, Workspace
         from pmr2.app.tests import utils
         self.portal['workspace'] = WorkspaceContainer()
         self.portal.workspace['eggs'] = Workspace('eggs')
