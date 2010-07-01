@@ -2,6 +2,13 @@ MANIFEST.in
 README.txt
 setup.cfg
 setup.py
+docs/COPYING.txt
+docs/HISTORY.txt
+docs/INSTALL.txt
+docs/LICENSE.GPL
+docs/LICENSE.LGPL
+docs/LICENSE.MPL
+docs/LICENSE.txt
 pmr2/__init__.py
 pmr2.app.egg-info/PKG-INFO
 pmr2.app.egg-info/SOURCES.txt

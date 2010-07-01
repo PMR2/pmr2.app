@@ -1,18 +1,36 @@
 Metadata-Version: 1.0
 Name: pmr2.app
-Version: 0.3.1
+Version: 0.3.2
 Summary: The PMR2 Application
 Home-page: http://www.cellml.org/
 Author: Tommy Yu
 Author-email: tommy.yu@auckland.ac.nz
-License: GPL
+License: MPL, GPL, LGPL
 Description: Introduction
         ============
         
-        
+        This is the Physiome Model Repository 2 software.  Please refer to the
+        changelog on the features this software provides.
         
         Changelog
         =========
+        
+        0.3.2 - Released (2010-07-01)
+        -----------------------------
+        
+        * Fresh installation now works as intended on standard configurations as
+        the bugs that prevented this were fixed.
+        - Default installation now correctly allow Mercurial clients to prompt
+        users for authentication.
+        - https://tracker.physiomeproject.org/show_bug.cgi?id=2625
+        
+        - PMR2 no longer prevents a default Plone site from rendering if it is
+        present but not installed using the portal add-on installer tool.
+        - https://tracker.physiomeproject.org/show_bug.cgi?id=2626
+        
+        * Updated documentation and classifiers.
+        * License has been amended to be what is intended (MPL/GPL/LGPL tri-
+        license).
         
         0.3.1 - Released (2010-06-22)
         -----------------------------
@@ -159,6 +177,14 @@ Description: Introduction
         consult the logs in the version control system.
         
 Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Web Environment
 Classifier: Framework :: Plone
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
+Classifier: License :: OSI Approved :: Mozilla Public License 1.1 (MPL 1.1)
 Classifier: Programming Language :: Python
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content
 Classifier: Topic :: Software Development :: Libraries :: Python Modules
