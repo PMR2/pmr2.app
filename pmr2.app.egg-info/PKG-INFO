@@ -15,8 +15,14 @@ Description: Introduction
         Changelog
         =========
         
-        0.3.2 - Unreleased
+        trunk - Unreleased
         ------------------
+        
+        * Correctly implemented usage of layers to remove access to views when
+        PMR2 is not installed.
+        
+        0.3.2 - Released (2010-07-01)
+        -----------------------------
         
         * Fresh installation now works as intended on standard configurations as
         the bugs that prevented this were fixed.
@@ -27,6 +33,10 @@ Description: Introduction
         - PMR2 no longer prevents a default Plone site from rendering if it is
         present but not installed using the portal add-on installer tool.
         - https://tracker.physiomeproject.org/show_bug.cgi?id=2626
+        
+        * Updated documentation and classifiers.
+        * License has been amended to be what is intended (MPL/GPL/LGPL tri-
+        license).
         
         0.3.1 - Released (2010-06-22)
         -----------------------------

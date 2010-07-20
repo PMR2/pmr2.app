@@ -66,8 +66,6 @@ pmr2/app/browser/layout.txt
 pmr2/app/browser/menu.py
 pmr2/app/browser/page.py
 pmr2/app/browser/page.txt
-pmr2/app/browser/root.py
-pmr2/app/browser/root.txt
 pmr2/app/browser/settings.py
 pmr2/app/browser/support.py
 pmr2/app/browser/table.py
@@ -123,7 +121,6 @@ pmr2/app/browser/templates/workspace_file_page.pt
 pmr2/app/content/__init__.py
 pmr2/app/content/exposure.py
 pmr2/app/content/interfaces.py
-pmr2/app/content/root.py
 pmr2/app/content/sandbox.py
 pmr2/app/content/support.py
 pmr2/app/content/workspace.py
@@ -135,6 +132,7 @@ pmr2/app/pas/mercurial.py
 pmr2/app/portlets/__init__.py
 pmr2/app/portlets/interfaces.py
 pmr2/app/profiles/default/actionicons.xml
+pmr2/app/profiles/default/browserlayer.xml
 pmr2/app/profiles/default/catalog.xml
 pmr2/app/profiles/default/controlpanel.xml
 pmr2/app/profiles/default/cssregistry.xml
@@ -159,7 +157,6 @@ pmr2/app/profiles/default/types/SandboxContainer.xml
 pmr2/app/profiles/default/types/Workspace.xml
 pmr2/app/profiles/default/types/WorkspaceContainer.xml
 pmr2/app/profiles/default/workflows/pmr2_exposure_workflow/definition.xml
-pmr2/app/profiles/default/workflows/pmr2_root_workflow/definition.xml
 pmr2/app/schema/__init__.py
 pmr2/app/schema/field.py
 pmr2/app/schema/interfaces.py
