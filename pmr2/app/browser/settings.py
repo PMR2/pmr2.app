@@ -1,7 +1,6 @@
 import zope.interface
 import zope.component
 from zope.location import Location, locate
-from zope.formlib import form
 from zope.i18nmessageid import MessageFactory
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.app.container.interfaces import IContainer
