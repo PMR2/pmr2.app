@@ -1,6 +1,12 @@
 Changelog
 =========
 
+trunk - Unreleased
+------------------
+
+* Correctly implemented usage of layers to remove access to views when
+  PMR2 is not installed.
+
 0.3.2 - Released (2010-07-01)
 -----------------------------
 

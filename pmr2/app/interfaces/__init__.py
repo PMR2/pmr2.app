@@ -10,6 +10,12 @@ from pmr2.app.interfaces.exceptions import *
 
 # Interfaces
 
+class IPMR2AppLayer(zope.interface.Interface):
+    """\
+    Marker interface for this product.
+    """
+
+
 class IExposureContentIndex(zope.interface.Interface):
     """\
     Interface for methods that will return a workable index.  All 
