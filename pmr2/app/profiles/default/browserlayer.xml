@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<layers>
+    <layer name="pmr2.app"
+           interface="pmr2.app.interfaces.IPMR2AppLayer" />
+</layers>
