@@ -49,7 +49,6 @@ class ExposureContainerTraverser(DefaultPublishTraverse):
     adapts(IExposureContainer, IRequest)
 
     base_query = {
-        'review_state': 'published',
         'portal_type': 'Exposure',
     }
 
@@ -94,7 +93,7 @@ class ExposureContainerTraverser(DefaultPublishTraverse):
         maxid = name + 'z'
 
         query = {
-            'path': self.context.absolute_url_path(),
+            'path': '/'.join(self.context.getPhysicalPath()),
             'id': {
                 'query': [name, maxid],
                 'range': 'minmax',
