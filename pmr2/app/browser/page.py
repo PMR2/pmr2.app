@@ -9,9 +9,12 @@ from zope.app.pagetemplate.viewpagetemplatefile \
     import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
+from z3c.form.interfaces import IForm
+
 from plone.z3cform import layout
 
 from pmr2.app.browser.interfaces import IPublishTraverse
+
 
 class SimplePage(BrowserPage):
     """\
@@ -19,6 +22,9 @@ class SimplePage(BrowserPage):
     wrapped by the layout.wrap_form from plone.z3cform and its wrapper
     class layout.FormWrapper.
     """
+
+    # marker to allow this to use the z3c form wrap_form method
+    zope.interface.implements(IForm)
 
     # override if necessary
     # XXX use adapter to register this instead?

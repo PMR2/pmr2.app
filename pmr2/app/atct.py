@@ -26,6 +26,4 @@ class ATFolderDocument(ATFolder, ATDocument):
     assocMimetypes = ()
     assocFileExt   = ()
 
-    __implements__ = ATDocument.__implements__, ATFolder.__implements__
-
     security       = ClassSecurityInfo()

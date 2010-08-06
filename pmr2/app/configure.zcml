@@ -9,6 +9,7 @@
   <include package="plone.app.z3cform" />
   <include package="plone.browserlayer" />
   <include package="z3c.table" />
+  <include package="pmr2.mercurial" />
 
   <!-- 
     Subscribers need to be registered first so the registrations that

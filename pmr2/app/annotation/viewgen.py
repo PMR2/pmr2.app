@@ -24,6 +24,8 @@ class DocViewGenBase(NamedUtilBase):
     Base utility class.
     """
 
+    mimetype = 'text/html'
+
     def __init__(self, context):
         super(DocViewGenBase, self).__init__(context)
         self.input = zope.component.getAdapter(
@@ -42,7 +44,7 @@ class DocViewGenBase(NamedUtilBase):
         context = self.context
         context.setTitle(self.generateTitle())
         context.setDescription(self.generateDescription())
-        context.setText(self.generateText())
+        context.setText(self.generateText(), mimetype=self.mimetype)
         context.docview_generator = self.name
 
 

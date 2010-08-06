@@ -5,7 +5,7 @@
   <!-- this only applies to the exposure -->
   <subscriber
       for="pmr2.app.content.interfaces.IExposure
-          zope.app.event.interfaces.IObjectModifiedEvent"
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler=".subscriber.catalog_content"
       />
 
@@ -21,19 +21,19 @@
 
   <subscriber
       for="pmr2.app.content.interfaces.IExposureFile
-          zope.app.event.interfaces.IObjectModifiedEvent"
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler=".subscriber.catalog_content"
       />
 
   <subscriber
       for="pmr2.app.content.interfaces.IExposureFileType
-          zope.app.event.interfaces.IObjectModifiedEvent"
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler=".subscriber.catalog_content"
       />
 
   <subscriber
       for="pmr2.app.content.interfaces.IExposureFolder
-          zope.app.event.interfaces.IObjectModifiedEvent"
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler=".subscriber.catalog_content"
       />
 
