@@ -116,12 +116,18 @@ html output, otherwise html is rendered as is.
 Other Defined Columns and Tables
 --------------------------------
 
-WorkspaceContainer.get_repository_list returns data in a specific format
-that we can render with WorkspaceStatusTable.
+WorkspaceContainer has a method that returns data in a specific format
+that we can render with WorkspaceStatusTable; we have to create a dummy
+to produce that.
 ::
 
-    >>> data = [('test0', True), ('test1', False), ('test2', None)]
-    >>> t = table.WorkspaceStatusTable(data, request)
+    >>> from pmr2.app.content.interfaces import IWorkspaceContainer
+    >>> class DummyWorkspaceContainer(object):
+    ...     zope.interface.implements(IWorkspaceContainer)
+    ...     def get_repository_list(self):
+    ...         return [('test0', True), ('test1', False), ('test2', None)]
+    ...
+    >>> t = table.WorkspaceStatusTable(DummyWorkspaceContainer(), request)
     >>> t.update()
     >>> print t.render()
     <table>

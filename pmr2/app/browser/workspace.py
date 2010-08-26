@@ -102,12 +102,13 @@ WorkspaceContainerEditFormView = layout.wrap_form(
 class WorkspaceContainerRepoListing(page.SimplePage):
 
     def content(self):
-
-        # XXX these messages should be stored in/gathered from the
-        # exception class/instance.
-        # XXX could use an error template to wrap these error messages.
+        t = table.WorkspaceStatusTable(self.context, self.request)
+        # XXX no idea why this isn't done automatically
+        t.__name__ = self.__name__
         try:
-            repolist = self.context.get_repository_list()
+            t.update()
+            # need styling the first, current and last class of renderBatch
+            return '\n'.join([t.render(), t.renderBatch()])
         except PathLookupError:
             return u'<div class="error">Repository Path lookup failed.</div>'
         except RepoPathUndefinedError:
@@ -117,10 +118,6 @@ class WorkspaceContainerRepoListing(page.SimplePage):
             return u'<div class="error">Workspace path is missing. ' \
                     'Please notify administrator.</div>'
 
-        t = table.WorkspaceStatusTable(repolist, self.request)
-        t.update()
-        # need styling the first, current and last class of renderBatch
-        return '\n'.join([t.render(), t.renderBatch()])
 
 WorkspaceContainerRepoListingView = layout.wrap_form(
     WorkspaceContainerRepoListing, label="Raw Workspace Listing")

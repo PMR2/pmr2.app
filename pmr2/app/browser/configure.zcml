@@ -417,6 +417,13 @@
       />
 
   <!--
+    Table value adapter
+  -->
+  <adapter
+      factory=".table.ValuesForWorkspaceStatusTable"
+      />
+
+  <!--
     This adapts the customized contentactions into the plone contentmeu
   -->
 

@@ -1,10 +1,15 @@
 from sys import maxint
 import cgi
 
+import zope.component
+import zope.interface
+from zope.publisher.interfaces.browser import IBrowserRequest
 from Products.CMFCore.utils import getToolByName
 
 import z3c.table.column
 import z3c.table.table
+from z3c.table.value import ValuesMixin
+from z3c.table.interfaces import ITable
 
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
@@ -121,7 +126,15 @@ class WorkspaceActionColumn(ItemKeyReplaceColumn):
         return result
 
 
-class WorkspaceStatusTable(z3c.table.table.SequenceTable):
+class IWorkspaceStatusTable(ITable):
+    """
+    Marker interface for workspace status table.
+    """
+
+
+class WorkspaceStatusTable(z3c.table.table.Table):
+
+    zope.interface.implements(IWorkspaceStatusTable)
 
     def setUpColumns(self):
         return [
@@ -139,6 +152,16 @@ class WorkspaceStatusTable(z3c.table.table.SequenceTable):
     def absolute_url(self):
         return self.request.getURL()
 
+
+class ValuesForWorkspaceStatusTable(ValuesMixin):
+    """Values from a simple IContainer."""
+
+    zope.component.adapts(zope.interface.Interface, IBrowserRequest,
+        IWorkspaceStatusTable)
+
+    @property
+    def values(self):
+        return self.context.get_repository_list()
 
 # Workspace log table.
 
