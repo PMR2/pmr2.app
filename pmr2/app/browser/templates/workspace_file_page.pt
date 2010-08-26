@@ -1,8 +1,15 @@
 <h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
 <div tal:content="structure view/content"/>
 <div tal:condition="exists:view/render_subrepo">
+<dl>
+<dt>Subrepo listing:</dt>
+<dd>
 <ul>
 <li tal:repeat="i view/subrepo">
+<a tal:attributes="href string:${i/source}/file/${i/rev}"
+   tal:content="i/location"/>
 </li>
 </ul>
+</dd>
+</dl>
 </div>
