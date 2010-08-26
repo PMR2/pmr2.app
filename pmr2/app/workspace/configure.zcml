@@ -1,0 +1,11 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <adapter
+      for="*"
+      factory=".adapter.WorkspaceListing"
+      provides=".interfaces.IWorkspaceListing"
+      />
+
+</configure>

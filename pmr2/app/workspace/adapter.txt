@@ -1,0 +1,88 @@
+Workspace Adapters
+==================
+
+Set up the workspace container first.  Ideally we would want to create
+simple mocks of the settings and related objects so we don't need the
+Zope/Plone instance stack, but this works for now.
+::
+
+    >>> import zope.component
+    >>> from pmr2.app.content import WorkspaceContainer
+    >>> from pmr2.app.content import Workspace
+    >>> from pmr2.app.interfaces import IPMR2GlobalSettings
+    >>> pmr2_settings = zope.component.getUtility(IPMR2GlobalSettings)
+    >>> pmr2_settings.repo_root = self.tmpdir
+    >>> self.portal['workspace'] = WorkspaceContainer()
+    >>> self.portal.workspace
+    <WorkspaceContainer at /plone/workspace>
+
+Now we test the adapter to see if container can be adapted.
+::
+
+    >>> from pmr2.app.workspace.interfaces import IWorkspaceListing
+    >>> listing = zope.component.getAdapter(
+    ...     self.portal.workspace, IWorkspaceListing)
+
+Calling that listing object will return a list of repositories within.
+Since the workspace directory does not currently exist, it will return
+an exception.
+::
+
+    >>> listing()
+    Traceback (most recent call last):
+    ...
+    WorkspaceDirNotExistsError
+
+Now we create the new directory.  The repository list should function 
+correctly now.  As there are obviously no workspaces and no related
+workspace objects, we get an empty list.
+::
+
+    >>> from pmr2.app.tests import utils
+    >>> utils.mkreporoot(pmr2_settings.createDir(self.portal))
+    >>> listing()
+    []
+
+Time to populate the directory with some VCS instances.  The method now
+returns a list that shows the existence of the VCS instances.  However,
+the second value returns shows None, which signifies that it has no Zope
+object associated with any of them, as they have not been created.
+::
+
+    >>> from os.path import join
+    >>> testdirlist = ['test%d' % i for i in xrange(3)]
+    >>> workspace_root = pmr2_settings.dirCreatedFor(self.portal.workspace)
+    >>> for i in testdirlist:
+    ...     utils.mkrepo(join(workspace_root, i))
+    >>> listing()
+    [('test0', None), ('test1', None), ('test2', None)]
+
+Now we create a couple Workspace objects with the same name to associate
+the object to the VCS instance in the workspace directory.  The second
+value is now True for them.
+::
+
+    >>> ws_objs = ['test%d' % i for i in xrange(2)]
+    >>> for i in ws_objs:
+    ...     self.portal.workspace[i] = Workspace(i)
+    >>> listing()
+    [('test0', True), ('test1', True), ('test2', None)]
+
+If we have a workspace object without an associated repository directory
+on the file system, a False value will signify an inconsistency.
+::
+
+    >>> self.portal.workspace['zzz'] = Workspace('zzz')
+    >>> listing()
+    [('test0', True), ('test1', True), ('test2', None), ('zzz', False)]
+
+Wrong object type will also result in a False value for an existing VCS
+instance of the same name as the object.  This should never happen in
+normal usage, because other object types have to be placed in here
+deliberately.
+::
+
+    >>> from pmr2.app.content import Exposure
+    >>> self.portal.workspace['test2'] = Exposure('test2')
+    >>> listing()
+    [('test0', True), ('test1', True), ('test2', False), ('zzz', False)]

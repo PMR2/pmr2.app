@@ -121,12 +121,26 @@ that we can render with WorkspaceStatusTable; we have to create a dummy
 to produce that.
 ::
 
+    >>> import zope.interface
+    >>> import zope.component
     >>> from pmr2.app.content.interfaces import IWorkspaceContainer
+    >>> from pmr2.app.workspace.interfaces import IWorkspaceListing
+    >>> 
     >>> class DummyWorkspaceContainer(object):
     ...     zope.interface.implements(IWorkspaceContainer)
-    ...     def get_repository_list(self):
-    ...         return [('test0', True), ('test1', False), ('test2', None)]
+    ...     data = [('test0', True), ('test1', False), ('test2', None)]
     ...
+    >>> class DummyWorkspaceListing(object):
+    ...     zope.interface.implements(IWorkspaceListing)
+    ...     zope.component.adapts(DummyWorkspaceContainer)
+    ...  
+    ...     def __init__(self, context):
+    ...         self.context = context
+    ... 
+    ...     def __call__(self):
+    ...         return self.context.data
+    ... 
+    >>> zope.component.provideAdapter(DummyWorkspaceListing)
     >>> t = table.WorkspaceStatusTable(DummyWorkspaceContainer(), request)
     >>> t.update()
     >>> print t.render()

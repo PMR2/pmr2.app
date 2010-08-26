@@ -17,6 +17,8 @@
   -->
   <include file="subscriber.zcml" />
 
+  <include package=".workspace" />
+
   <include package=".browser" />
   <include package=".validator" />
   <include package=".viewlets" />

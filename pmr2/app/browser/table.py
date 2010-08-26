@@ -14,6 +14,8 @@ from z3c.table.interfaces import ITable
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
+from pmr2.app.workspace.interfaces import IWorkspaceListing
+
 
 # Common
 
@@ -161,7 +163,8 @@ class ValuesForWorkspaceStatusTable(ValuesMixin):
 
     @property
     def values(self):
-        return self.context.get_repository_list()
+        listing = zope.component.getAdapter(self.context, IWorkspaceListing)
+        return listing()
 
 # Workspace log table.
 

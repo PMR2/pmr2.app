@@ -1,31 +1,6 @@
 Page
 ====
 
-These are just simple rendering pages meant for wrapping by the layout
-classes.
-
-    >>> from zope.publisher.browser import TestRequest
-    >>> from pmr2.app.browser import page
-    >>> 
-    >>> class dummy(object):
-    ...     def content(self):
-    ...         return 'Some Content'
-    ...
-    >>> context = dummy()
-    >>> request = TestRequest()
-    >>> failpage = page.SimplePage(context, request)
-    >>> failpage()
-    Traceback (most recent call last):
-    ...
-    NotImplementedError: need content
-
-So we subclass it to provide some content
-
-    >>> class MyPage(page.SimplePage):
-    ...     subtitle = 'My Test Page'
-    ...     def content(self):
-    ...         return context.content()
-    ...
-    >>> testpage = MyPage(context, request)
-    >>> testpage()
-    u'<h3>My Test Page</h3>\n<div>Some Content</div>\n'
+These were just simple rendering pages meant for wrapping by the layout
+classes to be replaced by more standard Plone way of rendering 
+templates.
