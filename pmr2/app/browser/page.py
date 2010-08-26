@@ -49,8 +49,15 @@ class SimplePage(BrowserPage):
     def content(self):
         raise NotImplementedError('need content')
 
-    def __call__(self, *a, **kw):
+    def update(self):
+        pass
+
+    def render(self):
         return self.template()
+
+    def __call__(self, *a, **kw):
+        self.update()
+        return self.render()
 
 
 class TraversePage(SimplePage):
