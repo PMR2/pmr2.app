@@ -25,7 +25,7 @@ class WorkspaceMenuProvider(ContentMenuProvider):
 
         # adapt a storage object.
         storage = queryMultiAdapter(
-            (self.context, self.request, self.view.view), 
+            (self.context, self.request, self._parent.view), 
             name="PMR2StorageRequestView")
         rev = storage.rev
         workspace = self.context.id
