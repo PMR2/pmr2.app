@@ -7,6 +7,7 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import *
+from pmr2.app.workspace.interfaces import IWorkspaceListing
 from pmr2.app.annotation.interfaces import *
 
 
@@ -21,7 +22,8 @@ class WorkspaceDirObjListVocab(SimpleVocabulary):
 
     def __init__(self, context):
         self.context = context
-        values = self.context.get_repository_list()
+        listing = zope.component.getAdapter(context, IWorkspaceListing)
+        values = listing()
         terms = [SimpleTerm(i, i[0]) for i in values]
         super(WorkspaceDirObjListVocab, self).__init__(terms)
 

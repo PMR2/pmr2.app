@@ -36,11 +36,6 @@ class IWorkspaceContainer(zope.interface.Interface):
         default=u'Workspace',
     )
 
-    get_repository_list, = zope.schema.accessors(WorkspaceList(
-        title=u'Repository List',
-        readonly=True,
-    ))
-
 
 class ISandboxContainer(zope.interface.Interface):
     """\

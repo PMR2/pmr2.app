@@ -36,6 +36,8 @@ from pmr2.app.content.interfaces import *
 from pmr2.app.content import *
 from pmr2.app.util import set_xmlbase, obfuscate, isodate, generate_exposure_id
 
+from pmr2.app.workspace.interfaces import IWorkspaceListing
+
 from pmr2.app.browser import interfaces
 from pmr2.app.browser import widget
 from pmr2.app.browser import form
@@ -450,7 +452,8 @@ class WorkspaceBulkAddForm(z3c.form.form.AddForm):
         self.norepo = []
 
         workspaces = data['workspace_list'].splitlines()
-        valid_hg = [i[0] for i in self.context.get_repository_list()]
+        listing = zope.component.getAdapter(self.context, IWorkspaceListing)
+        valid_hg = [i[0] for i in listing()]
         for id_ in workspaces:
             # unicode encoding needed here?
             id_ = str(id_)  # id_.encode('utf8')
