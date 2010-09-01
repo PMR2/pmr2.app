@@ -38,138 +38,12 @@
 
   <browser:page
       name="rollover-macros"
-      for="pmr2.app.content.interfaces.IWorkspace"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       class=".layout.RolloverMacros"
       allowed_interface="zope.interface.common.mapping.IItemMapping"
       permission="zope.Public" />
 
   <!-- pages -->
-
-  <!-- Workspace Container -->
-
-  <browser:page
-      for="pmr2.app.content.WorkspaceContainer"
-      name="raw_list"
-      class=".workspace.WorkspaceContainerRepoListingView"
-      permission="pmr2.app.security.ManagePMR2"
-      />
-
-  <!-- this creates the object, only admins can use -->
-  <browser:page
-      for="pmr2.app.content.WorkspaceContainer"
-      name="workspace_object_create"
-      class=".workspace.WorkspaceAddFormView"
-      permission="pmr2.app.security.ManagePMR2"
-      />
-
-  <!-- this creates the object and the storage, fails if storage exists -->
-  <browser:page
-      for="pmr2.app.content.WorkspaceContainer"
-      name="workspace_create"
-      class=".workspace.WorkspaceStorageCreateFormView"
-      permission="cmf.AddPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.WorkspaceContainer"
-      name="workspace_bulk_create"
-      class=".workspace.WorkspaceBulkAddFormView"
-      permission="pmr2.app.security.ManagePMR2"
-      />
-
-  <!-- Workspace -->
-
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="workspace_view"
-      class=".workspace.WorkspacePageView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="workspace_edit"
-      class=".workspace.WorkspaceEditFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="archive"
-      class=".workspace.WorkspaceArchive"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="log"
-      class=".workspace.WorkspaceLogView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="shortlog"
-      class=".workspace.WorkspaceShortlogView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="rsslog"
-      class=".workspace.WorkspaceLogRss"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="file"
-      class=".workspace.WorkspaceFilePageView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="rawfile"
-      class=".workspace.WorkspaceRawfileView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="xmlbase"
-      class=".workspace.WorkspaceRawfileXmlBaseView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="exposure_rollover"
-      class=".workspace.WorkspaceExposureRolloverView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <!--
-    Not really sure what the permission here should be as it really
-    depends on whether the user can add the exposure to the taget
-    container specified in the form.  Going with ModifyPortalContent
-    because if the user can't modify it, they shouldn't be making
-    Exposures in the first place.
-  -->
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="create_exposure"
-      class=".workspace.CreateExposureFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Workspace"
-      name="create"
-      class=".workspace.CreateFormView"
-      permission="zope2.View"
-      />
-
   <!-- Exposure Container -->
 
   <!--
@@ -395,48 +269,6 @@
       />
 
   <!--
-    An override of contentactions for Workspace for the menus in the
-    file page view (sandbox/exposure add dropdown menu).
-  -->
-
-  <browser:viewlet
-      name="plone.contentactions"
-      for="pmr2.app.content.Workspace"
-      view=".workspace.WorkspaceFilePageView"
-      manager="plone.app.layout.viewlets.interfaces.IContentViews"
-      class="pmr2.app.browser.viewlets.WorkspaceActionsViewlet"
-      permission="zope2.View"
-      />
-
-  <browser:viewlet
-      name="plone.links.RSS"
-      for="..content.Workspace"
-      manager="plone.app.layout.viewlets.interfaces.IHtmlHeadLinks"
-      class=".viewlets.WorkspaceRSSViewlet"
-      permission="zope2.View"
-      />
-
-  <!--
-    Table value adapter
-  -->
-  <adapter
-      factory=".table.ValuesForWorkspaceStatusTable"
-      />
-
-  <!--
-    This adapts the customized contentactions into the plone contentmeu
-  -->
-
-  <adapter
-      for="pmr2.app.content.interfaces.IWorkspace
-           zope.publisher.interfaces.browser.IDefaultBrowserLayer
-           .interfaces.IWorkspaceActionsViewlet"
-      factory=".menu.WorkspaceMenuProvider"
-      name="plone.contentmenu"
-      provides="zope.contentprovider.interfaces.IContentProvider"
-      />
-
-  <!--
     adapter for the adding view.
   -->
 
@@ -445,14 +277,6 @@
            *"
       name="addPMR2Search"
       factory=".support.PMR2SearchAddFormView"
-      provides="z3c.form.interfaces.IAddForm"
-      />
-
-  <adapter
-      for="Products.Five.browser.adding.ContentAdding
-           *"
-      name="addWorkspace"
-      factory=".workspace.WorkspaceStorageCreateFormView"
       provides="z3c.form.interfaces.IAddForm"
       />
 

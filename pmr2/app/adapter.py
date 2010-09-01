@@ -6,7 +6,6 @@ from Products.CMFCore.utils import getToolByName
 from zope.location import Location, locate
 from zope.app.component.hooks import getSite
 
-from pmr2.mercurial.interfaces import IPMR2StorageBase, IPMR2HgWorkspaceAdapter
 from pmr2.mercurial.adapter import PMR2StorageAdapter
 from pmr2.mercurial.adapter import PMR2StorageFixedRevAdapter
 from pmr2.mercurial.adapter import PMR2StorageRequestAdapter
@@ -20,7 +19,6 @@ from pmr2.app.browser.interfaces import IPublishTraverse
 from pmr2.app.browser.interfaces import IExposureFileSelectView
 
 __all__ = [
-    'PMR2StorageRequestViewAdapter',
     'PMR2ExposureStorageAdapter',
     'PMR2StorageURIResolver',
     'PMR2ExposureStorageURIResolver',
@@ -29,35 +27,6 @@ __all__ = [
     'ExposureSourceAdapter',
     'ExposureFileSelectView',
 ]
-
-
-class PMR2StorageRequestViewAdapter(PMR2StorageRequestAdapter):
-    """\
-    This adapter is more suited from within views that implment
-    IPublishTraverse within this product.
-
-    If we customized IPublishTraverse and adapt it into the request
-    (somehow) we could possibly do away with this adapter.  We could do
-    refactoring later if we have a standard implementation of 
-    IPublishTraverse that captures the request path.
-    """
-
-    def __init__(self, context, request, view):
-        """
-        context -
-            The object to turn into a workspace
-        request -
-            The request
-        view -
-            The view that implements IPublishTraverse
-        """
-
-        assert IPublishTraverse.providedBy(view)
-        # populate the request with values derived from view.
-        if view.traverse_subpath:
-            request['rev'] = view.traverse_subpath[0]
-            request['request_subpath'] = view.traverse_subpath[1:]
-        PMR2StorageRequestAdapter.__init__(self, context, request)
 
 
 class PMR2ExposureStorageAdapter(PMR2StorageFixedRevAdapter):

@@ -1,10 +1,12 @@
-from zope.interface import implements
-from zope.component import getMultiAdapter
+import zope.interface
+import zope.component
+
 from plone.app.layout.viewlets.common import ContentActionsViewlet
 from plone.app.layout.links.viewlets import RSSViewlet
 from Products.CMFCore.utils import getToolByName
 
-from pmr2.app.browser.interfaces import IWorkspaceActionsViewlet
+from pmr2.app.workspace.interfaces import IWorkspaceActionsViewlet
+
 
 
 class WorkspaceActionsViewlet(ContentActionsViewlet):
@@ -12,7 +14,7 @@ class WorkspaceActionsViewlet(ContentActionsViewlet):
     An ActionsViewlet for Workspaces.
     """
 
-    implements(IWorkspaceActionsViewlet)
+    zope.interface.implements(IWorkspaceActionsViewlet)
 
 
 class WorkspaceRSSViewlet(RSSViewlet):
@@ -27,6 +29,6 @@ class WorkspaceRSSViewlet(RSSViewlet):
         # we ignore the settings of the syndication tool, i.e. RSS link
         # is shown always (note the @@rsslog view is always available).
         self.allowed = True
-        context_state = getMultiAdapter((self.context, self.request),
-                                        name=u'plone_context_state')
+        context_state = zope.component.getMultiAdapter(
+            (self.context, self.request), name=u'plone_context_state')
         self.url = '%s/@@rsslog' % context_state.object_url()

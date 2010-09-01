@@ -18,8 +18,6 @@ from pmr2.app.content.support import PMR2Search
 
 
 # type registration
-atapi.registerType(WorkspaceContainer, 'pmr2.app')
-atapi.registerType(Workspace, 'pmr2.app')
 
 atapi.registerType(ExposureContainer, 'pmr2.app')
 atapi.registerType(Exposure, 'pmr2.app')

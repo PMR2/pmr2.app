@@ -2,10 +2,40 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="pmr2">
 
+  <include file="browser.zcml" />
+
   <adapter
       for="*"
       factory=".adapter.WorkspaceListing"
       provides=".interfaces.IWorkspaceListing"
+      />
+
+  <!-- 
+    XXX this adapter will need further relocation pending status
+    of pmr2.app and pmr2.mercurial modulation/coupling/relocation
+  -->
+
+  <adapter
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      factory="pmr2.app.adapter.PMR2StorageURIResolver"
+      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
+      name="PMR2StorageURIResolver"
+      />
+
+  <adapter
+      for="pmr2.app.workspace.interfaces.IWorkspace
+           zope.publisher.interfaces.IPublisherRequest
+           zope.publisher.interfaces.IPublishTraverse"
+      factory=".adapter.PMR2StorageRequestViewAdapter"
+      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
+      name="PMR2StorageRequestView"
+      />
+
+  <!--
+    Table value adapter
+  -->
+  <adapter
+      factory=".table.ValuesForWorkspaceStatusTable"
       />
 
 </configure>

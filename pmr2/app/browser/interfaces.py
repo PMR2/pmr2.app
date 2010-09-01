@@ -8,7 +8,8 @@ from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
 from pmr2.app.schema import ObjectId
-from pmr2.app.content.interfaces import *
+
+from pmr2.app.content.interfaces import IPMR2Search
 
 
 class IUpdatablePageView(zope.interface.Interface):
@@ -21,18 +22,6 @@ class IUpdatablePageView(zope.interface.Interface):
         Method call to update the internal structure before the view
         is rendered.
         """
-
-
-class IWorkspaceActionsViewlet(zope.interface.Interface):
-    """\
-    Interface for the Workspace action menu.
-    """
-
-
-class IWorkspaceFilePageView(IUpdatablePageView):
-    """\
-    Interface for the Workspace action menu.
-    """
 
 
 class IThemeSpecific(IDefaultPloneLayer):
@@ -78,32 +67,6 @@ class IObjectIdMixin(zope.interface.Interface):
     id = ObjectId(
         title=u'Id',
         description=u'The identifier of the object, used for URI.',
-    )
-
-
-class IWorkspaceStorageCreate(zope.interface.Interface):
-    """\
-    Interface for the use by WorkspaceStorageCreateForm.
-    """
-
-    # We customized the id so validator can discrimate this against
-    # the generate mixin id field.
-    id = ObjectId(
-        title=u'Id',
-        description=u'The identifier of the object, used for URI.',
-    )
-
-
-class IWorkspaceBulkAdd(zope.interface.Interface):
-    """\
-    Interface for the use by WorkspaceAddForm.
-    """
-
-    workspace_list = zope.schema.Text(
-        title=u'List of Workspaces',
-        description=u'List of Mercurial Repositories created by pmr2_mkhg ' \
-                     'that are already moved into the workspace directory.',
-        required=True,
     )
 
 

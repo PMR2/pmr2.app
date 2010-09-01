@@ -26,17 +26,6 @@ class IPMR2(zope.interface.Interface):
     # sandbox_path is 'sandbox'
 
 
-class IWorkspaceContainer(zope.interface.Interface):
-    """\
-    Container for the model workspaces.
-    """
-
-    title = zope.schema.TextLine(
-        title=u'Title',
-        default=u'Workspace',
-    )
-
-
 class ISandboxContainer(zope.interface.Interface):
     """\
     Container for the sandboxes (working copies).
@@ -56,24 +45,6 @@ class IExposureContainer(zope.interface.Interface):
     title = zope.schema.TextLine(
         title=u'Title',
         default=u'Exposure',
-    )
-
-
-class IWorkspace(zope.interface.Interface):
-    """\
-    Model workspace.
-    """
-
-    # id would be the actual path on filesystem
-
-    title = zope.schema.TextLine(
-        title=u'Title',
-        required=False,
-    )
-
-    description = zope.schema.Text(
-        title=u'Description',
-        required=False,
     )
 
 

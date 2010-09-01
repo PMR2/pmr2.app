@@ -43,13 +43,15 @@ from pmr2.app.browser import widget
 from pmr2.app.browser import form
 from pmr2.app.browser import page
 from pmr2.app.browser.page import ViewPageTemplateFile
-from pmr2.app.browser import table
 
 from pmr2.app.browser.layout import BorderedStorageFormWrapper
 from pmr2.app.browser.layout import BorderedTraverseFormWrapper
 from pmr2.app.browser.layout import TraverseFormWrapper
 
 from pmr2.app.browser.exposure import ExposurePort, ExposureAddForm
+
+from pmr2.app.workspace.interfaces import *
+from pmr2.app.workspace import table
 
 
 def restrictedGetExposureContainer():
@@ -393,7 +395,7 @@ class WorkspaceStorageCreateForm(WorkspaceAddForm):
 
     # IWorkspaceStorageCreate has a validator attached to its id 
     # attribute to verify that the workspace id has not been taken yet.
-    fields = z3c.form.field.Fields(interfaces.IWorkspaceStorageCreate) + \
+    fields = z3c.form.field.Fields(IWorkspaceStorageCreate) + \
              z3c.form.field.Fields(IWorkspace)
 
     def add_data(self, ctxobj):
@@ -413,7 +415,7 @@ class WorkspaceBulkAddForm(z3c.form.form.AddForm):
     Workspace Bulk Add Form
     """
 
-    fields = z3c.form.field.Fields(interfaces.IWorkspaceBulkAdd)
+    fields = z3c.form.field.Fields(IWorkspaceBulkAdd)
 
     result_base = """\
       <dt>%s</dt>
@@ -515,7 +517,8 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     Manifest listing page.
     """
     
-    zope.interface.implements(interfaces.IWorkspaceFilePageView)
+    zope.interface.implements(IWorkspaceFilePageView, 
+        interfaces.IUpdatablePageView)
 
     template = ViewPageTemplateFile('workspace_file_page.pt')
     filetemplate = ViewPageTemplateFile('file.pt')
@@ -683,7 +686,7 @@ WorkspaceFilePageView = layout.wrap_form(
     __wrapper_class=BorderedTraverseFormWrapper,
 )
 # XXX WorkspaceFilePageView needs to implement
-#zope.interface.implements(interfaces.IWorkspaceFilePageView)
+#zope.interface.implements(IWorkspaceFilePageView)
 
 
 class WorkspaceRawfileView(WorkspaceFilePage):

@@ -10,7 +10,7 @@ from z3c.form.browser import textarea
 import z3c.form.widget
 from z3c.form.widget import FieldWidget
 
-from table import WorkspaceStatusTable
+from pmr2.app.workspace.table import WorkspaceStatusTable
 
 __all__ = [
     'WorkspaceListingWidget',

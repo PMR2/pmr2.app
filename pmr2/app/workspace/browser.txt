@@ -6,10 +6,10 @@ Before we get started, we need to import the required classes and set up
 the test environment.
 ::
 
-    >>> from pmr2.app.browser import workspace
-    >>> from pmr2.app.tests.base import TestRequest
+    >>> from pmr2.app.workspace import browser
+    >>> from pmr2.testing.base import TestRequest
     >>> from plone.z3cform.tests import setup_defaults
-    >>> from pmr2.app.content import *
+    >>> from pmr2.app.workspace.content import *
     >>> self.portal['workspace'] = WorkspaceContainer()
     >>> self.portal.workspace
     <WorkspaceContainer at /plone/workspace>
@@ -23,7 +23,7 @@ not configured, the listing will raise an exception which should not be
 passed to the client.
 ::
 
-    >>> repolist_page = workspace.WorkspaceContainerRepoListing(
+    >>> repolist_page = browser.WorkspaceContainerRepoListing(
     ...     self.portal.workspace, request)
     >>> html = repolist_page()
     >>> 'Workspace path is missing. Please notify administrator.' in html
@@ -32,7 +32,7 @@ passed to the client.
 The edit form for the Workspace should work.
 ::
 
-    >>> testform = workspace.WorkspaceEditForm(
+    >>> testform = browser.WorkspaceEditForm(
     ...     self.portal.workspace.eggs, request)
     >>> html = testform()
     >>> 'Title' in html
@@ -49,7 +49,7 @@ Let's try to edit the Workspace with that form.
     ...         'form.widgets.description': u'Test\nWorkspace',
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> testform = workspace.WorkspaceEditForm(
+    >>> testform = browser.WorkspaceEditForm(
     ...     self.portal.workspace.eggs, request)
     >>> testform.update()
 
@@ -65,7 +65,7 @@ Now if we defined a temporary directory.  However, the workspace path
 has not been created yet.
 ::
 
-    >>> repolist_page = workspace.WorkspaceContainerRepoListing(
+    >>> repolist_page = browser.WorkspaceContainerRepoListing(
     ...     self.portal.workspace, request)
     >>> html = repolist_page()
     >>> 'Repository Path is undefined.' in html
@@ -124,7 +124,7 @@ already exists.
     ...         'form.buttons.add': 1,
     ...     })
     ... 
-    >>> testform = workspace.WorkspaceStorageCreateForm(
+    >>> testform = browser.WorkspaceStorageCreateForm(
     ...     self.portal.workspace, request)
     >>> html = testform()
     >>> 'A previous workspace' in html
@@ -134,7 +134,7 @@ In this case, we need to use the standard add form which only creates
 the workspace object and not the storage.
 ::
 
-    >>> testform = workspace.WorkspaceAddForm(
+    >>> testform = browser.WorkspaceAddForm(
     ...     self.portal.workspace, request)
     >>> testform.update()
 
@@ -159,7 +159,7 @@ earlier.
     ...         'form.buttons.add': 1,
     ...     })
     ... 
-    >>> testform = workspace.WorkspaceStorageCreateForm(
+    >>> testform = browser.WorkspaceStorageCreateForm(
     ...     self.portal.workspace, request)
     >>> testform.update()
     >>> p = join(self.pmr2.dirCreatedFor(portal.workspace), 'cake')
@@ -175,11 +175,10 @@ first we need to register the adapters.
 
     >>> from zope.component import provideAdapter
     >>> from zope.publisher.interfaces import IPublisherRequest
-    >>> from pmr2.app.content.interfaces import IWorkspace
+    >>> from pmr2.app.workspace.interfaces import IWorkspace
     >>> from pmr2.app.browser.interfaces import IPublishTraverse
     >>> from pmr2.mercurial.interfaces import IPMR2HgWorkspaceAdapter
-    >>> from pmr2.mercurial.interfaces import IPMR2StorageBase
-    >>> from pmr2.app.adapter import PMR2StorageRequestViewAdapter
+    >>> from pmr2.app.workspace.adapter import PMR2StorageRequestViewAdapter
     >>> provideAdapter(adapts=(
     ...                   IWorkspace, IPublisherRequest, IPublishTraverse,),
     ...                provides=IPMR2HgWorkspaceAdapter,
@@ -190,7 +189,7 @@ See if the page renders with expected output.
 ::
 
     >>> request = TestRequest()
-    >>> testpage = workspace.WorkspaceFilePage(
+    >>> testpage = browser.WorkspaceFilePage(
     ...     self.portal.workspace.cake, request)
     >>> testpage.update()
     >>> result = testpage()
@@ -203,7 +202,7 @@ The log page should render, too.
 ::
 
     >>> request = TestRequest()
-    >>> testpage = workspace.WorkspaceLog(
+    >>> testpage = browser.WorkspaceLog(
     ...     self.portal.workspace.cake, request)
     >>> result = testpage()
     >>> '<th>Log</th>' in result
@@ -213,7 +212,7 @@ Now the short log page should render, too.
 ::
 
     >>> request = TestRequest()
-    >>> testpage = workspace.WorkspaceShortlog(
+    >>> testpage = browser.WorkspaceShortlog(
     ...     self.portal.workspace.cake, request)
     >>> result = testpage()
     >>> '<th>Log</th>' in result
@@ -223,7 +222,7 @@ Main page should render fine, too.
 ::
 
     >>> request = TestRequest()
-    >>> testpage = workspace.WorkspacePage(
+    >>> testpage = browser.WorkspacePage(
     ...     self.portal.workspace.cake, request)
     >>> result = testpage()
     >>> '<th>Log</th>' in result
@@ -240,7 +239,7 @@ method to extract archive of the test repo will be called.
     >>> self.createRepo()
     >>> request = TestRequest()
     >>> wkspc = self.portal.workspace.pmr2hgtest
-    >>> testpage = workspace.WorkspacePage(wkspc, request)
+    >>> testpage = browser.WorkspacePage(wkspc, request)
     >>> result = testpage()
     >>> '<th>Log</th>' in result
     True
@@ -252,7 +251,7 @@ Now for a file listing.
 ::
 
     >>> request = TestRequest()
-    >>> testpage = workspace.WorkspaceFilePage(wkspc, request)
+    >>> testpage = browser.WorkspaceFilePage(wkspc, request)
     >>> testpage.update()
     >>> result = testpage()
     >>> label = u'Manifest: pmr2hgtest @ %s / ' % self.pmr2hgtest_revs[-1][:10]
@@ -273,7 +272,7 @@ request_subpath.
     >>> wkspc = self.portal.workspace.rdfmodel
     >>> subpath = self.rdfmodel_revs[-1:] + ['component']
     >>> request = TestRequest()
-    >>> testpage = workspace.WorkspaceFilePage(wkspc, request)
+    >>> testpage = browser.WorkspaceFilePage(wkspc, request)
     >>> testpage.traverse_subpath = subpath  
     >>> testpage.update()
     >>> result = testpage()
@@ -288,63 +287,10 @@ Bad revision results in not found.
 
     >>> subpath = ['abcdef1234567890', 'component']
     >>> request = TestRequest()
-    >>> testpage = workspace.WorkspaceFilePage(wkspc, request)
+    >>> testpage = browser.WorkspaceFilePage(wkspc, request)
     >>> testpage.traverse_subpath = subpath
     >>> testpage.update()
     Traceback (most recent call last):
     ...
     HTTPNotFound: 404 Not Found
     ...
-
------------------
-Exposure creation
------------------
-
-Exposures can be created via the creation form defined here.
-::
-
-    >>> wkspc = self.portal.workspace.pmr2hgtest
-    >>> request = TestRequest(form={'form.buttons.add': 1,})
-    >>> form = workspace.CreateExposureForm(wkspc, request)
-    >>> commit_id = self.pmr2hgtest_revs[-1]
-    >>> form.traverse_subpath = [commit_id]
-    >>> result = form()
-    >>> result is not None
-    True
-
-Oops, we didn't have an exposure container created.  So we retry this
-again after creating the container at the expected location.
-::
-
-    >>> self.portal['exposure'] = ExposureContainer('exposure')
-    >>> request = TestRequest(form={'form.buttons.add': 1,})
-    >>> form = workspace.CreateExposureForm(wkspc, request)
-    >>> commit_id = self.pmr2hgtest_revs[-1]
-    >>> form.traverse_subpath = [commit_id]
-    >>> result = form()
-    >>> next = request.response.getHeader('Location')
-    >>> next
-    'http://.../exposure/...'
-
-The new exposure object should have the right values.
-::
-
-    >>> from zope.component import getUtility
-    >>> from pmr2.app.interfaces import IPMR2GlobalSettings
-    >>> settings = getUtility(IPMR2GlobalSettings)
-    >>> frags = next.split('/')
-    >>> eid = frags[-1]  # assume default_view == immediate_view in fti
-    >>> exposures = settings.getExposureContainer()
-    >>> exposure = exposures[eid]
-    >>> exposure.workspace == wkspc.absolute_url_path()
-    True
-    >>> exposure.commit_id == commit_id
-    True
-
-Need test on the exposure listing and the roll over forms, namely for
-user workspaces.
-
-More tests to be done when I figure out how to test interactions with
-Mercurial client for complete test.  This can be manually driven at this
-point, since during deployment this functionality is vital and may be
-hindered by network access failures.

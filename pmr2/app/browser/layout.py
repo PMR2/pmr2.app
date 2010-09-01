@@ -123,6 +123,8 @@ class BorderedFormWrapper(FormWrapper):
         super(BorderedFormWrapper, self).__init__(*a, **kw)
         self.request['enable_border'] = True
 
+# XXX rename this into ProtocolFormWrapper or the like.
+# XXX Make this generic.
 
 class StorageFormWrapper(FormWrapper):
     """\

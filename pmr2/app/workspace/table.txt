@@ -15,7 +15,7 @@ Here we first import the modules and create required objects.
     >>> from zope.publisher.browser import TestRequest
     >>> from z3c.table.column import addColumn
     >>> from z3c.table.table import SequenceTable
-    >>> from pmr2.app.browser import table
+    >>> from pmr2.app.workspace import table
     >>> request = TestRequest()
 
 --------------
@@ -123,7 +123,7 @@ to produce that.
 
     >>> import zope.interface
     >>> import zope.component
-    >>> from pmr2.app.content.interfaces import IWorkspaceContainer
+    >>> from pmr2.app.workspace.interfaces import IWorkspaceContainer
     >>> from pmr2.app.workspace.interfaces import IWorkspaceListing
     >>> 
     >>> class DummyWorkspaceContainer(object):

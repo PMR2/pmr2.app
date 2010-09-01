@@ -56,31 +56,10 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
-        # Workspace and related object form usage tests.
-        ztc.ZopeDocFileSuite(
-            'browser/workspace.txt', package='pmr2.app',
-            test_class=base.WorkspaceDocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
-
         # Exposure and related object form usage tests.
         ztc.ZopeDocFileSuite(
             'browser/exposure.txt', package='pmr2.app',
             test_class=base.ExposureDocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
-
-        # Table objects.
-        ztc.ZopeDocFileSuite(
-            'browser/table.txt', package='pmr2.app',
-            test_class=base.DocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
-
-        # Workspace adapters.
-        ztc.ZopeDocFileSuite(
-            'workspace/adapter.txt', package='pmr2.app',
-            test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
