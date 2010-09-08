@@ -1,0 +1,128 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <!-- workspace status table -->
+
+  <adapter
+      for=".interfaces.IWorkspaceContainer
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IWorkspaceStatusTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.WorkspaceIdColumn"
+      name="workspace_id"
+      />
+
+  <adapter
+      for=".interfaces.IWorkspaceContainer
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IWorkspaceStatusTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.WorkspaceStatusColumn"
+      name="workspace_status"
+      />
+
+  <adapter
+      for=".interfaces.IWorkspaceContainer
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IWorkspaceStatusTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.WorkspaceActionColumn"
+      name="workspace_action"
+      />
+
+  <!-- changelog table -->
+
+  <adapter
+      for=".interfaces.IWorkspaceLogProvider
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IChangelogTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.ChangesetDateColumn"
+      name="changeset_date"
+      />
+
+  <adapter
+      for=".interfaces.IWorkspaceLogProvider
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IChangelogTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.ChangesetAuthorColumn"
+      name="changeset_author"
+      />
+
+  <adapter
+      for=".interfaces.IWorkspaceLogProvider
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IChangelogTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.ChangesetDescColumn"
+      name="changeset_desc"
+      />
+
+  <!-- shortlog table -->
+
+  <adapter
+      for=".interfaces.IWorkspaceLogProvider
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IShortlogTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.ShortlogOptionColumn"
+      name="shortlog_opt"
+      />
+
+  <!--
+    Table value adapter
+  -->
+  <adapter
+      factory=".table.ValuesForWorkspaceStatusTable"
+      />
+
+  <!-- file manifest table -->
+
+  <adapter
+      for=".interfaces.IWorkspaceFileListProvider
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IFileManifestTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.FilePermissionColumn"
+      name="file_perm"
+      />
+
+  <adapter
+      for=".interfaces.IWorkspaceFileListProvider
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IFileManifestTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.FilenameColumn"
+      name="file_name"
+      />
+
+  <adapter
+      for=".interfaces.IWorkspaceFileListProvider
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IFileManifestTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.FileDatetimeColumn"
+      name="file_datetime"
+      />
+
+  <adapter
+      for=".interfaces.IWorkspaceFileListProvider
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IFileManifestTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.FileSizeColumn"
+      name="file_size"
+      />
+
+  <adapter
+      for=".interfaces.IWorkspaceFileListProvider
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IFileManifestTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.FileOptionColumn"
+      name="file_opt"
+      />
+
+</configure>

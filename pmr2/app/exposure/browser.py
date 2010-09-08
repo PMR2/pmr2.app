@@ -28,7 +28,7 @@ from Products.CMFCore import permissions
 
 from pmr2.app.workspace.browser import WorkspaceLog
 
-from pmr2.app.workspace import table
+from pmr2.app.exposure import table
 
 from pmr2.app.exposure.interfaces import *
 

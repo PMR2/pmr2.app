@@ -1,0 +1,25 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <!-- shortlog table -->
+
+  <adapter
+      for="pmr2.app.workspace.interfaces.IWorkspaceLogProvider
+           zope.publisher.interfaces.IPublisherRequest
+           pmr2.app.workspace.table.IShortlogTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.ExposureColumn"
+      name="exposure_list"
+      />
+
+  <adapter
+      for="pmr2.app.workspace.interfaces.IWorkspaceLogProvider
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IExposureRolloverLogTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".table.ExposureRadioColumn"
+      name="exposure_list"
+      />
+
+</configure>

@@ -91,3 +91,15 @@ class IWorkspaceBulkAdd(zope.interface.Interface):
                      'that are already moved into the workspace directory.',
         required=True,
     )
+
+
+class IWorkspaceLogProvider(zope.interface.Interface):
+    """\
+    Interface that will provide a changelog from a workspace.
+    """
+
+
+class IWorkspaceFileListProvider(zope.interface.Interface):
+    """\
+    Interface that will provide a list of files from a workspace.
+    """

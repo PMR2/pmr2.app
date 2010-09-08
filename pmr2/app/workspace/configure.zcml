@@ -3,6 +3,7 @@
     i18n_domain="pmr2">
 
   <include file="browser.zcml" />
+  <include file="table.zcml" />
 
   <adapter
       for="*"
@@ -29,13 +30,6 @@
       factory=".adapter.PMR2StorageRequestViewAdapter"
       provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
       name="PMR2StorageRequestView"
-      />
-
-  <!--
-    Table value adapter
-  -->
-  <adapter
-      factory=".table.ValuesForWorkspaceStatusTable"
       />
 
 </configure>

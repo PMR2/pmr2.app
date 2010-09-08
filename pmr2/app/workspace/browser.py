@@ -176,7 +176,7 @@ class WorkspacePage(page.SimplePage):
     def shortlog(self):
         if not hasattr(self, '_log'):
             # XXX aq_inner(self.context) not needed?
-            self._log = WorkspacePageShortlog(self.context, self.request)
+            self._log = WorkspaceShortlog(self.context, self.request)
             # set our requirements.
             self._log.maxchanges = 10  # XXX magic number
             self._log.navlist = None
@@ -190,6 +190,8 @@ WorkspacePageView = layout.wrap_form(
 
 
 class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
+
+    zope.interface.implements(IWorkspaceLogProvider)
 
     # XXX no this does not work
     # XXX need to hack context_fti or DynamicViewTypeInformation somehow
@@ -263,11 +265,11 @@ WorkspaceShortlogView = layout.wrap_form(
 )
 
 
-class WorkspacePageShortlog(WorkspaceShortlog):
-    # for workspace main listing.
-
-    tbl = table.WorkspacePageShortlogTable
-
+#class WorkspacePageShortlog(WorkspaceShortlog):
+#    # for workspace main listing.
+#
+#    tbl = table.WorkspacePageShortlogTable
+#
 
 class WorkspaceLogRss(page.RssPage, WorkspaceLog):
 
@@ -435,6 +437,8 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     """
     
     zope.interface.implements(IWorkspaceFilePageView, 
+        IWorkspaceLogProvider,
+        IWorkspaceFileListProvider,
         interfaces.IUpdatablePageView)
 
     template = ViewPageTemplateFile('workspace_file_page.pt')

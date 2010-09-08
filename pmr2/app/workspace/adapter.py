@@ -119,7 +119,7 @@ class PMR2StorageURIResolver(PMR2StorageAdapter):
 
     def path_to_uri(self, rev=None, filepath=None, view=None, validate=True):
         """
-        Returns URI to a location within the workspace this exposure is
+        Returns URI to a location within the workspace this object is
         derived from.
 
         Parameters:

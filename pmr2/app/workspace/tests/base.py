@@ -38,7 +38,7 @@ class WorkspaceDocTestCase(DocTestCase):
 
     def setUp(self):
         """\
-        Sets up the environment that the exposure doctest needs.
+        Sets up the environment that the workspace doctest needs.
         """
 
         DocTestCase.setUp(self)
