@@ -6,21 +6,20 @@ from Products.CMFCore.utils import getToolByName
 from zope.location import Location, locate
 from zope.app.component.hooks import getSite
 
-from pmr2.mercurial.adapter import PMR2StorageAdapter
 from pmr2.mercurial.adapter import PMR2StorageFixedRevAdapter
 from pmr2.mercurial.adapter import PMR2StorageRequestAdapter
 from pmr2.mercurial.exceptions import PathNotFoundError
 from pmr2.mercurial import WebStorage
 import pmr2.mercurial.utils
 
+from pmr2.app.workspace.adapter import PMR2StorageURIResolver
+
 from pmr2.app.interfaces import *
-from pmr2.app.content.interfaces import *
+from pmr2.app.exposure.interfaces import *
 from pmr2.app.browser.interfaces import IPublishTraverse
-from pmr2.app.browser.interfaces import IExposureFileSelectView
 
 __all__ = [
     'PMR2ExposureStorageAdapter',
-    'PMR2StorageURIResolver',
     'PMR2ExposureStorageURIResolver',
     'ExposureToWorkspaceAdapter',
     'ExposureToWorkspaceTraverse',
@@ -42,78 +41,6 @@ class PMR2ExposureStorageAdapter(PMR2StorageFixedRevAdapter):
         self._path = ()
         PMR2StorageFixedRevAdapter.__init__(self, self.workspace, self._rev)
         self.context = context
-
-
-class PMR2StorageURIResolver(PMR2StorageAdapter):
-    """\
-    Storage class that supports resolution of URIs.
-    """
-
-    @property
-    def base_frag(self):
-        """
-        The base fragment would be the workspace's absolute url.
-        """
-
-        return self.context.absolute_url(),
-
-    def path_to_uri(self, rev=None, filepath=None, view=None, validate=True):
-        """
-        Returns URI to a location within the workspace this exposure is
-        derived from.
-
-        Parameters:
-
-        rev
-            revision, commit id.  If None, and filepath is requested,
-            it will default to the latest commit id.
-
-        filepath
-            The path fragment to the desired file.  Examples:
-
-            - 'dir/file' - Link to the file
-                e.g. http://.../workspace/name/@@view/rev/dir/file
-            - '' - Link to the root of the manifest
-                e.g. http://.../workspace/name/@@view/rev/
-            - None - The workspace "homepage"
-
-            Default: None
-
-        view
-            The view to use.  @@file for the file listing, @@rawfile for
-            the raw file (download link).  See browser/configure.zcml 
-            for a listing of views registered for this object.
-
-            Default: None (@@rawfile)
-
-        validate
-            Whether to validate whether filepath exists.
-
-            Default: True
-        """
-
-        if filepath is not None:
-            # we only need to resolve the rest of the path here.
-            if not view:
-                # XXX magic?
-                view = '@@rawfile'
-
-            if not rev:
-                self._changectx()
-                rev = self.rev 
-
-            if validate:
-                try:
-                    test = self.fileinfo(rev, filepath).next()
-                except PathNotFoundError:
-                    return None
-
-            frag = self.base_frag + (view, rev, filepath,)
-        else:
-            frag = self.base_frag
-
-        result = '/'.join(frag)
-        return result
 
 
 class PMR2ExposureStorageURIResolver(

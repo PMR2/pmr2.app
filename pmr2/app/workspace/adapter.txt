@@ -82,7 +82,7 @@ normal usage, because other object types have to be placed in here
 deliberately.
 ::
 
-    >>> from pmr2.app.content import Exposure
-    >>> self.portal.workspace['test2'] = Exposure('test2')
+    >>> from Products.ATContentTypes.content.document import ATDocument
+    >>> self.portal.workspace['test2'] = ATDocument('test2')
     >>> listing()
     [('test0', True), ('test1', True), ('test2', False), ('zzz', False)]

@@ -18,6 +18,7 @@
   <include file="subscriber.zcml" />
 
   <include package=".workspace" />
+  <include package=".exposure" />
 
   <include package=".browser" />
   <include package=".validator" />
@@ -25,7 +26,6 @@
   <include package=".annotation" />
 
   <include file="adapter.zcml" />
-  <include file="catalog.zcml" />
   <include file="converter.zcml" />
   <include file="profiles.zcml" />
   <include file="vocab.zcml" />

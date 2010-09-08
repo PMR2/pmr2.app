@@ -14,14 +14,14 @@
   -->
   <browser:page
       name="ploneform-macros"
-      for="pmr2.app.content.interfaces.IExposureFile"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
       class=".layout.Macros"
       allowed_interface="zope.interface.common.mapping.IItemMapping"
       permission="zope.Public" />
 
   <browser:page
       name="ploneform-macros"
-      for="pmr2.app.content.interfaces.IExposureFileType"
+      for="pmr2.app.exposure.interfaces.IExposureFileType"
       class=".layout.Macros"
       allowed_interface="zope.interface.common.mapping.IItemMapping"
       permission="zope.Public" />
@@ -32,7 +32,7 @@
   -->
 
   <adapter 
-      for="pmr2.app.browser.interfaces.IExposureRolloverForm
+      for="pmr2.app.exposure.interfaces.IExposureRolloverForm
            zope.publisher.interfaces.IPublisherRequest"
       factory=".layout.rollover_form_factory" />
 
@@ -44,183 +44,6 @@
       permission="zope.Public" />
 
   <!-- pages -->
-  <!-- Exposure Container -->
-
-  <!--
-  This form allows arbitrary exposures to be generated out of any
-  workspaces, thus it should be used with caution.
-  -->
-  <browser:page
-      for="pmr2.app.content.ExposureContainer"
-      name="exposure_add_form"
-      class=".exposure.ExposureAddFormView"
-      permission="pmr2.app.security.ManagePMR2"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureContainer"
-      name="exposure_bulk_regeneration"
-      class=".exposure.ExposureFileBulkRegenerateFormView"
-      permission="pmr2.app.security.ManagePMR2"
-      />
-
-  <!-- Exposure -->
-
-  <browser:page
-      for="pmr2.app.content.Exposure"
-      name="exposure_info"
-      class=".exposure.ExposureInfoView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Exposure"
-      name="exposure_edit"
-      class=".exposure.ExposureEditFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Exposure"
-      name="exposure_curation_edit"
-      class=".exposure.ExposureEditCurationFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Exposure"
-      name="filegen"
-      class=".exposure.ExposureFileGenFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Exposure"
-      name="docviewgen"
-      class=".exposure.ExposureDocViewGenFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.Exposure"
-      name="rollover"
-      class=".exposure.ExposurePortCommitIdFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <!-- Exposure File -->
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="annotation"
-      class=".exposure.ExposureFileAnnotatorFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="filetype"
-      class=".exposure.ExposureFileTypeChoiceFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="edit_annotations"
-      class=".exposure.ExposureFileTypeAnnotatorFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="note_editor"
-      class=".exposure.ExposureFileNoteEditFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="arrange_views"
-      class=".exposure.ExposureFileNoteArrangeFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="docviewgen"
-      class=".exposure.ExposureDocViewGenFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="exposure_file_redirect"
-      class=".exposure.ExposureFileRedirectView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="exposure_file_info"
-      class=".exposure.ExposureFileInfoView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="exposure_file_document_view"
-      class=".exposure.ExposureFileDocumentView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="select_view"
-      class=".exposure.ExposureFileSelectViewFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <!-- Exposure File Type -->
-
-  <browser:page
-      for="pmr2.app.content.ExposureFileType"
-      name="eftype_edit"
-      class=".exposure.ExposureFileTypeEditFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFileType"
-      name="eftype_view"
-      class=".exposure.ExposureFileTypeDisplayFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <!-- Exposure Notes -->
-
-  <browser:page
-      for="pmr2.app.content.ExposureFile"
-      name="basic_mathml"
-      class=".exposure.MathMLNoteView"
-      permission="zope2.View"
-      />
-
-  <!-- Exposure Folder -->
-
-  <browser:page
-      for="pmr2.app.content.ExposureFolder"
-      name="docviewgen"
-      class=".exposure.ExposureDocViewGenFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for="pmr2.app.content.ExposureFolder"
-      name="exposure_info"
-      class=".exposure.ExposureInfoView"
-      permission="zope2.View"
-      />
-
   <!-- PMR2 Custom Search object -->
 
   <browser:page
@@ -280,14 +103,6 @@
       provides="z3c.form.interfaces.IAddForm"
       />
 
-  <adapter
-      for="Products.Five.browser.adding.ContentAdding
-           *"
-      name="addExposureFileType"
-      factory=".exposure.ExposureFileTypeAddFormView"
-      provides="z3c.form.interfaces.IAddForm"
-      />
-
   <!-- layout adapters -->
 
   <adapter factory=".layout.plain_layout_factory" />
@@ -322,11 +137,6 @@
   <adapter 
       factory=".settings.PMR2PluginSettingsExtender"
       name="pmr2.plugin.extender"
-      />
-
-  <adapter 
-      factory=".exposure.ExposureFileTypeAnnotatorExtender"
-      name="pmr2.eft_annotator.extender"
       />
 
   <!-- 

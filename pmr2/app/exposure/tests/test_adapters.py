@@ -2,8 +2,8 @@ from unittest import TestSuite, makeSuite
 from base import ExposureDocTestCase
 from Products.CMFCore.utils import getToolByName
 
-from pmr2.app.content import ExposureContainer, Exposure
-from pmr2.app.adapter import *
+from pmr2.app.exposure.content import ExposureContainer, Exposure
+from pmr2.app.exposure.adapter import *
 
 
 class TestAdapters(ExposureDocTestCase):

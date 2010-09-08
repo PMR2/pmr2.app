@@ -1,0 +1,225 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="pmr2.app">
+
+  <!-- Exposure Container -->
+
+  <!--
+  This form allows arbitrary exposures to be generated out of any
+  workspaces, thus it should be used with caution.
+  -->
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureContainer"
+      name="exposure_add_form"
+      class=".browser.ExposureAddFormView"
+      permission="pmr2.app.security.ManagePMR2"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureContainer"
+      name="exposure_bulk_regeneration"
+      class=".browser.ExposureFileBulkRegenerateFormView"
+      permission="pmr2.app.security.ManagePMR2"
+      />
+
+  <!-- Exposure aditions to Workspace -->
+
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="exposure_rollover"
+      class=".browser.WorkspaceExposureRolloverView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <!--
+    Not really sure what the permission here should be as it really
+    depends on whether the user can add the exposure to the taget
+    container specified in the form.  Going with ModifyPortalContent
+    because if the user can't modify it, they shouldn't be making
+    Exposures in the first place.
+  -->
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="create_exposure"
+      class=".browser.CreateExposureFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <!-- Exposure -->
+
+  <browser:page
+      for="pmr2.app.exposure.content.Exposure"
+      name="exposure_info"
+      class=".browser.ExposureInfoView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.Exposure"
+      name="exposure_edit"
+      class=".browser.ExposureEditFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.Exposure"
+      name="exposure_curation_edit"
+      class=".browser.ExposureEditCurationFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.Exposure"
+      name="filegen"
+      class=".browser.ExposureFileGenFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.Exposure"
+      name="docviewgen"
+      class=".browser.ExposureDocViewGenFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.Exposure"
+      name="rollover"
+      class=".browser.ExposurePortCommitIdFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <!-- Exposure File -->
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="annotation"
+      class=".browser.ExposureFileAnnotatorFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="filetype"
+      class=".browser.ExposureFileTypeChoiceFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="edit_annotations"
+      class=".browser.ExposureFileTypeAnnotatorFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="note_editor"
+      class=".browser.ExposureFileNoteEditFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="arrange_views"
+      class=".browser.ExposureFileNoteArrangeFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="docviewgen"
+      class=".browser.ExposureDocViewGenFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="exposure_file_redirect"
+      class=".browser.ExposureFileRedirectView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="exposure_file_info"
+      class=".browser.ExposureFileInfoView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="exposure_file_document_view"
+      class=".browser.ExposureFileDocumentView"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="select_view"
+      class=".browser.ExposureFileSelectViewFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <!-- Exposure File Type -->
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFileType"
+      name="eftype_edit"
+      class=".browser.ExposureFileTypeEditFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFileType"
+      name="eftype_view"
+      class=".browser.ExposureFileTypeDisplayFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <!-- Exposure Notes -->
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="basic_mathml"
+      class=".browser.MathMLNoteView"
+      permission="zope2.View"
+      />
+
+  <!-- Exposure Folder -->
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFolder"
+      name="docviewgen"
+      class=".browser.ExposureDocViewGenFormView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFolder"
+      name="exposure_info"
+      class=".browser.ExposureInfoView"
+      permission="zope2.View"
+      />
+
+  <!--
+    adapter for the adding view.
+  -->
+
+  <adapter
+      for="Products.Five.browser.adding.ContentAdding
+           *"
+      name="addExposureFileType"
+      factory=".browser.ExposureFileTypeAddFormView"
+      provides="z3c.form.interfaces.IAddForm"
+      />
+
+  <!-- extensible form adapters -->
+
+  <adapter 
+      factory=".browser.ExposureFileTypeAnnotatorExtender"
+      name="pmr2.eft_annotator.extender"
+      />
+
+</configure>

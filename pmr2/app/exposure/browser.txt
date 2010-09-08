@@ -11,14 +11,14 @@ directories required should have been already set up by the script.
     >>> import zope.component
     >>> from Products.CMFCore.utils import getToolByName
     >>> from plone.z3cform.tests import setup_defaults
-    >>> from pmr2.app.browser import exposure
+    >>> from pmr2.app.exposure import browser as exposure
     >>> from pmr2.app.workspace import browser as workspace
     >>> from pmr2.app.tests.base import TestRequest
+    >>> from pmr2.app.interfaces import *
     >>> from pmr2.app.workspace.content import *
     >>> from pmr2.app.workspace.interfaces import *
-    >>> from pmr2.app.content import *
-    >>> from pmr2.app.interfaces import *
-    >>> from pmr2.app.content.interfaces import *
+    >>> from pmr2.app.exposure.content import *
+    >>> from pmr2.app.exposure.interfaces import *
     >>> pp = lambda x: pprint(x, indent=4, width=1)
     >>> catalog = getToolByName(self.portal, 'portal_catalog')
 
@@ -53,6 +53,41 @@ Exposure object is created with fields properly populated.
     u'eggs'
     >>> self.portal.exposure[oid].commit_id
     u'00000000'
+
+-----------------
+Exposure creation
+-----------------
+
+Exposures can be created via the creation form defined here.
+::
+
+    >>> wkspc = self.portal.workspace.pmr2hgtest
+    >>> request = TestRequest(form={'form.buttons.add': 1,})
+    >>> form = exposure.CreateExposureForm(wkspc, request)
+    >>> commit_id = self.archive_revs[-1]
+    >>> form.traverse_subpath = [commit_id]
+    >>> result = form()
+    >>> next = request.response.getHeader('Location')
+    >>> next
+    'http://.../exposure/...'
+
+The new exposure object should have the right values.
+::
+
+    >>> from zope.component import getUtility
+    >>> from pmr2.app.interfaces import IPMR2GlobalSettings
+    >>> settings = getUtility(IPMR2GlobalSettings)
+    >>> frags = next.split('/')
+    >>> eid = frags[-1]  # assume default_view == immediate_view in fti
+    >>> exposures = settings.getExposureContainer()
+    >>> new_exposure = exposures[eid]
+    >>> new_exposure.workspace == wkspc.absolute_url_path()
+    True
+    >>> new_exposure.commit_id == commit_id
+    True
+
+Need test on the exposure listing and the rollover forms, namely for
+user workspaces.
 
 ------------------------------------------------------------------------
 

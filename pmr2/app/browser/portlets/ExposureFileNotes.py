@@ -11,7 +11,7 @@ from Acquisition import aq_inner, aq_parent
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFPlone import PloneMessageFactory as _
 
-from pmr2.app.content.interfaces import IExposureFile
+from pmr2.app.exposure.interfaces import IExposureFile
 from pmr2.app.annotation.factory import has_note
 
 

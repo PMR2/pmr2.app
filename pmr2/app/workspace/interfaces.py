@@ -4,6 +4,12 @@ import zope.schema
 from pmr2.app.schema import ObjectId
 
 
+class IStorage(zope.interface.Interface):
+    """
+    Storage interface.
+    """
+
+
 # content
 
 class IWorkspaceContainer(zope.interface.Interface):
@@ -33,6 +39,12 @@ class IWorkspace(zope.interface.Interface):
         title=u'Description',
         required=False,
     )
+
+#    backend = zope.schema.Choice(
+#        title=u'Backend',
+#        description=u'The repository format.',
+#        vocabulary='pmr2.vocab.backend',
+#    )
 
 
 # browser related

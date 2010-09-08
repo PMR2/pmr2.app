@@ -102,34 +102,6 @@
       permission="zope2.View"
       />
 
-  <browser:page
-      for=".interfaces.IWorkspace"
-      name="exposure_rollover"
-      class=".browser.WorkspaceExposureRolloverView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <!--
-    Not really sure what the permission here should be as it really
-    depends on whether the user can add the exposure to the taget
-    container specified in the form.  Going with ModifyPortalContent
-    because if the user can't modify it, they shouldn't be making
-    Exposures in the first place.
-  -->
-  <browser:page
-      for=".interfaces.IWorkspace"
-      name="create_exposure"
-      class=".browser.CreateExposureFormView"
-      permission="cmf.ModifyPortalContent"
-      />
-
-  <browser:page
-      for=".interfaces.IWorkspace"
-      name="create"
-      class=".browser.CreateFormView"
-      permission="zope2.View"
-      />
-
   <!--
     An override of contentactions for Workspace for the menus in the
     file page view (sandbox/exposure add dropdown menu).

@@ -23,13 +23,6 @@ def test_suite():
 
         # Content tests.
         ztc.ZopeDocFileSuite(
-            'catalog.txt', package='pmr2.app',
-            test_class=base.DocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
-
-        # Content tests.
-        ztc.ZopeDocFileSuite(
             'content.txt', package='pmr2.app',
             test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
@@ -53,13 +46,6 @@ def test_suite():
         ztc.ZopeDocFileSuite(
             'browser/page.txt', package='pmr2.app',
             test_class=base.DocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
-
-        # Exposure and related object form usage tests.
-        ztc.ZopeDocFileSuite(
-            'browser/exposure.txt', package='pmr2.app',
-            test_class=base.ExposureDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 

@@ -6,7 +6,7 @@ from zope.publisher.interfaces import IPublishTraverse
 from paste.httpexceptions import HTTPNotFound, HTTPFound
 
 from pmr2.app.interfaces import *
-from pmr2.app.content.interfaces import *
+from pmr2.app.exposure.interfaces import *
 from pmr2.app.content import ExposureContainer, Exposure
 from pmr2.app.traverse import *
 from pmr2.app.tests.base import TestRequest, ExposureDocTestCase

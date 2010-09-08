@@ -9,7 +9,6 @@ _ = MessageFactory('pmr2')
 import z3c.form
 from plone.z3cform import layout
 from plone.z3cform.fieldsets import group, extensible
-from pmr2.app.content.interfaces import IExposureFile
 from pmr2.app.interfaces import IPMR2GlobalSettings, IPMR2PluggableSettings
 from pmr2.app.browser import form
 

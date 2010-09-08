@@ -7,7 +7,6 @@ import zope.component
 import zope.event
 import zope.lifecycleevent
 import zope.publisher.browser
-from zope.app.component.hooks import getSite
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
@@ -22,9 +21,6 @@ import z3c.form.button
 from plone.z3cform import layout
 from Products.CMFCore.utils import getToolByName
 from Acquisition import aq_parent, aq_inner
-from AccessControl import getSecurityManager
-from AccessControl import Unauthorized
-from Products.CMFCore import permissions
 
 import pmr2.mercurial.exceptions
 import pmr2.mercurial.utils
@@ -34,7 +30,7 @@ from pmr2.app.interfaces import *
 from pmr2.app.interfaces import IPMR2GlobalSettings
 from pmr2.app.content.interfaces import *
 from pmr2.app.content import *
-from pmr2.app.util import set_xmlbase, obfuscate, isodate, generate_exposure_id
+from pmr2.app.util import set_xmlbase, obfuscate, isodate
 
 from pmr2.app.workspace.interfaces import IWorkspaceListing
 
@@ -48,28 +44,9 @@ from pmr2.app.browser.layout import BorderedStorageFormWrapper
 from pmr2.app.browser.layout import BorderedTraverseFormWrapper
 from pmr2.app.browser.layout import TraverseFormWrapper
 
-from pmr2.app.browser.exposure import ExposurePort, ExposureAddForm
-
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace import table
 
-
-def restrictedGetExposureContainer():
-    # If there is a way to "magically" anchor this form at the
-    # target exposure container rather than the workspace, this
-    # would be unnecesary.
-    settings = zope.component.queryUtility(IPMR2GlobalSettings)
-    site = getSite()
-    exposure_container = site.restrictedTraverse(
-        str(settings.default_exposure_subpath), None)
-    if exposure_container is None:
-        # assume lack of permission.
-        raise Unauthorized('No permission to make exposures.')
-    security = getSecurityManager()
-    if not security.checkPermission(permissions.AddPortalContent, 
-            exposure_container):
-        raise Unauthorized('No permission to make exposures.')
-    return exposure_container
 
 # Workspace Container
 
@@ -283,66 +260,6 @@ WorkspaceShortlogView = layout.wrap_form(
     WorkspaceShortlog,
     __wrapper_class=BorderedTraverseFormWrapper,
     label='Shortlog'
-)
-
-
-class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
-
-    # more suitable interface name needed?
-    zope.interface.implements(interfaces.IExposureRolloverForm)
-    _finishedAdd = False
-    fields = z3c.form.field.Fields(interfaces.IExposureRolloverForm)
-
-    shortlog = True
-    tbl = table.ExposureRolloverLogTable
-
-    def export_source(self):
-        return self.source_exposure
-
-    @z3c.form.button.buttonAndHandler(_('Migrate'), name='apply')
-    def handleMigrate(self, action):
-        data, errors = self.extractData()
-        if errors:
-            self.status = self.formErrorsMessage
-            return
-
-        try:
-            exposure_container = restrictedGetExposureContainer()
-        except Unauthorized:
-            self.status = 'Unauthorized to create new exposure.'
-            raise z3c.form.interfaces.ActionExecutionError(
-                ExposureContainerInaccessibleError())
-        self._gotExposureContainer = True
-
-        self.exposure_container = exposure_container
-        self.source_exposure = exposure_container[data['exposure_id']]
-
-        eaf = ExposureAddForm(exposure_container, None)
-        data = {
-            'workspace': u'/'.join(self.context.getPhysicalPath()),
-            'curation': None,  # to be copied later
-            'commit_id': data['commit_id'],
-        }
-        eaf.createAndAdd(data)
-        exp_id = data['id']
-        target = exposure_container[exp_id]
-        self.mold(target)
-        self._finishedAdd = True
-        self.target = target
-
-    def nextURL(self):
-        return self.target.absolute_url()
-
-    def render(self):
-        if self._finishedAdd:
-            self.request.response.redirect(self.nextURL())
-            return ""
-        return super(WorkspaceExposureRollover, self).render()
-
-WorkspaceExposureRolloverView = layout.wrap_form(
-    WorkspaceExposureRollover,
-    __wrapper_class=BorderedTraverseFormWrapper,
-    label='Exposure Rollover'
 )
 
 
@@ -744,110 +661,3 @@ class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
         self.request.response.setHeader('Content-Length', len(data))
 
         return data
-
-
-class CreateForm(z3c.form.form.Form):
-
-    # XXX implement the interface that will show the types that users
-    # can create from a workspace.
-
-    # XXX the redirection below is brittle for user workspaces, and IS
-    # a security risk because it gives user too much power in changing
-    # "private" attributes.
-
-    def __call__(self):
-        type = self.request.form.get('type', None)
-        rev = self.request.form.get('rev', '')
-        workspace = self.request.form.get('workspace', '')
-        title = self.request.form.get('title', '')
-        if type == 'exposure':
-            settings = zope.component.queryUtility(IPMR2GlobalSettings)
-            subfrag = (getSite().absolute_url(),
-                       settings.default_exposure_subpath, 
-                       '@@exposure_add_form',)
-            url = '/'.join(subfrag)
-            url += '?form.widgets.workspace=%s' \
-                   '&form.widgets.commit_id=%s' \
-                   '&form.widgets.title=%s' % (
-                urllib.quote_plus(workspace),
-                urllib.quote_plus(rev),
-                urllib.quote_plus(title),
-            )
-            return self.request.response.redirect(url)
-
-        # XXX call parent's __call__ to render the form
-        return u''
-
-CreateFormView = layout.wrap_form(
-    CreateForm, label="Object Creation Form")
-
-
-class CreateExposureForm(form.AddForm, page.TraversePage):
-    """\
-    Page that will create an exposure inside the default exposure
-    container.
-    """
-
-    _gotExposureContainer = False
-
-    def create(self, data):
-        # no data assignments here
-        eid = generate_exposure_id()
-        return Exposure(eid)
-
-    def add(self, obj):
-        """\
-        The generic add method.
-        """
-        if not self.traverse_subpath:
-            raise HTTPNotFound(self.context.title_or_id())
-
-        exposure = obj
-        workspace = u'/'.join(self.context.getPhysicalPath())
-        commit_id = unicode(self.traverse_subpath[0])
-
-        try:
-            exposure_container = restrictedGetExposureContainer()
-        except Unauthorized:
-            self.status = 'Unauthorized to create new exposure.'
-            raise z3c.form.interfaces.ActionExecutionError(
-                ExposureContainerInaccessibleError())
-        self._gotExposureContainer = True
-
-        exposure_container[exposure.id] = exposure
-        exposure = exposure_container[exposure.id]
-        exposure.workspace = workspace
-        exposure.commit_id = commit_id
-        exposure.setTitle(self.context.title)
-        exposure.notifyWorkflowCreated()
-        exposure.reindexObject()
-
-        # so redirection via self.getURL will work.
-        self.ctxobj = exposure
-
-    def render(self):
-        if not self._gotExposureContainer:
-            # we didn't finish.
-            self._finishedAdd = False
-        return super(CreateExposureForm, self).render()
-
-    def __call__(self, *a, **kw):
-        if not self.traverse_subpath:
-            raise HTTPNotFound(self.context.title_or_id())
-
-        # Make sure this is a valid revision.
-        try:
-            storage = zope.component.queryMultiAdapter(
-                (self.context, self.request, self), 
-                name="PMR2StorageRequestView",
-            )
-        except (pmr2.mercurial.exceptions.PathInvalidError,
-                pmr2.mercurial.exceptions.RevisionNotFoundError,
-            ):
-            raise HTTPNotFound(self.context.title_or_id())
-
-        return super(CreateExposureForm, self).__call__(*a, **kw)
-
-CreateExposureFormView = layout.wrap_form(CreateExposureForm,
-    __wrapper_class=TraverseFormWrapper,
-    label="Select 'Add' to begin creating the exposure")

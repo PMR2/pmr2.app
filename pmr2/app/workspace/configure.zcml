@@ -17,7 +17,7 @@
 
   <adapter
       for="pmr2.app.workspace.interfaces.IWorkspace"
-      factory="pmr2.app.adapter.PMR2StorageURIResolver"
+      factory=".adapter.PMR2StorageURIResolver"
       provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
       name="PMR2StorageURIResolver"
       />

@@ -2,39 +2,6 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="pmr2">
 
-  <adapter
-      for="pmr2.app.content.interfaces.IExposure"
-      factory=".adapter.PMR2ExposureStorageAdapter"
-      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
-      name="PMR2ExposureStorageAdapter"
-      />
-
-  <adapter
-      for="pmr2.app.content.interfaces.IExposure"
-      factory=".adapter.PMR2ExposureStorageURIResolver"
-      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
-      name="PMR2ExposureStorageURIResolver"
-      />
-
-  <adapter
-      for="pmr2.app.content.interfaces.IExposure"
-      factory=".adapter.ExposureToWorkspaceAdapter"
-      provides="pmr2.app.workspace.interfaces.IWorkspace"
-      name="ExposureToWorkspace"
-      />
-
-  <adapter
-      for="pmr2.app.content.interfaces.IExposureObject"
-      factory=".adapter.ExposureSourceAdapter"
-      provides="pmr2.app.interfaces.IExposureSourceAdapter"
-      />
-
-  <adapter
-      for="pmr2.app.content.interfaces.IExposureFile"
-      factory=".adapter.ExposureFileSelectView"
-      provides="pmr2.app.browser.interfaces.IExposureFileSelectView"
-      />
-
   <!-- Global Configuration -->
   <adapter factory=".settings.PMR2GlobalSettings" />
 
@@ -42,4 +9,4 @@
   <adapter factory=".traverse.ExposureTraverser" />
   <adapter factory=".traverse.ExposureContainerTraverser" />
 
-</configure> 
+</configure>

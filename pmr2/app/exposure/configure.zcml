@@ -1,0 +1,10 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <include file="browser.zcml" />
+  <include file="adapter.zcml" />
+
+  <include file="catalog.zcml" />
+
+</configure>

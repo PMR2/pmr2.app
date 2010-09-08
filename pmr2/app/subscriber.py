@@ -1,7 +1,7 @@
 from zope.component import queryUtility, getSiteManager
 
 from pmr2.app.interfaces import IPMR2GlobalSettings
-from pmr2.app.content.interfaces import IExposure, IExposureFolder
+from pmr2.app.exposure.interfaces import IExposure, IExposureFolder
 
 def catalog_content(obj, event):
     # for the subscriber event.

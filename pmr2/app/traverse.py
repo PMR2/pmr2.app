@@ -5,7 +5,7 @@ from paste.httpexceptions import HTTPNotFound, HTTPFound
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import IExposureSourceAdapter
-from pmr2.app.content.interfaces import IExposureFolder, IExposureContainer
+from pmr2.app.exposure.interfaces import IExposureFolder, IExposureContainer
 
 
 class ExposureTraverser(DefaultPublishTraverse):

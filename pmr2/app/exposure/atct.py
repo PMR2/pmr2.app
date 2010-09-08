@@ -17,6 +17,8 @@ class ATFolderDocument(ATFolder, ATDocument):
     pasta of sort.
     """
 
+    # XXX For Exposure and ExposureFolders
+
     schema         =  ATFolderDocumentSchema
 
     portal_type    = 'PMR2 Exposure'

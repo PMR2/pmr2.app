@@ -22,8 +22,8 @@ First the setup.
 
     >>> import zope.interface
     >>> import zope.component
-    >>> from pmr2.app.catalog import pmr2_curation
-    >>> from pmr2.app.content.interfaces import *
+    >>> from pmr2.app.exposure.catalog import pmr2_curation
+    >>> from pmr2.app.exposure.interfaces import *
     >>> class ExposureDummy(object):
     ...     zope.interface.implements(IExposure, IExposureObject)
     ...     curation = {
@@ -37,14 +37,14 @@ First the setup.
 Exposure Workspace Index.
 ::
 
-    >>> from pmr2.app.catalog import pmr2_exposure_workspace
+    >>> from pmr2.app.exposure.catalog import pmr2_exposure_workspace
     >>> pmr2_exposure_workspace(dummy)()
     u'Workspace'
 
 Exposure Commit id.
 ::
 
-    >>> from pmr2.app.catalog import pmr2_exposure_commit_id
+    >>> from pmr2.app.exposure.catalog import pmr2_exposure_commit_id
     >>> pmr2_exposure_commit_id(dummy)()
     u'12345'
 
@@ -71,7 +71,7 @@ index will work on) and a few of keyword providers classes.
 ::
 
     >>> from pmr2.app.interfaces import IPMR2KeywordProvider
-    >>> from pmr2.app.catalog import pmr2_keyword
+    >>> from pmr2.app.exposure.catalog import pmr2_keyword
     >>> class ExposureFileDummy(object):
     ...     zope.interface.implements(IExposureFile, IExposureObject)
     ...     def word(self):

@@ -4,7 +4,7 @@
 
   <!-- this only applies to the exposure -->
   <subscriber
-      for="pmr2.app.content.interfaces.IExposure
+      for="pmr2.app.exposure.interfaces.IExposure
           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler=".subscriber.catalog_content"
       />
@@ -14,25 +14,25 @@
     as they use the parent variable for workflow state.
   -->
   <subscriber
-      for="pmr2.app.content.interfaces.IExposure
+      for="pmr2.app.exposure.interfaces.IExposure
           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler=".subscriber.recursive_recatalog_content"
       />
 
   <subscriber
-      for="pmr2.app.content.interfaces.IExposureFile
+      for="pmr2.app.exposure.interfaces.IExposureFile
           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler=".subscriber.catalog_content"
       />
 
   <subscriber
-      for="pmr2.app.content.interfaces.IExposureFileType
+      for="pmr2.app.exposure.interfaces.IExposureFileType
           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler=".subscriber.catalog_content"
       />
 
   <subscriber
-      for="pmr2.app.content.interfaces.IExposureFolder
+      for="pmr2.app.exposure.interfaces.IExposureFolder
           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler=".subscriber.catalog_content"
       />
