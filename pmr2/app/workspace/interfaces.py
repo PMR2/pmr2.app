@@ -3,6 +3,10 @@ import zope.schema
 
 from pmr2.app.schema import ObjectId
 
+from zope.app.publisher.interfaces.browser import IBrowserMenu
+from zope.app.publisher.interfaces.browser import IBrowserSubMenuItem
+from zope.app.publisher.interfaces.browser import IMenuItemType
+
 
 class IStorage(zope.interface.Interface):
     """
@@ -103,3 +107,21 @@ class IWorkspaceFileListProvider(zope.interface.Interface):
     """\
     Interface that will provide a list of files from a workspace.
     """
+
+
+# Workspace Menu
+
+class IWorkspaceMenuItem(zope.interface.Interface):
+    """workspace Menu item marker"""
+
+zope.interface.directlyProvides(IWorkspaceMenuItem, IMenuItemType)
+
+
+# Menus
+
+class IFileMenu(IBrowserMenu):
+    """File View Menu"""
+
+
+class IFileSubMenuItem(IBrowserSubMenuItem):
+    """workspace submenu item"""

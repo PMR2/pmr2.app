@@ -103,12 +103,13 @@
       />
 
   <!--
-    An override of contentactions for Workspace for the menus in the
-    file page view (sandbox/exposure add dropdown menu).
+    An override of contentactions viewlet for Workspace for the menus 
+    in the file page view.  The override only provide an extra
+    interface marker.
   -->
 
   <browser:viewlet
-      name="plone.contentactions"
+      name="pmr2.workspace.contentactions"
       for=".interfaces.IWorkspace"
       view=".browser.WorkspaceFilePageView"
       manager="plone.app.layout.viewlets.interfaces.IContentViews"
@@ -136,6 +137,29 @@
       name="plone.contentmenu"
       provides="zope.contentprovider.interfaces.IContentProvider"
       />
+
+  <!--
+    Workspace action menu for specific revisions
+  -->
+
+  <!-- Top level menu -->
+  <browser:menu
+      id="pmr2_workspacemenu"
+      title="Content menu - contains contextual actions related to the content"
+      interface=".interfaces.IWorkspaceMenuItem"
+      />
+
+  <browser:menu
+      id="pmr2_workspacemenu_file"
+      class=".menu.FileMenu"
+      title="Workspace action menu"
+      />
+
+  <adapter 
+      for="* *"
+      name="pmr2.workspacemenu.file"
+      factory=".menu.FileSubMenuItem"
+      provides=".interfaces.IWorkspaceMenuItem" />
 
   <!--
     adapter for the adding view.

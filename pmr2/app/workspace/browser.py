@@ -448,6 +448,16 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
         super(WorkspaceFilePage, self).__init__(*a, **kw)
         self.manifest = self.fileinfo = None
 
+    # XXX overriding traverse subpath here to define additional behavior
+    def publishTraverse(self, request, name):
+        self.traverse_subpath.append(name)
+        if self.request.get('rev', None) is None:
+            self.request['rev'] = name
+            self.request['request_subpath'] = []
+        else:
+            self.request['request_subpath'].append(name)
+        return self
+
     def update(self):
         """
         Populate internal data structures.

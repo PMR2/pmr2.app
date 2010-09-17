@@ -1,10 +1,15 @@
 import urllib
 
-from zope.component import queryMultiAdapter
+import zope.component
+import zope.interface
 
-from plone.app.contentmenu.menu import WorkflowSubMenuItem
+from zope.app.publisher.interfaces.browser import IBrowserMenu
+from zope.app.publisher.browser.menu import BrowserSubMenuItem
+from zope.app.publisher.browser.menu import BrowserMenu
+
 from plone.app.contentmenu.view import ContentMenuProvider
-from plone.app.contentmenu.interfaces import IWorkflowSubMenuItem
+from pmr2.app.workspace.interfaces import IFileMenu
+from pmr2.app.workspace.interfaces import IFileSubMenuItem
 
 
 class WorkspaceMenuProvider(ContentMenuProvider):
@@ -17,72 +22,77 @@ class WorkspaceMenuProvider(ContentMenuProvider):
     """
 
     def menu(self):
-        """\
-        This is a method with magic values.  The entire menu is rather
-        hard coded, values assumed.  The values basically need to be
-        built from querying adapters to gather what is available.
-        """
+        menu = zope.component.getUtility(
+            IBrowserMenu, name='pmr2_workspacemenu')
+        items = menu.getMenuItems(self.context, self.request)
+        items.reverse()
+        return items
 
-        # adapt a storage object.
-        storage = queryMultiAdapter(
-            (self.context, self.request, self._parent.view), 
-            name="PMR2StorageRequestView")
+
+class FileSubMenuItem(BrowserSubMenuItem):
+    zope.interface.implements(IFileSubMenuItem)
+
+    title = 'Workspace Actions'  # File View
+    description = 'Actions for the current workspace'
+    submenuId = 'pmr2_workspacemenu_file'
+
+    order = 60
+    extra = {'id': 'pmr2-workspacemenu-file'}
+
+    def __init__(self, context, request):
+        BrowserSubMenuItem.__init__(self, context, request)
+        self.context_state = zope.component.getMultiAdapter((context, request),
+            name='plone_context_state')
+
+    def getToolByName(self, tool):
+        return getToolByName(getSite(), tool)
+
+    @property
+    def action(self):
+        # XXX should be a disambiguation page
+        return self.context.absolute_url()  # + '/workspace_actions'
+
+    def available(self):
+        return True
+
+    def selected(self):
+        return False
+
+
+class FileMenu(BrowserMenu):
+    zope.interface.implements(IFileMenu)
+
+    def getMenuItems(self, context, request):
+
+        # request should already have rev and path populated.
+        storage = zope.component.queryMultiAdapter(
+            (context, request), name="PMR2StorageRequest")
+
         rev = storage.rev
-        workspace = self.context.id
-        title = self.context.title or self.context.id
+        workspace = context.id
 
         if not rev:
             # there is nothing to create an exposure from.
             return []
 
-        actionRootUri = self.context.absolute_url()
-        args = tuple(map(urllib.quote_plus, (workspace, rev, title)))
-        queryStr = '&workspace=%s&rev=%s&title=%s' % args
-        baseUri = '%s/@@create?type=%s%s'
-
-        mkSandboxUri = baseUri % (actionRootUri, 'sandbox', queryStr)
+        actionRootUri = context.absolute_url()
         mkExposureUri = '%s/@@create_exposure/%s' % (actionRootUri, rev)
 
-        items = [{
-            'title': u'Workspace Actions',
-            'action': actionRootUri,
-            'description': u'Workspace Actions',
-            'extra': {
-                'id': 'workspace-exposure-actions',
+        items = [
+            {
+                'title': 'Create Exposure',
+                'action': mkExposureUri,
+                'description': 'Creates an Exposure of this revision of this Workspace.',
+                'extra': {
+                    'class': 'kssIgnore',
+                    'id': 'create-exposure',
+                    'separator': None
+                },
+                'icon': None,
+                'selected': False,
+                'submenu': None,
             },
-            'icon': None,
-            'selected': u'',
-            'submenu': [
-
-                {
-                    'title': 'Create Sandbox',
-                    'action': mkSandboxUri,
-                    'description': 'Creates a Sandbox from this Workspace.',
-                    'extra': {
-                        'class': 'kssIgnore',
-                        'id': 'create-sandbox',
-                        'separator': None
-                    },
-                    'icon': None,
-                    'selected': False,
-                    'submenu': None,
-                },
-
-                {
-                    'title': 'Create Exposure',
-                    'action': mkExposureUri,
-                    'description': 'Creates an Exposure of this revision of this Workspace.',
-                    'extra': {
-                        'class': 'kssIgnore',
-                        'id': 'create-exposure',
-                        'separator': None
-                    },
-                    'icon': None,
-                    'selected': False,
-                    'submenu': None,
-                },
-
-            ],
-        }]
+        ]
 
         return items
+
