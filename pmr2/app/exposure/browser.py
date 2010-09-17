@@ -101,7 +101,7 @@ ExposureAddFormView = layout.wrap_form(ExposureAddForm,
 class CreateExposureForm(form.AddForm, page.TraversePage):
     """\
     Page that will create an exposure inside the default exposure
-    container.
+    container from within a workspace.
     """
 
     _gotExposureContainer = False

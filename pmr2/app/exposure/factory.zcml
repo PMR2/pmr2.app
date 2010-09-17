@@ -1,0 +1,11 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <utility
+      provides="pmr2.app.workspace.interfaces.IWorkspaceFileUtility"
+      component=".factory.CreateExposure"
+      name="create-exposure"
+      />
+
+</configure>

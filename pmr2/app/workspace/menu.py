@@ -10,6 +10,7 @@ from zope.app.publisher.browser.menu import BrowserMenu
 from plone.app.contentmenu.view import ContentMenuProvider
 from pmr2.app.workspace.interfaces import IFileMenu
 from pmr2.app.workspace.interfaces import IFileSubMenuItem
+from pmr2.app.workspace.interfaces import IWorkspaceFileUtility
 
 
 class WorkspaceMenuProvider(ContentMenuProvider):
@@ -70,29 +71,30 @@ class FileMenu(BrowserMenu):
 
         rev = storage.rev
         workspace = context.id
+        path = storage.path
 
         if not rev:
-            # there is nothing to create an exposure from.
+            # invalid revision; no available action.
             return []
 
-        actionRootUri = context.absolute_url()
-        mkExposureUri = '%s/@@create_exposure/%s' % (actionRootUri, rev)
+        menus = zope.component.getUtilitiesFor(IWorkspaceFileUtility)
+        items = []
 
-        items = [
-            {
-                'title': 'Create Exposure',
-                'action': mkExposureUri,
-                'description': 'Creates an Exposure of this revision of this Workspace.',
+        for id_, m in menus:
+            action = '%s/@@%s/%s/%s' % (
+                context.absolute_url(), m.view, rev, path)
+            items.append({
+                'title': m.title,
+                'action': action,
+                'description': m.description,
                 'extra': {
                     'class': 'kssIgnore',
-                    'id': 'create-exposure',
-                    'separator': None
+                    'id': id_,
+                    'separator': None,
                 },
                 'icon': None,
                 'selected': False,
                 'submenu': None,
-            },
-        ]
+            })
 
         return items
-

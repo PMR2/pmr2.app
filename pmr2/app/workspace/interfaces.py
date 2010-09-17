@@ -109,6 +109,32 @@ class IWorkspaceFileListProvider(zope.interface.Interface):
     """
 
 
+# Workspace utilities
+
+class IWorkspaceFileUtility(zope.interface.Interface):
+    """\
+    Utilities provided to files within workspaces.
+    """
+
+    # provides a view
+    id = zope.schema.ASCIILine(
+        title=u'Id',
+    )
+
+    # provides a view
+    view = zope.schema.ASCIILine(
+        title=u'View',
+    )
+
+    title = zope.schema.TextLine(
+        title=u'Title',
+    )
+
+    description = zope.schema.TextLine(
+        title=u'Description',
+    )
+
+
 # Workspace Menu
 
 class IWorkspaceMenuItem(zope.interface.Interface):
