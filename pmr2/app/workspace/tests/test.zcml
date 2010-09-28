@@ -1,0 +1,12 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    >
+
+  <utility
+      name="dummy_storage"
+      component="pmr2.app.workspace.tests.utility.DummyStorageUtility"
+      provides="pmr2.app.workspace.interfaces.IStorageUtility"
+      />
+
+</configure>

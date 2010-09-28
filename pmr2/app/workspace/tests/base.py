@@ -21,6 +21,7 @@ def setup():
     fiveconfigure.debug_mode = True
     # XXX dependant on pmr2.app still
     zcml.load_config('configure.zcml', pmr2.app)
+    zcml.load_config('test.zcml', pmr2.app.workspace.tests)
     fiveconfigure.debug_mode = False
     ztc.installPackage('pmr2.app')
 

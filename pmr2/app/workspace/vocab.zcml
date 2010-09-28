@@ -14,4 +14,10 @@
       name="pmr2.vocab.manifest"
       />
 
+  <utility
+      provides="zope.schema.interfaces.IVocabularyFactory"
+      component=".vocab.StorageVocabFactory"
+      name="pmr2.vocab.storage"
+      />
+
 </configure>

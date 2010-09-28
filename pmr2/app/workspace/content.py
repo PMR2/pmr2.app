@@ -41,6 +41,7 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
     zope.interface.implements(IWorkspace)
 
     description = fieldproperty.FieldProperty(IWorkspace['description'])
+    storage = fieldproperty.FieldProperty(IWorkspace['storage'])
 
 
 atapi.registerType(WorkspaceContainer, 'pmr2.app')

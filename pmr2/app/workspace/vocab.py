@@ -10,6 +10,7 @@ from pmr2.app.vocab import vocab_factory
 
 from pmr2.app.interfaces import *
 from pmr2.app.workspace.interfaces import IWorkspaceListing
+from pmr2.app.workspace.interfaces import IStorageUtility
 
 
 
@@ -27,8 +28,12 @@ WorkspaceDirObjListVocabFactory = vocab_factory(WorkspaceDirObjListVocab)
 
 class ManifestListVocab(SimpleVocabulary):
 
+    # XXX refactor this to take workspace
+
     def __init__(self, context):
         self.context = context
+        # if not IStorage.providedBy(self.context):
+        #     # adapt this into a storage
         obj = context
 
         helper = zope.component.queryAdapter(obj, IExposureSourceAdapter)
@@ -56,3 +61,38 @@ class ManifestListVocab(SimpleVocabulary):
             return super(ManifestListVocab, self).getTerm(value)
 
 ManifestListVocabFactory = vocab_factory(ManifestListVocab)
+
+
+class StorageVocab(SimpleVocabulary):
+
+    zope.interface.implements(IVocabulary)
+
+    _missing = ' (not found)'
+
+    def __init__(self, context=None):
+
+        self.context = context
+        terms = self._buildTerms()
+        super(StorageVocab, self).__init__(terms)
+
+    def _getValues(self):
+        return [(i[0], i[0], i[1].title) for i in 
+                zope.component.getUtilitiesFor(IStorageUtility)]
+
+    def _buildTerms(self):
+        # sort by title
+        values = self._getValues()
+        values.sort(cmp=lambda x, y: cmp(x[2], y[2]))
+        terms = [SimpleTerm(*i) for i in values]
+        return terms
+
+    def getTerm(self, value):
+        try:
+            return super(StorageVocab, self).getTerm(value)
+        except LookupError:
+            pass
+        # no utility is found
+        # XXX implement null utility maybe?  try some test cases first.
+        return SimpleTerm(None, None, value + self._missing)
+
+StorageVocabFactory = vocab_factory(StorageVocab)

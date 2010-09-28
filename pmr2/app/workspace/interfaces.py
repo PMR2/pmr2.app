@@ -10,8 +10,21 @@ from zope.app.publisher.interfaces.browser import IMenuItemType
 
 class IStorage(zope.interface.Interface):
     """
-    Storage interface.
+    Storage class.  Provides the methods to access data behind a 
+    workspace.
     """
+
+
+class IStorageUtility(zope.interface.Interface):
+    """\
+    Storage utility.  Used to initialize a storage object from a
+    workspace.
+    """
+
+    title = zope.schema.TextLine(
+        title=u'Title',
+        default=u'Workspace',
+    )
 
 
 # content
@@ -44,11 +57,11 @@ class IWorkspace(zope.interface.Interface):
         required=False,
     )
 
-#    backend = zope.schema.Choice(
-#        title=u'Backend',
-#        description=u'The repository format.',
-#        vocabulary='pmr2.vocab.backend',
-#    )
+    storage = zope.schema.Choice(
+        title=u'Storage Method',
+        description=u'The type of storage backend used for this workspace.',
+        vocabulary='pmr2.vocab.storage',
+    )
 
 
 # browser related
