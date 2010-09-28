@@ -4,6 +4,7 @@
 
   <include file="browser.zcml" />
   <include file="table.zcml" />
+  <include file="vocab.zcml" />
 
   <adapter
       for="*"

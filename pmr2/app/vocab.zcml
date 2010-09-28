@@ -4,18 +4,6 @@
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.WorkspaceDirObjListVocabFactory"
-      name="pmr2.vocab.workspace_dir_obj"
-      />
-
-  <utility
-      provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.ManifestListVocabFactory"
-      name="pmr2.vocab.manifest"
-      />
-
-  <utility
-      provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.PMR2TransformsVocabFactory"
       name="pmr2.vocab.transforms"
       />
