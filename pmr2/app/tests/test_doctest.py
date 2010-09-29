@@ -23,13 +23,6 @@ def test_suite():
 
         # Content tests.
         ztc.ZopeDocFileSuite(
-            'content.txt', package='pmr2.app',
-            test_class=base.DocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
-
-        # Content tests.
-        ztc.ZopeDocFileSuite(
             'util.txt', package='pmr2.app',
             test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
