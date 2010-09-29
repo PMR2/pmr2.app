@@ -28,7 +28,7 @@ WorkspaceDirObjListVocabFactory = vocab_factory(WorkspaceDirObjListVocab)
 
 class ManifestListVocab(SimpleVocabulary):
 
-    # XXX refactor this to take workspace
+    # XXX refactor this to take storage provider
 
     def __init__(self, context):
         self.context = context

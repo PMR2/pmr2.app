@@ -235,6 +235,8 @@ Main page should render fine, too.
 Actual Data
 -----------
 
+XXX move this into pmr2.mercurial.
+
 Here we will use data from a real repository with actual data.  The
 method to extract archive of the test repo will be called.
 ::
