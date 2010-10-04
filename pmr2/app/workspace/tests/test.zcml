@@ -3,9 +3,15 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     >
 
+  <!-- 
+    We need to register a base storage backend so workspaces could be
+    added, as the storage field is required.  Not to mention we do need
+    it to provide test data.
+  -->
+
   <utility
       name="dummy_storage"
-      component="pmr2.app.workspace.tests.utility.DummyStorageUtility"
+      factory="pmr2.app.workspace.tests.storage.DummyStorageUtility"
       provides="pmr2.app.workspace.interfaces.IStorageUtility"
       />
 

@@ -14,11 +14,41 @@ class IStorage(zope.interface.Interface):
     workspace.
     """
 
+    def log(start, count, branch=None):
+        """\
+        Returns a list of log entries, starting from revision, up to
+        number count.  Restricting entries to a specific branch is
+        specified by optional parameter branch.
+        """
+
+    def checkout(rev):
+        """\
+        Make the revision identified by rev the active revision for
+        all file operations.
+        """
+
+    def files():
+        """\
+        Return the list of files.
+        """
+
+    def file(path):
+        """\
+        Return the contents of the given path.
+        """
+
 
 class IStorageUtility(zope.interface.Interface):
     """\
-    Storage utility.  Used to initialize a storage object from a
-    workspace.
+    Wrapper around the initialization of its respective storage class.
+
+    This class is used to initialize a storage object from a workspace
+    in an implementation agnostic way, as they all have different
+    initialization methods (i.e. different on-disk locations, init
+    parameters).  This utility separates out the initialization of a
+    storage using a Zope/Plone object from specifying raw parameters,
+    and also provide a place to put the title and descriptions of
+    this particular storage type.
     """
 
     title = zope.schema.TextLine(

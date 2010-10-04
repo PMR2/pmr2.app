@@ -13,6 +13,26 @@ from pmr2.app.browser.interfaces import IPublishTraverse
 from pmr2.app.workspace.interfaces import *
 
 
+def WorkspaceStorageAdapter(workspace):
+    """\
+    Adapts a given `Workspace` into a `Storage`.
+    """
+
+    storage_util = zope.component.queryUtility(
+        IStorageUtility, name=workspace.storage)
+    if storage_util is None:
+        raise ValueError('storage type `%s` unknown' % workspace.storage)
+    return storage_util(workspace)
+
+
+def WorkspaceRequestStorageAdapter(workspace, request):
+    """\
+    Adapts a given `Workspace` and request into a `Storage`.
+
+    This facilitates "checking out" the correct requested revision.
+    """
+
+
 class WorkspaceListing(object):
     """\
     Returns a list of objects that implements IWorkspace from a given

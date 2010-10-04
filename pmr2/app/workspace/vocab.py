@@ -11,7 +11,7 @@ from pmr2.app.vocab import vocab_factory
 from pmr2.app.interfaces import *
 from pmr2.app.workspace.interfaces import IWorkspaceListing
 from pmr2.app.workspace.interfaces import IStorageUtility
-
+from pmr2.app.workspace.interfaces import IStorage
 
 
 class WorkspaceDirObjListVocab(SimpleVocabulary):
@@ -32,10 +32,29 @@ class ManifestListVocab(SimpleVocabulary):
 
     def __init__(self, context):
         self.context = context
-        # if not IStorage.providedBy(self.context):
-        #     # adapt this into a storage
-        obj = context
 
+        if not IStorage.providedBy(self.context):
+            # adapt this into a storage
+            self.storage = zope.component.queryAdapter(self.context, IStorage)
+        else:
+            self.storage = context
+
+        # XXX figure out how to implement this - do we want to implement
+        # context similar to how Mercurial does it, namely have another
+        # object to encapsulate revision.
+        if self.storage is None:
+            values = self._legacy()
+        else:
+            values = self.storage.files()
+            values.sort()
+
+        terms = [SimpleTerm(i, i) for i in values]
+        super(ManifestListVocab, self).__init__(terms)
+
+    def _legacy(self):
+        # XXX hack legacy support for exposure type
+        # XXX MUST be removed before 0.4 is released
+        obj = self.context
         helper = zope.component.queryAdapter(obj, IExposureSourceAdapter)
         if not helper:
             raise TypeError('could not acquire source from context')
@@ -50,8 +69,7 @@ class ManifestListVocab(SimpleVocabulary):
         manifest = storage.raw_manifest()
         values = manifest.keys()
         values.sort()
-        terms = [SimpleTerm(i, i) for i in values]
-        super(ManifestListVocab, self).__init__(terms)
+        return values
 
     def getTerm(self, value):
         if value is None:
