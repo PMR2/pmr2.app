@@ -5,8 +5,4 @@
   <!-- Global Configuration -->
   <adapter factory=".settings.PMR2GlobalSettings" />
 
-  <!-- Traversal Customization -->
-  <adapter factory=".traverse.ExposureTraverser" />
-  <adapter factory=".traverse.ExposureContainerTraverser" />
-
 </configure>

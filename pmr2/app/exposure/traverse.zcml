@@ -1,0 +1,9 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <!-- Traversal Customization -->
+  <adapter factory=".traverse.ExposureTraverser" />
+  <adapter factory=".traverse.ExposureContainerTraverser" />
+
+</configure> 
