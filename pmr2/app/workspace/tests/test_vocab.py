@@ -7,7 +7,7 @@ from pmr2.app.workspace.content import Workspace
 from pmr2.app.workspace.storage import BaseStorage
 from pmr2.app.workspace.vocab import *
 
-from pmr2.app.workspace.test.utility import DummyStorageUtility
+from pmr2.app.workspace.tests.utility import DummyStorageUtility
 
 
 class TestStorageVocab(TestCase):
@@ -26,7 +26,7 @@ class TestStorageVocab(TestCase):
         zope.component.provideUtility(
             DummyStorageUtility, IStorageUtility, name='dummy_storage')
         vocab = StorageVocab(self.workspace)
-        self.assertEqual(list(vocab), [('base', DummyStorageUtility)])
+        self.assertEqual(vocab.getTerm('dummy_storage').title, 'Dummy Storage')
 
 
 def test_suite():
