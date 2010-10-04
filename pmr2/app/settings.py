@@ -23,7 +23,8 @@ from pmr2.app.workspace.interfaces import IWorkspaceContainer
 from pmr2.app.interfaces import IPMR2GlobalSettings, IPMR2PluggableSettings
 from pmr2.app.factory import NamedUtilBase
 
-from pmr2.app.content import WorkspaceContainer, ExposureContainer
+from pmr2.app.workspace.content import WorkspaceContainer
+from pmr2.app.exposure.content import ExposureContainer
 
 __all__ = [
     'PMR2GlobalSettings',

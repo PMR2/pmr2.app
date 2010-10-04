@@ -28,11 +28,9 @@ from pmr2.mercurial import Storage
 
 from pmr2.app.interfaces import *
 from pmr2.app.interfaces import IPMR2GlobalSettings
-from pmr2.app.content.interfaces import *
-from pmr2.app.content import *
+from pmr2.app.workspace.interfaces import *
+from pmr2.app.workspace.content import *
 from pmr2.app.util import set_xmlbase, obfuscate, isodate
-
-from pmr2.app.workspace.interfaces import IWorkspaceListing
 
 from pmr2.app.browser import interfaces
 from pmr2.app.browser import widget

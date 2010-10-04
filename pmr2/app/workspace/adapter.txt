@@ -7,8 +7,8 @@ Zope/Plone instance stack, but this works for now.
 ::
 
     >>> import zope.component
-    >>> from pmr2.app.content import WorkspaceContainer
-    >>> from pmr2.app.content import Workspace
+    >>> from pmr2.app.workspace.content import WorkspaceContainer
+    >>> from pmr2.app.workspace.content import Workspace
     >>> from pmr2.app.interfaces import IPMR2GlobalSettings
     >>> pmr2_settings = zope.component.getUtility(IPMR2GlobalSettings)
     >>> pmr2_settings.repo_root = self.tmpdir

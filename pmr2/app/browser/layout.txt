@@ -35,7 +35,7 @@ Now we build our adapters.
     >>> from pmr2.app.browser.layout import StorageFormWrapper
     >>> from pmr2.app.browser.layout import PlainLayoutWrapper
     >>> from pmr2.app.browser.layout import MathMLLayoutWrapper
-    >>> from pmr2.app.content import Workspace
+    >>> from pmr2.app.workspace.content import Workspace
     >>> 
     >>> provideAdapter(adapts=(Interface, IBrowserRequest),
     ...                provides=Interface,

@@ -10,8 +10,7 @@ from pmr2.app.interfaces.exceptions import *
 from pmr2.app.interfaces import IPMR2GlobalSettings
 from pmr2.app.browser.interfaces import IPublishTraverse
 
-from pmr2.app.workspace.interfaces import IWorkspace
-from pmr2.app.workspace.interfaces import IWorkspaceListing
+from pmr2.app.workspace.interfaces import *
 
 
 class WorkspaceListing(object):

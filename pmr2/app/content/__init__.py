@@ -1,4 +1,5 @@
 import zope.interface
+import zope.deprecation
 
 from Products.Archetypes import atapi
 
@@ -48,14 +49,7 @@ from pmr2.app.content.support import PMR2Search
 # type registration
 
 __all__ = [
-    'WorkspaceContainer',
-    'Workspace',
     'SandboxContainer',
     'Sandbox',
-    'ExposureContainer',
-    'Exposure',
-    'ExposureFile',
-    'ExposureFileType',
-    'ExposureFolder',
     'PMR2Search',
 ]
