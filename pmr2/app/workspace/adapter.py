@@ -18,6 +18,7 @@ def WorkspaceStorageAdapter(workspace):
     Adapts a given `Workspace` into a `Storage`.
     """
 
+    assert IWorkspace.providedBy(workspace)
     storage_util = zope.component.queryUtility(
         IStorageUtility, name=workspace.storage)
     if storage_util is None:
