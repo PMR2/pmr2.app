@@ -34,17 +34,17 @@ class DummyStorage(BaseStorage):
     
     def __init__(self, context):
         self.context = context
-        self.id_ = context.id_
+        self.__id = context.id
         self.checkout(len(self._data()) - 1)
 
     def _data(self):
-        return _dummy_storage_data[self.id_]
+        return _dummy_storage_data[self.__id]
 
     def _changeset(self):
-        return self._data()[self.rev]
+        return self._data()[self.__rev]
 
     def checkout(self, rev):
-        self.rev = rev
+        self.__rev = rev
 
     def files(self):
         result = self._changeset().keys()
@@ -60,5 +60,5 @@ class DummyWorkspace(object):
     zope.interface.implements(IWorkspace)
 
     def __init__(self, id_):
-        self.id_ = id_
+        self.id = id_
         self.storage = None
