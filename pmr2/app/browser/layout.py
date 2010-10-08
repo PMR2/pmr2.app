@@ -18,7 +18,7 @@ from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
 from Products.PythonScripts.standard import url_quote
 
-import pmr2.mercurial.exceptions
+from pmr2.app.workspace.exceptions import *
 
 import pmr2.app.browser
 from pmr2.app.browser.interfaces import IUpdatablePageView
@@ -176,7 +176,7 @@ class StorageFormWrapper(FormWrapper):
 
         try:
             storage = getMultiAdapter((self.context,), name='PMR2Storage')
-        except pmr2.mercurial.exceptions.PathInvalidError:
+        except PathInvalidError:
             # This is raised in the case where a Workspace object exists
             # without a corresponding Hg repo on the filesystem.
             # XXX this error page does not say what really happened.
@@ -192,7 +192,7 @@ class StorageFormWrapper(FormWrapper):
                 self.context.setModificationDate(DateTime())
                 self.context.reindexObject()
             return results
-        except pmr2.mercurial.exceptions.UnsupportedCommandError:
+        except UnsupportedCommandError:
             return super(StorageFormWrapper, self).__call__(*a, **kw)
 
 

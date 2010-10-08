@@ -31,4 +31,4 @@ class RepoNotFoundError(ValueError):
 
 
 class UnsupportedCommandError(AttributeError):
-    """unsupported hgweb command"""
+    """unsupported command"""

@@ -27,6 +27,7 @@ from Products.PortalTransforms.data import datastream
 from Products.CMFCore import permissions
 
 from pmr2.app.workspace.browser import WorkspaceLog
+from pmr2.app.workspace.exceptions import *
 
 from pmr2.app.exposure import table
 
@@ -156,9 +157,7 @@ class CreateExposureForm(form.AddForm, page.TraversePage):
                 (self.context, self.request, self), 
                 name="PMR2StorageRequestView",
             )
-        except (pmr2.mercurial.exceptions.PathInvalidError,
-                pmr2.mercurial.exceptions.RevisionNotFoundError,
-            ):
+        except (PathInvalidError, RevisionNotFoundError,):
             raise HTTPNotFound(self.context.title_or_id())
 
         return super(CreateExposureForm, self).__call__(*a, **kw)

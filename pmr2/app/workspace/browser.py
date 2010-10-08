@@ -22,8 +22,6 @@ from plone.z3cform import layout
 from Products.CMFCore.utils import getToolByName
 from Acquisition import aq_parent, aq_inner
 
-import pmr2.mercurial.exceptions
-import pmr2.mercurial.utils
 from pmr2.mercurial import Storage
 
 from pmr2.app.interfaces import *
@@ -42,6 +40,7 @@ from pmr2.app.browser.layout import BorderedStorageFormWrapper
 from pmr2.app.browser.layout import BorderedTraverseFormWrapper
 from pmr2.app.browser.layout import TraverseFormWrapper
 
+from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace import table
 
@@ -115,7 +114,7 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
     def __call__(self, *a, **kw):
         try:
             storage = getMultiAdapter((self.context,), name='PMR2Storage')
-        except pmr2.mercurial.exceptions.PathInvalidError:
+        except PathInvalidError:
             # This is raised in the case where a Workspace object exists
             # without a corresponding Hg repo on the filesystem.
             # XXX should be raising NotFound instead of some other error 
@@ -125,7 +124,7 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
         try:
             # Process the request.
             return storage.process_request(self.request)
-        except pmr2.mercurial.exceptions.UnsupportedCommandError:
+        except UnsupportedCommandError:
             # Can't do this command, redirect back to root object.
             raise HTTPFound(self.context.absolute_url())
 
@@ -141,8 +140,8 @@ class WorkspaceArchive(page.TraversePage):
                 (self.context, self.request, self), 
                 name="PMR2StorageRequestView",
             )
-        except (pmr2.mercurial.exceptions.PathInvalidError,
-                pmr2.mercurial.exceptions.RevisionNotFoundError,
+        except (PathInvalidError,
+                RevisionNotFoundError,
             ):
             raise HTTPNotFound(self.context.title_or_id())
 
@@ -212,7 +211,7 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
                 self._log = storage.get_log(shortlog=self.shortlog,
                                             datefmt=self.datefmt,
                                             maxchanges=self.maxchanges)
-            except pmr2.mercurial.exceptions.RevisionNotFoundError:
+            except RevisionNotFoundError:
                 raise HTTPNotFound(self.context.title_or_id())
         return self._log
 
@@ -465,11 +464,11 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
         # meaningful.
         try:
             self._structure = self.storage.structure
-        except pmr2.mercurial.exceptions.RevisionNotFoundError:
+        except RevisionNotFoundError:
             raise HTTPNotFound(self.context.title_or_id())
-        except pmr2.mercurial.exceptions.PathNotFoundError:
+        except PathNotFoundError:
             raise HTTPNotFound(self.context.title_or_id())
-        except pmr2.mercurial.exceptions.RepoEmptyError:
+        except RepoEmptyError:
             # Since repository empty, we return an empty structure.
             self._structure = {}
             return
@@ -627,7 +626,7 @@ class WorkspaceRawfileView(WorkspaceFilePage):
             # XXX large files will eat RAM
             try:
                 data = self.storage.rawfile
-            except pmr2.mercurial.exceptions.PathNotFoundError:
+            except PathNotFoundError:
                 # this is a rawfile view, this can be triggered by 
                 # attempting to access a directory.  we redirect to the
                 # standard file view.
