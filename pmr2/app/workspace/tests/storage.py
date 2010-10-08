@@ -55,6 +55,12 @@ class DummyStorage(BaseStorage):
         self.__id = context.id
         self.checkout(len(self._data()) - 1)
 
+    def _datetime(self, rev=None):
+        i = rev
+        if rev is None:
+            i = self.__rev
+        return str(datetime.fromtimestamp(i * 9876 + 1111111111))
+
     def _data(self):
         return _dummy_storage_data[self.__id]
 
@@ -99,6 +105,17 @@ class DummyStorage(BaseStorage):
         except KeyError:
             raise PathNotFoundError()
 
+    def fileinfo(self, path):
+        text = self.file(path)
+        result = {
+            'permissions': '-rw-r--r--',
+            'node': self.rev,
+            'date': self._datetime(),
+            'size': str(len(text)),
+            'basename': basename(path),
+        }
+        return result
+
     def _logentry(self, rev):
         if rev < 0:
             return
@@ -133,7 +150,7 @@ class DummyStorage(BaseStorage):
                 break
             results.append({
                 'node': str(i),
-                'date': str(datetime.fromtimestamp(i * 9876 + 1111111111)),
+                'date': self._datetime(i),
                 'author': 'pmr2.teststorage <pmr2.tester@example.com>',
                 'desc': entry,
             })

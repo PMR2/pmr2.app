@@ -119,6 +119,32 @@ class TestDummyStorage(TestCase):
         storage.checkout('0')
         self.assertRaises(PathNotFoundError, storage.file, 'file3')
 
+    def test_400_fileinfo(self):
+        storage = DummyStorage(self.workspace)
+        storage.checkout('0')
+        result = storage.fileinfo('file1')
+        answer = {
+            'permissions': '-rw-r--r--',
+            'node': '0',
+            'date': '2005-03-18 14:58:31',
+            'size': '27',
+            'basename': 'file1',
+        }
+        self.assertEqual(answer, result)
+
+    def test_401_fileinfo(self):
+        storage = DummyStorage(self.workspace)
+        storage.checkout('3')
+        result = storage.fileinfo('dir1/nested/file')
+        answer = {
+            'permissions': '-rw-r--r--',
+            'node': '3',
+            'date': '2005-03-18 23:12:19',
+            'size': '27',
+            'basename': 'file',
+        }
+        self.assertEqual(answer, result)
+
 
 def test_suite():
     suite = TestSuite()
