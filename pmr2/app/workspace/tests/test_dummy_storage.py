@@ -145,6 +145,106 @@ class TestDummyStorage(TestCase):
         }
         self.assertEqual(answer, result)
 
+    def test_500_listdir_root(self):
+        storage = DummyStorage(self.workspace)
+        storage.checkout('3')
+        result = storage.listdir('')
+        answer = [
+        {
+            'permissions': 'drwxr-xr-x',
+            'node': '3',
+            'date': '',
+            'size': '',
+            'basename': 'dir1',
+        },
+        {
+            'permissions': '-rw-r--r--',
+            'node': '3',
+            'date': '2005-03-18 23:12:19',
+            'size': '31',
+            'basename': 'file1',
+        },
+        {
+            'permissions': '-rw-r--r--',
+            'node': '3',
+            'date': '2005-03-18 23:12:19',
+            'size': '21',
+            'basename': 'file3',
+        },
+        ]
+        self.assertEqual(answer, result)
+
+    def test_501_listdir_one_level(self):
+        storage = DummyStorage(self.workspace)
+        storage.checkout('3')
+        result = storage.listdir('dir1')
+        answer = [
+        {
+            'permissions': 'drwxr-xr-x',
+            'node': '3',
+            'date': '',
+            'size': '',
+            'basename': 'dir2',
+        },
+        {
+            'permissions': 'drwxr-xr-x',
+            'node': '3',
+            'date': '',
+            'size': '',
+            'basename': 'nested',
+        },
+        {
+            'permissions': '-rw-r--r--',
+            'node': '3',
+            'date': '2005-03-18 23:12:19',
+            'size': '19',
+            'basename': 'f1',
+        },
+        {
+            'permissions': '-rw-r--r--',
+            'node': '3',
+            'date': '2005-03-18 23:12:19',
+            'size': '20',
+            'basename': 'f2',
+        },
+        ]
+        self.assertEqual(answer, result)
+        # include trailing /
+        result = storage.listdir('dir1/')
+        self.assertEqual(answer, result)
+
+    def test_502_listdir_two_levels(self):
+        storage = DummyStorage(self.workspace)
+        storage.checkout('3')
+        result = storage.listdir('dir1/nested')
+        answer = [
+        {
+            'permissions': '-rw-r--r--',
+            'node': '3',
+            'date': '2005-03-18 23:12:19',
+            'size': '27',
+            'basename': 'file',
+        }]
+        self.assertEqual(answer, result)
+        # include multiple /
+        result = storage.listdir('dir1///nested')
+        self.assertEqual(answer, result)
+
+    def test_510_listdir_on_file_fail(self):
+        storage = DummyStorage(self.workspace)
+        storage.checkout('3')
+        self.assertRaises(PathNotDirError, storage.listdir, 'file1')
+        self.assertRaises(PathNotDirError, storage.listdir, 'dir1/f1')
+        self.assertRaises(PathNotDirError, storage.listdir, 'dir1/dir2/f1')
+
+    def test_511_listdir_on_non_path(self):
+        storage = DummyStorage(self.workspace)
+        storage.checkout('3')
+        self.assertRaises(PathNotFoundError, storage.listdir, 'file11')
+        self.assertRaises(PathNotFoundError, storage.listdir, 'dir1/f11')
+        self.assertRaises(PathNotFoundError, storage.listdir, 'dir1/dir2/f11')
+        self.assertRaises(PathNotFoundError, storage.listdir, 'dir2/dir1/f11')
+
 
 def test_suite():
     suite = TestSuite()

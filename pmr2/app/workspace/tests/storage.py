@@ -73,6 +73,15 @@ class DummyStorage(BaseStorage):
         except IndexError:
             raise RevisionNotFoundError()
 
+    def _dirinfo(self, path):
+        return {
+            'permissions': 'drwxr-xr-x',
+            'node': self.rev,
+            'date': '',
+            'size': '',
+            'basename': basename(path),
+        }
+
     def _validrev(self, rev):
         # valid type
         if not isinstance(rev, (int, basestring)):
@@ -115,6 +124,47 @@ class DummyStorage(BaseStorage):
             'basename': basename(path),
         }
         return result
+
+    def listdir(self, path):
+        # root is '', zero length
+        try:
+            self.file(path)
+            # we have a file, not a directory
+            raise PathNotDirError()
+        except PathNotFoundError:
+            # check to see if path is a directory in a bit
+            pass
+        except:
+            # raise other exceptions
+            raise
+        parts = tuple([p for p in path.split('/') if p])
+        length = len(parts)
+
+        depth = len(parts) + 1
+        # probably don't have to do this for every single one, but this
+        # makes the algorithm a bit easier to understand.
+        fileparts = [tuple(f.split('/')) for f in self.files()]
+        fileparts = [f for f in fileparts if f[:length] == parts]
+        if not fileparts:
+            # not a single fragment was found.
+            raise PathNotFoundError
+        dirs = set()
+        files = []
+        for f in fileparts:
+            if len(f) > depth:
+                # nested too deep, but we should record the fragment up
+                # to the depth.
+                dirs.add(f[:depth])
+                continue
+            # we can add info for this file
+            files.append(self.fileinfo('/'.join(f)))
+
+        # finish processing dirs
+        dirs = list(dirs)
+        dirs.sort()
+        results = [self._dirinfo('/'.join(d)) for d in dirs]
+        results.extend(files)
+        return results
 
     def _logentry(self, rev):
         if rev < 0:
