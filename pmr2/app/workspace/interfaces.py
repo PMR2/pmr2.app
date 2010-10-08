@@ -37,6 +37,16 @@ class IStorage(zope.interface.Interface):
         Return the contents of the given path.
         """
 
+    def fileinfo(path):
+        """\
+        Return the contents of the given path.
+        """
+
+    def listdir(path):
+        """\
+        Returns the list of files within this path.
+        """
+
 
 class IStorageUtility(zope.interface.Interface):
     """\

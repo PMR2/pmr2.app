@@ -1,3 +1,4 @@
+from os.path import basename
 from datetime import datetime
 import zope.interface
 
@@ -31,6 +32,8 @@ _dummy_storage_data = {
             'file3': 'Yes file1 is removed\n',
             'dir1/f1': 'first file in dir1\n',
             'dir1/f2': 'second file in dir1\n',
+            'dir1/dir2/f1': 'first file in dir2\n',
+            'dir1/dir2/f2': 'second file in dir2\n',
             'dir1/nested/file': 'some three level deep file\n',
         },
     ],
@@ -77,6 +80,10 @@ class DummyStorage(BaseStorage):
         self._changeset(rev)
         return rev
 
+    @property
+    def rev(self):
+        return str(self.__rev)
+
     def checkout(self, rev):
         # set current revision
         self.__rev = self._validrev(rev)
@@ -108,13 +115,10 @@ class DummyStorage(BaseStorage):
         for f in files:
             if f not in oldcs:
                 results.append('A:%s' % f)
-                continue
-            if f not in newcs:
+            elif f not in newcs:
                 results.append('D:%s' % f)
-                continue
-            if oldcs[f] == newcs[f]:
-                continue
-            results.append('C:%s' % f)
+            elif not oldcs[f] == newcs[f]:
+                results.append('C:%s' % f)
 
         results.sort()
         return '\n'.join(results)
