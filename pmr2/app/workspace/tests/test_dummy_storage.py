@@ -67,7 +67,6 @@ class TestDummyStorage(TestCase):
         storage = DummyStorage(self.workspace)
         self.assertRaises(RevisionNotFoundError, storage.checkout, '100')
         self.assertRaises(RevisionNotFoundError, storage.checkout, 'a00')
-        self.assertRaises(RevisionNotFoundError, storage.checkout, None)
 
     def test_200_storage_log(self):
         storage = DummyStorage(self.workspace)
@@ -114,7 +113,6 @@ class TestDummyStorage(TestCase):
         storage = DummyStorage(self.workspace)
         self.assertRaises(RevisionNotFoundError, storage.log, '100', 30)
         self.assertRaises(RevisionNotFoundError, storage.log, 'a00', 30)
-        self.assertRaises(RevisionNotFoundError, storage.log, None, 30)
 
     def test_300_storage_file(self):
         storage = DummyStorage(self.workspace)

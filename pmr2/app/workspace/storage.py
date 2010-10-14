@@ -12,10 +12,18 @@ class BaseStorage(object):
 
     zope.interface.implements(IStorage)
 
+    @property
+    def rev(self):
+        raise NotImplementedError
+
+    @property
+    def shortrev(self):
+        return self.rev
+
     def basename(self, name):
         raise NotImplementedError
 
-    def checkout(self, rev):
+    def checkout(self, rev=None):
         raise NotImplementedError
 
     def file(self, path):

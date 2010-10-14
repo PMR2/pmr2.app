@@ -65,7 +65,7 @@ class DummyStorage(BaseStorage):
     def __init__(self, context):
         self.context = context
         self.__id = context.id
-        self.checkout(len(self._data()) - 1)
+        self.checkout()
 
     def _datetime(self, rev=None):
         i = rev
@@ -116,8 +116,10 @@ class DummyStorage(BaseStorage):
     def basename(self, path):
         return path.split('/')[-1]
 
-    def checkout(self, rev):
+    def checkout(self, rev=None):
         # set current revision
+        if rev is None:
+            rev = len(self._data()) - 1
         self.__rev = self._validrev(rev)
 
     def files(self):

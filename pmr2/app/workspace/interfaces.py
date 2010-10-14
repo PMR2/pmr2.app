@@ -14,16 +14,23 @@ class IStorage(zope.interface.Interface):
     workspace.
     """
 
+    # XXX add these properties:
+    # rev - current revision id
+    # shortrev - current revision short id
+
     def basename(path):
         """\
         Returns the basename of this path, implementation specific to
         the backend in question.
         """
 
-    def checkout(rev):
+    def checkout(rev=None):
         """\
         Make the revision identified by rev the active revision for
         all file operations.
+
+        rev can be None, it would be the default checkout of the storage
+        backend.
         """
 
     def format(permissions, node, date, size, basename, contents):
