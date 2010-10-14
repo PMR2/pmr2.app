@@ -2,6 +2,8 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="pmr2">
 
+  <include package="z3c.table" />
+
   <include file="adapter.zcml" />
   <include file="browser.zcml" />
   <include file="table.zcml" />

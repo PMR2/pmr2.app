@@ -13,9 +13,9 @@ the test environment.
     >>> self.portal['workspace'] = WorkspaceContainer()
     >>> self.portal.workspace
     <WorkspaceContainer at /plone/workspace>
-    >>> self.portal.workspace['eggs'] = Workspace('eggs')
-    >>> self.portal.workspace.eggs
-    <Workspace at /plone/workspace/eggs>
+    >>> self.portal.workspace['test'] = Workspace('test')
+    >>> self.portal.workspace.test
+    <Workspace at /plone/workspace/test>
     >>> request = TestRequest()
 
 We will test the Repository Listing form first.  As the root object is
@@ -33,7 +33,7 @@ The edit form for the Workspace should work.
 ::
 
     >>> testform = browser.WorkspaceEditForm(
-    ...     self.portal.workspace.eggs, request)
+    ...     self.portal.workspace.test, request)
     >>> html = testform()
     >>> 'Title' in html
     True
@@ -51,15 +51,15 @@ Let's try to edit the Workspace with that form.
     ...         'form.buttons.apply': 1,
     ...     })
     >>> testform = browser.WorkspaceEditForm(
-    ...     self.portal.workspace.eggs, request)
+    ...     self.portal.workspace.test, request)
     >>> testform.update()
 
 Workspace is updated
 ::
 
-    >>> self.portal.workspace.eggs.title
+    >>> self.portal.workspace.test.title
     u'Delicious Eggs'
-    >>> self.portal.workspace.eggs.description
+    >>> self.portal.workspace.test.description
     u'Test\nWorkspace'
 
 Now if we defined a temporary directory.  However, the workspace path
@@ -78,10 +78,9 @@ Once the required paths are created on the file system, the raw
 repository listing should render fine.
 ::
 
-    >>> from pmr2.app.tests import utils
-    >>> utils.mkreporoot(self.pmr2.createDir(self.portal.workspace))
+    >>> workspace_root = self.pmr2.createDir(self.portal.workspace)
     >>> html = repolist_page()
-    >>> 'eggs' in html
+    >>> 'test' in html
     True
     >>> 'Error' in html
     True
@@ -93,20 +92,21 @@ show up on the table.
 ::
 
     >>> from os.path import join
-    >>> utils.mkrepo(join(self.pmr2.dirCreatedFor(portal.workspace), 'ham'))
+    >>> from os import mkdir
+    >>> mkdir(join(workspace_root, 'ham'))
     >>> html = repolist_page()
     >>> 'ham' in html
     True
     >>> 'Not Found' in html
     True
 
-Now we create the repository for eggs.  It should no longer appear 
+Now we create the repository for test.  It should no longer appear 
 broken.
 ::
 
-    >>> utils.mkrepo(self.pmr2.dirOf(self.portal.workspace.eggs))
+    >>> test_workspace = self.pmr2.createDir(self.portal.workspace.test)
     >>> html = repolist_page()
-    >>> 'eggs' in html
+    >>> 'test' in html
     True
     >>> 'Error' in html
     False
@@ -157,7 +157,7 @@ earlier.
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.id': u'cake',
-    ...         'form.widgets.name': u'Delicious Cake',
+    ...         'form.widgets.title': u'Delicious Cake',
     ...         'form.widgets.storage': [u'dummy_storage'],
     ...         'form.buttons.add': 1,
     ...     })
@@ -165,28 +165,24 @@ earlier.
     >>> testform = browser.WorkspaceStorageCreateForm(
     ...     self.portal.workspace, request)
     >>> testform.update()
-    >>> p = join(self.pmr2.dirCreatedFor(portal.workspace), 'cake')
-    >>> utils.isdir(p)
+    >>> # XXX this is based off mercurial still
+    >>> cake_path = self.pmr2.dirCreatedFor(self.portal.workspace.cake)
+    >>> cake_path.endswith('/workspace/cake')
     True
-    >>> p = join(self.pmr2.dirCreatedFor(portal.workspace), 'cake', '.hg')
-    >>> utils.isdir(p)
+    >>> self.portal.workspace.cake.title == u'Delicious Cake'
+    True
+    >>> self.portal.workspace.cake.storage == u'dummy_storage'
     True
 
-Now using the newly created workspace, try to render the file page, but
-first we need to register the adapters.
+Make sure the storage behind this workspace is set up.
 ::
 
-    >>> from zope.component import provideAdapter
-    >>> from zope.publisher.interfaces import IPublisherRequest
-    >>> from pmr2.app.workspace.interfaces import IWorkspace
-    >>> from pmr2.app.browser.interfaces import IPublishTraverse
-    >>> from pmr2.mercurial.interfaces import IPMR2HgWorkspaceAdapter
-    >>> from pmr2.app.workspace.adapter import PMR2StorageRequestViewAdapter
-    >>> provideAdapter(adapts=(
-    ...                   IWorkspace, IPublisherRequest, IPublishTraverse,),
-    ...                provides=IPMR2HgWorkspaceAdapter,
-    ...                factory=PMR2StorageRequestViewAdapter,
-    ...                name=u"PMR2StorageRequestView")
+    >>> import zope.component
+    >>> from pmr2.app.workspace.interfaces import IStorage
+    >>> cake = self.portal.workspace.cake
+    >>> cake_store = zope.component.queryAdapter(cake, IStorage)
+    >>> cake_store.file('status') == 'is a lie.'
+    True
 
 See if the page renders with expected output.
 ::
@@ -198,8 +194,10 @@ See if the page renders with expected output.
     >>> result = testpage()
     >>> '<th>Filename</th>' in result
     True
+    >>> 'status' in result
+    True
     >>> testpage.label
-    u'Manifest: cake @ 0000000000 / '
+    u'Manifest: cake @ 0 / '
 
 The log page should render, too.
 ::
@@ -231,66 +229,43 @@ Main page should render fine, too.
     >>> '<th>Log</th>' in result
     True
 
------------
-Actual Data
------------
-
-XXX move this into pmr2.mercurial.
-
-Here we will use data from a real repository with actual data.  The
-method to extract archive of the test repo will be called.
-::
-
-    >>> self.createRepo()
-    >>> request = TestRequest()
-    >>> wkspc = self.portal.workspace.pmr2hgtest
-    >>> testpage = browser.WorkspacePage(wkspc, request)
-    >>> result = testpage()
-    >>> '<th>Log</th>' in result
-    True
-    >>> len([i for i in self.pmr2hgtest_revs if i in result]) == len(
-    ...     self.pmr2hgtest_revs)
-    True
-
-Now for a file listing.
-::
-
-    >>> request = TestRequest()
-    >>> testpage = browser.WorkspaceFilePage(wkspc, request)
-    >>> testpage.update()
-    >>> result = testpage()
-    >>> label = u'Manifest: pmr2hgtest @ %s / ' % self.pmr2hgtest_revs[-1][:10]
-    >>> testpage.label == label
-    True
-    >>> 'file1' in result
-    True
-    >>> 'file2' in result
-    True
-    >>> 'README' in result
-    True
-
-Subdirectories should work.  We use a different repo for this that has
-the subdirectories in place, and we do need a proper revision for the
+Subdirectories should work along with a subpath to access the 
+subdirectories in place, and we do need a proper revision for the
 request_subpath.
 ::
 
-    >>> wkspc = self.portal.workspace.rdfmodel
-    >>> subpath = self.rdfmodel_revs[-1:] + ['component']
+    >>> wkspc = self.portal.workspace.test
+    >>> subpath = ['2', 'dir1']
     >>> request = TestRequest()
     >>> testpage = browser.WorkspaceFilePage(wkspc, request)
     >>> testpage.traverse_subpath = subpath  
     >>> testpage.update()
     >>> result = testpage()
-    >>> label = u'Manifest: rdfmodel @ %s / %s' % (subpath[0][:10], subpath[1])
+    >>> label = u'Manifest: test @ 2 / dir1'
     >>> testpage.label == label
     True
-    >>> 'module.cellml' in result
+    >>> 'f1' in result
+    True
+    >>> 'f2' in result
     True
 
 Bad revision results in not found.
 ::
 
-    >>> subpath = ['abcdef1234567890', 'component']
+    >>> subpath = ['1010', 'dir1']
+    >>> request = TestRequest()
+    >>> testpage = browser.WorkspaceFilePage(wkspc, request)
+    >>> testpage.traverse_subpath = subpath
+    >>> testpage.update()
+    Traceback (most recent call last):
+    ...
+    HTTPNotFound: 404 Not Found
+    ...
+
+As well as bad files
+::
+
+    >>> subpath = ['2', 'dir2']
     >>> request = TestRequest()
     >>> testpage = browser.WorkspaceFilePage(wkspc, request)
     >>> testpage.traverse_subpath = subpath

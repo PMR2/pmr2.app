@@ -17,11 +17,11 @@ def test_suite():
     return unittest.TestSuite([
 
         # Adapters to access data.
-        ztc.ZopeDocFileSuite(
-            'adapter.txt', package='pmr2.app.workspace',
-            test_class=DocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
+        #ztc.ZopeDocFileSuite(
+        #    'adapter.txt', package='pmr2.app.workspace',
+        #    test_class=DocTestCase,
+        #    optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
+        #),
 
         # Forms and interactions.
         ztc.ZopeDocFileSuite(

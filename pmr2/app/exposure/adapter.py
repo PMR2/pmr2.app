@@ -10,8 +10,8 @@ from pmr2.mercurial.adapter import PMR2StorageFixedRevAdapter
 from pmr2.mercurial.adapter import PMR2StorageRequestAdapter
 from pmr2.mercurial import WebStorage
 import pmr2.mercurial.utils
+from pmr2.mercurial.adapter import PMR2StorageURIResolver
 
-from pmr2.app.workspace.adapter import PMR2StorageURIResolver
 from pmr2.app.workspace.exceptions import PathNotFoundError
 
 from pmr2.app.interfaces import *
@@ -29,6 +29,7 @@ __all__ = [
 
 
 class PMR2ExposureStorageAdapter(PMR2StorageFixedRevAdapter):
+    # XXX to be deprecated
 
     def __init__(self, context):
 
@@ -45,6 +46,7 @@ class PMR2ExposureStorageAdapter(PMR2StorageFixedRevAdapter):
 
 class PMR2ExposureStorageURIResolver(
         PMR2ExposureStorageAdapter, PMR2StorageURIResolver):
+    # XXX to be deprecated
 
     def __init__(self, *a, **kw):
         PMR2ExposureStorageAdapter.__init__(self, *a, **kw)

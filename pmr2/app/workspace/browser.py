@@ -299,6 +299,7 @@ class WorkspaceAddForm(form.AddForm):
     def add_data(self, ctxobj):
         ctxobj.title = self._data['title']
         ctxobj.description = self._data['description']
+        ctxobj.storage = self._data['storage']
 
 WorkspaceAddFormView = layout.wrap_form(
     WorkspaceAddForm, label="Workspace Object Creation Form")

@@ -38,6 +38,12 @@ _dummy_storage_data = {
         },
     ],
 
+    'cake': [
+        {
+            'status': 'is a lie.',
+        },
+    ],
+
 }
 
 
