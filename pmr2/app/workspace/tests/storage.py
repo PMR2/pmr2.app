@@ -1,4 +1,3 @@
-from os.path import basename
 from datetime import datetime
 import zope.interface
 
@@ -50,6 +49,13 @@ _dummy_storage_data = {
 class DummyStorageUtility(StorageUtility):
     title = 'Dummy Storage'
 
+    def create(self, context):
+        # creates the datastore for a dummy storage
+        if context.id in _dummy_storage_data:
+            # don't overwrite existing data
+            return
+        _dummy_storage_data[context.id] == [{}]
+
     def __call__(self, context):
         return DummyStorage(context)
 
@@ -80,13 +86,15 @@ class DummyStorage(BaseStorage):
             raise RevisionNotFoundError()
 
     def _dirinfo(self, path):
-        return {
+        contents = lambda: self.listdir(path)
+        return self.format(**{
             'permissions': 'drwxr-xr-x',
             'node': self.rev,
             'date': '',
             'size': '',
-            'basename': basename(path),
-        }
+            'path': path,
+            'contents': contents,
+        })
 
     def _validrev(self, rev):
         # valid type
@@ -105,6 +113,9 @@ class DummyStorage(BaseStorage):
     def rev(self):
         return str(self.__rev)
 
+    def basename(self, path):
+        return path.split('/')[-1]
+
     def checkout(self, rev):
         # set current revision
         self.__rev = self._validrev(rev)
@@ -122,14 +133,16 @@ class DummyStorage(BaseStorage):
 
     def fileinfo(self, path):
         text = self.file(path)
-        result = {
+        # this is done because contents may not be needed at all times
+        contents = lambda: self.file(path)
+        return self.format(**{
             'permissions': '-rw-r--r--',
             'node': self.rev,
             'date': self._datetime(),
             'size': str(len(text)),
-            'basename': basename(path),
-        }
-        return result
+            'path': path,
+            'contents': contents,
+        })
 
     def listdir(self, path):
         # root is '', zero length

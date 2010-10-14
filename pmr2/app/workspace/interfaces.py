@@ -14,11 +14,10 @@ class IStorage(zope.interface.Interface):
     workspace.
     """
 
-    def log(start, count, branch=None):
+    def basename(path):
         """\
-        Returns a list of log entries, starting from revision, up to
-        number count.  Restricting entries to a specific branch is
-        specified by optional parameter branch.
+        Returns the basename of this path, implementation specific to
+        the backend in question.
         """
 
     def checkout(rev):
@@ -27,9 +26,27 @@ class IStorage(zope.interface.Interface):
         all file operations.
         """
 
-    def files():
+    def format(permissions, node, date, size, basename, contents):
         """\
-        Return the list of files.
+        Takes the parameters and returns a dictionary with a specific
+        set of keys as per default implementation.
+
+        permissions 
+            - a string representing permissions
+        node 
+            - the revision identifier, node the file or object resides 
+              in.
+        date
+            - datetime stamp of the file or object
+        size
+            - the size of the file or object
+        path
+            - the path of the content
+        contents
+            - a method or lambda that returns the contents
+
+        The returning value is a dictionary of the above, with a new
+        basename key.
         """
 
     def file(path):
@@ -42,9 +59,26 @@ class IStorage(zope.interface.Interface):
         Return the contents of the given path.
         """
 
+    def files():
+        """\
+        Return the list of files.
+        """
+
     def listdir(path):
         """\
         Returns the list of files within this path.
+        """
+
+    def log(start, count, branch=None):
+        """\
+        Returns a list of log entries, starting from revision, up to
+        number count.  Restricting entries to a specific branch is
+        specified by optional parameter branch.
+        """
+
+    def pathinfo(path):
+        """\
+        Returns either a list of fileinfo or individual fileinfo.
         """
 
 
@@ -65,6 +99,11 @@ class IStorageUtility(zope.interface.Interface):
         title=u'Title',
         default=u'Workspace',
     )
+
+    def create(context):
+        """\
+        Create or instantiate the backend storage for context.
+        """
 
 
 # content

@@ -1,5 +1,6 @@
 import zope.interface
 
+from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import IStorage
 from pmr2.app.workspace.interfaces import IStorageUtility
 
@@ -10,6 +11,61 @@ class BaseStorage(object):
     """
 
     zope.interface.implements(IStorage)
+
+    def basename(self, name):
+        raise NotImplementedError
+
+    def checkout(self, rev):
+        raise NotImplementedError
+
+    def file(self, path):
+        raise NotImplementedError
+
+    def fileinfo(self, path):
+        raise NotImplementedError
+
+    def files(self):
+        raise NotImplementedError
+
+    def format(self, permissions, node, date, size, path, contents):
+        return {
+            'permissions': permissions,
+            'node': node,
+            'date': date,
+            'size': size,
+            'basename': self.basename(path),
+            'contents': contents,
+        }
+
+    def listdir(self, path):
+        raise NotImplementedError
+
+    def log(self, start, count, branch=None):
+        raise NotImplementedError
+
+    def pathinfo(self, path):
+        """\
+        This is a default implementation.  If a specific backend 
+        supports other types of path resolution, this method can be
+        safely overridden provided the correct data is returned.
+        """
+
+        try:
+            listing = self.listdir(path)
+            # consider using an iterator?
+            contents = lambda: listing
+            data = self.format(**{
+                'permissions': 'drwxr-xr-x',
+                'node': self.rev,
+                'date': '',
+                'size': '',
+                'path': path,
+                'contents': contents,
+            })
+        except PathNotDirError:
+            # then path must be a file
+            data = self.fileinfo(path)
+        return data
 
 
 class StorageUtility(object):

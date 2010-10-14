@@ -24,6 +24,19 @@ class TestDummyStorage(TestCase):
     def tearDown(self):
         pass
 
+    def filter_pathinfo(self, input):
+        def filter(i):
+            # make sure contents is what we expect
+            result = {}
+            result.update(i)
+            self.assert_(callable(result['contents']))
+            del result['contents']
+            return result
+
+        if isinstance(input, list):
+            return [filter(i) for i in input]
+        return filter(input)
+
     def test_000_storage(self):
         # Trivial
         storage = DummyStorage(self.workspace)
@@ -130,7 +143,7 @@ class TestDummyStorage(TestCase):
             'size': '27',
             'basename': 'file1',
         }
-        self.assertEqual(answer, result)
+        self.assertEqual(answer, self.filter_pathinfo(result))
 
     def test_401_fileinfo(self):
         storage = DummyStorage(self.workspace)
@@ -143,7 +156,7 @@ class TestDummyStorage(TestCase):
             'size': '27',
             'basename': 'file',
         }
-        self.assertEqual(answer, result)
+        self.assertEqual(answer, self.filter_pathinfo(result))
 
     def test_500_listdir_root(self):
         storage = DummyStorage(self.workspace)
@@ -172,7 +185,7 @@ class TestDummyStorage(TestCase):
             'basename': 'file3',
         },
         ]
-        self.assertEqual(answer, result)
+        self.assertEqual(answer, self.filter_pathinfo(result))
 
     def test_501_listdir_one_level(self):
         storage = DummyStorage(self.workspace)
@@ -208,10 +221,10 @@ class TestDummyStorage(TestCase):
             'basename': 'f2',
         },
         ]
-        self.assertEqual(answer, result)
+        self.assertEqual(answer, self.filter_pathinfo(result))
         # include trailing /
         result = storage.listdir('dir1/')
-        self.assertEqual(answer, result)
+        self.assertEqual(answer, self.filter_pathinfo(result))
 
     def test_502_listdir_two_levels(self):
         storage = DummyStorage(self.workspace)
@@ -225,10 +238,10 @@ class TestDummyStorage(TestCase):
             'size': '27',
             'basename': 'file',
         }]
-        self.assertEqual(answer, result)
+        self.assertEqual(answer, self.filter_pathinfo(result))
         # include multiple /
         result = storage.listdir('dir1///nested')
-        self.assertEqual(answer, result)
+        self.assertEqual(answer, self.filter_pathinfo(result))
 
     def test_510_listdir_on_file_fail(self):
         storage = DummyStorage(self.workspace)
@@ -244,6 +257,45 @@ class TestDummyStorage(TestCase):
         self.assertRaises(PathNotFoundError, storage.listdir, 'dir1/f11')
         self.assertRaises(PathNotFoundError, storage.listdir, 'dir1/dir2/f11')
         self.assertRaises(PathNotFoundError, storage.listdir, 'dir2/dir1/f11')
+
+    def test_600_pathinfo(self):
+        storage = DummyStorage(self.workspace)
+        storage.checkout('0')
+        result = storage.pathinfo('file1')
+        answer = {
+            'permissions': '-rw-r--r--',
+            'node': '0',
+            'date': '2005-03-18 14:58:31',
+            'size': '27',
+            'basename': 'file1',
+        }
+        self.assertEqual(answer, self.filter_pathinfo(result))
+
+    def test_601_pathinfo_nested_dir(self):
+        storage = DummyStorage(self.workspace)
+        storage.checkout('3')
+        result = storage.pathinfo('dir1/nested')
+        answer = {
+            'permissions': 'drwxr-xr-x',
+            'node': '3',
+            'date': '',
+            'size': '',
+            'basename': 'nested',
+        }
+        self.assertEqual(answer, self.filter_pathinfo(result))
+
+    def test_602_pathinfo_nested_dir(self):
+        storage = DummyStorage(self.workspace)
+        storage.checkout('3')
+        result = storage.pathinfo('dir1/nested/file')
+        answer = {
+            'permissions': '-rw-r--r--',
+            'node': '3',
+            'date': '2005-03-18 23:12:19',
+            'size': '27',
+            'basename': 'file',
+        }
+        self.assertEqual(answer, self.filter_pathinfo(result))
 
 
 def test_suite():
