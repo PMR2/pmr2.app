@@ -1,3 +1,4 @@
+from os.path import join
 import warnings
 import mimetypes
 import urllib
@@ -9,6 +10,10 @@ import zope.lifecycleevent
 import zope.publisher.browser
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
+
+from zope.app.pagetemplate.viewpagetemplatefile \
+    import ViewPageTemplateFile as VPTF
+ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
 from paste.httpexceptions import HTTPNotFound, HTTPFound
 
@@ -34,7 +39,6 @@ from pmr2.app.browser import interfaces
 from pmr2.app.browser import widget
 from pmr2.app.browser import form
 from pmr2.app.browser import page
-from pmr2.app.browser.page import ViewPageTemplateFile
 
 from pmr2.app.browser.layout import BorderedStorageFormWrapper
 from pmr2.app.browser.layout import BorderedTraverseFormWrapper
