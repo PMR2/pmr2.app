@@ -27,16 +27,11 @@ from plone.z3cform import layout
 from Products.CMFCore.utils import getToolByName
 from Acquisition import aq_parent, aq_inner
 
-from pmr2.mercurial import Storage
-
-from pmr2.app.interfaces import *
-from pmr2.app.interfaces import IPMR2GlobalSettings
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace.content import *
 from pmr2.app.util import set_xmlbase, obfuscate, isodate
 
 from pmr2.app.browser import interfaces
-from pmr2.app.browser import widget
 from pmr2.app.browser import form
 from pmr2.app.browser import page
 
@@ -107,6 +102,24 @@ WorkspaceContainerRepoListingView = layout.wrap_form(
 
 # Workspace
 
+
+class WorkspaceTraversePage(page.TraversePage):
+    """\
+    Parses traversal path in a way specific to Workspace paths.
+    """
+
+    def publishTraverse(self, request, name):
+        # customize traverse subpath here as we can set the request
+        # variables directly
+        self.traverse_subpath.append(name)
+        if self.request.get('rev', None) is None:
+            self.request['rev'] = name
+            self.request['request_subpath'] = []
+        else:
+            self.request['request_subpath'].append(name)
+        return self
+
+
 class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
     """\
     Browser page that encapsulates access to the Mercurial protocol.
@@ -116,14 +129,7 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
     # totally handled "correctly".
 
     def __call__(self, *a, **kw):
-        try:
-            storage = getMultiAdapter((self.context,), name='PMR2Storage')
-        except PathInvalidError:
-            # This is raised in the case where a Workspace object exists
-            # without a corresponding Hg repo on the filesystem.
-            # XXX should be raising NotFound instead of some other error 
-            # page that accurately describe this error.
-            raise HTTPNotFound(self.context.title_or_id())
+        storage = zope.component.queryAdapter(self.context, IStorage)
 
         try:
             # Process the request.
@@ -133,7 +139,7 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
             raise HTTPFound(self.context.absolute_url())
 
 
-class WorkspaceArchive(page.TraversePage):
+class WorkspaceArchive(WorkspaceTraversePage):
     """\
     Browser page that archives a hg repo.
     """
@@ -155,16 +161,15 @@ class WorkspaceArchive(page.TraversePage):
 
 class WorkspacePage(page.SimplePage):
     """\
-    The main page view.
+    The main workspace page.
     """
-    # XXX the implementation works, but is probably not best practice
-    # way to implement views based on other classes.
 
     template = ViewPageTemplateFile('workspace.pt')
 
     @property
     def owner(self):
         if not hasattr(self, '_owner'):
+            # method getOwner is from AccessControl.Owned.Owned
             owner = self.context.getOwner()
             result = '%s <%s>' % (
                 owner.getProperty('fullname', owner.getId()),
@@ -190,7 +195,7 @@ WorkspacePageView = layout.wrap_form(
 )
 
 
-class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
+class WorkspaceLog(WorkspaceTraversePage, z3c.table.value.ValuesForContainer):
 
     zope.interface.implements(IWorkspaceLogProvider)
 
@@ -201,46 +206,24 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
     # XXX this needs to be fixed to take advantage of shared adapted result.
     shortlog = False
     tbl = table.ChangelogTable
-    maxchanges = None  # default value.
+    maxchanges = 50  # default value.
     datefmt = None # default value.
 
     @property
     def log(self):
         if not hasattr(self, '_log'):
             try:
-                storage = zope.component.queryMultiAdapter(
-                    (self.context, self.request, self), 
-                    name="PMR2StorageRequestView",
-                )
-                self._log = storage.get_log(shortlog=self.shortlog,
-                                            datefmt=self.datefmt,
-                                            maxchanges=self.maxchanges)
+                storage = zope.component.queryAdapter(self.context, IStorage)
+                if self.request.get('rev', None):
+                    storage.checkout(self.request['rev'])
+                rev = storage.rev
+                self._log = storage.log(rev, self.maxchanges)
             except RevisionNotFoundError:
                 raise HTTPNotFound(self.context.title_or_id())
         return self._log
 
-    def navlist(self):
-        # XXX we are merging before/after together.
-        nav = self.log['changenav'][0]
-        for i in nav['before']():
-            yield {
-                'href': i['node'],
-                'label': i['label'],
-            }
-        for i in nav['after']():
-            yield {
-                'href': i['node'],
-                'label': i['label'],
-            }
-
-    @property
     def values(self):
-        """\
-        Although this is a property, it will return a method that 
-        returns a generator.
-        """
-
-        return self.log['entries']
+        return self.log
 
     def content(self):
         t = self.tbl(self, self.request)
@@ -321,11 +304,9 @@ class WorkspaceStorageCreateForm(WorkspaceAddForm):
 
     def add_data(self, ctxobj):
         WorkspaceAddForm.add_data(self, ctxobj)
-        # path shouldn't exist, but don't make it
-        rp = zope.component.getUtility(IPMR2GlobalSettings).dirOf(ctxobj)
-        # This creates the mercurial workspace, and will fail if storage
-        # already exists.
-        Storage.create(rp, ffa=True)
+        storage = zope.component.getUtility(
+            IStorageUtility, name=ctxobj.storage)
+        storage.create(ctxobj)
 
 WorkspaceStorageCreateFormView = layout.wrap_form(
     WorkspaceStorageCreateForm, label="Create a New Workspace")
@@ -427,146 +408,73 @@ class WorkspaceEditForm(form.EditForm):
     Workspace edit form.
     """
 
-    fields = z3c.form.field.Fields(IWorkspace)
+    fields = z3c.form.field.Fields(IWorkspace).omit('storage')
 
 WorkspaceEditFormView = layout.wrap_form(
     WorkspaceEditForm, label="Workspace Edit Form")
 
 
-class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
+class WorkspaceFilePage(WorkspaceTraversePage):
     """\
     Manifest listing page.
     """
     
-    zope.interface.implements(IWorkspaceFilePageView, 
-        IWorkspaceLogProvider,
-        IWorkspaceFileListProvider,
-        interfaces.IUpdatablePageView)
+    #zope.interface.implements(IWorkspaceFilePageView, 
+    #    IWorkspaceLogProvider,
+    #    IWorkspaceFileListProvider,
+    #    interfaces.IUpdatablePageView)
+    zope.interface.implements(IWorkspaceFileListProvider)
 
     template = ViewPageTemplateFile('workspace_file_page.pt')
     filetemplate = ViewPageTemplateFile('file.pt')
+    label = ViewPageTemplateFile('workspace_location.pt')
 
-    def __init__(self, *a, **kw):
-        super(WorkspaceFilePage, self).__init__(*a, **kw)
-        self.manifest = self.fileinfo = None
-
-    # XXX overriding traverse subpath here to define additional behavior
-    def publishTraverse(self, request, name):
-        self.traverse_subpath.append(name)
-        if self.request.get('rev', None) is None:
-            self.request['rev'] = name
-            self.request['request_subpath'] = []
-        else:
-            self.request['request_subpath'].append(name)
-        return self
+    @property
+    def rev(self):
+        # set by update()
+        return self._rev
 
     def update(self):
-        """
-        Populate internal data structures.
+        """\
+        Acquire content from request_subpath from storage
         """
 
-        # it may be desirable if the 404 pages return something more
-        # meaningful.
+        storage = zope.component.getAdapter(self.context, IStorage)
         try:
-            self._structure = self.storage.structure
+            storage.checkout(self.request.get('rev', None))
         except RevisionNotFoundError:
             raise HTTPNotFound(self.context.title_or_id())
+
+        request_subpath = self.request.get('request_subpath', [])
+
+        try:
+            # to do a subrepo redirect, the implementation specific 
+            # pathinfo method should raise a HTTPFound at this stage.
+            data = storage.pathinfo('/'.join(request_subpath))
         except PathNotFoundError:
             raise HTTPNotFound(self.context.title_or_id())
-        except RepoEmptyError:
-            # Since repository empty, we return an empty structure.
-            self._structure = {}
-            return
 
-        if self._structure[''] == 'filerevision':
-            self.fileinfo = self._structure
-            # XXX should figure out how to set date format in structure
-            # rather than rebuilding
-            self.fileinfo['date'] = isodate(self.fileinfo['date'])
-        elif self._structure[''] == 'manifest':
-            self.manifest = self._structure
-            # XXX hacks, because this class is trying to render more
-            # than one data source.
-            self.render_subrepo = True
-        elif self._structure[''] == '_subrepo':
-            uri = '%s/@@%s/%s/%s' % (
-                self._structure['location'],
-                self.__name__,
-                self._structure['rev'],
-                self._structure['path'],
-            )
-            raise HTTPFound(uri)
+        self._rev = storage.shortrev
+        # this is for rendering
+        self.filepath = request_subpath or ['']
+
+        # data['size'] gives a hint as to what it is.  If it's unset,
+        # it is assumed to be a directory, we acquire the directory 
+        # renderer.
+
+        # XXX tentative.
+        if data['size'] == '':
+            # XXX this is a hack to get it working
+            # this is a dictionary with a contents key, which is a
+            # method that will return the values expected by the table
+            # rendering class.
+            self._values = data
+            tbl = table.FileManifestTable(self, self.request)
+            tbl.update()
+            self.content = tbl.render()
         else:
-            # not sure what to do
-            raise Exception("unknown storage response structure")
-
-    @property
-    def storage(self):
-        # XXX placeholder
-        self.request.form['cmd'] = ['file']
-        if not hasattr(self, '_storage'):
-            self._storage = zope.component.queryMultiAdapter(
-                (self.context, self.request, self),
-                name="PMR2StorageRequestView"
-            )
-        return self._storage
-
-    @property
-    def structure(self):
-        if hasattr(self, '_structure'):
-            return self._structure
-
-    # XXX rewrite this class to use adapters for specific views for 
-    # these distinct types of values
-    @property
-    def values(self):
-        """
-        provides values for the table.
-        """
-
-        if self.structure[''] == 'filerevision':
-            return self.fileinfo['text']
-        elif self.structure[''] == 'manifest':
-            return self.manifest['aentries']
-        return []
-
-    def content(self):
-
-        if self.structure is None:
-            raise HTTPNotFound(self.context.title_or_id())
-
-        if self.structure[''] == 'manifest':
-            t = table.FileManifestTable(self, self.request)
-            t.update()
-            return t.render()
-        else:
-            return self.filetemplate()
-
-    @property
-    def label(self):
-        """
-        provides values for the form.
-        """
-
-        if not self.structure:
-            return u''
-
-        if self.structure[''] == 'filerevision':
-            label = 'Fileinfo'
-        elif self.structure[''] == 'manifest':
-            label = 'Manifest'
-        else:
-            return u'No Information Available'
-        rev = self.storage.rev
-        if rev:
-            rev = rev[:10]
-        else:
-            # emulating null ID.
-            rev = '0' * 10
-        return u'%s: %s @ %s / %s' % (
-            label, self.context.title_or_id(), rev,
-            self.storage.path.replace('/', ' / '),
-        )
+            self.content = zope.component.queryMultiAdapter((
+                data, self.request), IWorkspaceFileRender)
 
     def _getpath(self, view='rawfile', path=None):
         result = [
@@ -579,14 +487,14 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
         return result
 
     @property
+    def values(self):
+        # XXX this is here to hack
+        return self._values['contents']
+
+    @property
     def rooturi(self):
         """the root uri."""
         return '/'.join(self._getpath())
-
-    @property
-    def xmlrooturi(self):
-        """the root uri."""
-        return '/'.join(self._getpath(view='xmlbase'))
 
     @property
     def fullpath(self):
@@ -597,22 +505,6 @@ class WorkspaceFilePage(page.TraversePage, z3c.table.value.ValuesForContainer):
     def viewpath(self):
         """view uri."""
         return '/'.join(self._getpath(view='file', path=self.storage.path))
-
-    @property
-    def subrepo(self):
-        # XXX directly using internals?
-        try:
-            substate = self.storage.ctx.substate
-        except:
-            # XXX catchall
-            return []
-        result = []
-        for location, subrepo in substate.iteritems():
-            source, rev, kind = subrepo
-            result.append((location, source, rev))
-        result.sort()
-        result = [dict(zip(('location', 'source', 'rev'), i)) for i in result]
-        return result
 
 WorkspaceFilePageView = layout.wrap_form(
     WorkspaceFilePage,

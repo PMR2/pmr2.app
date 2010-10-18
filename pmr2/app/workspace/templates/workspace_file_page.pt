@@ -1,6 +1,7 @@
 <h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
 <div tal:content="structure view/content"/>
 <div tal:condition="exists:view/render_subrepo">
+<tal:if tal:condition="exists:view/subrepo">
 <dl tal:condition="view/subrepo">
 <dt>Subrepo listing:</dt>
 <dd>
@@ -12,4 +13,5 @@
 </ul>
 </dd>
 </dl>
+</tal:if>
 </div>

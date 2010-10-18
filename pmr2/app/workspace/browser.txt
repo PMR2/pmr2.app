@@ -16,6 +16,7 @@ the test environment.
     >>> self.portal.workspace['test'] = Workspace('test')
     >>> self.portal.workspace.test
     <Workspace at /plone/workspace/test>
+    >>> self.portal.workspace.test.storage = u'dummy_storage'
     >>> request = TestRequest()
 
 We will test the Repository Listing form first.  As the root object is
@@ -165,10 +166,6 @@ earlier.
     >>> testform = browser.WorkspaceStorageCreateForm(
     ...     self.portal.workspace, request)
     >>> testform.update()
-    >>> # XXX this is based off mercurial still
-    >>> cake_path = self.pmr2.dirCreatedFor(self.portal.workspace.cake)
-    >>> cake_path.endswith('/workspace/cake')
-    True
     >>> self.portal.workspace.cake.title == u'Delicious Cake'
     True
     >>> self.portal.workspace.cake.storage == u'dummy_storage'
@@ -191,13 +188,13 @@ See if the page renders with expected output.
     >>> testpage = browser.WorkspaceFilePage(
     ...     self.portal.workspace.cake, request)
     >>> testpage.update()
+    >>> testpage.label()
+    u'Location: Delicious Cake @ 0 / \n'
     >>> result = testpage()
     >>> '<th>Filename</th>' in result
     True
     >>> 'status' in result
     True
-    >>> testpage.label
-    u'Manifest: cake @ 0 / '
 
 The log page should render, too.
 ::
@@ -235,15 +232,31 @@ request_subpath.
 ::
 
     >>> wkspc = self.portal.workspace.test
-    >>> subpath = ['2', 'dir1']
     >>> request = TestRequest()
+    >>> request['rev'] = '2'
+    >>> request['request_subpath'] = ['dir1']
     >>> testpage = browser.WorkspaceFilePage(wkspc, request)
-    >>> testpage.traverse_subpath = subpath  
     >>> testpage.update()
     >>> result = testpage()
-    >>> label = u'Manifest: test @ 2 / dir1'
-    >>> testpage.label == label
+    >>> testpage.label()
+    u'Location: Delicious Eggs @ 2 / dir1\n'
+    >>> 'f1' in result
     True
+    >>> 'f2' in result
+    True
+
+Nested works too.
+::
+
+    >>> wkspc = self.portal.workspace.test
+    >>> request = TestRequest()
+    >>> request['rev'] = '3'
+    >>> request['request_subpath'] = ['dir1', 'dir2']
+    >>> testpage = browser.WorkspaceFilePage(wkspc, request)
+    >>> testpage.update()
+    >>> result = testpage()
+    >>> testpage.label()
+    u'Location: Delicious Eggs @ 3 / dir1 / dir2\n'
     >>> 'f1' in result
     True
     >>> 'f2' in result
@@ -252,23 +265,23 @@ request_subpath.
 Bad revision results in not found.
 ::
 
-    >>> subpath = ['1010', 'dir1']
     >>> request = TestRequest()
+    >>> request['rev'] = '1010'
+    >>> request['request_subpath'] = ['dir1']
     >>> testpage = browser.WorkspaceFilePage(wkspc, request)
-    >>> testpage.traverse_subpath = subpath
     >>> testpage.update()
     Traceback (most recent call last):
     ...
     HTTPNotFound: 404 Not Found
     ...
 
-As well as bad files
+As well as non-existent files at a specific revision.
 ::
 
-    >>> subpath = ['2', 'dir2']
     >>> request = TestRequest()
+    >>> request['rev'] = '1'
+    >>> request['request_subpath'] = ['dir1']
     >>> testpage = browser.WorkspaceFilePage(wkspc, request)
-    >>> testpage.traverse_subpath = subpath
     >>> testpage.update()
     Traceback (most recent call last):
     ...

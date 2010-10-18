@@ -291,10 +291,8 @@ object, only change the data and add in a fake storage rev attribute.
     ...     },
     ... ]
     ...
-    >>> storage = FakeContainer()
-    >>> storage.rev = 'c0ffee'
     >>> context._values = data
-    >>> context.storage = storage
+    >>> context.rev = 'c0ffee'
     >>> request = TestRequest()
     >>> t = table.FileManifestTable(context, request)
     >>> t.update()
