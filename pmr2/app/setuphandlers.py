@@ -76,8 +76,16 @@ def cellml_v0_2tov0_3(context):
 
     from zope.annotation.interfaces import IAnnotations
     from pmr2.app.annotation.interfaces import IExposureFileNote
-    from pmr2.app.browser.exposure import ExposureFileTypeAnnotatorForm
-    from pmr2.app.adapter import ExposureSourceAdapter
+
+    try:
+        from pmr2.app.exposure.browser import ExposureFileTypeAnnotatorForm
+    except ImportError:
+        from pmr2.app.browser.exposure import ExposureFileTypeAnnotatorForm
+
+    try:
+        from pmr2.app.adapter import ExposureSourceAdapter
+    except ImportError:
+        from pmr2.app.exposure.adapter import ExposureSourceAdapter
 
     logger = getLogger('pmr2.app')
     catalog = getToolByName(context, 'portal_catalog')
