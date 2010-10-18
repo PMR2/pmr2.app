@@ -19,60 +19,15 @@ the test environment.
     >>> self.portal.workspace.test.storage = u'dummy_storage'
     >>> request = TestRequest()
 
-We will test the Repository Listing form first.  As the root object is
-not configured, the listing will raise an exception which should not be
-passed to the client.
+We will test the Repository Listing form first.  As the workspace path
+has not been created, the listing will raise an exception which should
+not be passed to the client but show an error message.
 ::
 
     >>> repolist_page = browser.WorkspaceContainerRepoListing(
     ...     self.portal.workspace, request)
     >>> html = repolist_page()
     >>> 'Workspace path is missing. Please notify administrator.' in html
-    True
-
-The edit form for the Workspace should work.
-::
-
-    >>> testform = browser.WorkspaceEditForm(
-    ...     self.portal.workspace.test, request)
-    >>> html = testform()
-    >>> 'Title' in html
-    True
-    >>> 'Description' in html
-    True
-
-Let's try to edit the Workspace with that form.
-::
-
-    >>> request = TestRequest(
-    ...     form={
-    ...         'form.widgets.title': u'Delicious Eggs',
-    ...         'form.widgets.description': u'Test\nWorkspace',
-    ...         'form.widgets.storage': [u'dummy_storage'],
-    ...         'form.buttons.apply': 1,
-    ...     })
-    >>> testform = browser.WorkspaceEditForm(
-    ...     self.portal.workspace.test, request)
-    >>> testform.update()
-
-Workspace is updated
-::
-
-    >>> self.portal.workspace.test.title
-    u'Delicious Eggs'
-    >>> self.portal.workspace.test.description
-    u'Test\nWorkspace'
-
-Now if we defined a temporary directory.  However, the workspace path
-has not been created yet.
-::
-
-    >>> repolist_page = browser.WorkspaceContainerRepoListing(
-    ...     self.portal.workspace, request)
-    >>> html = repolist_page()
-    >>> 'Repository Path is undefined.' in html
-    False
-    >>> 'Workspace path is missing.' in html
     True
 
 Once the required paths are created on the file system, the raw 
@@ -113,6 +68,39 @@ broken.
     False
     >>> 'Valid' in html
     True
+
+The edit form for the Workspace should work.
+::
+
+    >>> testform = browser.WorkspaceEditForm(
+    ...     self.portal.workspace.test, request)
+    >>> html = testform()
+    >>> 'Title' in html
+    True
+    >>> 'Description' in html
+    True
+
+Let's try to edit the Workspace with that form.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.title': u'Delicious Eggs',
+    ...         'form.widgets.description': u'Test\nWorkspace',
+    ...         'form.widgets.storage': [u'dummy_storage'],
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> testform = browser.WorkspaceEditForm(
+    ...     self.portal.workspace.test, request)
+    >>> testform.update()
+
+Workspace is updated.
+::
+
+    >>> self.portal.workspace.test.title
+    u'Delicious Eggs'
+    >>> self.portal.workspace.test.description
+    u'Test\nWorkspace'
 
 Now we if try to create the ham workspace object using the 
 WorkspaceStorageCreateForm, it will fail because the ham Storage object
