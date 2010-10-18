@@ -140,6 +140,7 @@ class TestDummyStorage(TestCase):
             'date': '2005-03-18 14:58:31',
             'size': '27',
             'basename': 'file1',
+            'file': 'file1',
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
@@ -153,6 +154,7 @@ class TestDummyStorage(TestCase):
             'date': '2005-03-18 23:12:19',
             'size': '27',
             'basename': 'file',
+            'file': 'dir1/nested/file',
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
@@ -167,6 +169,7 @@ class TestDummyStorage(TestCase):
             'date': '',
             'size': '',
             'basename': 'dir1',
+            'file': 'dir1',
         },
         {
             'permissions': '-rw-r--r--',
@@ -174,6 +177,7 @@ class TestDummyStorage(TestCase):
             'date': '2005-03-18 23:12:19',
             'size': '31',
             'basename': 'file1',
+            'file': 'file1',
         },
         {
             'permissions': '-rw-r--r--',
@@ -181,6 +185,7 @@ class TestDummyStorage(TestCase):
             'date': '2005-03-18 23:12:19',
             'size': '21',
             'basename': 'file3',
+            'file': 'file3',
         },
         ]
         self.assertEqual(answer, self.filter_pathinfo(result))
@@ -196,6 +201,7 @@ class TestDummyStorage(TestCase):
             'date': '',
             'size': '',
             'basename': 'dir2',
+            'file': 'dir1/dir2',
         },
         {
             'permissions': 'drwxr-xr-x',
@@ -203,6 +209,7 @@ class TestDummyStorage(TestCase):
             'date': '',
             'size': '',
             'basename': 'nested',
+            'file': 'dir1/nested',
         },
         {
             'permissions': '-rw-r--r--',
@@ -210,6 +217,7 @@ class TestDummyStorage(TestCase):
             'date': '2005-03-18 23:12:19',
             'size': '19',
             'basename': 'f1',
+            'file': 'dir1/f1',
         },
         {
             'permissions': '-rw-r--r--',
@@ -217,6 +225,7 @@ class TestDummyStorage(TestCase):
             'date': '2005-03-18 23:12:19',
             'size': '20',
             'basename': 'f2',
+            'file': 'dir1/f2',
         },
         ]
         self.assertEqual(answer, self.filter_pathinfo(result))
@@ -235,6 +244,7 @@ class TestDummyStorage(TestCase):
             'date': '2005-03-18 23:12:19',
             'size': '27',
             'basename': 'file',
+            'file': 'dir1/nested/file',
         }]
         self.assertEqual(answer, self.filter_pathinfo(result))
         # include multiple /
@@ -266,6 +276,7 @@ class TestDummyStorage(TestCase):
             'date': '2005-03-18 14:58:31',
             'size': '27',
             'basename': 'file1',
+            'file': 'file1',
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
@@ -279,6 +290,7 @@ class TestDummyStorage(TestCase):
             'date': '',
             'size': '',
             'basename': 'nested',
+            'file': 'dir1/nested',
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
@@ -292,6 +304,7 @@ class TestDummyStorage(TestCase):
             'date': '2005-03-18 23:12:19',
             'size': '27',
             'basename': 'file',
+            'file': 'dir1/nested/file',
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 

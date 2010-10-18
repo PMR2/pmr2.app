@@ -41,6 +41,7 @@ class BaseStorage(object):
             'node': node,
             'date': date,
             'size': size,
+            'file': path,
             'basename': self.basename(path),
             'contents': contents,
         }
