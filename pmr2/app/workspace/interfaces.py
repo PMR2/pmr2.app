@@ -15,8 +15,13 @@ class IStorage(zope.interface.Interface):
     """
 
     # XXX add these properties:
+
+    # read-only properties
     # rev - current revision id
     # shortrev - current revision short id
+
+    # read/write properties
+    # datefmt - date format
 
     def basename(path):
         """\

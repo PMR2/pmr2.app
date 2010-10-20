@@ -214,6 +214,8 @@ class WorkspaceLog(WorkspaceTraversePage, z3c.table.value.ValuesForContainer):
         if not hasattr(self, '_log'):
             try:
                 storage = zope.component.queryAdapter(self.context, IStorage)
+                if self.datefmt:
+                    storage.datefmt = self.datefmt
                 if self.request.get('rev', None):
                     storage.checkout(self.request['rev'])
                 rev = storage.rev
@@ -257,7 +259,7 @@ WorkspaceShortlogView = layout.wrap_form(
 
 class WorkspaceLogRss(page.RssPage, WorkspaceLog):
 
-    datefmt = 'rfc822date'
+    datefmt = 'rfc2822'
 
     def items(self):
         for i in self.values():
@@ -265,7 +267,7 @@ class WorkspaceLogRss(page.RssPage, WorkspaceLog):
                 'title': i['desc'].splitlines()[0],
                 # XXX magic manifest link
                 'link': '%s/@@file/%s' % (
-                    self.context.context.absolute_url(),
+                    self.context.absolute_url(),
                     i['node'],
                 ),
                 'description': i['desc'],

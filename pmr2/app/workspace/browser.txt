@@ -204,6 +204,40 @@ Now the short log page should render, too.
     >>> '<th>Log</th>' in result
     True
 
+There is an RSS page for the log, it should render correctly.
+::
+
+    >>> request = TestRequest()
+    >>> testpage = browser.WorkspaceLogRss(
+    ...     self.portal.workspace.test, request)
+    >>> items = list(testpage.items())
+    >>> items[0]['pubDate'] == 'Fri, 18 Mar 2005 23:12:19 +0000'
+    True
+    >>> result = testpage()
+    >>> print result
+    <?xml version="1.0" encoding="utf-8"?>
+    <rss version="2.0">
+      <channel>
+        <link>http://nohost/plone/workspace/test</link>
+        <language>en-us</language>
+        <title>Delicious Eggs</title>
+        <description>Test
+    Workspace</description>
+    ...
+        <item>
+          <title>A:dir1/f1</title>
+          <link>http://nohost/plone/workspace/test/@@file/2</link>
+          <description>A:dir1/f1
+    A:dir1/f2
+    C:file3
+    D:file1</description>
+          <author>&amp;#112;&amp;#109;...
+          <pubDate>Fri, 18 Mar 2005 20:27:43 +0000</pubDate>
+        </item>
+    ...
+    </rss>
+
+
 Main page should render fine, too.
 ::
 
