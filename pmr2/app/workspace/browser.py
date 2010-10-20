@@ -199,11 +199,8 @@ class WorkspaceLog(WorkspaceTraversePage, z3c.table.value.ValuesForContainer):
 
     zope.interface.implements(IWorkspaceLogProvider)
 
-    # XXX no this does not work
-    # XXX need to hack context_fti or DynamicViewTypeInformation somehow
-    # to make it do what needs to be done.
-    # This value could be captured using DynamicViewTypeInformation
-    # XXX this needs to be fixed to take advantage of shared adapted result.
+    # Ideally, we acquire the table needed dynamically, based on the
+    # requested URI.
     shortlog = False
     tbl = table.ChangelogTable
     maxchanges = 50  # default value.
