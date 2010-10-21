@@ -34,7 +34,7 @@ class TestWorkspaceTraversePage(TestCase):
         page = WorkspaceTraversePage(None, request)
         page.publishTraverse(request, '123456')
         self.assertEqual(request.get('rev'), '123456')
-        self.assertEqual(request.get('request_subpath', [])
+        self.assertEqual(request.get('request_subpath', []))
 
     def test_002_revision_and_path(self):
         request = TestRequest()
