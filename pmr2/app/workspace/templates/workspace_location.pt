@@ -1,6 +1,6 @@
 <span tal:omit-tag="not:nothing">Location: <span 
   tal:content="context/title_or_id" tal:omit-tag="not:nothing"
-  /> @ <span tal:content="view/rev" tal:omit-tag="not:nothing" 
+  /> @ <span tal:content="view/shortrev" tal:omit-tag="not:nothing" 
   /><tal:loop tal:repeat="i view/filepath"
     > / <span tal:condition="i" tal:content="i" tal:omit-tag="not:nothing"
   /></tal:loop

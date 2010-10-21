@@ -433,6 +433,11 @@ class WorkspaceFilePage(WorkspaceTraversePage):
         # set by update()
         return self._rev
 
+    @property
+    def shortrev(self):
+        # set by update()
+        return self._shortrev
+
     def update(self):
         """\
         Acquire content from request_subpath from storage
@@ -453,7 +458,8 @@ class WorkspaceFilePage(WorkspaceTraversePage):
         except PathNotFoundError:
             raise HTTPNotFound(self.context.title_or_id())
 
-        self._rev = storage.shortrev
+        self._rev = storage.rev
+        self._shortrev = storage.shortrev
         # this is for rendering
         self.filepath = request_subpath or ['']
 
