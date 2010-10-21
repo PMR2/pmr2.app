@@ -221,10 +221,10 @@ class TraverseFormWrapper(FormWrapper):
         if self.form is not None:
             assert IPublishTraverse.providedBy(self.form_instance)
             # sharing subpath list with instance of form.
-            self.form_instance.traverse_subpath = self.traverse_subpath
+            self.traverse_subpath = self.form_instance.traverse_subpath
 
     def publishTraverse(self, request, name):
-        self.traverse_subpath.append(name)
+        self.form_instance.publishTraverse(request, name)
         return self
 
 
