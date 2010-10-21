@@ -13,7 +13,9 @@ from Products.PloneTestCase.layer import onteardown
 
 import pmr2.testing
 from pmr2.testing.base import DocTestCase
+from pmr2.testing.base import TestRequest
 
+from pmr2.app.browser.interfaces import IPublishTraverse
 
 @onsetup
 def setup():
@@ -50,6 +52,19 @@ class WorkspaceDocTestCase(DocTestCase):
         # also set up the root to the tmpdir.
         self.pmr2 = zope.component.getUtility(IPMR2GlobalSettings)
         self.pmr2.repo_root = self.tmpdir
+
+    def traverse(self, context, browserClass, traverse_subpath, request=None):
+        """\
+        Mimic traverse behavior by a client.
+        """
+
+        assert IPublishTraverse.implementedBy(browserClass)
+        if request is None:
+            request = TestRequest()
+        result = browserClass(context, request)
+        for i in traverse_subpath:
+            result = result.publishTraverse(request, i)
+        return result
 
     def tearDown(self):
         DocTestCase.tearDown(self)
