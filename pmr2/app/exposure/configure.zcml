@@ -9,4 +9,6 @@
   <include file="table.zcml" />
   <include file="traverse.zcml" />
 
+  <include package=".portlets" />
+
 </configure>
