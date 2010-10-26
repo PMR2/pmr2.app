@@ -72,7 +72,7 @@ class DummyStorage(BaseStorage):
         if rev is None:
             i = self.__rev
         ts = datetime.fromtimestamp(i * 9876 + 1111111111)
-        return ts.strftime(self.datefmt)
+        return ts.strftime(self.datefmtstr)
 
     def _data(self):
         return _dummy_storage_data[self.__id]

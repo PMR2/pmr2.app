@@ -28,20 +28,26 @@ class BaseStorage(object):
 
     __default_datefmt = {
         'rfc2822': '%a, %d %b %Y %H:%M:%S +0000',
-        'iso8601': '%Y-%m-%dT%H:%M:%SZ',
-        'iso': '%Y-%m-%d %H:%M:%S',
+        'rfc3339': '%Y-%m-%dT%H:%M:%SZ',
+        'iso8601': '%Y-%m-%d %H:%M:%S',
     }
 
-    __datefmt = __default_datefmt['iso']
+    __datefmt = 'iso8601'
 
     def _getDatefmt(self):
         return self.__datefmt
 
     def _setDatefmt(self, datefmt):
         if datefmt in BaseStorage.__default_datefmt:
-            self.__datefmt = BaseStorage.__default_datefmt[datefmt]
+            self.__datefmt = datefmt
+        else:
+            raise ValueError('unsupported datetime format')
 
     datefmt = property(_getDatefmt, _setDatefmt)
+
+    @property
+    def datefmtstr(self):
+        return BaseStorage.__default_datefmt[self.datefmt]
 
     # Default implementation for methods
 
