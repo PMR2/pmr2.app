@@ -1,3 +1,5 @@
+from os.path import join
+from os.path import dirname
 from datetime import datetime
 import zope.interface
 
@@ -7,6 +9,14 @@ from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.storage import StorageUtility
 from pmr2.app.workspace.storage import BaseStorage
 
+
+def readfile(fn):
+    fd = open(fn)
+    result = fd.read()
+    fd.close()
+    return result
+
+test_png = readfile(join(dirname(__file__), 'test.png'))
 
 _dummy_storage_data = {
 
@@ -39,7 +49,9 @@ _dummy_storage_data = {
 
     'cake': [
         {
+            'null': '\0',
             'status': 'is a lie.',
+            'test.png': test_png,
         },
     ],
 

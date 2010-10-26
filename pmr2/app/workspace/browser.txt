@@ -309,3 +309,40 @@ As well as non-existent files at a specific revision.
     ...
     HTTPNotFound: 404 Not Found
     ...
+
+--------------
+File rendering
+--------------
+
+As there are many different file types that will be stored, it will
+greatly benefit the users if the important ones can be rendered in
+specific ways.  Images could be rendered and files can be shown with
+syntax highlighted.
+
+While the Exposure File Annotations achieved this, it requires an
+exposure to be generated first.  The annotators can also be used here to
+provide alternate views to workspace files if the correct adapters are
+registered.
+
+Here is a test of basic rendering:
+::
+
+    >>> subpath = ['1', 'file1']
+    >>> page = self.traverse(wkspc, browser.WorkspaceFilePage, subpath)
+    >>> page.update()
+    >>> result = page()
+    >>> 'file1-rev1\nThis test has changed.\n' in result
+    True
+
+There may be binary types which will not render properly by clients.
+The view should not render it.
+::
+
+    >>> subpath = ['0', 'null']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.cake, browser.WorkspaceFilePage, subpath)
+    >>> result = page()
+    >>> '\0' in result
+    False
+    >>> 'application/octet-stream' in result
+    True

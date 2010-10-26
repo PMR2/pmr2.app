@@ -213,6 +213,14 @@ class IWorkspaceFileListProvider(zope.interface.Interface):
     """
 
 
+class IWorkspaceFileRenderer(zope.interface.Interface):
+    """\
+    This provides file rendering capability.
+
+    (maybe subclass this from one of the browser interface?)
+    """
+
+
 # Workspace utilities
 
 class IWorkspaceFileUtility(zope.interface.Interface):

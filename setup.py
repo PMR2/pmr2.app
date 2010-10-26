@@ -36,6 +36,7 @@ setup(
         'setuptools',
         'z3c.form',
         'Paste',
+        'python-magic',
         'z3c.table>=0.6.0',
         'plone.app.content',
         'plone.app.z3cform>=0.3.2',

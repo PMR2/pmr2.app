@@ -25,17 +25,19 @@ class TestDummyStorage(TestCase):
         pass
 
     def filter_pathinfo(self, input):
-        def filter(i):
+        def filter_callable(i):
             # make sure contents is what we expect
+            callables = ['contents', 'mimetype',]
             result = {}
             result.update(i)
-            self.assert_(callable(result['contents']))
-            del result['contents']
+            for c in callables:
+                self.assert_(callable(result[c]))
+                del result[c]
             return result
 
         if isinstance(input, list):
-            return [filter(i) for i in input]
-        return filter(input)
+            return [filter_callable(i) for i in input]
+        return filter_callable(input)
 
     def test_000_storage(self):
         # Trivial
@@ -279,6 +281,7 @@ class TestDummyStorage(TestCase):
             'file': 'file1',
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
+        self.assertEqual(result['mimetype'](), 'text/plain; charset=us-ascii')
 
     def test_601_pathinfo_nested_dir(self):
         storage = DummyStorage(self.workspace)

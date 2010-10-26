@@ -1,3 +1,5 @@
+import mimetypes
+from magic import Magic
 import zope.interface
 
 from pmr2.app.workspace.exceptions import *
@@ -66,7 +68,20 @@ class BaseStorage(object):
     def files(self):
         raise NotImplementedError
 
-    def format(self, permissions, node, date, size, path, contents):
+    def format(self, permissions, node, date, size, path, contents, *a, **kw):
+
+        def mimetype():
+            # use the built-in mimetypes, then use magic library
+            # XXX performance penalty here getting the entire file?
+            data = contents()
+            if not isinstance(data, basestring):
+                return None
+            mt = mimetypes.guess_type(path)[0]
+            if mt is None or mt.startswith('text/'):
+                magic = Magic(mime=True)
+                mt = magic.from_buffer(data[:4096])
+            return mt
+
         return {
             'permissions': permissions,
             'node': node,
@@ -75,6 +90,7 @@ class BaseStorage(object):
             'file': path,
             'basename': self.basename(path),
             'contents': contents,
+            'mimetype': mimetype,
         }
 
     def listdir(self, path):

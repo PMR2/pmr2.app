@@ -467,11 +467,17 @@ class WorkspaceFilePage(WorkspaceTraversePage):
         # this is for rendering
         self.filepath = request_subpath or ['']
 
+        self.data = data
+
+    @property
+    def content(self):
+        # XXX tentative property/method
+
         # data['size'] gives a hint as to what it is.  If it's unset,
         # it is assumed to be a directory, we acquire the directory 
         # renderer.
 
-        # XXX tentative.
+        data = self.data
         if data['size'] == '':
             # XXX this is a hack to get it working
             # this is a dictionary with a contents key, which is a
@@ -480,10 +486,14 @@ class WorkspaceFilePage(WorkspaceTraversePage):
             self._values = data
             tbl = table.FileManifestTable(self, self.request)
             tbl.update()
-            self.content = tbl.render()
+            return tbl.render()
         else:
-            self.content = zope.component.queryMultiAdapter((
-                data, self.request), IWorkspaceFileRender)
+            fileview = zope.component.queryMultiAdapter((
+                data, self.request), IWorkspaceFileRenderer,
+                name=data['mimetype'])
+            if fileview is None:
+                fileview = DefaultFileRenderer(data, self.request)
+            return fileview()
 
     def _getpath(self, view='rawfile', path=None):
         result = [
@@ -523,26 +533,36 @@ WorkspaceFilePageView = layout.wrap_form(
 #zope.interface.implements(IWorkspaceFilePageView)
 
 
+class DefaultFileRenderer(page.BrowserPage):
+    zope.interface.implements(IWorkspaceFileRenderer)
+
+    def __call__(self):
+        contents = self.context['contents']()
+        if '\0' in contents:
+            return '(%s)' % self.context['mimetype']()
+        else:
+            return contents
+
+
 class WorkspaceRawfileView(WorkspaceFilePage):
 
     def __call__(self):
         self.update()
-        if self.structure:
+        data = self.data
+        if data:
             # not supporting resuming download
             # XXX large files will eat RAM
             try:
-                data = self.storage.rawfile
+                contents = data['contents']()
             except PathNotFoundError:
                 # this is a rawfile view, this can be triggered by 
                 # attempting to access a directory.  we redirect to the
                 # standard file view.
                 raise HTTPFound(self.viewpath)
-            mt = mimetypes.guess_type(self.storage.path)[0]
-            if mt is None or (data and '\0' in data[:4096]):
-                mt = mt or 'application/octet-stream'
-            self.request.response.setHeader('Content-Type', mt)
-            self.request.response.setHeader('Content-Length', len(data))
-            return data
+
+            self.request.response.setHeader('Content-Type', data['mimetype'])
+            self.request.response.setHeader('Content-Length', data['size'])
+            return contents
         else:
             raise HTTPNotFound(self.context.title_or_id())
 
