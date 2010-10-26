@@ -426,7 +426,7 @@ class WorkspaceFilePage(WorkspaceTraversePage):
 
     template = ViewPageTemplateFile('workspace_file_page.pt')
     filetemplate = ViewPageTemplateFile('file.pt')
-    label = ViewPageTemplateFile('workspace_location.pt')
+    labeltemplate = ViewPageTemplateFile('workspace_location.pt')
 
     @property
     def rev(self):
@@ -437,6 +437,10 @@ class WorkspaceFilePage(WorkspaceTraversePage):
     def shortrev(self):
         # set by update()
         return self._shortrev
+
+    @property
+    def label(self):
+        return self.labeltemplate()
 
     def update(self):
         """\
