@@ -101,6 +101,8 @@ class DummyStorage(BaseStorage):
     def _dirinfo(self, path):
         contents = lambda: self.listdir(path)
         return self.format(**{
+            'author': '',
+            'desc': '',
             'permissions': 'drwxr-xr-x',
             'node': self.rev,
             'date': '',
@@ -151,6 +153,8 @@ class DummyStorage(BaseStorage):
         # this is done because contents may not be needed at all times
         contents = lambda: self.file(path)
         return self.format(**{
+            'author': 'pmr2.teststorage <pmr2.tester@example.com>',
+            'desc': '',
             'permissions': '-rw-r--r--',
             'node': self.rev,
             'date': self._datetime(),

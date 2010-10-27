@@ -137,7 +137,9 @@ class TestDummyStorage(TestCase):
         storage.checkout('0')
         result = storage.fileinfo('file1')
         answer = {
+            'author': 'pmr2.teststorage <pmr2.tester@example.com>',
             'permissions': '-rw-r--r--',
+            'desc': '',
             'node': '0',
             'date': '2005-03-18 14:58:31',
             'size': '27',
@@ -151,7 +153,9 @@ class TestDummyStorage(TestCase):
         storage.checkout('3')
         result = storage.fileinfo('dir1/nested/file')
         answer = {
+            'author': 'pmr2.teststorage <pmr2.tester@example.com>',
             'permissions': '-rw-r--r--',
+            'desc': '',
             'node': '3',
             'date': '2005-03-18 23:12:19',
             'size': '27',
@@ -166,7 +170,9 @@ class TestDummyStorage(TestCase):
         result = storage.listdir('')
         answer = [
         {
+            'author': '',
             'permissions': 'drwxr-xr-x',
+            'desc': '',
             'node': '3',
             'date': '',
             'size': '',
@@ -174,7 +180,9 @@ class TestDummyStorage(TestCase):
             'file': 'dir1',
         },
         {
+            'author': 'pmr2.teststorage <pmr2.tester@example.com>',
             'permissions': '-rw-r--r--',
+            'desc': '',
             'node': '3',
             'date': '2005-03-18 23:12:19',
             'size': '31',
@@ -182,7 +190,9 @@ class TestDummyStorage(TestCase):
             'file': 'file1',
         },
         {
+            'author': 'pmr2.teststorage <pmr2.tester@example.com>',
             'permissions': '-rw-r--r--',
+            'desc': '',
             'node': '3',
             'date': '2005-03-18 23:12:19',
             'size': '21',
@@ -198,7 +208,9 @@ class TestDummyStorage(TestCase):
         result = storage.listdir('dir1')
         answer = [
         {
+            'author': '',
             'permissions': 'drwxr-xr-x',
+            'desc': '',
             'node': '3',
             'date': '',
             'size': '',
@@ -206,7 +218,9 @@ class TestDummyStorage(TestCase):
             'file': 'dir1/dir2',
         },
         {
+            'author': '',
             'permissions': 'drwxr-xr-x',
+            'desc': '',
             'node': '3',
             'date': '',
             'size': '',
@@ -214,7 +228,9 @@ class TestDummyStorage(TestCase):
             'file': 'dir1/nested',
         },
         {
+            'author': 'pmr2.teststorage <pmr2.tester@example.com>',
             'permissions': '-rw-r--r--',
+            'desc': '',
             'node': '3',
             'date': '2005-03-18 23:12:19',
             'size': '19',
@@ -222,7 +238,9 @@ class TestDummyStorage(TestCase):
             'file': 'dir1/f1',
         },
         {
+            'author': 'pmr2.teststorage <pmr2.tester@example.com>',
             'permissions': '-rw-r--r--',
+            'desc': '',
             'node': '3',
             'date': '2005-03-18 23:12:19',
             'size': '20',
@@ -241,7 +259,9 @@ class TestDummyStorage(TestCase):
         result = storage.listdir('dir1/nested')
         answer = [
         {
+            'author': 'pmr2.teststorage <pmr2.tester@example.com>',
             'permissions': '-rw-r--r--',
+            'desc': '',
             'node': '3',
             'date': '2005-03-18 23:12:19',
             'size': '27',
@@ -273,7 +293,9 @@ class TestDummyStorage(TestCase):
         storage.checkout('0')
         result = storage.pathinfo('file1')
         answer = {
+            'author': 'pmr2.teststorage <pmr2.tester@example.com>',
             'permissions': '-rw-r--r--',
+            'desc': '',
             'node': '0',
             'date': '2005-03-18 14:58:31',
             'size': '27',
@@ -288,7 +310,9 @@ class TestDummyStorage(TestCase):
         storage.checkout('3')
         result = storage.pathinfo('dir1/nested')
         answer = {
+            'author': '',
             'permissions': 'drwxr-xr-x',
+            'desc': '',
             'node': '3',
             'date': '',
             'size': '',
@@ -302,7 +326,9 @@ class TestDummyStorage(TestCase):
         storage.checkout('3')
         result = storage.pathinfo('dir1/nested/file')
         answer = {
+            'author': 'pmr2.teststorage <pmr2.tester@example.com>',
             'permissions': '-rw-r--r--',
+            'desc': '',
             'node': '3',
             'date': '2005-03-18 23:12:19',
             'size': '27',

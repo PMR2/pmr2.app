@@ -68,7 +68,8 @@ class BaseStorage(object):
     def files(self):
         raise NotImplementedError
 
-    def format(self, permissions, node, date, size, path, contents, *a, **kw):
+    def format(self, permissions, node, date, size, path, contents,
+               author='', desc='', *a, **kw):
 
         def mimetype():
             # use the built-in mimetypes, then use magic library
@@ -84,6 +85,8 @@ class BaseStorage(object):
 
         return {
             'permissions': permissions,
+            'author': author,
+            'desc': desc,
             'node': node,
             'date': date,
             'size': size,
@@ -117,6 +120,8 @@ class BaseStorage(object):
                 'size': '',
                 'path': path,
                 'contents': contents,
+                'author': '',
+                'desc': '',
             })
         except PathNotDirError:
             # then path must be a file

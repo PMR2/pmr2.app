@@ -425,8 +425,10 @@ class WorkspaceFilePage(WorkspaceTraversePage):
     zope.interface.implements(IWorkspaceFileListProvider)
 
     template = ViewPageTemplateFile('workspace_file_page.pt')
-    filetemplate = ViewPageTemplateFile('file.pt')
     labeltemplate = ViewPageTemplateFile('workspace_location.pt')
+
+    def absolute_url(self):
+        return self.context.absolute_url()
 
     @property
     def rev(self):
@@ -488,42 +490,23 @@ class WorkspaceFilePage(WorkspaceTraversePage):
             tbl.update()
             return tbl.render()
         else:
+            # XXX perhaps we introduce utilities that resolves the
+            # mimetype into a specific name.
+            # for u in zope.component.getAllUtiltiesFor(IWorkspaceFileRenderer):
+            #     name = u.match(data['mimetype'])
+            #     if name:
+            #         break
+            name = data['mimetype']
             fileview = zope.component.queryMultiAdapter((
-                data, self.request), IWorkspaceFileRenderer,
-                name=data['mimetype'])
+                self, self.request), IWorkspaceFileRenderer, name=name)
             if fileview is None:
-                fileview = DefaultFileRenderer(data, self.request)
+                fileview = DefaultFileRenderer(self, self.request)
             return fileview()
-
-    def _getpath(self, view='rawfile', path=None):
-        result = [
-            self.context.absolute_url(),
-            '@@' + view,
-            self.storage.rev,
-        ]
-        if path:
-            result.append(path)
-        return result
 
     @property
     def values(self):
         # XXX this is here to hack
         return self._values['contents']
-
-    @property
-    def rooturi(self):
-        """the root uri."""
-        return '/'.join(self._getpath())
-
-    @property
-    def fullpath(self):
-        """permanent uri."""
-        return '/'.join(self._getpath(path=self.storage.path))
-
-    @property
-    def viewpath(self):
-        """view uri."""
-        return '/'.join(self._getpath(view='file', path=self.storage.path))
 
 WorkspaceFilePageView = layout.wrap_form(
     WorkspaceFilePage,
@@ -534,14 +517,51 @@ WorkspaceFilePageView = layout.wrap_form(
 
 
 class DefaultFileRenderer(page.BrowserPage):
+    """\
+    Default file render.  May need to make this even more generic such
+    that the annotators can make use of this renderer for its data.
+    """
+
     zope.interface.implements(IWorkspaceFileRenderer)
 
-    def __call__(self):
-        contents = self.context['contents']()
+    index = ViewPageTemplateFile('file.pt')
+
+    def _getpath(self, view='rawfile', path=None):
+        result = [
+            self.context.absolute_url(),
+            view,
+            self.context.rev,
+        ]
+        if path:
+            result.append(path)
+        return result
+
+    @property
+    def rooturi(self):
+        """the root uri."""
+        return '/'.join(self._getpath())
+
+    @property
+    def fullpath(self):
+        """permanent uri."""
+        return '/'.join(self._getpath(path=self.context.data['file']))
+
+    @property
+    def viewpath(self):
+        """view uri."""
+        return '/'.join(self._getpath(view='file',
+            path=self.context.data['file']))
+
+    @property
+    def contents(self):
+        contents = self.context.data['contents']()
         if '\0' in contents:
-            return '(%s)' % self.context['mimetype']()
+            return '(%s)' % self.context.data['mimetype']()
         else:
             return contents
+
+    def __call__(self):
+        return self.index()
 
 
 class WorkspaceRawfileView(WorkspaceFilePage):
