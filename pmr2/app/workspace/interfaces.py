@@ -1,8 +1,6 @@
 import zope.interface
 import zope.schema
 
-from pmr2.app.schema import ObjectId
-
 from zope.app.publisher.interfaces.browser import IBrowserMenu
 from zope.app.publisher.interfaces.browser import IBrowserSubMenuItem
 from zope.app.publisher.interfaces.browser import IMenuItemType
@@ -155,73 +153,13 @@ class IWorkspace(zope.interface.Interface):
     )
 
 
-# browser related
+# Workspace utilities
 
 class IWorkspaceListing(zope.interface.Interface):
     """\
     Returns a list of workspaces.
     """
 
-
-class IWorkspaceActionsViewlet(zope.interface.Interface):
-    """\
-    Interface for the Workspace action menu.
-    """
-
-
-class IWorkspaceFilePageView(zope.interface.Interface):
-    """\
-    Interface for the Workspace action menu.
-    """
-
-
-class IWorkspaceStorageCreate(zope.interface.Interface):
-    """\
-    Interface for the use by WorkspaceStorageCreateForm.
-    """
-
-    # We customized the id so validator can discrimate this against
-    # the generate mixin id field.
-    id = ObjectId(
-        title=u'Id',
-        description=u'The identifier of the object, used for URI.',
-    )
-
-
-class IWorkspaceBulkAdd(zope.interface.Interface):
-    """\
-    Interface for the use by WorkspaceAddForm.
-    """
-
-    workspace_list = zope.schema.Text(
-        title=u'List of Workspaces',
-        description=u'List of Mercurial Repositories created by pmr2_mkhg ' \
-                     'that are already moved into the workspace directory.',
-        required=True,
-    )
-
-
-class IWorkspaceLogProvider(zope.interface.Interface):
-    """\
-    Interface that will provide a changelog from a workspace.
-    """
-
-
-class IWorkspaceFileListProvider(zope.interface.Interface):
-    """\
-    Interface that will provide a list of files from a workspace.
-    """
-
-
-class IWorkspaceFileRenderer(zope.interface.Interface):
-    """\
-    This provides file rendering capability.
-
-    (maybe subclass this from one of the browser interface?)
-    """
-
-
-# Workspace utilities
 
 class IWorkspaceFileUtility(zope.interface.Interface):
     """\
@@ -245,6 +183,26 @@ class IWorkspaceFileUtility(zope.interface.Interface):
     description = zope.schema.TextLine(
         title=u'Description',
     )
+
+
+class IWorkspaceLogProvider(zope.interface.Interface):
+    """\
+    Interface that will provide a changelog from a workspace.
+    """
+
+
+class IWorkspaceFileListProvider(zope.interface.Interface):
+    """\
+    Interface that will provide a list of files from a workspace.
+    """
+
+
+# Workspace viewlets
+
+class IWorkspaceActionsViewlet(zope.interface.Interface):
+    """\
+    Interface for the Workspace action menu.
+    """
 
 
 # Workspace Menu

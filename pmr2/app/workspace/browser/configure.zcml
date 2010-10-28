@@ -40,126 +40,67 @@
   <!-- Workspace -->
 
   <browser:page
-      for=".interfaces.IWorkspace"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="workspace_view"
       class=".browser.WorkspacePageView"
       permission="zope2.View"
       />
 
   <browser:page
-      for=".interfaces.IWorkspace"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="workspace_edit"
       class=".browser.WorkspaceEditFormView"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for=".interfaces.IWorkspace"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="archive"
       class=".browser.WorkspaceArchive"
       permission="zope2.View"
       />
 
   <browser:page
-      for=".interfaces.IWorkspace"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="log"
       class=".browser.WorkspaceLogView"
       permission="zope2.View"
       />
 
   <browser:page
-      for=".interfaces.IWorkspace"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="shortlog"
       class=".browser.WorkspaceShortlogView"
       permission="zope2.View"
       />
 
   <browser:page
-      for=".interfaces.IWorkspace"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="rsslog"
       class=".browser.WorkspaceLogRss"
       permission="zope2.View"
       />
 
   <browser:page
-      for=".interfaces.IWorkspace"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="file"
       class=".browser.WorkspaceFilePageView"
       permission="zope2.View"
       />
 
   <browser:page
-      for=".interfaces.IWorkspace"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="rawfile"
       class=".browser.WorkspaceRawfileView"
       permission="zope2.View"
       />
 
   <browser:page
-      for=".interfaces.IWorkspace"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="xmlbase"
       class=".browser.WorkspaceRawfileXmlBaseView"
       permission="zope2.View"
       />
-
-  <!--
-    An override of contentactions viewlet for Workspace for the menus 
-    in the file page view.  The override only provide an extra
-    interface marker.
-  -->
-
-  <browser:viewlet
-      name="pmr2.workspace.contentactions"
-      for=".interfaces.IWorkspace"
-      view=".browser.WorkspaceFilePageView"
-      manager="plone.app.layout.viewlets.interfaces.IContentViews"
-      class=".viewlets.WorkspaceActionsViewlet"
-      permission="zope2.View"
-      />
-
-  <browser:viewlet
-      name="plone.links.RSS"
-      for=".interfaces.IWorkspace"
-      manager="plone.app.layout.viewlets.interfaces.IHtmlHeadLinks"
-      class=".viewlets.WorkspaceRSSViewlet"
-      permission="zope2.View"
-      />
-
-  <!--
-    This adapts the customized contentactions into the plone contentmeu
-  -->
-
-  <adapter
-      for="pmr2.app.workspace.interfaces.IWorkspace
-           zope.publisher.interfaces.browser.IDefaultBrowserLayer
-           pmr2.app.workspace.interfaces.IWorkspaceActionsViewlet"
-      factory=".menu.WorkspaceMenuProvider"
-      name="plone.contentmenu"
-      provides="zope.contentprovider.interfaces.IContentProvider"
-      />
-
-  <!--
-    Workspace action menu for specific revisions
-  -->
-
-  <!-- Top level menu -->
-  <browser:menu
-      id="pmr2_workspacemenu"
-      title="Content menu - contains contextual actions related to the content"
-      interface=".interfaces.IWorkspaceMenuItem"
-      />
-
-  <browser:menu
-      id="pmr2_workspacemenu_file"
-      class=".menu.FileMenu"
-      title="Workspace action menu"
-      />
-
-  <adapter 
-      for="* *"
-      name="pmr2.workspacemenu.file"
-      factory=".menu.FileSubMenuItem"
-      provides=".interfaces.IWorkspaceMenuItem" />
 
   <!--
     adapter for the adding view.

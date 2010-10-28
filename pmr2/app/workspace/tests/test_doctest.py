@@ -25,7 +25,7 @@ def test_suite():
 
         # Forms and interactions.
         ztc.ZopeDocFileSuite(
-            'browser.txt', package='pmr2.app.workspace',
+            'browser/browser.txt', package='pmr2.app.workspace',
             test_class=base.WorkspaceDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),

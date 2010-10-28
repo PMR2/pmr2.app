@@ -26,7 +26,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 from Products.CMFCore import permissions
 
-from pmr2.app.workspace.browser import WorkspaceLog
+from pmr2.app.workspace.browser.browser import WorkspaceLog
 from pmr2.app.workspace.exceptions import *
 
 from pmr2.app.exposure import table

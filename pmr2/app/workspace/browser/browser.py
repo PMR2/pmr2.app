@@ -39,9 +39,11 @@ from pmr2.app.browser.layout import BorderedStorageFormWrapper
 from pmr2.app.browser.layout import BorderedTraverseFormWrapper
 from pmr2.app.browser.layout import TraverseFormWrapper
 
+from pmr2.app.workspace import table
+
 from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import *
-from pmr2.app.workspace import table
+from pmr2.app.workspace.browser.interfaces import *
 
 
 # Workspace Container

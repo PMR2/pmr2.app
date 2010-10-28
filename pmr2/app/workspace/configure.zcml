@@ -3,10 +3,13 @@
     i18n_domain="pmr2">
 
   <include package="z3c.table" />
+  <include package=".browser" />
 
   <include file="adapter.zcml" />
-  <include file="browser.zcml" />
+  <include file="menu.zcml" />
   <include file="table.zcml" />
+  <include file="validator.zcml" />
+  <include file="viewlets.zcml" />
   <include file="vocab.zcml" />
 
 </configure>

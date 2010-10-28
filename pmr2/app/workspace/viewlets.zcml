@@ -1,0 +1,29 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="pmr2.app">
+
+  <!--
+    An override of contentactions viewlet for Workspace for the menus 
+    in the file page view.  The override only provide an extra
+    interface marker.
+  -->
+
+  <browser:viewlet
+      name="pmr2.workspace.contentactions"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      view="pmr2.app.workspace.browser.browser.WorkspaceFilePageView"
+      manager="plone.app.layout.viewlets.interfaces.IContentViews"
+      class=".viewlets.WorkspaceActionsViewlet"
+      permission="zope2.View"
+      />
+
+  <browser:viewlet
+      name="plone.links.RSS"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      manager="plone.app.layout.viewlets.interfaces.IHtmlHeadLinks"
+      class=".viewlets.WorkspaceRSSViewlet"
+      permission="zope2.View"
+      />
+
+</configure>

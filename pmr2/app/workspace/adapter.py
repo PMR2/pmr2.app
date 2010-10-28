@@ -15,8 +15,9 @@ def WorkspaceStorageAdapter(workspace):
     """
 
     assert IWorkspace.providedBy(workspace)
+    name = workspace.storage or 'mercurial'
     storage_util = zope.component.queryUtility(
-        IStorageUtility, name=workspace.storage)
+        IStorageUtility, name=name)
     if storage_util is None:
         raise ValueError('storage type `%s` unknown' % workspace.storage)
     return storage_util(workspace)
@@ -32,6 +33,8 @@ def WorkspaceRequestStorageAdapter(workspace, request):
 
 class WorkspaceListing(object):
     """\
+    XXX incompatible with v0.4
+
     Returns a list of objects that implements IWorkspace from a given
     context alongside with directories that exist within its associated
     directory located on the file system as defined by the PMR2 

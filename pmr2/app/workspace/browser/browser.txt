@@ -6,7 +6,7 @@ Before we get started, we need to import the required classes and set up
 the test environment.
 ::
 
-    >>> from pmr2.app.workspace import browser
+    >>> from pmr2.app.workspace.browser import browser
     >>> from pmr2.testing.base import TestRequest
     >>> from plone.z3cform.tests import setup_defaults
     >>> from pmr2.app.workspace.content import *

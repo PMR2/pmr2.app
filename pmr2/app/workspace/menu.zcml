@@ -1,0 +1,42 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="pmr2.app">
+
+  <!--
+    This adapts the customized contentactions into the plone contentmeu
+  -->
+
+  <adapter
+      for="pmr2.app.workspace.interfaces.IWorkspace
+           zope.publisher.interfaces.browser.IDefaultBrowserLayer
+           pmr2.app.workspace.interfaces.IWorkspaceActionsViewlet"
+      factory=".menu.WorkspaceMenuProvider"
+      name="plone.contentmenu"
+      provides="zope.contentprovider.interfaces.IContentProvider"
+      />
+
+  <!--
+    Workspace action menu for specific revisions
+  -->
+
+  <!-- Top level menu -->
+  <browser:menu
+      id="pmr2_workspacemenu"
+      title="Content menu - contains contextual actions related to the content"
+      interface=".interfaces.IWorkspaceMenuItem"
+      />
+
+  <browser:menu
+      id="pmr2_workspacemenu_file"
+      class=".menu.FileMenu"
+      title="Workspace action menu"
+      />
+
+  <adapter 
+      for="* *"
+      name="pmr2.workspacemenu.file"
+      factory=".menu.FileSubMenuItem"
+      provides=".interfaces.IWorkspaceMenuItem" />
+
+</configure>

@@ -8,7 +8,7 @@ from pmr2.app.workspace.interfaces import *
 
 # Objects to test
 
-from pmr2.app.workspace.browser import WorkspaceTraversePage
+from pmr2.app.workspace.browser.browser import WorkspaceTraversePage
 
 
 class TestWorkspaceTraversePage(TestCase):
