@@ -44,16 +44,3 @@ z3c.form.validator.WidgetValidatorDiscriminators(
     StorageExistsValidator, 
     field=IWorkspaceStorageCreate['id'],
 )
-
-
-class RepoPathValidator(z3c.form.validator.SimpleFieldValidator):
-
-    def validate(self, value):
-        super(RepoPathValidator, self).validate(value)
-        if not os.path.exists(value):
-            raise exceptions.InvalidPathError()
-
-z3c.form.validator.WidgetValidatorDiscriminators(
-    RepoPathValidator, 
-    field=IPMR2['repo_root'],
-)
