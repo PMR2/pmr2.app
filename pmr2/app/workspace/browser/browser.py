@@ -492,17 +492,15 @@ class WorkspaceFilePage(WorkspaceTraversePage):
             tbl.update()
             return tbl.render()
         else:
-            # XXX perhaps we introduce utilities that resolves the
-            # mimetype into a specific name.
-            # for u in zope.component.getAllUtiltiesFor(IWorkspaceFileRenderer):
-            #     name = u.match(data['mimetype'])
-            #     if name:
-            #         break
-            name = data['mimetype']
-            fileview = zope.component.queryMultiAdapter((
-                self, self.request), IWorkspaceFileRenderer, name=name)
-            if fileview is None:
-                fileview = DefaultFileRenderer(self, self.request)
+            name = 'default' 
+            for u in zope.component.getAllUtilitiesRegisteredFor(
+                    IWorkspaceFileRenderer):
+                render = u.match(data['mimetype'])
+                if render:
+                    name = render
+                    break
+            fileview = zope.component.getMultiAdapter(
+                (self, self.request), name=name)
             return fileview()
 
     @property
@@ -516,54 +514,6 @@ WorkspaceFilePageView = layout.wrap_form(
 )
 # XXX WorkspaceFilePageView needs to implement
 #zope.interface.implements(IWorkspaceFilePageView)
-
-
-class DefaultFileRenderer(page.BrowserPage):
-    """\
-    Default file render.  May need to make this even more generic such
-    that the annotators can make use of this renderer for its data.
-    """
-
-    zope.interface.implements(IWorkspaceFileRenderer)
-
-    index = ViewPageTemplateFile('file.pt')
-
-    def _getpath(self, view='rawfile', path=None):
-        result = [
-            self.context.absolute_url(),
-            view,
-            self.context.rev,
-        ]
-        if path:
-            result.append(path)
-        return result
-
-    @property
-    def rooturi(self):
-        """the root uri."""
-        return '/'.join(self._getpath())
-
-    @property
-    def fullpath(self):
-        """permanent uri."""
-        return '/'.join(self._getpath(path=self.context.data['file']))
-
-    @property
-    def viewpath(self):
-        """view uri."""
-        return '/'.join(self._getpath(view='file',
-            path=self.context.data['file']))
-
-    @property
-    def contents(self):
-        contents = self.context.data['contents']()
-        if '\0' in contents:
-            return '(%s)' % self.context.data['mimetype']()
-        else:
-            return contents
-
-    def __call__(self):
-        return self.index()
 
 
 class WorkspaceRawfileView(WorkspaceFilePage):

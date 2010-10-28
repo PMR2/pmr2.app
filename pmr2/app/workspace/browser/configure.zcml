@@ -103,6 +103,17 @@
       />
 
   <!--
+    file renderer
+  -->
+
+  <browser:page
+      for=".browser.WorkspaceFilePage"
+      name="default"
+      class=".filerenderer.DefaultFileRenderer"
+      permission="zope2.View"
+      />
+
+  <!--
     adapter for the adding view.
   -->
 
