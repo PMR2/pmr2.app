@@ -40,3 +40,8 @@ class IWorkspaceFileRenderer(zope.interface.Interface):
     """\
     This provides file rendering capability.
     """
+
+    mimetypes = zope.schema.Text(
+        title=u'Supported Mimetypes',
+        description=u'The mimetypes supported by this renderer.'
+    )

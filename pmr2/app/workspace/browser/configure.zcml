@@ -3,6 +3,10 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="pmr2.app">
 
+  <!-- Enable "provider:" attribute -->
+  <include package="zope.app.pagetemplate" file="meta.zcml" />
+  <include package="zope.contentprovider" />
+
   <include package="pmr2.app.security" />
 
   <!-- Workspace Container -->
@@ -84,7 +88,7 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="file"
-      class=".browser.WorkspaceFilePageView"
+      class=".browser.FileInfoPageView"
       permission="zope2.View"
       />
 
@@ -103,13 +107,35 @@
       />
 
   <!--
+    file renderer manager
+
+    Should probably adapt to only a subset of views.
+  -->
+
+  <adapter
+      for="*
+           zope.publisher.interfaces.browser.IDefaultBrowserLayer
+           *"
+      provides="zope.contentprovider.interfaces.IContentProvider"
+      factory=".filerenderer.FileRendererProvider"
+      name="pmr2.workspace.filerenderer"
+      />
+
+  <!--
     file renderer
   -->
 
   <browser:page
-      for=".browser.WorkspaceFilePage"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="default"
       class=".filerenderer.DefaultFileRenderer"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="directory"
+      class=".filerenderer.DirectoryRenderer"
       permission="zope2.View"
       />
 

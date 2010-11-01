@@ -1,5 +1,29 @@
-<h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
-<div tal:content="structure view/content"/>
+<h1>Location: <span 
+  tal:content="context/title_or_id" tal:omit-tag="not:nothing"
+  /> @ <span tal:content="view/shortrev" tal:omit-tag="not:nothing" 
+  /><tal:loop tal:repeat="i request/filepath"
+    > / <span tal:condition="i" tal:content="i" tal:omit-tag="not:nothing"
+  /></tal:loop
+></h1>
+
+<dl>
+<dt>Author:</dt>
+<dd tal:content="view/data/author"/>
+<dt>Date:</dt>
+<dd tal:content="view/data/date"/>
+<dt>Desc:</dt>
+<dd tal:content="view/data/desc"/>
+<dt>Permanent Download URI:</dt>
+<dd><a tal:attributes="
+      href view/fullpath;
+    "
+    tal:content="view/fullpath"
+  />
+</dd>
+</dl>
+
+<div tal:replace="structure provider:pmr2.workspace.filerenderer"></div>
+
 <div tal:condition="exists:view/render_subrepo">
 <tal:if tal:condition="exists:view/subrepo">
 <dl tal:condition="view/subrepo">

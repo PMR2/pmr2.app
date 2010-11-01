@@ -415,36 +415,54 @@ WorkspaceEditFormView = layout.wrap_form(
     WorkspaceEditForm, label="Workspace Edit Form")
 
 
-class WorkspaceFilePage(WorkspaceTraversePage):
+class FileInfoPage(WorkspaceTraversePage):
     """\
-    Manifest listing page.
+    A Traversal Page that extracts and process the info when updated.
+    Provides some properties that is available once that is done.
     """
-    
-    #zope.interface.implements(IWorkspaceFilePageView, 
-    #    IWorkspaceLogProvider,
-    #    IWorkspaceFileListProvider,
-    #    interfaces.IUpdatablePageView)
-    zope.interface.implements(IWorkspaceFileListProvider)
 
     template = ViewPageTemplateFile('workspace_file_page.pt')
-    labeltemplate = ViewPageTemplateFile('workspace_location.pt')
 
     def absolute_url(self):
         return self.context.absolute_url()
 
     @property
     def rev(self):
-        # set by update()
-        return self._rev
+        return self.request.get('rev', '')
 
     @property
     def shortrev(self):
-        # set by update()
-        return self._shortrev
+        return self.request.get('shortrev', '')
 
     @property
-    def label(self):
-        return self.labeltemplate()
+    def data(self):
+        return self.request.get('_data', {})
+
+    def _getpath(self, view='rawfile', path=None):
+        result = [
+            self.context.absolute_url(),
+            view,
+            self.rev,
+        ]
+        if path:
+            result.append(path)
+        return result
+
+    @property
+    def rooturi(self):
+        """the root uri."""
+        return '/'.join(self._getpath())
+
+    @property
+    def fullpath(self):
+        """permanent uri."""
+        return '/'.join(self._getpath(path=self.data['file']))
+
+    @property
+    def viewpath(self):
+        """view uri."""
+        return '/'.join(self._getpath(view='file',
+            path=self.data['file']))
 
     def update(self):
         """\
@@ -466,61 +484,26 @@ class WorkspaceFilePage(WorkspaceTraversePage):
         except PathNotFoundError:
             raise HTTPNotFound(self.context.title_or_id())
 
-        self._rev = storage.rev
-        self._shortrev = storage.shortrev
+        # update rev using the storage rev
+        self.request['rev'] = storage.rev
+        self.request['shortrev'] = storage.shortrev
         # this is for rendering
-        self.filepath = request_subpath or ['']
+        self.request['filepath'] = request_subpath or ['']
+        # data
+        self.request['_data'] = data
+        self.request['_storage'] = storage
 
-        self.data = data
-
-    @property
-    def content(self):
-        # XXX tentative property/method
-
-        # data['size'] gives a hint as to what it is.  If it's unset,
-        # it is assumed to be a directory, we acquire the directory 
-        # renderer.
-
-        data = self.data
-        if data['size'] == '':
-            # XXX this is a hack to get it working
-            # this is a dictionary with a contents key, which is a
-            # method that will return the values expected by the table
-            # rendering class.
-            self._values = data
-            tbl = table.FileManifestTable(self, self.request)
-            tbl.update()
-            return tbl.render()
-        else:
-            name = 'default' 
-            for u in zope.component.getAllUtilitiesRegisteredFor(
-                    IWorkspaceFileRenderer):
-                render = u.match(data['mimetype'])
-                if render:
-                    name = render
-                    break
-            fileview = zope.component.getMultiAdapter(
-                (self, self.request), name=name)
-            return fileview()
-
-    @property
-    def values(self):
-        # XXX this is here to hack
-        return self._values['contents']
-
-WorkspaceFilePageView = layout.wrap_form(
-    WorkspaceFilePage,
+FileInfoPageView = layout.wrap_form(
+    FileInfoPage,
     __wrapper_class=BorderedTraverseFormWrapper,
 )
-# XXX WorkspaceFilePageView needs to implement
-#zope.interface.implements(IWorkspaceFilePageView)
 
 
-class WorkspaceRawfileView(WorkspaceFilePage):
+class WorkspaceRawfileView(FileInfoPage):
 
     def __call__(self):
         self.update()
-        data = self.data
+        data = self.request['_data']
         if data:
             # not supporting resuming download
             # XXX large files will eat RAM

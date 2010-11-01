@@ -173,12 +173,12 @@ See if the page renders with expected output.
 ::
 
     >>> request = TestRequest()
-    >>> testpage = browser.WorkspaceFilePage(
+    >>> testpage = browser.FileInfoPage(
     ...     self.portal.workspace.cake, request)
     >>> testpage.update()
-    >>> testpage.label
-    u'Location: Delicious Cake @ 0 / \n'
     >>> result = testpage()
+    >>> 'Location: Delicious Cake @ 0 /' in result
+    True
     >>> '<th>Filename</th>' in result
     True
     >>> 'status' in result
@@ -257,11 +257,11 @@ request_subpath.
     >>> request = TestRequest()
     >>> request['rev'] = '2'
     >>> request['request_subpath'] = ['dir1']
-    >>> testpage = browser.WorkspaceFilePage(wkspc, request)
+    >>> testpage = browser.FileInfoPage(wkspc, request)
     >>> testpage.update()
     >>> result = testpage()
-    >>> testpage.label
-    u'Location: Delicious Eggs @ 2 / dir1\n'
+    >>> 'Location: Delicious Eggs @ 2 / dir1' in result
+    True
     >>> 'f1' in result
     True
     >>> 'f2' in result
@@ -274,11 +274,11 @@ Nested works too.
     >>> request = TestRequest()
     >>> request['rev'] = '3'
     >>> request['request_subpath'] = ['dir1', 'dir2']
-    >>> testpage = browser.WorkspaceFilePage(wkspc, request)
+    >>> testpage = browser.FileInfoPage(wkspc, request)
     >>> testpage.update()
     >>> result = testpage()
-    >>> testpage.label
-    u'Location: Delicious Eggs @ 3 / dir1 / dir2\n'
+    >>> 'Location: Delicious Eggs @ 3 / dir1 / dir2' in result
+    True
     >>> 'f1' in result
     True
     >>> 'f2' in result
@@ -290,7 +290,7 @@ Bad revision results in not found.
     >>> request = TestRequest()
     >>> request['rev'] = '1010'
     >>> request['request_subpath'] = ['dir1']
-    >>> testpage = browser.WorkspaceFilePage(wkspc, request)
+    >>> testpage = browser.FileInfoPage(wkspc, request)
     >>> testpage.update()
     Traceback (most recent call last):
     ...
@@ -303,7 +303,7 @@ As well as non-existent files at a specific revision.
     >>> request = TestRequest()
     >>> request['rev'] = '1'
     >>> request['request_subpath'] = ['dir1']
-    >>> testpage = browser.WorkspaceFilePage(wkspc, request)
+    >>> testpage = browser.FileInfoPage(wkspc, request)
     >>> testpage.update()
     Traceback (most recent call last):
     ...
@@ -328,7 +328,7 @@ Here is a test of basic rendering:
 ::
 
     >>> subpath = ['1', 'file1']
-    >>> page = self.traverse(wkspc, browser.WorkspaceFilePage, subpath)
+    >>> page = self.traverse(wkspc, browser.FileInfoPage, subpath)
     >>> page.update()
     >>> result = page()
     >>> 'file1-rev1\nThis test has changed.\n' in result
@@ -340,7 +340,7 @@ The view should not render it.
 
     >>> subpath = ['0', 'null']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.WorkspaceFilePage, subpath)
+    ...     self.portal.workspace.cake, browser.FileInfoPage, subpath)
     >>> result = page()
     >>> '\0' in result
     False
