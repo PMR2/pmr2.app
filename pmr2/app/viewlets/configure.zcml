@@ -6,7 +6,7 @@
   <browser:viewlet
       name="pmr2.app.above_content_body_portlets"
       manager="plone.app.layout.viewlets.interfaces.IAboveContentBody"
-      template="above_content_body_portlets.pt"
+      class=".AboveContentBodyPortletsViewlet"
       permission="zope2.View"
       />
 
