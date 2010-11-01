@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.3.2 - Released (2010-07-01)
------------------------------
+0.3.3 - Unreleased
+------------------
 
 * Fresh installation now works as intended on standard configurations as
   the bugs that prevented this were fixed.
@@ -13,6 +13,9 @@ Changelog
   - PMR2 no longer prevents a default Plone site from rendering if it is
     present but not installed using the portal add-on installer tool.
     - https://tracker.physiomeproject.org/show_bug.cgi?id=2626
+
+0.3.2 - Released (2010-07-01)
+-----------------------------
 
 * Updated documentation and classifiers.
 * License has been amended to be what is intended (MPL/GPL/LGPL tri-
