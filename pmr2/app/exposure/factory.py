@@ -6,6 +6,5 @@ class CreateExposure(factory.WorkspaceFileUtility):
     # hard code this into the workspace class.
     id = 'create-exposure'
     view = 'create_exposure'
-    title = 'Create Exposure'
-    description = 'Creates an Exposure of this revision of this Workspace.',
-
+    title = u'Create Exposure'
+    description = u'Creates an Exposure of this revision of this Workspace.'
