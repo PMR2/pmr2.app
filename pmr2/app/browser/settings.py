@@ -29,6 +29,45 @@ class PMR2GlobalSettingsEditForm(extensible.ExtensibleForm, form.EditForm):
         # ensure we get the one annotated to the site manager.
         return zope.component.getUtility(IPMR2GlobalSettings)
 
+    @z3c.form.button.buttonAndHandler(_('Apply'), name='apply')
+    def handleApply(self, action):
+        # have to repeat the definition here because a new button in
+        # a class overwrites the ones from parent classes.
+        return form.EditForm.handleApply(self, action)
+
+    @z3c.form.button.buttonAndHandler(_('Apply and Create Objects'),
+                                      name='apply_and_create')
+    def handleApplyAndCreate(self, action):
+        # Call handleApply first
+        form.EditForm.handleApply(self, action)
+        # have to read a string as the method above has no return value
+        if self.status == self.formErrorsMessage:
+            return
+        
+        results = []
+        settings = self.getContent()
+        try:
+            created = settings.createDefaultWorkspaceContainer()
+            if created:
+                results.append('Created Workspace Container.')
+            else:
+                results.append('Workspace Container already exists.')
+        except:
+            results.append('Failed to created Workspace Container.')
+            raise
+
+        try:
+            settings.createDefaultExposureContainer()
+            if created:
+                results.append('Created Exposure Container.')
+            else:
+                results.append('Exposure Container already exists.')
+        except:
+            results.append('Failed to created Exposure Container.')
+
+        self.status = self.status + ' '.join(results)
+
+
 PMR2GlobalSettingsEditFormView = layout.wrap_form(PMR2GlobalSettingsEditForm,
     label = _(u'PMR2 Core Configuration'))
 
