@@ -57,7 +57,7 @@ class PMR2GlobalSettingsEditForm(extensible.ExtensibleForm, form.EditForm):
             results.append('Failed to created Workspace Container.')
 
         try:
-            settings.createDefaultExposureContainer()
+            created = settings.createDefaultExposureContainer()
             if created:
                 results.append('Created Exposure Container.')
             else:
