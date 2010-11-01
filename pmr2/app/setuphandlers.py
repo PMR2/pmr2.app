@@ -24,14 +24,21 @@ def add_pas_plugin(site):
     # check for and activate the wanted plugins
     activated_pn = uf.plugins.listPluginIds(IChallengePlugin)
     if id_ not in activated_pn:
+        # activatePluginInterfaces should have done this, but it may
+        # not have because something could prevent this from happening.
         uf.plugins.activatePlugin(IChallengePlugin, id_)
         print >> out, 'IChallengePlugin "%s" activated' % id_
-        # only move our plugin to the top if we just activated it, as
-        # keeping it at the bottom (actually, below the cookie auth)
-        # is the same as deactivating it as it will never have a chance
-        # to be triggered (so manual demotion is left alone).
-        uf.plugins.movePluginsDown(IChallengePlugin, activated_pn)
-        print >> out, 'IChallengePlugin "%s" moved to top' % id_
+        move_pn = activated_pn
+    else:
+        # Select the plugins to move down.
+        move_pn = list(activated_pn)
+        move_pn = move_pn[0:move_pn.index(id_)]
+
+    # keep hgauthpas at the bottom (actually, below the cookie auth)
+    # is the same as deactivating it as it will never have a chance
+    # to be triggered (so manual demotion is left alone).
+    uf.plugins.movePluginsDown(IChallengePlugin, move_pn)
+    print >> out, 'IChallengePlugin "%s" moved to top' % id_
 
     return out.getvalue()
 
