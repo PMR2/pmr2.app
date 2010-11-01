@@ -6,6 +6,10 @@ Changelog
 
 * Fresh installation now works as intended on standard configurations as
   the bugs that prevented this were fixed.
+  - Settings now provides a method set up the objects and directories
+    on disk.
+    - https://tracker.physiomeproject.org/show_bug.cgi?id=2622
+
   - Default installation now correctly allow Mercurial clients to prompt
     users for authentication.
     - https://tracker.physiomeproject.org/show_bug.cgi?id=2625
