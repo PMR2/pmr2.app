@@ -78,7 +78,7 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
             makedirs(path)
         return path
 
-    def createContainer(self, container, name, root=None):
+    def _createContainer(self, container, name, root=None, createDir=False):
         # We need a context that can be traversed using absolute paths,
         # but the site manager acquired ones do not provide this.
         # 
@@ -105,8 +105,10 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
             return False
 
         folder[name] = container(name)
-        self.createDir(folder[name])
         folder[name].reindexObject()
+
+        if createDir:
+            self.createDir(folder[name])
 
         return True
 
@@ -132,7 +134,7 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         return self.createExposureContainer(*exposure_args)
 
     def createExposureContainer(self, name, root=None):
-        return self.createContainer(ExposureContainer, name, root)
+        return self._createContainer(ExposureContainer, name, root)
 
     def createUserWorkspaceContainer(self, user, override=False):
         if not (self.create_user_workspace or override):
@@ -146,7 +148,8 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         self.createWorkspaceContainer(user, self.user_workspace_subpath)
 
     def createWorkspaceContainer(self, name, root=None):
-        return self.createContainer(WorkspaceContainer, name, root)
+        return self._createContainer(WorkspaceContainer, name, root, 
+                                    createDir=True)
 
     def getWorkspaceContainer(self, user=None):
         if user is None:

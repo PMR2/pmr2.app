@@ -53,8 +53,8 @@ class PMR2GlobalSettingsEditForm(extensible.ExtensibleForm, form.EditForm):
             else:
                 results.append('Workspace Container already exists.')
         except:
+            # XXX specific exception types please
             results.append('Failed to created Workspace Container.')
-            raise
 
         try:
             settings.createDefaultExposureContainer()
@@ -63,9 +63,10 @@ class PMR2GlobalSettingsEditForm(extensible.ExtensibleForm, form.EditForm):
             else:
                 results.append('Exposure Container already exists.')
         except:
+            # XXX specific exception types please
             results.append('Failed to created Exposure Container.')
 
-        self.status = self.status + ' '.join(results)
+        self.status = self.status + ' ' + ' '.join(results)
 
 
 PMR2GlobalSettingsEditFormView = layout.wrap_form(PMR2GlobalSettingsEditForm,
