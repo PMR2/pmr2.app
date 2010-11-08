@@ -36,7 +36,7 @@ class IWorkspaceBulkAdd(zope.interface.Interface):
     )
 
 
-class IWorkspaceFileRenderer(zope.interface.Interface):
+class IFileRenderer(zope.interface.Interface):
     """\
     This provides file rendering capability.
     """

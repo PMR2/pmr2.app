@@ -24,8 +24,8 @@ class FileRendererProvider(ContentProviderBase):
         if mimetype:
             view = 'default'
             for u in zope.component.getAllUtilitiesRegisteredFor(
-                    IWorkspaceFileRenderer):
-                render = u.match(mimetype)
+                    IFileRenderer):
+                render = u.match(data)
                 if render:
                     view = render
                     break
@@ -38,7 +38,7 @@ class FileRendererProvider(ContentProviderBase):
 
 
 class BaseFileRenderer(FileInfoPage):
-    zope.interface.implements(IWorkspaceFileRenderer)
+    zope.interface.implements(IFileRenderer)
 
     template = ViewPageTemplateFile('file.pt')
 
