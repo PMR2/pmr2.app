@@ -15,17 +15,15 @@ Description: Introduction
         Changelog
         =========
         
-        trunk - Unreleased
+        0.3.3 - Unreleased
         ------------------
-        
-        * Correctly implemented usage of layers to remove access to views when
-        PMR2 is not installed.
-        
-        0.3.2 - Released (2010-07-01)
-        -----------------------------
         
         * Fresh installation now works as intended on standard configurations as
         the bugs that prevented this were fixed.
+        - Settings now provides a method set up the objects and directories
+        on disk.
+        - https://tracker.physiomeproject.org/show_bug.cgi?id=2622
+        
         - Default installation now correctly allow Mercurial clients to prompt
         users for authentication.
         - https://tracker.physiomeproject.org/show_bug.cgi?id=2625
@@ -33,6 +31,9 @@ Description: Introduction
         - PMR2 no longer prevents a default Plone site from rendering if it is
         present but not installed using the portal add-on installer tool.
         - https://tracker.physiomeproject.org/show_bug.cgi?id=2626
+        
+        0.3.2 - Released (2010-07-01)
+        -----------------------------
         
         * Updated documentation and classifiers.
         * License has been amended to be what is intended (MPL/GPL/LGPL tri-
@@ -49,6 +50,10 @@ Description: Introduction
         
         0.3 - Released (2010-06-21)
         ---------------------------
+        
+        Changes added in:
+        
+        - 0.3rc1
         
         * Streamlined exposure creation process.
         - Added a exposure file type definition object, which allows
@@ -69,6 +74,7 @@ Description: Introduction
         of the anchor file.
         * Added partial exposure id resolution, where a partial id entered will
         resolve to its full id and redirect to the complete link.
+        * Added migration step, made available under under portal_setup.
         * Pushes to workspace now updates the modified date, so RSS feeds based
         on updates to workspaces can be generated.
         * Redone the exposure creation form as it was insecure against errors.
