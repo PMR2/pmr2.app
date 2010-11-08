@@ -79,18 +79,6 @@
       />
 
   <!--
-    PMR1 Compatibility View
-  -->
-
-  <browser:page
-      for="Products.CMFCore.interfaces.IFolderish"
-      name="pmr1_folder_listing"
-      template="templates/pmr1_folder_listing.pt"
-      permission="zope2.View"
-      layer="pmr2.app.interfaces.IPMR2AppLayer"
-      />
-
-  <!--
     adapter for the adding view.
   -->
 
