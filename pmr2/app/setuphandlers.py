@@ -168,3 +168,48 @@ def cellml_v0_2tov0_3(context):
         logger.info('`%s` had its notes migrated successfully.' % 
                     context.absolute_url_path())
 
+
+def exposure_rand_to_seq(context):
+    """\
+    Migration script specific to models.cellml.org.
+
+    This script converts the id of exposures to use sequential id, using
+    the pmr2.idgen product, and move them to the new, shorter dir.
+    """
+
+    import traceback
+    import zope.component
+    from logging import getLogger
+    from pmr2.idgen.interfaces import IIdGenerator
+
+    try:
+        from pmr2.app.exposure.content import Exposure
+    except ImportError:
+        from pmr2.app.content import Exposure
+
+    logger = getLogger('pmr2.app')
+
+    props = getToolByName(context, 'portal_properties')
+    idgen = props.site_properties.getProperty('cellml_id_generator')
+    if not idgen == 'autoinc':
+        return
+
+    u = zope.component.queryUtility(IPMR2GlobalSettings)
+    container = u.getExposureContainer()
+    path = '/'.join(container.getPhysicalPath())
+
+    catalog = getToolByName(context, 'portal_catalog')
+    exposures = catalog(portal_type='Exposure', path=path, sort_on='created')
+
+    counter = zope.component.getUtility(IIdGenerator, 'autoinc')
+
+    for exposure in exposures:
+        oldid = exposure.id
+        newid = '%x' % (counter.next())
+        try:
+            container.manage_renameObject(oldid, newid)
+        except:
+            logger.error('failed: `%s` not renamed to `%s`' % (oldid, newid))
+            logger.warning(traceback.format_exc())
+            continue
+        logger.info('exposure `%s` rename to `%s`' % (oldid, newid))

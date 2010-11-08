@@ -74,6 +74,8 @@ class BaseStorage(object):
         def mimetype():
             # use the built-in mimetypes, then use magic library
             # XXX performance penalty here getting the entire file?
+            # XXX should provide a way to allow other packages to add
+            # more mimetypes.
             data = contents()
             if not isinstance(data, basestring):
                 return None

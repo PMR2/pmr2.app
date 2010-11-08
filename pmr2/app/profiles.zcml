@@ -21,4 +21,13 @@
       profile="pmr2.app:default"
       />
 
+  <genericsetup:upgradeStep
+      title="PMR2 - Exposure id change"
+      description="This is used to upgrade CellML Model Repository from pmr2.app v0.3 to v0.3.3 to use the sequential exposure id."
+      source="0.3"
+      destination="0.3.3"
+      handler="pmr2.app.setuphandlers.exposure_rand_to_seq"
+      profile="pmr2.app:default"
+      />
+
 </configure>

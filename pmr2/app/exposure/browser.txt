@@ -29,8 +29,7 @@ Create the exposure container.
     >>> self.portal.exposure
     <ExposureContainer at /plone/exposure>
 
-Exposure container creates new exposure, we test it here.  It should be
-a 32 byte long hex string.
+Exposure container creates new exposure, we test it here.
 ::
 
     >>> request = TestRequest(
@@ -43,8 +42,8 @@ a 32 byte long hex string.
     ...     self.portal.exposure, request)
     >>> testform.update()
     >>> oid = self.portal.exposure.objectIds()[0]
-    >>> len(oid)
-    32
+    >>> oid
+    '1'
 
 Exposure object is created with fields properly populated.
 ::
