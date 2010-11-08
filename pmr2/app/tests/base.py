@@ -76,37 +76,3 @@ class DocTestCase(ptc.FunctionalTestCase):
     def tearDown(self):
         super(DocTestCase, self).tearDown()
         shutil.rmtree(self.tmpdir, ignore_errors=True)
-
-
-class ExposureDocTestCase(WorkspaceDocTestCase):
-
-    def setUp(self):
-        """\
-        Sets up the environment that the exposure doctest needs.
-        """
-
-        WorkspaceDocTestCase.setUp(self)
-        self.pmr2.repo_root = self.tmpdir
-        from pmr2.app.workspace.content import WorkspaceContainer, Workspace
-        from pmr2.app.tests import utils
-        self.portal['workspace'] = WorkspaceContainer()
-        self.portal.workspace['eggs'] = Workspace('eggs')
-        utils.mkreporoot(self.pmr2.createDir(self.portal))
-        utils.mkrepo(self.pmr2.dirOf(self.portal.workspace.eggs))
-
-        # create real Hg repos
-
-        import pmr2.mercurial.tests
-        from pmr2.mercurial.tests import util
-        # pmr2.mercurial
-        wdir = self.pmr2.createDir(self.portal.workspace)
-        util.extract_archive(wdir)
-        # pmr2.app
-        p2a_test = join(dirname(__file__), 'pmr2.app.testdata.tgz')
-        util.extract_archive(wdir, p2a_test)
-
-        self.archive_revs = util.ARCHIVE_REVS
-        self.portal.workspace['import1'] = Workspace('import1')
-        self.portal.workspace['import2'] = Workspace('import2')
-        self.portal.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
-        self.portal.workspace['rdfmodel'] = Workspace('rdfmodel')

@@ -9,7 +9,8 @@ from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.content import ExposureContainer, Exposure
 from pmr2.app.exposure.traverse import *
-from pmr2.app.tests.base import TestRequest, ExposureDocTestCase
+from pmr2.app.exposure.tests.base import ExposureDocTestCase
+from pmr2.app.tests.base import TestRequest
 
 
 class MockWorkspace:
