@@ -2,6 +2,9 @@ from random import getrandbits
 import re
 from lxml import etree
 
+import zope.component
+from pmr2.idgen.interfaces import IIdGenerator
+
 import pmr2.mercurial.utils
 
 def set_xmlbase(xml, base):
@@ -35,5 +38,6 @@ def simple_valid_date(input):
         return False
 
 def generate_exposure_id():
-    return '%032x' % getrandbits(128)
+    counter = zope.component.getUtility(IIdGenerator, 'autoinc')
+    return '%x' % counter.next()
 

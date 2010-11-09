@@ -43,7 +43,8 @@ class ExposureTraverser(DefaultPublishTraverse):
 class ExposureContainerTraverser(DefaultPublishTraverse):
     """\
     Traverser for the exposure container that will enable the resolution
-    of partial subpaths into its full path.
+    of partial subpaths into its full path, when a non-sequential
+    exposure id generator is used.
     """
 
     adapts(IExposureContainer, IRequest)
