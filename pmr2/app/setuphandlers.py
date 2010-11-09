@@ -173,6 +173,14 @@ def exposure_rand_to_seq(context):
     import zope.component
     from logging import getLogger
     from pmr2.idgen.interfaces import IIdGenerator
+    from zope.app.component.hooks import getSite
+
+    try:
+        from pmr2.app.exposure.browser import ExposureAddForm
+        from pmr2.app.exposure.browser import ExposurePort
+    except ImportError:
+        from pmr2.app.browser.exposure import ExposureAddForm
+        from pmr2.app.browser.exposure import ExposurePort
 
     try:
         from pmr2.app.exposure.content import Exposure
@@ -180,28 +188,72 @@ def exposure_rand_to_seq(context):
         from pmr2.app.content import Exposure
 
     logger = getLogger('pmr2.app')
+    wft = getToolByName(context, 'portal_workflow')
+
+    def clone(exposure, newid):
+        oldid = exposure.id
+        try:
+            obj = exposure.getObject()
+            container.manage_clone(obj, newid)
+            logger.info('exposure `%s` copied to `%s`' % (oldid, newid))
+
+            wft.doActionFor(container[newid], 'publish')
+            wft.doActionFor(obj, 'expire')
+            logger.info('workflow state updated')
+        except:
+            logger.warning(traceback.format_exc())
+            logger.error('`%s` not cloned to `%s; aborted`' % (oldid, newid))
+            raise
+
+    def port(exposure, newid):
+        # XXX alternative/more verbose way to get this done; mutually
+        # exclusive with above method.
+        oldid = exposure.id
+        try:
+            eaf = ExposureAddForm(container, None)
+            data = {
+                'workspace': exposure.pmr2_exposure_workspace,
+                'curation': None,
+                'commit_id': exposure.pmr2_exposure_commit_id,
+            }
+            eaf.createAndAdd(data)
+            exp_id = data['id']
+            logger.info('exposure `%s` copied to `%s`' % (oldid, newid))
+
+            obj = exposure.getObject()
+            target = container[exp_id]
+            ep = ExposurePort(obj, None)
+            ep.mold(target)
+            logger.info('exposure `%s` ported to `%s`' % (oldid, newid))
+
+            wft.doActionFor(obj, 'expire')
+            logger.info('expired `%s`' % (oldid,))
+        except:
+            logger.error('failed: `%s` not ported to `%s`' % (oldid, newid))
+            logger.warning(traceback.format_exc())
+            raise
 
     props = getToolByName(context, 'portal_properties')
-    idgen = props.site_properties.getProperty('cellml_id_generator')
-    if not idgen == 'autoinc':
+    old_id = props.site_properties.getProperty('exposure_old_container')
+    if not old_id:
+        logger.info('no old exposure id specified; nothing to do.')
         return
 
+    site = getSite()
     u = zope.component.queryUtility(IPMR2GlobalSettings)
-    container = u.getExposureContainer()
-    path = '/'.join(container.getPhysicalPath())
+    old_container = u.siteManagerUnrestrictedTraverse(old_id)
+    path = '/'.join(old_container.getPhysicalPath())
 
     catalog = getToolByName(context, 'portal_catalog')
-    exposures = catalog(portal_type='Exposure', path=path, sort_on='created')
+    exposures = catalog(portal_type='Exposure', path=path,
+        review_state='published', sort_on='created')
+
+    # need the full path
+    container = site.unrestrictedTraverse('/'.join(('',) + 
+        u.getExposureContainer().getPhysicalPath()))
 
     counter = zope.component.getUtility(IIdGenerator, 'autoinc')
 
     for exposure in exposures:
-        oldid = exposure.id
         newid = '%x' % (counter.next())
-        try:
-            container.manage_renameObject(oldid, newid)
-        except:
-            logger.error('failed: `%s` not renamed to `%s`' % (oldid, newid))
-            logger.warning(traceback.format_exc())
-            continue
-        logger.info('exposure `%s` rename to `%s`' % (oldid, newid))
+        clone(exposure, newid)
