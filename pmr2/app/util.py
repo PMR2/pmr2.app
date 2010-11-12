@@ -3,7 +3,6 @@ import re
 from lxml import etree
 
 import zope.component
-from pmr2.idgen.interfaces import IIdGenerator
 
 import pmr2.mercurial.utils
 
@@ -36,8 +35,3 @@ def simple_valid_date(input):
         return re_simple_date.search(input)
     except:
         return False
-
-def generate_exposure_id():
-    counter = zope.component.getUtility(IIdGenerator, 'autoinc')
-    return '%x' % counter.next()
-

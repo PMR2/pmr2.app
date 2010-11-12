@@ -88,7 +88,6 @@ pmr2/app/browser/templates/page_nav.pt
 pmr2/app/browser/templates/plain_layout.pt
 pmr2/app/browser/templates/ploneview_layout.pt
 pmr2/app/browser/templates/pmr1_curation.pt
-pmr2/app/browser/templates/pmr1_folder_listing.pt
 pmr2/app/browser/templates/pmr2search.pt
 pmr2/app/browser/templates/raw_content.pt
 pmr2/app/browser/templates/rollover_form.pt

@@ -43,6 +43,7 @@ setup(
         'plone.z3cform>=0.5',
         'plone.browserlayer',
         'pmr2.mercurial',
+        'pmr2.idgen',
         'lxml>=2.1.0',
     ],
     entry_points="""

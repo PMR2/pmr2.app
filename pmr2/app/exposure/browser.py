@@ -26,6 +26,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 from Products.CMFCore import permissions
 
+from pmr2.idgen.interfaces import IIdGenerator
+
 from pmr2.app.workspace.browser.browser import WorkspaceLog
 from pmr2.app.workspace.exceptions import *
 
@@ -63,6 +65,20 @@ def restrictedGetExposureContainer():
         raise Unauthorized('No permission to make exposures.')
     return exposure_container
 
+def getGenerator(form):
+    # Using default id generator as specified by global settings. 
+    # Will need to change this if exposure containers can specify
+    # its own id generation scheme.
+    settings = zope.component.queryUtility(IPMR2GlobalSettings)
+    idgen = zope.component.queryUtility(IIdGenerator, 
+        name=settings.default_exposure_idgen)
+    if idgen is None:
+        form.status = 'The exposure id generator `%s` cannot be found; ' \
+                      'please contact site administrator.'
+        raise z3c.form.interfaces.ActionExecutionError(
+            ExposureIdGeneratorMissingError())
+    return idgen
+
 
 class ExposureAddForm(form.AddForm):
     """\
@@ -77,11 +93,8 @@ class ExposureAddForm(form.AddForm):
     clsobj = Exposure
 
     def create(self, data):
-        # Rely on randomly generated id, as multiple models (usually
-        # different versions of same model) will use the same title
-        # Tagging will be used and another search page will return
-        # nice models.
-        data['id'] = generate_exposure_id()
+        generator = getGenerator(self)
+        data['id'] = generator.next()
         return form.AddForm.create(self, data)
 
     def add_data(self, ctxobj):
@@ -108,7 +121,8 @@ class CreateExposureForm(form.AddForm, page.TraversePage):
 
     def create(self, data):
         # no data assignments here
-        eid = generate_exposure_id()
+        generator = getGenerator(self)
+        eid = generator.next()
         return Exposure(eid)
 
     def add(self, obj):

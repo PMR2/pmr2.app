@@ -41,6 +41,7 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
 
         WorkspaceDocTestCase.setUp(self)
         self.pmr2.repo_root = self.tmpdir
+        self.pmr2.default_exposure_idgen = 'autoinc'
         from pmr2.app.workspace.content import WorkspaceContainer, Workspace
         from pmr2.app.tests import utils
         self.portal['workspace'] = WorkspaceContainer()

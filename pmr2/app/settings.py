@@ -47,6 +47,8 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         IPMR2GlobalSettings['user_workspace_subpath'])
     default_exposure_subpath = zope.schema.fieldproperty.FieldProperty(
         IPMR2GlobalSettings['default_exposure_subpath'])
+    default_exposure_idgen = zope.schema.fieldproperty.FieldProperty(
+        IPMR2GlobalSettings['default_exposure_idgen'])
     create_user_workspace = zope.schema.fieldproperty.FieldProperty(
         IPMR2GlobalSettings['create_user_workspace'])
 

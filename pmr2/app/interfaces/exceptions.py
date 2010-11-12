@@ -46,3 +46,6 @@ class WorkspaceObjNotFoundError(zope.schema.ValidationError):
 class ExposureContainerInaccessibleError(zope.schema.ValidationError):
     __doc__ = _("""The exposure container cannot be accessed.""")
 
+
+class ExposureIdGeneratorMissingError(zope.schema.ValidationError):
+    __doc__ = _("""The exposure id generator is missing.""")

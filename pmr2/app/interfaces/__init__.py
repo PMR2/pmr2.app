@@ -113,6 +113,13 @@ class IPMR2GlobalSettings(zope.interface.Interface):
         required=True,
     )
 
+    default_exposure_idgen = zope.schema.Choice(
+        title=_(u'Default Exposure Id Generator'),
+        description=_(u'The default id generator for exposures'),
+        vocabulary='pmr2.idgen.vocab',
+        required=True,
+    )
+
     create_user_workspace = zope.schema.Bool(
         title=_(u'Create User Workspaces'),
         description=_(u'Create a user workspace folder within the default '
