@@ -92,7 +92,7 @@ class WorkspaceDocTestCase(DocTestCase):
         self.pmr2 = zope.component.getUtility(IPMR2GlobalSettings)
         # force the repo_root unset
         self.pmr2.repo_root = self.tmpdir
-        self.pmr2.default_exposure_idgen = 'autohex'
+        self.pmr2.default_exposure_idgen = 'rand128hex'
 
     def createRepo(self):
         # create real Hg repos, to be called only after workspace is

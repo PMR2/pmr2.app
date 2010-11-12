@@ -24,7 +24,7 @@ how pmr2_settings created from above is not acquired again.
     ...         'form.widgets.default_workspace_subpath': u'workspace',
     ...         'form.widgets.user_workspace_subpath': u'w',
     ...         'form.widgets.default_exposure_subpath': u'exposure',
-    ...         'form.widgets.default_exposure_idgen': ['autohex'],
+    ...         'form.widgets.default_exposure_idgen': ['rand128hex'],
     ...         'form.widgets.create_user_workspace': [u'false'],
     ...         'form.buttons.apply': 1,
     ...     })
@@ -71,7 +71,7 @@ action which site managers can used to create them.
     ...         'form.widgets.default_workspace_subpath': u'workspace',
     ...         'form.widgets.user_workspace_subpath': u'w',
     ...         'form.widgets.default_exposure_subpath': u'exposure',
-    ...         'form.widgets.default_exposure_idgen': ['autohex'],
+    ...         'form.widgets.default_exposure_idgen': ['rand128hex'],
     ...         'form.widgets.create_user_workspace': [u'false'],
     ...         'form.buttons.apply_and_create': 1,
     ...     })
@@ -236,7 +236,7 @@ Try to update the value.
     ...         'form.widgets.default_workspace_subpath': u'workspace',
     ...         'form.widgets.user_workspace_subpath': u'w',
     ...         'form.widgets.default_exposure_subpath': u'exposure',
-    ...         'form.widgets.default_exposure_idgen': ['autohex'],
+    ...         'form.widgets.default_exposure_idgen': ['rand128hex'],
     ...         'form.widgets.create_user_workspace': [u'false'],
     ...         'form.widgets.pluginsetting.dummy': u'SMRT',
     ...         'form.buttons.apply': 1,
