@@ -34,7 +34,7 @@ from pmr2.app.interfaces import *
 from pmr2.app.interfaces import IPMR2GlobalSettings
 from pmr2.app.content.interfaces import *
 from pmr2.app.content import *
-from pmr2.app.util import set_xmlbase, obfuscate, isodate, generate_exposure_id
+from pmr2.app.util import set_xmlbase, obfuscate, isodate
 
 from pmr2.app.browser import interfaces
 from pmr2.app.browser import widget
@@ -48,6 +48,7 @@ from pmr2.app.browser.layout import BorderedTraverseFormWrapper
 from pmr2.app.browser.layout import TraverseFormWrapper
 
 from pmr2.app.browser.exposure import ExposurePort, ExposureAddForm
+from pmr2.app.browser.exposure import getGenerator
 
 
 def restrictedGetExposureContainer():
@@ -789,7 +790,8 @@ class CreateExposureForm(form.AddForm, page.TraversePage):
 
     def create(self, data):
         # no data assignments here
-        eid = generate_exposure_id()
+        generator = getGenerator(self)
+        eid = generator.next()
         return Exposure(eid)
 
     def add(self, obj):

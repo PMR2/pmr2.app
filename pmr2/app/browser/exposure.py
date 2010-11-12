@@ -22,6 +22,8 @@ from Acquisition import aq_parent, aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 
+from pmr2.idgen.interfaces import IIdGenerator
+
 from pmr2.app.interfaces import *
 from pmr2.app.content.interfaces import *
 from pmr2.app.browser.interfaces import *
@@ -37,6 +39,20 @@ from pmr2.app.browser.page import ViewPageTemplateFile
 from pmr2.app.browser import widget
 from pmr2.app.browser.layout import *
 
+def getGenerator(form):
+    # Using default id generator as specified by global settings. 
+    # Will need to change this if exposure containers can specify
+    # its own id generation scheme.
+    settings = zope.component.queryUtility(IPMR2GlobalSettings)
+    idgen = zope.component.queryUtility(IIdGenerator, 
+        name=settings.default_exposure_idgen)
+    if idgen is None:
+        form.status = 'The exposure id generator `%s` cannot be found; ' \
+                      'please contact site administrator.'
+        raise z3c.form.interfaces.ActionExecutionError(
+            ExposureIdGeneratorMissingError())
+    return idgen
+
 
 class ExposureAddForm(form.AddForm):
     """\
@@ -51,11 +67,8 @@ class ExposureAddForm(form.AddForm):
     clsobj = Exposure
 
     def create(self, data):
-        # Rely on randomly generated id, as multiple models (usually
-        # different versions of same model) will use the same title
-        # Tagging will be used and another search page will return
-        # nice models.
-        data['id'] = generate_exposure_id()
+        generator = getGenerator(self)
+        data['id'] = generator.next()
         return form.AddForm.create(self, data)
 
     def add_data(self, ctxobj):
