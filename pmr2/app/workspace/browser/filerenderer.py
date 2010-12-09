@@ -7,6 +7,8 @@ from zope.app.pagetemplate.viewpagetemplatefile \
     import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
+from Products.statusmessages.interfaces import IStatusMessage
+
 from pmr2.app.browser import page
 
 from pmr2.app.workspace.interfaces import IWorkspaceFileListProvider
@@ -16,25 +18,57 @@ from pmr2.app.workspace.browser.browser import WorkspaceTraversePage
 from pmr2.app.workspace.browser.browser import FileInfoPage
 
 
+class DefaultRendererDictionary(object):
+
+    zope.interface.implements(IRendererDictionary)
+
+    def match(self, data):
+        mimetype = data['mimetype']()
+        if not mimetype:
+            return 'directory'
+
+        return 'default'
+
+
 class FileRendererProvider(ContentProviderBase):
 
     def render(self, *a, **kw):
+        errors = []
+        results = ''
+        status = IStatusMessage(self.request)
         data = self.request['_data']
-        mimetype = data['mimetype']()
-        if mimetype:
-            view = 'default'
-            for u in zope.component.getAllUtilitiesRegisteredFor(
-                    IFileRenderer):
-                render = u.match(data)
-                if render:
-                    view = render
-                    break
-        else:
-            view = 'directory'
 
-        fileview = zope.component.getMultiAdapter(
-            (self.context, self.request), name=view)
-        return fileview()
+        finder = list(zope.component.getUtilitiesFor(IRendererDictionary))
+        if not finder:
+            status.addStatusMessage(
+                u'No render dictionary installed, please contact site '
+                 'administrator.', 'error')
+            return
+        # get the default (unamed) to be last one
+        finder.reverse()  
+
+        for n, u in finder:
+            view = u.match(data)
+            if view:
+                fileview = zope.component.getMultiAdapter(
+                    (self.context, self.request), name=view)
+                try:
+                    results = fileview()
+                    break
+
+                except:
+                    errors.append(
+                        '"%s" selected "%s" but it failed to render.' %
+                        (n or '<default>', view))
+                    continue
+
+        if errors:
+            # probably should only show this info message to users who
+            # can deal with this.
+            status.addStatusMessage(' '.join(errors), 'info')
+
+        if results:
+            return results
 
 
 class BaseFileRenderer(FileInfoPage):

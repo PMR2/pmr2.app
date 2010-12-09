@@ -122,6 +122,15 @@
       />
 
   <!--
+    file renderer finder
+  -->
+
+  <utility
+      provides=".interfaces.IRendererDictionary"
+      factory=".filerenderer.DefaultRendererDictionary"
+      />
+
+  <!--
     file renderer
   -->
 

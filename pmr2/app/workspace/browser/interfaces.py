@@ -45,3 +45,14 @@ class IFileRenderer(zope.interface.Interface):
         title=u'Supported Mimetypes',
         description=u'The mimetypes supported by this renderer.'
     )
+
+
+class IRendererDictionary(zope.interface.Interface):
+    """\
+    This provides file rendering capability.
+    """
+
+    def match(data):
+        """
+        match the provided data and return a mimetype.
+        """
