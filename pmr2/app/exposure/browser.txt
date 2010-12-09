@@ -42,8 +42,8 @@ Exposure container creates new exposure, we test it here.
     ...     self.portal.exposure, request)
     >>> testform.update()
     >>> oid = self.portal.exposure.objectIds()[0]
-    >>> oid
-    '1'
+    >>> len(oid)
+    32
 
 Exposure object is created with fields properly populated.
 ::
