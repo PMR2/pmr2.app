@@ -84,6 +84,8 @@ math > mrow {
 }
 
 #shjs-view pre {
+    color: #000;
+    background: #fff;
     padding: 0.5em;
     border: 0;
 }
