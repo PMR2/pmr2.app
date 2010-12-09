@@ -14,6 +14,23 @@ class BaseStorage(object):
 
     zope.interface.implements(IStorage)
 
+    def __init__(self, context):
+        # context will always be the immediate object that leads to the
+        # creation of this storage object, or the final object that is
+        # resolved.
+        # 
+        # example 1: if we have an exposure of a workspace, and we adapt
+        # an exposure to a storage, its context will be the workspace
+        # and not the exposure
+        #
+        # example 2: if we have an exposure file that sits within an
+        # exposure, context will again be the workspace that the 
+        # exposure references.
+        # 
+        # to get to an individual file, just specify the path.
+
+        self.context = context
+
     # Parameters
 
     @property
