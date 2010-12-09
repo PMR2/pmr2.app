@@ -143,6 +143,13 @@
 
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="image"
+      class=".filerenderer.ImageRenderer"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="directory"
       class=".filerenderer.DirectoryRenderer"
       permission="zope2.View"

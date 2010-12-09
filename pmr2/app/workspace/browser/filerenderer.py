@@ -27,7 +27,10 @@ class DefaultRendererDictionary(object):
         if not mimetype:
             return 'directory'
 
-        return 'default'
+        if mimetype.startswith('image/'):
+            return 'image'
+        else:
+            return 'default'
 
 
 class FileRendererProvider(ContentProviderBase):
@@ -116,3 +119,15 @@ class DefaultFileRenderer(BaseFileRenderer):
             return '(%s)' % data['mimetype']()
         else:
             return contents
+
+
+class ImageRenderer(BaseFileRenderer):
+    """\
+    Default file render.
+    """
+
+    template = ViewPageTemplateFile('image.pt')
+
+    @property
+    def contents(self):
+        return self.fullpath
