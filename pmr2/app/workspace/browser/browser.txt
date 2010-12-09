@@ -329,7 +329,6 @@ Here is a test of basic rendering:
 
     >>> subpath = ['1', 'file1']
     >>> page = self.traverse(wkspc, browser.FileInfoPage, subpath)
-    >>> page.update()
     >>> result = page()
     >>> 'file1-rev1\nThis test has changed.\n' in result
     True
@@ -346,3 +345,130 @@ The view should not render it.
     False
     >>> 'application/octet-stream' in result
     True
+
+Invalid revision should raise a 404.
+::
+
+    >>> subpath = ['110', 'null']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.cake, browser.FileInfoPage, subpath)
+    >>> result = page()
+    Traceback (most recent call last):
+    ...
+    HTTPNotFound: 404 Not Found
+    ...
+
+As well as invalid file entries.
+::
+
+    >>> subpath = ['0', 'nullnull']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.cake, browser.FileInfoPage, subpath)
+    >>> result = page()
+    Traceback (most recent call last):
+    ...
+    HTTPNotFound: 404 Not Found
+    ...
+
+Or traversing down a file as if a directory
+::
+
+    >>> subpath = ['0', 'null', 'null']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.cake, browser.FileInfoPage, subpath)
+    >>> result = page()
+    Traceback (most recent call last):
+    ...
+    HTTPNotFound: 404 Not Found
+    ...
+
+---------------
+Raw File Viewer
+---------------
+
+It must also be possible to directly download or otherwise view a file
+that is stored within the workspace as is.  
+
+We reuse the path in the previous example, but this time the view will
+return just the contents.
+::
+
+    >>> subpath = ['1', 'file1']
+    >>> page = self.traverse(wkspc, browser.WorkspaceRawfileView, subpath)
+    >>> page.update()
+    >>> page()
+    'file1-rev1\nThis test has changed.\n'
+    >>> page.request.response.getHeader('Content-length')
+    '34'
+
+Binary data will be returned as is.
+::
+
+    >>> subpath = ['0', 'null']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfileView, subpath)
+    >>> page() == '\0'
+    True
+
+Invalid revision should raise a 404.
+::
+
+    >>> subpath = ['110', 'null']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfileView, subpath)
+    >>> result = page()
+    Traceback (most recent call last):
+    ...
+    HTTPNotFound: 404 Not Found
+    ...
+
+As well as invalid file entries.
+::
+
+    >>> subpath = ['0', 'nullnull']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfileView, subpath)
+    >>> result = page()
+    Traceback (most recent call last):
+    ...
+    HTTPNotFound: 404 Not Found
+    ...
+
+Or traversing down a file as if a directory.
+::
+
+    >>> subpath = ['0', 'null', 'null']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfileView, subpath)
+    >>> result = page()
+    Traceback (most recent call last):
+    ...
+    HTTPNotFound: 404 Not Found
+    ...
+
+Obviously, this view cannot render directories at all.  Instead of 
+throwing an error we redirect to the FileInfo view.
+::
+
+    >>> subpath = ['0']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfileView, subpath)
+    >>> page()
+    Traceback (most recent call last):
+    ...
+    HTTPFound: 302 Found
+    The resource was found at
+    http://nohost/plone/workspace/cake/file/0
+
+This should work for nested directories.
+::
+
+    >>> subpath = ['3', 'dir1', 'dir2']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.test, browser.WorkspaceRawfileView, subpath)
+    >>> page()
+    Traceback (most recent call last):
+    ...
+    HTTPFound: 302 Found
+    The resource was found at
+    http://nohost/plone/workspace/test/file/3/dir1/dir2

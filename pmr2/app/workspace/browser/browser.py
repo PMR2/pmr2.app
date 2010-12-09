@@ -507,10 +507,10 @@ class WorkspaceRawfileView(FileInfoPage):
         if data:
             # not supporting resuming download
             # XXX large files will eat RAM
-            try:
-                contents = data['contents']()
-            except PathNotFoundError:
-                # this is a rawfile view, this can be triggered by 
+            contents = data['contents']()
+
+            if not isinstance(contents, basestring):
+                # thuuhis is a rawfile view, this can be triggered by 
                 # attempting to access a directory.  we redirect to the
                 # standard file view.
                 raise HTTPFound(self.viewpath)
