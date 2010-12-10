@@ -524,29 +524,39 @@ class WorkspaceRawfileView(FileInfoPage):
 
 class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
 
-    def find_type(self):
-        # XXX should really hook into mimetype registry and not hard
-        # coded in here.
-        if self.storage.path.endswith('session.xml'):
-            return 'application/x-pcenv-cellml+xml'
-        elif self.storage.path.endswith('.cellml'):
-            return 'application/cellml+xml'
+    @property
+    def xmlrooturi(self):
+        """the root uri."""
+        return '/'.join(self._getpath(view='xmlbase'))
 
     def __call__(self):
+        # XXX should really hook into a mimetype registry and not hard
+        # coded in here.
+        def custom_content_type(s):
+            f_ext = (
+                ('.session.xml', 'application/x-pcenv-cellml+xml'),
+                ('.cellml', 'application/cellml+xml'),
+            )
+            for k, v in f_ext:
+                if s.endswith(k):
+                    self.request.response.setHeader('Content-Type', v)
+                    return
+
         data = WorkspaceRawfileView.__call__(self)
-        frag = self.storage.path.rsplit('/', 1)
-        filename = frag.pop()
-        s_path = frag and frag.pop() or ''
+        filepath = self.request['filepath']
+        filename = filepath[-1]
+        # have to acquire dirpath.
+        request_subpath = self.request.get('request_subpath', [])
+        dirpath = '/'.join(request_subpath[:-1] + [''])
 
         # add the xml:base, with empty end string for trailing /
         # since this is the xml base rewrite, we be consistent.
-        xmlroot = '/'.join((self.xmlrooturi, s_path, '',))
+        xmlroot = '/'.join((self.xmlrooturi, dirpath,))
         data = set_xmlbase(data, xmlroot)
 
-        # all done, now set headers.
-        contentType = self.find_type()
-        if contentType:
-            self.request.response.setHeader('Content-Type', contentType)
+        # XXX this should not be here
+        custom_content_type(filename)
+
         self.request.response.setHeader('Content-Disposition',
             'attachment; filename="%s"' % filename,
         )

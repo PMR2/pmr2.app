@@ -475,3 +475,33 @@ This should work for nested directories.
     HTTPFound: 302 Found
     The resource was found at
     http://nohost/plone/workspace/test/file/3/dir1/dir2
+
+---------------
+XML Base Viewer
+---------------
+
+As one of the main file types PMR2 originally handle is XML base, there
+are various cases where the xml:base must be set in the file such that
+the relative links within the file can be resolved when opened from a
+user's local machine.
+::
+
+    >>> subpath = ['0', 'test.xml']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfileXmlBaseView,
+    ...     subpath)
+    >>> result = page()
+    >>> 'xml:base="http://nohost/plone/workspace/cake/xmlbase/0/">' in result
+    True
+
+Nested dir should also work.
+::
+
+    >>> subpath = ['0', 'dir1', 'dir2', 'file.xml']
+    >>> page = self.traverse(
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfileXmlBaseView,
+    ...     subpath)
+    >>> result = page()
+    >>> 'xml:base="http://nohost/plone/workspace/cake/xmlbase/0/dir1/dir2/">' \
+    ...     in result
+    True
