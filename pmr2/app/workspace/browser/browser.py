@@ -510,12 +510,12 @@ class WorkspaceRawfileView(FileInfoPage):
             contents = data['contents']()
 
             if not isinstance(contents, basestring):
-                # thuuhis is a rawfile view, this can be triggered by 
+                # this is a rawfile view, this can be triggered by 
                 # attempting to access a directory.  we redirect to the
                 # standard file view.
                 raise HTTPFound(self.viewpath)
 
-            self.request.response.setHeader('Content-Type', data['mimetype'])
+            self.request.response.setHeader('Content-Type', data['mimetype']())
             self.request.response.setHeader('Content-Length', data['size'])
             return contents
         else:

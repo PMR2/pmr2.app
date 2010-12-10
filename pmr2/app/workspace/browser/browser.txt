@@ -400,6 +400,9 @@ return just the contents.
     'file1-rev1\nThis test has changed.\n'
     >>> page.request.response.getHeader('Content-length')
     '34'
+    >>> page.request.response.getHeader('Content-type').startswith(
+    ...     'text/plain')
+    True
 
 Binary data will be returned as is.
 ::
