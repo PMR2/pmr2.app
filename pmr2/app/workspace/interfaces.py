@@ -15,11 +15,25 @@ class IStorage(zope.interface.Interface):
     # XXX add these properties:
 
     # read-only properties
-    # rev - current revision id
-    # shortrev - current revision short id
+    # archive_formats
+    #   - archive formats provided by this storage type.
+    # rev 
+    #   - current revision id
+    # shortrev 
+    #   - current revision short id
 
     # read/write properties
     # datefmt - date format
+
+    def archive_info(format):
+        """\
+        Information on the specified archive `format`.
+        """
+
+    def archive(format):
+        """\
+        Return an archive of `format`.
+        """
 
     def basename(path):
         """\

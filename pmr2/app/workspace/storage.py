@@ -53,6 +53,13 @@ class BaseStorage(object):
 
     __datefmt = 'iso8601'
 
+    # this stores the types of archive available, with its key the 
+    # method name with a 2-tuple value that stores the human readable
+    # name and the file name extension.  See tests/storage.py for the
+    # example.
+    _archiveFormats = {}
+    __archiveFormatInfoKeys = ('name', 'ext',)
+
     def _getDatefmt(self):
         return self.__datefmt
 
@@ -68,7 +75,28 @@ class BaseStorage(object):
     def datefmtstr(self):
         return BaseStorage.__default_datefmt[self.datefmt]
 
+    @property
+    def archiveFormats(self):
+        return self._archiveFormats.keys()
+
     # Default implementation for methods
+
+    def archiveInfo(self, format):
+        info = self._archiveFormats.get(format, None)
+        if not info:
+            raise ValueError('format `%s` not supported' % format)
+        return dict(zip(self.__archiveFormatInfoKeys, info))
+
+    def archive(self, format):
+        archivePrefix = 'archive_'
+        if format not in self.archiveFormats:
+            raise ValueError('format `%s` not supported' % format)
+        archiver = getattr(self, archivePrefix + format, None)
+        if not (archiver and callable(archiver)):
+            # Well someone screwed up by forgetting to implement the
+            # appropriate method with the correct name.
+            raise NotImplementedError
+        return archiver()
 
     def basename(self, name):
         raise NotImplementedError

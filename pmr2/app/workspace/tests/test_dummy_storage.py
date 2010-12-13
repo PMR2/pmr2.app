@@ -337,6 +337,28 @@ class TestDummyStorage(TestCase):
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
+    def test_700_archiveFormats(self):
+        storage = DummyStorage(self.workspace)
+        formats = storage.archiveFormats
+        self.assertEqual(formats, ['dummy'])
+
+    def test_710_archiveInfo(self):
+        storage = DummyStorage(self.workspace)
+        info = storage.archiveInfo('dummy')
+        self.assertEqual(info, {
+            'name': 'Dummy Archive',
+            'ext': '.dummy',
+        })
+
+    def test_711_archiveInfoValueError(self):
+        storage = DummyStorage(self.workspace)
+        self.assertRaises(ValueError, storage.archiveInfo, 'invalid')
+
+    def test_720_archive(self):
+        storage = DummyStorage(self.workspace)
+        archive = storage.archive('dummy')
+        self.assert_(archive.startswith('(dp1\nS'))
+
 
 def test_suite():
     suite = TestSuite()

@@ -1,6 +1,7 @@
 from os.path import join
 from os.path import dirname
 from datetime import datetime
+from cPickle import dumps
 import zope.interface
 
 from pmr2.app.workspace.interfaces import IWorkspace
@@ -83,6 +84,10 @@ class DummyStorageUtility(StorageUtility):
 
 
 class DummyStorage(BaseStorage):
+
+    _archiveFormats = {
+        'dummy': ('Dummy Archive', '.dummy'),
+    }
     
     def __init__(self, context):
         self.context = context
@@ -137,6 +142,9 @@ class DummyStorage(BaseStorage):
     @property
     def rev(self):
         return str(self.__rev)
+
+    def archive_dummy(self):
+        return dumps(self._changeset())
 
     def basename(self, path):
         return path.split('/')[-1]
