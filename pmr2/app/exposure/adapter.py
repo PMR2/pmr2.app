@@ -13,6 +13,7 @@ import pmr2.mercurial.utils
 from pmr2.mercurial.adapter import PMR2StorageURIResolver
 
 from pmr2.app.workspace.exceptions import PathNotFoundError
+from pmr2.app.workspace.interfaces import IStorage
 
 from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
@@ -23,6 +24,7 @@ __all__ = [
     'PMR2ExposureStorageURIResolver',
     'ExposureToWorkspaceAdapter',
     'ExposureToWorkspaceTraverse',
+    'ExposureStorageAdapter',
     'ExposureSourceAdapter',
     'ExposureFileSelectView',
 ]
@@ -153,6 +155,11 @@ def ExposureToWorkspaceTraverse(context):
     if result is None:
         raise WorkspaceObjNotFoundError()
     return result
+
+def ExposureStorageAdapter(context):
+    workspace = ExposureToWorkspaceAdapter(context)
+    storage = zope.component.getAdapter(workspace, IStorage)
+    return storage
 
 
 class ExposureSourceAdapter(object):

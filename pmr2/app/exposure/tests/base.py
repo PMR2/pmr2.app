@@ -51,6 +51,8 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
         utils.mkreporoot(self.pmr2.createDir(self.portal))
         utils.mkrepo(self.pmr2.dirOf(self.portal.workspace.eggs))
 
+        self.portal.workspace['cake'] = Workspace('cake')
+
         # create real Hg repos
 
         import pmr2.mercurial.tests
