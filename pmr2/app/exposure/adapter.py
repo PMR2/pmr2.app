@@ -153,12 +153,15 @@ def ExposureToWorkspaceTraverse(context):
     sm = zope.component.getSiteManager(context)
     result = sm.unrestrictedTraverse(fullpath, None)
     if result is None:
+        # XXX might worth it to give one more shot using the redirect
+        # tool, because some one might have moved the workspace.
         raise WorkspaceObjNotFoundError()
     return result
 
 def ExposureStorageAdapter(context):
     workspace = ExposureToWorkspaceAdapter(context)
     storage = zope.component.getAdapter(workspace, IStorage)
+    storage.checkout(context.commit_id)
     return storage
 
 

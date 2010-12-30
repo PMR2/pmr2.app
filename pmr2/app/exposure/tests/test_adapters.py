@@ -60,6 +60,7 @@ class TestExposureStorageAdapter(ExposureDocTestCase):
         self.portal['exposure'] = ExposureContainer('exposure')
         self.workspace = self.portal.workspace.cake
         tester = Exposure('tester')
+        tester.commit_id = u'0'
         tester.workspace = u'/plone/workspace/cake'
         self.portal.exposure['tester'] = tester
         self.exposure = self.portal.exposure['tester']
@@ -73,6 +74,7 @@ class TestExposureStorageAdapter(ExposureDocTestCase):
         # storage adapter should now return.
         result = ExposureStorageAdapter(self.exposure)
         self.assert_(isinstance(result, DummyStorage))
+        self.assertEqual(result.rev, '0')
 
 
 def test_suite():
