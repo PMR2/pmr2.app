@@ -16,7 +16,7 @@ from pmr2.app.workspace.adapter import WorkspaceStorageAdapter
 class TestWorkspaceStorageAdapter(TestCase):
     """\
     This tests the dummy framework and implementation, along with the
-    adapter.
+    adapter with manual registration.
     """
 
     def setUp(self):

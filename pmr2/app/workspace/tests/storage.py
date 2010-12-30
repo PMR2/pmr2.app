@@ -64,6 +64,22 @@ _dummy_storage_data = {
                 '  <node>Some file</node>\n'
                 '</ex>\n',
         },
+        {
+            'null': '\0',
+            'status': 'is a lie.',
+            'test.png': test_png,
+            'test.xml':
+                '<?xml version="1.0"?>\n'
+                '<ex xmlns="http://ns.example.com/">\n'
+                '  <node>Some text</node>\n'
+                '</ex>\n',
+            'dir1/dummy.txt': 'Dummy txt file\n',
+            'dir1/dir2/file.xml':
+                '<?xml version="1.0"?>\n'
+                '<ex xmlns="http://ns.example.com/">\n'
+                '  <node>Some file</node>\n'
+                '</ex>\n',
+        },
     ],
 
 }

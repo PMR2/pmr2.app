@@ -177,7 +177,7 @@ See if the page renders with expected output.
     ...     self.portal.workspace.cake, request)
     >>> testpage.update()
     >>> result = testpage()
-    >>> 'Location: Delicious Cake @ 0 /' in result
+    >>> 'Location: Delicious Cake @ 1 /' in result
     True
     >>> '<th>Filename</th>' in result
     True

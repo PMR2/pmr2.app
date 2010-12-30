@@ -1,15 +1,13 @@
 from unittest import TestCase, TestSuite, makeSuite
 
+import zope.component
+
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace.exceptions import *
 
 from pmr2.app.workspace.tests.storage import DummyStorageUtility
 from pmr2.app.workspace.tests.storage import DummyStorage
 from pmr2.app.workspace.tests.storage import DummyWorkspace
-
-# Objects to test
-
-from pmr2.app.workspace.adapter import WorkspaceStorageAdapter
 
 
 class TestDummyStorage(TestCase):
@@ -40,15 +38,17 @@ class TestDummyStorage(TestCase):
         return filter_callable(input)
 
     def test_000_storage(self):
-        # Trivial
+        # Direct instantiation of storage from workspace
         storage = DummyStorage(self.workspace)
         self.assert_(isinstance(storage, DummyStorage))
 
     def test_001_utility(self):
-        # Trivial
+        # Instantiating the storage with utility
         utility = DummyStorageUtility()
         storage = utility(self.workspace)
         self.assert_(isinstance(storage, DummyStorage))
+
+    # the adapter test is done inside test_adapter.py
 
     def test_010_storage_base(self):
         # nothing registered
