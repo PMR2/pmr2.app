@@ -1,6 +1,34 @@
 Changelog
 =========
 
+0.4 - Unreleased
+----------------
+
+* Major reorganization done to the code base.
+  - The code is in the process of being split up and reorganized based
+    on related features.  Most notable changes are the workspace and
+    exposures being moved into its own module, with all supporting code
+    elsewhere (such as subscribers and adapters) are moved into them.
+
+* Introduction of customized renders of files directly from workspace
+  - Workspace file views now supports the rendering of other file types,
+    with the rendering controlled by the mimetype of the file.  Adapters
+    can be registered to introduce customized renders for file types.
+  - Exposures may be hooked into this method in the future, once an
+    appropriate caching mechanism is put into place as the rendering of
+    a custom type can trigger CPU intensive processes to construct the
+    output that the client expects.
+
+* Generalized workspace storage backend
+  - While the plan for PMR2 was to allow multiple backends to be
+    supported, it had strong ties to pmr2.mercurial.  This has been
+    corrected as workspace now supports different backends.
+  - Developers to create their own backends for the storage of data
+    within PMR2, provided that the backend provides the output in the
+    format PMR2 expects.  Also, even in the case of existing backends,
+    a newer/better implementation can be more easily created to replace
+    deprecated ones.
+
 0.3.3 - Unreleased
 ------------------
 
