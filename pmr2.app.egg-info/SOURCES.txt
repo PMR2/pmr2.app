@@ -129,6 +129,7 @@ pmr2/app/content/root.py
 pmr2/app/content/sandbox.py
 pmr2/app/content/support.py
 pmr2/app/content/workspace.py
+pmr2/app/exposure/tests/test_dummy_storage.py
 pmr2/app/interfaces/__init__.py
 pmr2/app/interfaces/exceptions.py
 pmr2/app/pas/__init__.py
@@ -137,6 +138,7 @@ pmr2/app/pas/mercurial.py
 pmr2/app/portlets/__init__.py
 pmr2/app/portlets/interfaces.py
 pmr2/app/profiles/default/actionicons.xml
+pmr2/app/profiles/default/actions.xml
 pmr2/app/profiles/default/catalog.xml
 pmr2/app/profiles/default/controlpanel.xml
 pmr2/app/profiles/default/cssregistry.xml
@@ -186,3 +188,5 @@ pmr2/app/viewlets/__init__.py
 pmr2/app/viewlets/above_content_body_portlets.pt
 pmr2/app/viewlets/configure.zcml
 pmr2/app/viewlets/manage_pmr2portlets.pt
+pmr2/app/workspace/TODO
+pmr2/app/workspace/storage.txt
