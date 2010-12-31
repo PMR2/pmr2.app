@@ -9,6 +9,7 @@ from Products.CMFCore.utils import getToolByName
 from pmr2.app.vocab import vocab_factory
 
 from pmr2.app.interfaces import *
+from pmr2.app.workspace.interfaces import IWorkspace
 from pmr2.app.workspace.interfaces import IWorkspaceListing
 from pmr2.app.workspace.interfaces import IStorageUtility
 from pmr2.app.workspace.interfaces import IStorage
@@ -28,48 +29,23 @@ WorkspaceDirObjListVocabFactory = vocab_factory(WorkspaceDirObjListVocab)
 
 class ManifestListVocab(SimpleVocabulary):
 
-    # XXX refactor this to take storage provider
-
     def __init__(self, context):
-        self.context = context
+        self.context = wks = context
 
-        if not IStorage.providedBy(self.context):
-            # adapt this into a storage
-            self.storage = zope.component.queryAdapter(self.context, IStorage)
-        else:
-            self.storage = context
+        # XXX this part need to be subclassed away into exposure module
+        if not IWorkspace.providedBy(self.context):
+            helper = zope.component.queryAdapter(self.context, 
+                IExposureSourceAdapter)
+            if not helper:
+                raise TypeError('could not acquire source from context')
+            obj, wks, path = helper.source()
 
-        # XXX figure out how to implement this - do we want to implement
-        # context similar to how Mercurial does it, namely have another
-        # object to encapsulate revision.
-        if self.storage is None:
-            values = self._legacy()
-        else:
-            values = self.storage.files()
-            values.sort()
+        self.storage = zope.component.getAdapter(wks, IStorage)
+        values = self.storage.files()
+        values.sort()
 
         terms = [SimpleTerm(i, i) for i in values]
         super(ManifestListVocab, self).__init__(terms)
-
-    def _legacy(self):
-        # XXX hack legacy support for exposure type
-        # XXX MUST be removed before 0.4 is released
-        obj = self.context
-        helper = zope.component.queryAdapter(obj, IExposureSourceAdapter)
-        if not helper:
-            raise TypeError('could not acquire source from context')
-        obj, wks, path = helper.source()
-
-        # XXX could just adapt wks to the storage adapter from here
-        storage = zope.component.getMultiAdapter(
-            (obj,),
-            name='PMR2ExposureStorageAdapter',
-        )
-
-        manifest = storage.raw_manifest()
-        values = manifest.keys()
-        values.sort()
-        return values
 
     def getTerm(self, value):
         if value is None:

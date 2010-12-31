@@ -66,7 +66,15 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
         util.extract_archive(wdir, p2a_test)
 
         self.archive_revs = util.ARCHIVE_REVS
-        self.portal.workspace['import1'] = Workspace('import1')
-        self.portal.workspace['import2'] = Workspace('import2')
-        self.portal.workspace['pmr2hgtest'] = Workspace('pmr2hgtest')
-        self.portal.workspace['rdfmodel'] = Workspace('rdfmodel')
+
+        def mkhg_workspace(name):
+            # XXX temporary method to work with existing tests until
+            # this is replaced
+            w = Workspace(name)
+            w.storage = u'mercurial'
+            self.portal.workspace[name] = w
+
+        mkhg_workspace('import1')
+        mkhg_workspace('import2')
+        mkhg_workspace('pmr2hgtest')
+        mkhg_workspace('rdfmodel')

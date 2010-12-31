@@ -3,6 +3,12 @@
     i18n_domain="pmr2">
 
   <adapter
+      for=".interfaces.IExposure"
+      factory=".adapter.ExposureStorageAdapter"
+      provides="pmr2.app.workspace.interfaces.IStorage"
+      />
+
+  <adapter
       for="pmr2.app.exposure.interfaces.IExposure"
       factory=".adapter.PMR2ExposureStorageAdapter"
       provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"

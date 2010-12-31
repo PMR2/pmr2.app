@@ -15,10 +15,8 @@ def WorkspaceStorageAdapter(workspace):
     """
 
     assert IWorkspace.providedBy(workspace)
-    # XXX workaround until migration script is in place.
-    name = workspace.storage or 'mercurial'
     storage_util = zope.component.queryUtility(
-        IStorageUtility, name=name)
+        IStorageUtility, name=workspace.storage)
     if storage_util is None:
         raise ValueError('storage type `%s` unknown' % workspace.storage)
     return storage_util(workspace)
