@@ -3,6 +3,8 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="pmr2.app">
 
+  <include file="adapter.zcml"/>
+
   <!-- Exposure Container -->
 
   <!--

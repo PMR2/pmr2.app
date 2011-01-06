@@ -31,7 +31,7 @@
   -->
 
   <adapter 
-      for="pmr2.app.exposure.interfaces.IExposureRolloverForm
+      for="pmr2.app.exposure.browser.interfaces.IExposureRolloverForm
            zope.publisher.interfaces.IPublisherRequest"
       factory=".layout.rollover_form_factory" />
 

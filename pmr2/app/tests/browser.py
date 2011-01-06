@@ -2,8 +2,8 @@ import os.path
 from z3c.form import tests
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from plone.z3cform import layout
-from pmr2.app.exposure.browser import GroupedNoteViewBase
-from pmr2.app.exposure.browser import ExposureFileViewBase
+from pmr2.app.exposure.browser.browser import GroupedNoteViewBase
+from pmr2.app.exposure.browser.browser import ExposureFileViewBase
 from pmr2.app.browser.layout import PlainLayoutWrapper
 
 

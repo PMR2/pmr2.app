@@ -91,28 +91,28 @@
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="rdfn3"
-      class="pmr2.app.exposure.browser.RawTextNoteView"
+      class="pmr2.app.exposure.browser.browser.RawTextNoteView"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="rdfturtle"
-      class="pmr2.app.exposure.browser.RawTextNoteView"
+      class="pmr2.app.exposure.browser.browser.RawTextNoteView"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="rdfxml"
-      class="pmr2.app.exposure.browser.RawTextNoteView"
+      class="pmr2.app.exposure.browser.browser.RawTextNoteView"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="rot13"
-      class="pmr2.app.exposure.browser.RawTextNoteView"
+      class="pmr2.app.exposure.browser.browser.RawTextNoteView"
       permission="zope2.View"
       />
 

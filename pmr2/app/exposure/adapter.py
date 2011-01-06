@@ -3,7 +3,6 @@ import zope.component
 from zope.schema import fieldproperty
 from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
-from zope.location import Location, locate
 from zope.app.component.hooks import getSite
 
 from pmr2.mercurial.adapter import PMR2StorageFixedRevAdapter
@@ -26,7 +25,6 @@ __all__ = [
     'ExposureToWorkspaceTraverse',
     'ExposureStorageAdapter',
     'ExposureSourceAdapter',
-    'ExposureFileSelectView',
 ]
 
 
@@ -218,23 +216,3 @@ class ExposureSourceAdapter(object):
             name='PMR2StorageFixedRev',
         )
         return storage.file(path)
-
-
-class ExposureFileSelectView(Location):
-
-    zope.interface.implements(IExposureFileSelectView)
-    selected_view = fieldproperty.FieldProperty(IExposureFileSelectView['selected_view'])
-    views = fieldproperty.FieldProperty(IExposureFileSelectView['views'])
-
-    def __init__(self, context):
-        # must locate itself into context the very first thing, as the
-        # vocabulary uses source adapter registered above.
-        locate(self, context, '')
-        # have to assign the views
-        self.views = context.views
-        # before we can try to assign the selected views do to usage of
-        # constrained vocabulary.
-        try:
-            self.selected_view = context.selected_view
-        except:
-            pass

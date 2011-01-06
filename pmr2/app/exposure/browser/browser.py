@@ -34,6 +34,7 @@ from pmr2.app.workspace.exceptions import *
 from pmr2.app.exposure import table
 
 from pmr2.app.exposure.interfaces import *
+from pmr2.app.exposure.browser.interfaces import *
 
 from pmr2.app.interfaces import *
 from pmr2.app.browser.interfaces import *

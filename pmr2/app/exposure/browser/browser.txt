@@ -11,7 +11,7 @@ directories required should have been already set up by the script.
     >>> import zope.component
     >>> from Products.CMFCore.utils import getToolByName
     >>> from plone.z3cform.tests import setup_defaults
-    >>> from pmr2.app.exposure import browser as exposure
+    >>> from pmr2.app.exposure.browser import browser as exposure
     >>> from pmr2.app.workspace import browser as workspace
     >>> from pmr2.app.tests.base import TestRequest
     >>> from pmr2.app.interfaces import *
