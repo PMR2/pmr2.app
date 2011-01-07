@@ -50,7 +50,6 @@ class ExposureContainerTraverser(DefaultPublishTraverse):
     adapts(IExposureContainer, IRequest)
 
     base_query = {
-        'review_state': 'published',
         'portal_type': 'Exposure',
     }
 
