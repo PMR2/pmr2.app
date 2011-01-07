@@ -94,7 +94,7 @@ class ExposureContainerTraverser(DefaultPublishTraverse):
         maxid = name + 'z'
 
         query = {
-            'path': self.context.absolute_url_path(),
+            'path': '/'.join(self.context.getPhysicalPath()),
             'id': {
                 'query': [name, maxid],
                 'range': 'minmax',
