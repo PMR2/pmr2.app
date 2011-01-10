@@ -13,6 +13,17 @@
       name="exposure_list"
       />
 
+  <!-- exposure rollover table from a view of workspace -->
+
+  <adapter
+      for="pmr2.app.workspace.interfaces.IWorkspaceLogProvider
+           zope.publisher.interfaces.IPublisherRequest
+           .table.IExposureRolloverLogTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory="pmr2.app.workspace.table.ChangesetRadioColumn"
+      name="node"
+      />
+
   <adapter
       for="pmr2.app.workspace.interfaces.IWorkspaceLogProvider
            zope.publisher.interfaces.IPublisherRequest
