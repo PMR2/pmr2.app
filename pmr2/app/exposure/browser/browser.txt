@@ -34,7 +34,7 @@ Exposure container creates new exposure, we test it here.
 
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.workspace': u'eggs',
+    ...         'form.widgets.workspace': u'/plone/workspace/eggs',
     ...         'form.widgets.commit_id': u'00000000',
     ...         'form.buttons.add': 1,
     ...     })
@@ -49,7 +49,7 @@ Exposure object is created with fields properly populated.
 ::
 
     >>> self.portal.exposure[oid].workspace
-    u'eggs'
+    u'/plone/workspace/eggs'
     >>> self.portal.exposure[oid].commit_id
     u'00000000'
 
@@ -251,7 +251,7 @@ a workspace with actual data.
     >>> rev = unicode(self.archive_revs[1])
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.workspace': u'pmr2hgtest',
+    ...         'form.widgets.workspace': u'/plone/workspace/pmr2hgtest',
     ...         'form.widgets.commit_id': rev,
     ...         'form.buttons.add': 1,
     ...     })
@@ -364,7 +364,7 @@ Now we do the same with our set of data, with more content.
     >>> rev = unicode(rawrev)
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.workspace': u'rdfmodel',
+    ...         'form.widgets.workspace': u'/plone/workspace/rdfmodel',
     ...         'form.widgets.commit_id': rev,
     ...         'form.buttons.add': 1,
     ...     })
@@ -1049,7 +1049,7 @@ utility defined for this task.
     ...         'docview_generator': u'safe_html',
     ...         'docview_gensource': u'component/docs/index.html',
     ...         'title': u'Simple HTML',
-    ...         'workspace': u'rdfmodel',
+    ...         'workspace': u'/plone/workspace/rdfmodel',
     ...         'Subject': ('Test',),
     ...     })
     ... ]
@@ -1067,7 +1067,7 @@ First we need need a new exposure object.
     >>> rawrev = rawrevs[2]
     >>> rev = unicode(rawrev)
     >>> data = {
-    ...     'workspace': u'rdfmodel',
+    ...     'workspace': u'/plone/workspace/rdfmodel',
     ...     'curation': None,
     ...     'commit_id': rev,
     ... }
