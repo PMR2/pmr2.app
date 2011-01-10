@@ -1156,7 +1156,8 @@ Currently, the more accessible, easier to use form for this rollover
 feature is attached to a view within workspaces.  We can achieve this
 by instantiating the form from one.
 
-First we verify that the form contain the fields we are interested in.
+First we verify that the form contain the fields we are interested in,
+with the radio boxes available to be selected.
 ::
 
     >>> context = self.portal.workspace['rdfmodel']
@@ -1166,6 +1167,36 @@ First we verify that the form contain the fields we are interested in.
     >>> result = view.form_instance()
     >>> '006f11cd9211abd2a879df0f6c7f27b9844a8ff2' in result
     True
+    >>> '<td><label><input type="radio" class="radio-widget" ' \
+    ... 'name="form.widgets.commit_id" ' \
+    ... 'value="eef1e9af39a79b2fc47ef978f8e61e853bad54e2"  /> ' \
+    ... 'eef1e9af39a7</label></td>' in result
+    True
+    >>> '<input type="radio" class="radio-widget" ' \
+    ... 'name="form.widgets.exposure_id"' in result
+    True
+
+Then we can submit the form, and see that the data still match.
+::
+
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': rev,
+    ...    'form.widgets.exposure_id': unicode(new_id),
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                         name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> nextURL = request.response.getHeader('Location')
+    >>> print nextURL
+    http://.../exposure/...
+    >>> next_id = nextURL.split('/')[-1]
+    >>> next_ex = self.portal.exposure[next_id]
+    >>> nextport = exposure.ExposurePort(next_ex, None)
+    >>> result = list(nextport.export())
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
 
 Miscellenous
 ------------
