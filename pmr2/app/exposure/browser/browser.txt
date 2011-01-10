@@ -1149,6 +1149,27 @@ commit.
     ...     pp(answer)
     ...     pp(result)
 
+Rollovers via workspace
+-----------------------
+
+Currently, the more accessible, easier to use form for this rollover
+feature is attached to a view within workspaces.  We can achieve this
+by instantiating the form from one.
+
+First we verify that the form contain the fields we are interested in.
+::
+
+    >>> context = self.portal.workspace['rdfmodel']
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                          name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> '006f11cd9211abd2a879df0f6c7f27b9844a8ff2' in result
+    True
+
+Miscellenous
+------------
+
 Need a test case to handle file name changes, either through move or
 delete.
 

@@ -210,18 +210,18 @@ class WorkspaceLog(WorkspaceTraversePage, z3c.table.value.ValuesForContainer):
 
     @property
     def log(self):
-        if not hasattr(self, '_log'):
-            try:
-                storage = zope.component.queryAdapter(self.context, IStorage)
-                if self.datefmt:
-                    storage.datefmt = self.datefmt
-                if self.request.get('rev', None):
-                    storage.checkout(self.request['rev'])
-                rev = storage.rev
-                self._log = storage.log(rev, self.maxchanges)
-            except RevisionNotFoundError:
-                raise HTTPNotFound(self.context.title_or_id())
-        return self._log
+        try:
+            storage = zope.component.queryAdapter(self.context, IStorage)
+            if self.datefmt:
+                storage.datefmt = self.datefmt
+            # This might be worth fixing, since the purpose here is
+            # to resolve the full revision id from user input.
+            if self.request.get('rev', None):
+                storage.checkout(self.request['rev'])
+            rev = storage.rev
+            return storage.log(rev, self.maxchanges)
+        except RevisionNotFoundError:
+            raise HTTPNotFound(self.context.title_or_id())
 
     def values(self):
         return self.log
