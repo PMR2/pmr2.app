@@ -19,34 +19,34 @@ class TestAdapters(ExposureDocTestCase):
     def test_000_original_adapter(self):
         tester = self.portal.exposure.tester
         self.assertEqual(tester.workspace, None)
-        tester.workspace = u'import1'
+        tester.workspace = u'cake'
         workspace = ExposureToWorkspaceAdapter(tester)
         self.assertEqual(workspace.absolute_url_path(), 
-            '/plone/workspace/import1')
+            '/plone/workspace/cake')
 
     def test_001_fullpath_adapter(self):
         tester = self.portal.exposure.tester
         self.assertEqual(tester.workspace, None)
-        tester.workspace = u'/plone/workspace/import1'
+        tester.workspace = u'/plone/workspace/cake'
         workspace = ExposureToWorkspaceAdapter(tester)
         self.assertEqual(workspace.absolute_url_path(), 
-            '/plone/workspace/import1')
+            '/plone/workspace/cake')
 
     def test_010_original_traverse(self):
         tester = self.portal.exposure.tester
         self.assertEqual(tester.workspace, None)
-        tester.workspace = u'import1'
+        tester.workspace = u'cake'
         workspace = ExposureToWorkspaceTraverse(tester)
         self.assertEqual(workspace.absolute_url_path(), 
-            '/plone/workspace/import1')
+            '/plone/workspace/cake')
 
     def test_011_fullpath_traverse(self):
         tester = self.portal.exposure.tester
         self.assertEqual(tester.workspace, None)
-        tester.workspace = u'/plone/workspace/import1'
+        tester.workspace = u'/plone/workspace/cake'
         workspace = ExposureToWorkspaceTraverse(tester)
         self.assertEqual(workspace.absolute_url_path(), 
-            '/plone/workspace/import1')
+            '/plone/workspace/cake')
 
 
 class TestExposureStorageAdapter(ExposureDocTestCase):

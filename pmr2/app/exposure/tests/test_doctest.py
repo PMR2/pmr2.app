@@ -13,6 +13,9 @@ import pmr2.app.workspace
 
 from pmr2.app.exposure.tests import base
 
+from pmr2.mercurial.tests.base import MercurialDocTestCase
+
+
 def test_suite():
     return unittest.TestSuite([
 
@@ -26,14 +29,14 @@ def test_suite():
         # Forms and interactions.
         ztc.ZopeDocFileSuite(
             'browser/browser.txt', package='pmr2.app.exposure',
-            test_class=base.ExposureDocTestCase,
+            test_class=MercurialDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
         # Catalog
         ztc.ZopeDocFileSuite(
             'catalog.txt', package='pmr2.app.exposure',
-            test_class=base.ExposureDocTestCase,
+            test_class=MercurialDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 

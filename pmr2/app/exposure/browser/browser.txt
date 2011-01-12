@@ -63,7 +63,7 @@ Exposures can be created via the creation form defined here.
     >>> wkspc = self.portal.workspace.pmr2hgtest
     >>> request = TestRequest(form={'form.buttons.add': 1,})
     >>> form = exposure.CreateExposureForm(wkspc, request)
-    >>> commit_id = self.archive_revs[-1]
+    >>> commit_id = self.pmr2hgtest_revs[-1]
     >>> form.traverse_subpath = [commit_id]
     >>> result = form()
     >>> next = request.response.getHeader('Location')
@@ -248,7 +248,7 @@ built in setup (uses pmr2.mercurial.tests) and create the exposure using
 a workspace with actual data.
 ::
 
-    >>> rev = unicode(self.archive_revs[1])
+    >>> rev = unicode(self.pmr2hgtest_revs[1])
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.workspace': u'/plone/workspace/pmr2hgtest',

@@ -52,29 +52,3 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
         utils.mkrepo(self.pmr2.dirOf(self.portal.workspace.eggs))
 
         self.portal.workspace['cake'] = Workspace('cake')
-
-        # create real Hg repos
-
-        import pmr2.mercurial.tests
-        from pmr2.mercurial.tests import util
-        # pmr2.mercurial
-        wdir = self.pmr2.createDir(self.portal.workspace)
-        util.extract_archive(wdir)
-        # pmr2.app
-        # XXX Mercurial specific
-        p2a_test = join(dirname(pmr2.testing.__file__), 'pmr2.app.testdata.tgz')
-        util.extract_archive(wdir, p2a_test)
-
-        self.archive_revs = util.ARCHIVE_REVS
-
-        def mkhg_workspace(name):
-            # XXX temporary method to work with existing tests until
-            # this is replaced
-            w = Workspace(name)
-            w.storage = u'mercurial'
-            self.portal.workspace[name] = w
-
-        mkhg_workspace('import1')
-        mkhg_workspace('import2')
-        mkhg_workspace('pmr2hgtest')
-        mkhg_workspace('rdfmodel')
