@@ -39,7 +39,7 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
         Sets up the environment that the exposure doctest needs.
         """
 
-        WorkspaceDocTestCase.setUp(self)
+        super(ExposureDocTestCase, self).setUp()
 
         self.pmr2.default_exposure_idgen = 'rand128hex'
         self.pmr2.repo_root = self.tmpdir
@@ -52,3 +52,46 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
         utils.mkrepo(self.pmr2.dirOf(self.portal.workspace.eggs))
 
         self.portal.workspace['cake'] = Workspace('cake')
+
+
+class CompleteDocTestCase(ExposureDocTestCase):
+
+    def setUp(self):
+        """\
+        Completes the other data within the portal so that other test
+        classes don't have to set up Exposure objects and friends.
+        """
+
+        super(CompleteDocTestCase, self).setUp()
+
+        from pmr2.app.settings import IPMR2GlobalSettings
+        from pmr2.idgen.interfaces import IIdGenerator
+        from pmr2.app.workspace.content import Workspace
+        from pmr2.app.exposure.content import ExposureContainer, Exposure
+
+        settings = zope.component.queryUtility(IPMR2GlobalSettings)
+        idgen = zope.component.queryUtility(IIdGenerator,
+            name=settings.default_exposure_idgen)
+
+        self.portal['exposure'] = ExposureContainer()
+        def mkexposure(workspace, commit_id, id_):
+            if not id_:
+                id_ = idgen.next()
+            e = Exposure(id_)
+            e.workspace = workspace
+            e.commit_id = commit_id
+            self.portal.exposure[id_] = e
+            self.portal.exposure[id_].reindexObject()
+
+        def mkdummywks(name):
+            w = Workspace(name)
+            w.storage = 'dummy_storage'
+            self.portal.workspace[name] = w
+
+        # we made a cake in parent
+        # mkdummywks('cake')
+        self.portal.workspace['cake'].storage = 'dummy_storage'
+        mkdummywks('test')
+
+        mkexposure(u'/plone/workspace/test', u'2', '1')
+        mkexposure(u'/plone/workspace/eggs', u'1', '2')

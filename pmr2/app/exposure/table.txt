@@ -1,0 +1,83 @@
+===================
+Tables in Exposures
+===================
+
+------------
+Introduction
+------------
+
+Exposures introduces a number of additions on top of workspaces.  This
+resulted in additional views which in turn provides new tables that will
+be rendered.
+
+-------
+Columns
+-------
+
+One of the views that exposure provide for workspace is the exposure 
+rollover view, where the structure of a previously created exposure is
+rolled on top of a new revision within a workspace, thus all the files
+with its original views are generated for this new revision, resulting
+in a new exposure.  This view provides new columns, which we will test
+below.
+
+First we define a table that will render the column that returns
+the revision id, along with the exposures of that id.
+::
+
+    >>> import zope.component
+    >>> from pmr2.app.tests.base import TestRequest
+    >>> from pmr2.app.workspace.interfaces import IStorage
+    >>> from pmr2.app.workspace.table import ChangesetRadioColumn
+    >>> from pmr2.app.exposure.table import ExposureColumn
+    >>> from z3c.table import table, value, column
+    >>>
+    >>> class Log(value.ValuesForContainer):
+    ...     def values(self):
+    ...         storage = zope.component.queryAdapter(
+    ...             self.context, IStorage)
+    ...         storage.checkout(None)
+    ...         rev = storage.rev
+    ...         return storage.log(rev, 50)
+    ... 
+    >>> class ExposureColumnTable(table.Table):
+    ...     sortOn = None
+    ...
+    ...     def setUpColumns(self):
+    ...         return [
+    ...             column.addColumn(self, ChangesetRadioColumn, u'commit_id'),
+    ...             column.addColumn(self, ExposureColumn, u'exposure'),
+    ...         ]
+    ...
+    >>> request = TestRequest()
+    >>> context = Log(self.portal.workspace.test, request, None)
+    >>> t = ExposureColumnTable(context, request)
+    >>> t.update()
+    >>> print t.render()
+    <table>
+      <thead>
+        <tr>
+          <th>Changeset</th>
+          <th>Exposure</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><label><input type="radio" class="radio-widget" name="form.widgets.commit_id" value="3"  /> 3</label></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><label><input type="radio" class="radio-widget" name="form.widgets.commit_id" value="2"  /> 2</label></td>
+          <td><a class="state-private" href="http://nohost/plone/exposure/1">1</a></td>
+        </tr>
+        <tr>
+          <td><label><input type="radio" class="radio-widget" name="form.widgets.commit_id" value="1"  /> 1</label></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><label><input type="radio" class="radio-widget" name="form.widgets.commit_id" value="0"  /> 0</label></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+

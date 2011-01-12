@@ -11,7 +11,8 @@ from Products.PloneTestCase.layer import onsetup
 from pmr2.testing.base import DocTestCase
 import pmr2.app.workspace
 
-from pmr2.app.exposure.tests import base
+from pmr2.app.exposure.tests.base import ExposureDocTestCase
+from pmr2.app.exposure.tests.base import CompleteDocTestCase
 
 from pmr2.mercurial.tests.base import MercurialDocTestCase
 
@@ -33,10 +34,17 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
+        # Table
+        ztc.ZopeDocFileSuite(
+            'table.txt', package='pmr2.app.exposure',
+            test_class=CompleteDocTestCase,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
+        ),
+
         # Catalog
         ztc.ZopeDocFileSuite(
             'catalog.txt', package='pmr2.app.exposure',
-            test_class=MercurialDocTestCase,
+            test_class=ExposureDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
