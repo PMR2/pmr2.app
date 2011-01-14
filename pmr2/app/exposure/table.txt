@@ -28,7 +28,6 @@ the revision id, along with the exposures of that id.
     >>> import zope.component
     >>> from pmr2.app.tests.base import TestRequest
     >>> from pmr2.app.workspace.interfaces import IStorage
-    >>> from pmr2.app.workspace.table import ChangesetRadioColumn
     >>> from pmr2.app.exposure.table import ExposureColumn
     >>> from z3c.table import table, value, column
     >>>
@@ -45,9 +44,60 @@ the revision id, along with the exposures of that id.
     ...
     ...     def setUpColumns(self):
     ...         return [
-    ...             column.addColumn(self, ChangesetRadioColumn, u'commit_id'),
     ...             column.addColumn(self, ExposureColumn, u'exposure'),
     ...         ]
+    ...
+    >>> request = TestRequest()
+    >>> context = Log(self.portal.workspace.test, request, None)
+    >>> t = ExposureColumnTable(context, request)
+    >>> t.update()
+    >>> print t.render()
+    <table>
+      <thead>
+        <tr>
+          <th>Exposure</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+        </tr>
+        <tr>
+          <td><a class="state-private" href="http://nohost/plone/exposure/1">1</a></td>
+        </tr>
+        <tr>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+The other column adds in a series of radio buttons as the selection
+widgets for the workspace rollover form.
+::
+
+    >>> from pmr2.app.workspace.table import ChangesetRadioColumn
+    >>> from pmr2.app.exposure.table import ExposureRadioColumn
+    >>>
+    >>> class Log(value.ValuesForContainer):
+    ...     def values(self):
+    ...         storage = zope.component.queryAdapter(
+    ...             self.context, IStorage)
+    ...         storage.checkout(None)
+    ...         rev = storage.rev
+    ...         return storage.log(rev, 50)
+    ... 
+    >>> class ExposureColumnTable(table.Table):
+    ...     sortOn = None
+    ...
+    ...     def setUpColumns(self):
+    ...         return [
+    ...             column.addColumn(self, ChangesetRadioColumn, u'commit_id'),
+    ...             column.addColumn(self, ExposureRadioColumn, u'exposure'),
+    ...         ]
+    ...
     ...
     >>> request = TestRequest()
     >>> context = Log(self.portal.workspace.test, request, None)
@@ -64,20 +114,19 @@ the revision id, along with the exposures of that id.
       <tbody>
         <tr>
           <td><label><input type="radio" class="radio-widget" name="form.widgets.commit_id" value="3"  /> 3</label></td>
-          <td></td>
+          <td>(none)</td>
         </tr>
         <tr>
           <td><label><input type="radio" class="radio-widget" name="form.widgets.commit_id" value="2"  /> 2</label></td>
-          <td><a class="state-private" href="http://nohost/plone/exposure/1">1</a></td>
+          <td><label><input type="radio" class="radio-widget" name="form.widgets.exposure_id" value="1"  /> <a href="http://nohost/plone/exposure/1">1</a></label></td>
         </tr>
         <tr>
           <td><label><input type="radio" class="radio-widget" name="form.widgets.commit_id" value="1"  /> 1</label></td>
-          <td></td>
+          <td>(none)</td>
         </tr>
         <tr>
           <td><label><input type="radio" class="radio-widget" name="form.widgets.commit_id" value="0"  /> 0</label></td>
-          <td></td>
+          <td>(none)</td>
         </tr>
       </tbody>
     </table>
-
