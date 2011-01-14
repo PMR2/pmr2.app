@@ -47,6 +47,12 @@ class IFileRenderer(zope.interface.Interface):
     )
 
 
+class IDirectoryRenderer(zope.interface.Interface):
+    """\
+    This is a marker interface for directory listing renderer.
+    """
+
+
 class IRendererDictionary(zope.interface.Interface):
     """\
     This provides file rendering capability.

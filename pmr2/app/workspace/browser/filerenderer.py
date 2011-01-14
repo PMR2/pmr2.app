@@ -84,26 +84,33 @@ class BaseFileRenderer(FileInfoPage):
         return ''
 
 
-class DirectoryRenderer(BaseFileRenderer):
+class DirectoryRenderer(BaseFileRenderer, table.FileManifestTable):
     """\
-    Default file render.
+    Default directory render.  Includes table.
     """
 
-    zope.interface.implements(IWorkspaceFileListProvider)
+    zope.interface.implements(IDirectoryRenderer)
+
+    def __init__(self, context, request):
+        BaseFileRenderer.__init__(self, context, request)
+        table.FileManifestTable.__init__(self, context, request)
 
     @property
     def values(self):
-        # this is a callable object, or what the table class expects.
-        return self._values['contents']
+        # ignoring the adapter for now.
+        return self._values['contents']()
+
+    def update(self):
+        BaseFileRenderer.update(self)
+        self._values = self.request['_data']
+        table.FileManifestTable.update(self)
+
+    def render(self):
+        return table.FileManifestTable.render(self)
 
     def __call__(self):
-        # this is a dictionary with a contents key, which is a
-        # method that will return the values expected by the table
-        # rendering class.
-        self._values = self.request['_data']
-        tbl = table.FileManifestTable(self, self.request)
-        tbl.update()
-        return tbl.render()
+        self.update()
+        return self.render()
 
 
 class DefaultFileRenderer(BaseFileRenderer):

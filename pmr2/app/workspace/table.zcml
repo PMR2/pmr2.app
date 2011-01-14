@@ -34,7 +34,7 @@
   <!-- changelog table -->
 
   <adapter
-      for=".interfaces.IWorkspaceLogProvider
+      for=".interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            .table.IChangelogTable"
       provides="z3c.table.interfaces.IColumn"
@@ -43,7 +43,7 @@
       />
 
   <adapter
-      for=".interfaces.IWorkspaceLogProvider
+      for=".interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            .table.IChangelogTable"
       provides="z3c.table.interfaces.IColumn"
@@ -52,7 +52,7 @@
       />
 
   <adapter
-      for=".interfaces.IWorkspaceLogProvider
+      for=".interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            .table.IChangelogTable"
       provides="z3c.table.interfaces.IColumn"
@@ -63,7 +63,7 @@
   <!-- shortlog table -->
 
   <adapter
-      for=".interfaces.IWorkspaceLogProvider
+      for=".interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            .table.IShortlogTable"
       provides="z3c.table.interfaces.IColumn"
@@ -78,10 +78,14 @@
       factory=".table.ValuesForWorkspaceStatusTable"
       />
 
+  <adapter
+      factory=".table.ValuesForChangelogTable"
+      />
+
   <!-- file manifest table -->
 
   <adapter
-      for=".interfaces.IWorkspaceFileListProvider
+      for=".interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            .table.IFileManifestTable"
       provides="z3c.table.interfaces.IColumn"
@@ -90,7 +94,7 @@
       />
 
   <adapter
-      for=".interfaces.IWorkspaceFileListProvider
+      for=".interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            .table.IFileManifestTable"
       provides="z3c.table.interfaces.IColumn"
@@ -99,7 +103,7 @@
       />
 
   <adapter
-      for=".interfaces.IWorkspaceFileListProvider
+      for=".interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            .table.IFileManifestTable"
       provides="z3c.table.interfaces.IColumn"
@@ -108,7 +112,7 @@
       />
 
   <adapter
-      for=".interfaces.IWorkspaceFileListProvider
+      for=".interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            .table.IFileManifestTable"
       provides="z3c.table.interfaces.IColumn"
@@ -117,7 +121,7 @@
       />
 
   <adapter
-      for=".interfaces.IWorkspaceFileListProvider
+      for=".interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            .table.IFileManifestTable"
       provides="z3c.table.interfaces.IColumn"

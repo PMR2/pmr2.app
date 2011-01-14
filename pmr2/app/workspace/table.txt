@@ -16,6 +16,7 @@ Here we first import the modules and create required objects.
     >>> from zope.publisher.browser import TestRequest
     >>> from z3c.table.column import addColumn
     >>> from z3c.table.table import SequenceTable
+    >>> from z3c.table.value import ValuesMixin
     >>> from pmr2.app.workspace import interfaces
     >>> from pmr2.app.workspace import table
     >>> request = TestRequest()
@@ -117,17 +118,15 @@ html output, otherwise html is rendered as is.
       </tbody>
     </table>
 
---------------------------------
-Other Defined Columns and Tables
---------------------------------
+-----------------------
+Workspace Listing Table
+-----------------------
 
 WorkspaceContainer has a method that returns data in a specific format
 that we can render with WorkspaceStatusTable; we have to create a dummy
 to produce that.
 ::
 
-    >>> import zope.interface
-    >>> import zope.component
     >>> from pmr2.app.workspace.interfaces import IWorkspaceContainer
     >>> from pmr2.app.workspace.interfaces import IWorkspaceListing
     >>> 
@@ -176,30 +175,47 @@ to produce that.
       </tbody>
     </table>
 
+---------------
+Changelog Table
+---------------
+
 The pmr2 storage libraries also return data in lists or generators.
 We also have tables for them which we can test output with.  Here the
 changelog table is tested, using a fake container as context.
 ::
 
-    >>> data = [
-    ...     {
-    ...         'date': '1970-01-01 00:00',
-    ...         'author': 'user <user@example.com>', 
-    ...         'desc': 'a log',
-    ...         'node': 'a12345',
-    ...     },
-    ...     {
-    ...         'date': '1970-01-02 00:00',
-    ...         'author': 'user <user@example.com>', 
-    ...         'desc': 'another log ><',
-    ...         'node': 'c0ffee',
-    ...     },
-    ... ]
+    >>> class FakeWorkspace(object):
+    ...     zope.interface.implements(interfaces.IWorkspace)
+    ...     def absolute_url(self):
+    ...         return 'urn:example:'
+    ...     def __init__(self, values):
+    ...         self._values = values
+    ...     def values(self):
+    ...         return self._values
     ...
-    >>> context = FakeContainer()
-    >>> context._values = data
-    >>> context.context = FakeContainer()
-    >>> context.context.absolute_url = lambda: 'urn:example:'
+    >>> class DummyLog(ValuesMixin):
+    ...     zope.component.adapts(FakeWorkspace, TestRequest,
+    ...         table.IChangelogTable)
+    ...     @property
+    ...     def values(self):
+    ...         return self.context.values()
+    ...
+    >>> zope.component.provideAdapter(DummyLog)
+    >>> context = FakeWorkspace([
+    ...         {
+    ...             'date': '1970-01-01 00:00',
+    ...             'author': 'user <user@example.com>', 
+    ...             'desc': 'a log',
+    ...             'node': 'a12345',
+    ...         },
+    ...         {
+    ...             'date': '1970-01-02 00:00',
+    ...             'author': 'user <user@example.com>', 
+    ...             'desc': 'another log ><',
+    ...             'node': 'c0ffee',
+    ...         },
+    ...     ])
+    ...
     >>> request = TestRequest()
     >>> t = table.ChangelogTable(context, request)
     >>> t.update()
@@ -267,13 +283,17 @@ portal objects, rendering this unworkable.
 
 Now we test the manifest table.  Going to reuse the fake container 
 object, only change the data and add in a fake storage rev attribute.
+
+XXX this is absolutely horrid and non-standard way of using the
+ValuesMixin and friends.  Please fix.
 ::
 
-    >>> data = [
+    >>> context = FakeWorkspace([
     ...     {
     ...         'permissions': 'drwxr-xr-x',
     ...         'basename': 'dir',
     ...         'file': 'dir/',
+    ...         'node': 'c0ffee',
     ...     },
     ...     {
     ...         'permissions': '-rwxr-xr-x',
@@ -281,6 +301,7 @@ object, only change the data and add in a fake storage rev attribute.
     ...         'size': 0,
     ...         'basename': 'foo',
     ...         'file': 'foo',
+    ...         'node': 'c0ffee',
     ...     },
     ...     {
     ...         'permissions': '-rwxr-xr-x',
@@ -288,12 +309,11 @@ object, only change the data and add in a fake storage rev attribute.
     ...         'size': 10,
     ...         'basename': 'bar',
     ...         'file': 'bar',
+    ...         'node': 'c0ffee',
     ...     },
-    ... ]
+    ... ])
     ...
-    >>> context._values = data
-    >>> context.rev = 'c0ffee'
-    >>> request = TestRequest()
+    >>> request = TestRequest({'rev': 'c0ffee'})
     >>> t = table.FileManifestTable(context, request)
     >>> t.update()
     >>> print t.render()

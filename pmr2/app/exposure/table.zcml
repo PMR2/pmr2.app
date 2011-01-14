@@ -5,7 +5,7 @@
   <!-- shortlog table -->
 
   <adapter
-      for="pmr2.app.workspace.interfaces.IWorkspaceLogProvider
+      for="pmr2.app.workspace.interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            pmr2.app.workspace.table.IShortlogTable"
       provides="z3c.table.interfaces.IColumn"
@@ -16,7 +16,7 @@
   <!-- exposure rollover table from a view of workspace -->
 
   <adapter
-      for="pmr2.app.workspace.interfaces.IWorkspaceLogProvider
+      for="pmr2.app.workspace.interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            .table.IExposureRolloverLogTable"
       provides="z3c.table.interfaces.IColumn"
@@ -25,7 +25,7 @@
       />
 
   <adapter
-      for="pmr2.app.workspace.interfaces.IWorkspaceLogProvider
+      for="pmr2.app.workspace.interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            .table.IExposureRolloverLogTable"
       provides="z3c.table.interfaces.IColumn"

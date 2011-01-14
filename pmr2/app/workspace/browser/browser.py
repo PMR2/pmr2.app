@@ -197,7 +197,7 @@ WorkspacePageView = layout.wrap_form(
 )
 
 
-class WorkspaceLog(WorkspaceTraversePage, z3c.table.value.ValuesForContainer):
+class WorkspaceLog(WorkspaceTraversePage):
 
     zope.interface.implements(IWorkspaceLogProvider)
 
@@ -208,26 +208,13 @@ class WorkspaceLog(WorkspaceTraversePage, z3c.table.value.ValuesForContainer):
     maxchanges = 50  # default value.
     datefmt = None # default value.
 
-    @property
-    def log(self):
-        try:
-            storage = zope.component.queryAdapter(self.context, IStorage)
-            if self.datefmt:
-                storage.datefmt = self.datefmt
-            # This might be worth fixing, since the purpose here is
-            # to resolve the full revision id from user input.
-            if self.request.get('rev', None):
-                storage.checkout(self.request['rev'])
-            rev = storage.rev
-            return storage.log(rev, self.maxchanges)
-        except RevisionNotFoundError:
-            raise HTTPNotFound(self.context.title_or_id())
-
-    def values(self):
-        return self.log
-
     def content(self):
-        t = self.tbl(self, self.request)
+        # putting datefmt into request as the value provider for the
+        # table currently uses it to determine output format...
+        self.request['datefmt'] = self.datefmt
+        self.request['maxchanges'] = self.maxchanges
+
+        t = self.tbl(self.context, self.request)
         t.update()
         return t.render()
 
@@ -256,12 +243,16 @@ WorkspaceShortlogView = layout.wrap_form(
 #    tbl = table.WorkspacePageShortlogTable
 #
 
-class WorkspaceLogRss(page.RssPage, WorkspaceLog):
+class WorkspaceLogRss(page.RssPage):
 
-    datefmt = 'rfc2822'
+    shortlog = False
+    maxchanges = 50  # default value.
 
     def items(self):
-        for i in self.values():
+        storage = zope.component.queryAdapter(self.context, IStorage)
+        storage.datefmt = 'rfc2822'
+        entries = storage.log(storage.rev, self.maxchanges)
+        for i in entries:
             yield {
                 'title': i['desc'].splitlines()[0],
                 # XXX magic manifest link

@@ -16,7 +16,7 @@ class ExposureColumn(ItemKeyColumn):
     itemkey = None  # actually derived from catalog
 
     def getItem(self, item):
-        workspace = self.context.context  # the workspace
+        workspace = self.context
         pt = getToolByName(workspace, 'portal_catalog', None)
         if pt is None:
             return None

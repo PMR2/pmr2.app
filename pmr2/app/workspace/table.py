@@ -13,7 +13,9 @@ from z3c.table.interfaces import ITable
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
+from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import IWorkspaceListing
+from pmr2.app.workspace.interfaces import IStorage
 
 
 # Common
@@ -192,11 +194,11 @@ class ShortlogOptionColumn(ItemKeyColumn):
         # also could render changeset link (for diffs)
         result = [
             u'<a href="%s/@@file/%s/">[manifest]</a>' % \
-                (self.context.context.absolute_url(), self.getItem(item)),
+                (self.context.absolute_url(), self.getItem(item)),
             u'<a href="%s/@@archive/%s/zip">[zip]</a>' % \
-                (self.context.context.absolute_url(), self.getItem(item)),
+                (self.context.absolute_url(), self.getItem(item)),
             u'<a href="%s/@@archive/%s/gz">[gz]</a>' % \
-                (self.context.context.absolute_url(), self.getItem(item)),
+                (self.context.absolute_url(), self.getItem(item)),
         ]
         return ' '.join(result)
 
@@ -223,6 +225,35 @@ class ShortlogTable(z3c.table.table.Table):
 
     zope.interface.implements(IChangelogTable, IShortlogTable)
     sortOn = None
+
+
+class ValuesForChangelogTable(ValuesMixin):
+    """Values from a simple IContainer."""
+
+    zope.component.adapts(zope.interface.Interface, IBrowserRequest,
+        IChangelogTable)
+
+    @property
+    def values(self):
+        # XXX because z3c.tables does not support iterators.
+        return list(self.log())
+
+    def log(self):
+        try:
+            storage = zope.component.queryAdapter(self.context, IStorage)
+            datefmt = self.request.get('datefmt', None)
+            rev = self.request.get('rev', None)
+            maxchanges = self.request.get('maxchanges', 50)
+            if datefmt:
+                storage.datefmt = datefmt
+            # This might be worth fixing, since the purpose here is
+            # to resolve the full revision id from user input.
+            if rev:
+                storage.checkout(rev)
+            rev = storage.rev
+            return storage.log(rev, maxchanges)
+        except RevisionNotFoundError:
+            raise HTTPNotFound(self.context.title_or_id())
 
 
 # Workspace manifest table.
@@ -257,8 +288,8 @@ class FilenameColumn(EscapedItemKeyColumn):
     def renderCell(self, item):
         # also could render changeset link (for diffs)
         return u'<a href="%s/@@file/%s/%s">%s</a>' % (
-            self.table.context.context.absolute_url(),
-            self.table.context.rev,
+            self.table.context.absolute_url(),
+            item['node'],
             item['file'],
             self.getItem(item),
         )
@@ -273,8 +304,8 @@ class FileOptionColumn(EscapedItemKeyColumn):
         # also could render changeset link (for diffs)
         if item['permissions'][0] != 'd':
             result = [u'<a href="%s/@@rawfile/%s/%s">[%s]</a>' % (
-                self.table.context.context.absolute_url(),
-                self.table.context.rev,
+                self.table.context.absolute_url(),
+                item['node'],
                 item['file'],
                 _(u'download'),
             )]
@@ -284,8 +315,8 @@ class FileOptionColumn(EscapedItemKeyColumn):
             # *.session.xml assumption
             if item['file'].endswith('.session.xml'):
                 result.append(u'<a href="%s/@@xmlbase/%s/%s">[%s]</a>' % (
-                    self.table.context.context.absolute_url(),
-                    self.table.context.rev,
+                    self.table.context.absolute_url(),
+                    item['node'],
                     item['file'],
                     _(u'run'),
                 ))
