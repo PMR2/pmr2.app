@@ -29,6 +29,10 @@ class ExposureColumn(ItemKeyColumn):
         query['pmr2_exposure_commit_id'] = item['node']
         return pt(**query)
 
+    def getItemValue(self, item):
+        # return the object path of the exposure
+        return [i.getPath() for i in self.getItem(item)]
+
     def renderCell(self, item):
         items = self.getItem(item)
         if items:
@@ -39,11 +43,38 @@ class ExposureColumn(ItemKeyColumn):
         return u''
 
 
-class ExposureRadioColumn(ItemKeyRadioColumn, ExposureColumn):
+class ExposureRadioColumn(ExposureColumn, ItemKeyRadioColumn):
+    """\
+    This combines the exposure column with the radio column, but as this
+    column provides multiple values at a time, this is different from
+    the shipped RadioColumn.
+    """
 
-    def getItemKey(self, item):
-        # XXX magic
-        return u'form.widgets.exposure_id'
+    _selectedItems = None
+
+    @apply
+    def selectedItem():
+        # do not use the table, because a) this column isn't a primary
+        # key, b) this column provides multiple values per cell, and
+        # c) the primary key lives in another column.
+        def get(self):
+            if self._selectedItems and len(self._selectedItems):
+                return list(self._selectedItems).pop()
+        def set(self, value):
+            self._selectedItems = [value]
+        return property(get, set)
+
+    def update(self):
+        """\
+        Like the parent method, this figures out the selectedItem, but
+        we won't be using self.table.values as the column provides it.
+        """
+
+        # using None as the parameter value as getItemKey should return
+        # the same result regardless of input.
+        selected = self.request.get(self.getItemKey(None), [])
+        if selected:
+            self.selectedItem = selected.pop()
 
     def renderCell(self, item):
         items = self.getItem(item)
@@ -51,15 +82,16 @@ class ExposureRadioColumn(ItemKeyRadioColumn, ExposureColumn):
             return u'(none)'
         result = []
         for i in items:
-            selected = (item == self.selectedItem) and \
+            selected = (i.getPath() == self.selectedItem) and \
                 u'checked="checked"' or u''
             radio = u'<input type="radio" class="%s" name="%s" ' \
                      'value="%s" %s />' % ('radio-widget',
                                            self.getItemKey(item), 
-                                           i.id,
+                                           i.getPath(),
                                            selected)
-            result.append(u'<label>%s <a href="%s">%s</a></label>' % (
-                radio, i.getURL(), i.Title or i.id))
+            result.append(u'<label>%s <a class="state-%s" '
+                           'href="%s">%s</a></label>' % (
+                radio, i.pmr2_review_state, i.getURL(), i.Title or i.id))
         return '<br />\n'.join(result)
 
 

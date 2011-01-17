@@ -1363,19 +1363,42 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
     def handleMigrate(self, action):
         data, errors = self.extractData()
         if errors:
-            self.status = self.formErrorsMessage
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(
+                u'Please ensure both radio columns have been selected before '
+                 'trying again.',
+                'error')
             return
 
+        # acquire default container
         try:
             exposure_container = restrictedGetExposureContainer()
+            self.exposure_container = exposure_container
+            self._gotExposureContainer = True
         except Unauthorized:
-            self.status = 'Unauthorized to create new exposure.'
-            raise z3c.form.interfaces.ActionExecutionError(
-                ExposureContainerInaccessibleError())
-        self._gotExposureContainer = True
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(
+                u'Unauthorized to create new exposure at default location.',
+                'error')
+            return
 
-        self.exposure_container = exposure_container
-        self.source_exposure = exposure_container[data['exposure_id']]
+        # acquire source
+        try:
+            self.source_exposure = self.context.restrictedTraverse(
+                data['exposure_path'])
+        except Unauthorized:
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(
+                u'Unauthorized to read exposure at selected location',
+                'error')
+            return
+        except KeyError:
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(
+                u'Cannot find exposure at selected location.',
+                'error')
+            return
+
 
         eaf = ExposureAddForm(exposure_container, None)
         data = {

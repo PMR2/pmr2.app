@@ -1173,7 +1173,7 @@ with the radio boxes available to be selected.
     ... 'eef1e9af39a7</label></td>' in result
     True
     >>> '<input type="radio" class="radio-widget" ' \
-    ... 'name="form.widgets.exposure_id"' in result
+    ... 'name="form.widgets.exposure_path"' in result
     True
 
 Then we can submit the form, and see that the data still match.
@@ -1181,7 +1181,7 @@ Then we can submit the form, and see that the data still match.
 
     >>> request = TestRequest(form={
     ...    'form.widgets.commit_id': rev,
-    ...    'form.widgets.exposure_id': unicode(new_id),
+    ...    'form.widgets.exposure_path': '/plone/exposure/%s' % new_id,
     ...    'form.buttons.apply': 1,
     ... })
     >>> view = zope.component.queryMultiAdapter((context, request), 
@@ -1197,6 +1197,33 @@ Then we can submit the form, and see that the data still match.
     >>> if not result == answer:
     ...     pp(answer)
     ...     pp(result)
+
+Errors cases
+------------
+
+There are ways to submit this form using bad information.  Those will 
+need to be handled.
+::
+
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': rev,
+    ...    'form.widgets.exposure_path': u'',
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                         name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> request.response.getHeader('Location')
+
+The correctly selected value should have been selected, but it is not
+enabled at this point.
+::
+
+    >>> '<td><label><input type="radio" class="radio-widget" ' \
+    ... 'name="form.widgets.commit_id" ' \
+    ... 'value="eef1e9af39a79b2fc47ef978f8e61e853bad54e2" ' \
+    ... 'selected="selected" />' in result
+    False
 
 Miscellenous
 ------------

@@ -215,6 +215,8 @@ class WorkspaceLog(WorkspaceTraversePage):
         self.request['maxchanges'] = self.maxchanges
 
         t = self.tbl(self.context, self.request)
+        # the parent of the table is this form.
+        t.__parent__ = self
         t.update()
         return t.render()
 

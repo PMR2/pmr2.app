@@ -124,15 +124,18 @@ class IExposureRolloverForm(zope.interface.Interface):
     """
     """
 
-    # XXX this should be some sort of radio choice, but I haven't
-    # figured out how to integrate the radio widgets with the table.
+    # XXX these should be some sort of radio choice; while I have used
+    # the table with the custom radio columns, it will be nice to figure
+    # out how to integrate the values acquired from there onto some
+    # vocabulary that can be placed here.
 
     commit_id = zope.schema.TextLine(
-        title=u'Commit ID'
+        title=u'Commit ID',
     )
 
-    exposure_id = zope.schema.TextLine(
-        title=u'Exposure ID'
+    exposure_path = zope.schema.ASCIILine(
+        title=u'Exposure Path',
+        description=u'Absolute path to the exposure object.',
     )
 
 

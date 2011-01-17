@@ -4,13 +4,17 @@
 
   <!-- shortlog table -->
 
+  <!-- reason why this has exposure_path as name is because
+       the current implementation for IExposureRolloverLogTable
+       inherits from whatever implements IShortlogTable.  Might be
+       worth correcting later. -->
   <adapter
       for="pmr2.app.workspace.interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
            pmr2.app.workspace.table.IShortlogTable"
       provides="z3c.table.interfaces.IColumn"
       factory=".table.ExposureColumn"
-      name="exposure_list"
+      name="exposure_path"
       />
 
   <!-- exposure rollover table from a view of workspace -->
@@ -21,7 +25,7 @@
            .table.IExposureRolloverLogTable"
       provides="z3c.table.interfaces.IColumn"
       factory="pmr2.app.workspace.table.ChangesetRadioColumn"
-      name="node"
+      name="commit_id"
       />
 
   <adapter
@@ -30,7 +34,7 @@
            .table.IExposureRolloverLogTable"
       provides="z3c.table.interfaces.IColumn"
       factory=".table.ExposureRadioColumn"
-      name="exposure_list"
+      name="exposure_path"
       />
 
 </configure>

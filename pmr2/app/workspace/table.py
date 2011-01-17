@@ -5,6 +5,8 @@ import zope.component
 import zope.interface
 from zope.publisher.interfaces.browser import IBrowserRequest
 
+from z3c.form.interfaces import IForm
+
 import z3c.table.column
 import z3c.table.table
 from z3c.table.value import ValuesMixin
@@ -40,13 +42,26 @@ class ItemKeyColumn(z3c.table.column.Column):
 
 class ItemKeyRadioColumn(ItemKeyColumn, z3c.table.column.RadioColumn):
 
+    def getItemKey(self, item):
+        form = self.table.__parent__
+        if not IForm.providedBy(form):
+            return super(ItemKeyRadioColumn, self).getItemKey(item)
+        try:
+            result = form.widgets[self.__name__].name
+        except KeyError:
+            # XXX perhaps we have some sort of warning here as the form
+            # does not define the widget we need, or that this column is
+            # registered with a wrong name.
+            result = super(ItemKeyRadioColumn, self).getItemKey(item)
+        return result
+
     def getItemValue(self, item):
         return self.getItem(item)
 
     def renderCell(self, item):
         radio = z3c.table.column.RadioColumn.renderCell(self, item)
         return '<label>%s %s</label>' % (
-            radio, self.getItem(item)[0:12])
+            radio, self.getItem(item)[0:12]) # XXX improper shortrev
 
 
 class EscapedItemKeyColumn(ItemKeyColumn):
@@ -161,10 +176,6 @@ class ChangesetRadioColumn(ItemKeyRadioColumn):
     weight = 0
     header = _(u'Changeset')
     itemkey = 'node'
-
-    def getItemKey(self, item):
-        # XXX magic
-        return u'form.widgets.commit_id'
 
 
 class ChangesetDateColumn(ItemKeyColumn):
