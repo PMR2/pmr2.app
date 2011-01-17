@@ -25,6 +25,7 @@ from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 from Products.CMFCore import permissions
+from Products.statusmessages.interfaces import IStatusMessage
 
 from pmr2.idgen.interfaces import IIdGenerator
 
@@ -71,11 +72,13 @@ def getGenerator(form):
     # Will need to change this if exposure containers can specify
     # its own id generation scheme.
     settings = zope.component.queryUtility(IPMR2GlobalSettings)
-    idgen = zope.component.queryUtility(IIdGenerator, 
-        name=settings.default_exposure_idgen)
+    name = settings.default_exposure_idgen
+    idgen = zope.component.queryUtility(IIdGenerator, name=name)
     if idgen is None:
-        form.status = 'The exposure id generator `%s` cannot be found; ' \
-                      'please contact site administrator.'
+        status = IStatusMessage(form.request)
+        status.addStatusMessage(
+            u'The exposure id generator `%s` cannot be found; '
+            'please contact site administrator.' % name, 'error')
         raise z3c.form.interfaces.ActionExecutionError(
             ExposureIdGeneratorMissingError())
     return idgen
