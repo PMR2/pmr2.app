@@ -129,7 +129,6 @@ pmr2/app/content/root.py
 pmr2/app/content/sandbox.py
 pmr2/app/content/support.py
 pmr2/app/content/workspace.py
-pmr2/app/exposure/tests/test_dummy_storage.py
 pmr2/app/interfaces/__init__.py
 pmr2/app/interfaces/exceptions.py
 pmr2/app/pas/__init__.py

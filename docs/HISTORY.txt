@@ -4,6 +4,10 @@ Changelog
 0.3.4 - Unreleased
 ------------------
 
+* Backported changes made in master (trunk) that allow an exposure
+  rollover to use a source exposure that does not reside in the default
+  exposure container.
+  - https://tracker.physiomeproject.org/show_bug.cgi?id=2806
 * Reapplied some patches that were meant to be patched.
   - Exposure custom traversal should be fixed for good, this time.
 
