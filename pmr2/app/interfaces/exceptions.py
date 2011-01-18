@@ -11,6 +11,7 @@ class PathLookupError(LookupError):
 
 # Validation errors
 
+
 class ObjectIdExistsError(zope.schema.ValidationError):
     __doc__ = _("""The specified id is already in use.""")
 
@@ -45,6 +46,10 @@ class WorkspaceObjNotFoundError(zope.schema.ValidationError):
 
 class ExposureContainerInaccessibleError(zope.schema.ValidationError):
     __doc__ = _("""The exposure container cannot be accessed.""")
+
+
+class ExposureInaccessibleError(zope.schema.ValidationError):
+    __doc__ = _("""The exposure cannot be accessed.""")
 
 
 class ExposureIdGeneratorMissingError(zope.schema.ValidationError):

@@ -3,6 +3,8 @@ import cgi
 
 from Products.CMFCore.utils import getToolByName
 
+from z3c.form.interfaces import IForm
+
 import z3c.table.column
 import z3c.table.table
 
@@ -32,13 +34,26 @@ class ItemKeyColumn(z3c.table.column.Column):
 
 class ItemKeyRadioColumn(ItemKeyColumn, z3c.table.column.RadioColumn):
 
+    def getItemKey(self, item):
+        form = self.table.__parent__
+        if not IForm.providedBy(form):
+            return super(ItemKeyRadioColumn, self).getItemKey(item)
+        try:
+            result = form.widgets[self.__name__].name
+        except KeyError:
+            # XXX perhaps we have some sort of warning here as the form
+            # does not define the widget we need, or that this column is
+            # registered with a wrong name.
+            result = super(ItemKeyRadioColumn, self).getItemKey(item)
+        return result
+
     def getItemValue(self, item):
         return self.getItem(item)
 
     def renderCell(self, item):
         radio = z3c.table.column.RadioColumn.renderCell(self, item)
         return '<label>%s %s</label>' % (
-            radio, self.getItem(item)[0:12])
+            radio, self.getItem(item)[0:12]) # XXX improper shortrev
 
 
 class EscapedItemKeyColumn(ItemKeyColumn):
@@ -206,6 +221,10 @@ class ExposureColumn(ItemKeyColumn):
         query['pmr2_exposure_commit_id'] = item['node']
         return pt(**query)
 
+    def getItemValue(self, item):
+        # return the object path of the exposure
+        return [i.getPath() for i in self.getItem(item)]
+
     def renderCell(self, item):
         items = self.getItem(item)
         if items:
@@ -216,11 +235,48 @@ class ExposureColumn(ItemKeyColumn):
         return u'(none)'
 
 
-class ExposureRadioColumn(ItemKeyRadioColumn, ExposureColumn):
+class ExposureRadioColumn(ExposureColumn, ItemKeyRadioColumn):
+    """\
+    This combines the exposure column with the radio column, but as this
+    column provides multiple values at a time, this is different from
+    the shipped RadioColumn.
+    """
+
+    _selectedItems = None
 
     def getItemKey(self, item):
         # XXX magic
-        return u'form.widgets.exposure_id'
+        return u'form.widgets.exposure_path'
+
+    @apply
+    def selectedItem():
+        # do not use the table, because a) this column isn't a primary
+        # key, b) this column provides multiple values per cell, and
+        # c) the primary key lives in another column.
+        def get(self):
+            if self._selectedItems and len(self._selectedItems):
+                return list(self._selectedItems).pop()
+        def set(self, value):
+            self._selectedItems = [value]
+        return property(get, set)
+
+    def update(self):
+        """\
+        Like the parent method, this figures out the selectedItem, but
+        we won't be using self.table.values as the column provides it.
+        """
+
+        # using None as the parameter value as getItemKey should return
+        # the same result regardless of input.
+        selected = self.request.get(self.getItemKey(None), [])
+        # TODO until the form interface is defined to use a vocabulary
+        # for this field, we work with the input as a string for now.
+        if not selected:
+            return
+        if isinstance(selected, list):
+            self.selectedItem = selected.pop()
+        else:
+            self.selectedItem = selected
 
     def renderCell(self, item):
         items = self.getItem(item)
@@ -228,15 +284,16 @@ class ExposureRadioColumn(ItemKeyRadioColumn, ExposureColumn):
             return u'(none)'
         result = []
         for i in items:
-            selected = (item == self.selectedItem) and \
+            selected = (i.getPath() == self.selectedItem) and \
                 u'checked="checked"' or u''
             radio = u'<input type="radio" class="%s" name="%s" ' \
                      'value="%s" %s />' % ('radio-widget',
                                            self.getItemKey(item), 
-                                           i.id,
+                                           i.getPath(),
                                            selected)
-            result.append(u'<label>%s <a href="%s">%s</a></label>' % (
-                radio, i.getURL(), i.Title or i.id))
+            result.append(u'<label>%s <a class="state-%s" '
+                           'href="%s">%s</a></label>' % (
+                radio, i.pmr2_review_state, i.getURL(), i.Title or i.id))
         return '<br />\n'.join(result)
 
 

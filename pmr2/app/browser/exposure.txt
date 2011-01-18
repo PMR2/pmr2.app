@@ -325,7 +325,7 @@ Now we do the same with our set of data, with more content.
     >>> rev = unicode(rawrev)
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.workspace': u'rdfmodel',
+    ...         'form.widgets.workspace': u'/plone/workspace/rdfmodel',
     ...         'form.widgets.commit_id': rev,
     ...         'form.buttons.add': 1,
     ...     })
@@ -1009,7 +1009,7 @@ utility defined for this task.
     ...         'docview_generator': u'safe_html',
     ...         'docview_gensource': u'component/docs/index.html',
     ...         'title': u'Simple HTML',
-    ...         'workspace': u'rdfmodel',
+    ...         'workspace': u'/plone/workspace/rdfmodel',
     ...         'Subject': ('Test',),
     ...     })
     ... ]
@@ -1027,7 +1027,7 @@ First we need need a new exposure object.
     >>> rawrev = rawrevs[2]
     >>> rev = unicode(rawrev)
     >>> data = {
-    ...     'workspace': u'rdfmodel',
+    ...     'workspace': u'/plone/workspace/rdfmodel',
     ...     'curation': None,
     ...     'commit_id': rev,
     ... }
@@ -1109,14 +1109,165 @@ commit.
     ...     pp(answer)
     ...     pp(result)
 
-Need a test case to handle file name changes, either through move or
-delete.
+Rollovers via workspace
+-----------------------
 
-Need to test this with the catalog, such that the results can still be
-queried.
+Currently, the more accessible, easier to use form for this rollover
+feature is attached to a view within workspaces.  We can achieve this
+by instantiating the form from one.
 
-Also need to filter out incompatible objects.
+First we verify that the form contain the fields we are interested in,
+with the radio boxes available to be selected.
+::
 
+    >>> context = self.portal.workspace['rdfmodel']
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((context, request),
+    ...                                          name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> '006f11cd9211abd2a879df0f6c7f27b9844a8ff2' in result
+    True
+    >>> '<td><label><input type="radio" class="radio-widget" ' \
+    ... 'name="form.widgets.commit_id" ' \
+    ... 'value="eef1e9af39a79b2fc47ef978f8e61e853bad54e2"  /> ' \
+    ... 'eef1e9af39a7</label></td>' in result
+    True
+    >>> '<input type="radio" class="radio-widget" ' \
+    ... 'name="form.widgets.exposure_path" value="/plone/exposure/' in result
+    True
+
+Then we can submit the form, and see that the data still match.
+::
+
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': rev,
+    ...    'form.widgets.exposure_path': '/plone/exposure/%s' % new_id,
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request),
+    ...                                         name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> nextURL = request.response.getHeader('Location')
+    >>> print nextURL
+    http://.../exposure/...
+    >>> next_id = nextURL.split('/')[-1]
+    >>> next_ex = self.portal.exposure[next_id]
+    >>> nextport = exposure.ExposurePort(next_ex, None)
+    >>> result = list(nextport.export())
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
+
+Errors cases
+------------
+
+There are ways to submit this form using bad information.  Those will 
+need to be handled.
+::
+
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': rev,
+    ...    'form.widgets.exposure_path': '',
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                         name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> request.response.getHeader('Location')
+    >>> data, errors = view.form_instance.extractData()
+    >>> len(errors)
+    1
+
+We should have seen that the form did not redirect and the error being
+caused by the missing field.  The user should have saw the same form
+with the commit_id remain selected.
+::
+
+    >>> '<td><label><input type="radio" class="radio-widget" ' \
+    ... 'name="form.widgets.commit_id" ' \
+    ... 'value="eef1e9af39a79b2fc47ef978f8e61e853bad54e2" ' \
+    ... 'checked="checked" />' in result
+    True
+
+If we flip this around and provide an empty id and a valid exposure
+path:
+::
+
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': u'',
+    ...    'form.widgets.exposure_path': '/plone/exposure/%s' % new_id,
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                         name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> request.response.getHeader('Location')
+    >>> data, errors = view.form_instance.extractData()
+    >>> len(errors)
+    1
+    >>> ('<td><label><input type="radio" class="radio-widget" ' \
+    ...  'name="form.widgets.exposure_path" ' \
+    ...  'value="/plone/exposure/%s" ' \
+    ...  'checked="checked" />' % new_id) in result
+    True
+
+Or completely bogus values:
+::
+
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': u'fake',
+    ...    'form.widgets.exposure_path': 'fake',
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                         name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> request.response.getHeader('Location')
+    >>> view.form_instance.status
+    u'Cannot find exposure at selected location.'
+
+Exposure Rollover and changed default exposure subpath
+------------------------------------------------------
+
+In the case of having a new destination container because the settings
+have changed, there should be no issue as the full exposure path to the
+source is used.
+::
+
+    >>> from pmr2.app.interfaces import IPMR2GlobalSettings
+    >>> settings = zope.component.getUtility(IPMR2GlobalSettings)
+    >>> self.portal['e'] = ExposureContainer('e')
+    >>> settings.default_exposure_subpath = u'e'
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': rev,
+    ...    'form.widgets.exposure_path': '/plone/exposure/%s' % new_id,
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                         name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> nextURL = request.response.getHeader('Location')
+    >>> print nextURL
+    http://.../e/...
+    >>> next_id = nextURL.split('/')[-1]
+    >>> next_ex = self.portal.e[next_id]
+    >>> nextport = exposure.ExposurePort(next_ex, None)
+    >>> result = list(nextport.export())
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
+
+Miscellenous
+------------
+
+A test case that demonstrates any issue with dealing with changes in the
+list of files between the revision that are associated with an exposure
+and the ones in the target revision within the source workspace, either
+through rename/move or delete.
+
+Also a test that verify that incompatible objects will not complicate
+the rollover process (i.e. they be filtered out and ignored).
+  
 ------------------
 Exposure File Type
 ------------------

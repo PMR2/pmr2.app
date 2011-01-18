@@ -253,17 +253,15 @@ class WorkspaceLog(page.NavPage, z3c.table.value.ValuesForContainer):
                 'label': i['label'],
             }
 
-    @property
     def values(self):
-        """\
-        Although this is a property, it will return a method that 
-        returns a generator.
-        """
-
-        return self.log['entries']
-
+        filter_keys = ['author', 'date', 'node', 'rev', 'desc',]
+        def clean(d):
+            return dict([i for i in d.items() if i[0] in filter_keys])
+        return [clean(d) for d in self.log['entries']()]
+ 
     def content(self):
         t = self.tbl(self, self.request)
+        t.__parent__ = self
         t.update()
         return t.render()
 
@@ -303,19 +301,31 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
     def handleMigrate(self, action):
         data, errors = self.extractData()
         if errors:
-            self.status = self.formErrorsMessage
+            self.status = u'Please ensure both radio columns have been ' \
+                           'selected before trying again.'
             return
 
+        # acquire default container
         try:
             exposure_container = restrictedGetExposureContainer()
+            self.exposure_container = exposure_container
+            self._gotExposureContainer = True
         except Unauthorized:
-            self.status = 'Unauthorized to create new exposure.'
-            raise z3c.form.interfaces.ActionExecutionError(
-                ExposureContainerInaccessibleError())
-        self._gotExposureContainer = True
+            self.status = \
+                u'Unauthorized to create new exposure at default location.'
+            return
 
-        self.exposure_container = exposure_container
-        self.source_exposure = exposure_container[data['exposure_id']]
+        # acquire source
+        try:
+            self.source_exposure = self.context.restrictedTraverse(
+                data['exposure_path'])
+        except Unauthorized:
+            self.status = u'Unauthorized to read exposure at selected location'
+            return
+        except (AttributeError, KeyError):
+            self.status = u'Cannot find exposure at selected location.'
+            return
+
 
         eaf = ExposureAddForm(exposure_container, None)
         data = {
