@@ -241,13 +241,20 @@ class ShortlogTable(z3c.table.table.Table):
 class ValuesForChangelogTable(ValuesMixin):
     """Values from a simple IContainer."""
 
+    filter_keys = ['author', 'date', 'node', 'rev', 'desc',]
+
     zope.component.adapts(zope.interface.Interface, IBrowserRequest,
         IChangelogTable)
 
+    # will benefit @instance.memoize instead?
+    # can be difficult to combine this with existing work...
     @property
     def values(self):
-        # XXX because z3c.tables does not support iterators.
-        return list(self.log())
+        # filter the values
+        # return this as a list since the whole thing will be rendered.
+        def clean(d):
+            return dict([i for i in d.items() if i[0] in self.filter_keys])
+        return [clean(d) for d in self.log()]
 
     def log(self):
         try:

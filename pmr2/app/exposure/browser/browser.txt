@@ -1207,23 +1207,27 @@ need to be handled.
 
     >>> request = TestRequest(form={
     ...    'form.widgets.commit_id': rev,
-    ...    'form.widgets.exposure_path': u'',
+    ...    'form.widgets.exposure_path': '',
     ...    'form.buttons.apply': 1,
     ... })
     >>> view = zope.component.queryMultiAdapter((context, request), 
     ...                                         name='exposure_rollover')
     >>> result = view.form_instance()
     >>> request.response.getHeader('Location')
+    >>> data, errors = view.form_instance.extractData()
+    >>> len(errors)
+    1
 
-The correctly selected value should have been selected, but it is not
-enabled at this point.
+We should have seen that the form did not redirect and the error being
+caused by the missing field.  The user should have saw the same form
+with the commit_id remain selected.
 ::
 
     >>> '<td><label><input type="radio" class="radio-widget" ' \
     ... 'name="form.widgets.commit_id" ' \
     ... 'value="eef1e9af39a79b2fc47ef978f8e61e853bad54e2" ' \
-    ... 'selected="selected" />' in result
-    False
+    ... 'checked="checked" />' in result
+    True
 
 Miscellenous
 ------------
