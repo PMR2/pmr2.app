@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.3.4 - Unreleased
-------------------
+0.3.4 - Relased (2011-01-18)
+----------------------------
 
 * Backported changes made in master (trunk) that allow an exposure
   rollover to use a source exposure that does not reside in the default
