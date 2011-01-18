@@ -29,8 +29,8 @@ Changelog
     a newer/better implementation can be more easily created to replace
     deprecated ones.
 
-0.3.3 - Unreleased
-------------------
+0.3.3 - Released (2010-12-31)
+-----------------------------
 
 * Fresh installation now works as intended on standard configurations as
   the bugs that prevented this were fixed.

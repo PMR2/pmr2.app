@@ -104,9 +104,6 @@ pmr2/app/exposure/__init__.py
 pmr2/app/exposure/adapter.py
 pmr2/app/exposure/adapter.zcml
 pmr2/app/exposure/atct.py
-pmr2/app/exposure/browser.py
-pmr2/app/exposure/browser.txt
-pmr2/app/exposure/browser.zcml
 pmr2/app/exposure/catalog.py
 pmr2/app/exposure/catalog.txt
 pmr2/app/exposure/catalog.zcml
@@ -116,9 +113,17 @@ pmr2/app/exposure/factory.py
 pmr2/app/exposure/factory.zcml
 pmr2/app/exposure/interfaces.py
 pmr2/app/exposure/table.py
+pmr2/app/exposure/table.txt
 pmr2/app/exposure/table.zcml
 pmr2/app/exposure/traverse.py
 pmr2/app/exposure/traverse.zcml
+pmr2/app/exposure/browser/__init__.py
+pmr2/app/exposure/browser/adapter.py
+pmr2/app/exposure/browser/adapter.zcml
+pmr2/app/exposure/browser/browser.py
+pmr2/app/exposure/browser/browser.txt
+pmr2/app/exposure/browser/configure.zcml
+pmr2/app/exposure/browser/interfaces.py
 pmr2/app/exposure/portlets/ExposureDownload.py
 pmr2/app/exposure/portlets/ExposureFileNotes.py
 pmr2/app/exposure/portlets/ExposureInfo.py
@@ -218,6 +223,7 @@ pmr2/app/workspace/browser/configure.zcml
 pmr2/app/workspace/browser/filerenderer.py
 pmr2/app/workspace/browser/interfaces.py
 pmr2/app/workspace/browser/templates/file.pt
+pmr2/app/workspace/browser/templates/image.pt
 pmr2/app/workspace/browser/templates/workspace.pt
 pmr2/app/workspace/browser/templates/workspace_file_page.pt
 pmr2/app/workspace/browser/templates/workspace_location.pt
