@@ -43,6 +43,16 @@ Description: Introduction
         a newer/better implementation can be more easily created to replace
         deprecated ones.
         
+        0.3.4 - Released (2011-01-18)
+        -----------------------------
+        
+        * Backported changes made in master (trunk) that allow an exposure
+        rollover to use a source exposure that does not reside in the default
+        exposure container.
+        - https://tracker.physiomeproject.org/show_bug.cgi?id=2806
+        * Reapplied some patches that were meant to be patched.
+        - Exposure custom traversal should be fixed for good, this time.
+        
         0.3.3 - Released (2010-12-31)
         -----------------------------
         
