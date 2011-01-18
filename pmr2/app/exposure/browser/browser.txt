@@ -1266,16 +1266,45 @@ Or completely bogus values:
     >>> 'statusmessages' in request
     True
 
+Exposure Rollover and changed default exposure subpath
+------------------------------------------------------
+
+In the case of having a new destination container because the settings
+have changed, there should be no issue as the full exposure path to the
+source is used.
+::
+
+    >>> self.portal['e'] = ExposureContainer('e')
+    >>> settings.default_exposure_subpath = u'e'
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': rev,
+    ...    'form.widgets.exposure_path': '/plone/exposure/%s' % new_id,
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                         name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> nextURL = request.response.getHeader('Location')
+    >>> print nextURL
+    http://.../e/...
+    >>> next_id = nextURL.split('/')[-1]
+    >>> next_ex = self.portal.e[next_id]
+    >>> nextport = exposure.ExposurePort(next_ex, None)
+    >>> result = list(nextport.export())
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
+
 Miscellenous
 ------------
 
-Need a test case to handle file name changes, either through move or
-delete.
+A test case that demonstrates any issue with dealing with changes in the
+list of files between the revision that are associated with an exposure
+and the ones in the target revision within the source workspace, either
+through rename/move or delete.
 
-Need to test this with the catalog, such that the results can still be
-queried.
-
-Also need to filter out incompatible objects.
+Also a test that verify that incompatible objects will not complicate
+the rollover process (i.e. they be filtered out and ignored).
 
 ------------------
 Exposure File Type
