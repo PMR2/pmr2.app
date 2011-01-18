@@ -73,8 +73,14 @@ class ExposureRadioColumn(ExposureColumn, ItemKeyRadioColumn):
         # using None as the parameter value as getItemKey should return
         # the same result regardless of input.
         selected = self.request.get(self.getItemKey(None), [])
-        if selected:
+        # TODO until the form interface is defined to use a vocabulary
+        # for this field, we work with the input as a string for now.
+        if not selected:
+            return
+        if isinstance(selected, list):
             self.selectedItem = selected.pop()
+        else:
+            self.selectedItem = selected
 
     def renderCell(self, item):
         items = self.getItem(item)

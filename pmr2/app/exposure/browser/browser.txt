@@ -1229,6 +1229,43 @@ with the commit_id remain selected.
     ... 'checked="checked" />' in result
     True
 
+If we flip this around and provide an empty id and a valid exposure
+path:
+::
+
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': u'',
+    ...    'form.widgets.exposure_path': '/plone/exposure/%s' % new_id,
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                         name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> request.response.getHeader('Location')
+    >>> data, errors = view.form_instance.extractData()
+    >>> len(errors)
+    1
+    >>> ('<td><label><input type="radio" class="radio-widget" ' \
+    ...  'name="form.widgets.exposure_path" ' \
+    ...  'value="/plone/exposure/%s" ' \
+    ...  'checked="checked" />' % new_id) in result
+    True
+
+Or completely bogus values:
+::
+
+    >>> request = TestRequest(form={
+    ...    'form.widgets.commit_id': u'fake',
+    ...    'form.widgets.exposure_path': 'fake',
+    ...    'form.buttons.apply': 1,
+    ... })
+    >>> view = zope.component.queryMultiAdapter((context, request), 
+    ...                                         name='exposure_rollover')
+    >>> result = view.form_instance()
+    >>> request.response.getHeader('Location')
+    >>> 'statusmessages' in request
+    True
+
 Miscellenous
 ------------
 

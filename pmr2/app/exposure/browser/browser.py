@@ -1392,7 +1392,7 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
                 u'Unauthorized to read exposure at selected location',
                 'error')
             return
-        except KeyError:
+        except (AttributeError, KeyError):
             status = IStatusMessage(self.request)
             status.addStatusMessage(
                 u'Cannot find exposure at selected location.',
