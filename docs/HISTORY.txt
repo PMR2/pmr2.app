@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.3.4 - Unreleased
+------------------
+
+* Reapplied some patches that were meant to be patched.
+  - Exposure custom traversal should be fixed for good, this time.
+
+
 0.3.3 - Released (2010-12-31)
 -----------------------------
 
