@@ -1,3 +1,5 @@
+from logging import getLogger
+
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 from Products.CMFCore.utils import getToolByName
@@ -72,7 +74,6 @@ def cellml_v0_2tov0_3(context):
     """Migration script specific to models.cellml.org."""
 
     import traceback
-    from logging import getLogger
 
     from zope.annotation.interfaces import IAnnotations
     from pmr2.app.annotation.interfaces import IExposureFileNote
@@ -179,7 +180,6 @@ def exposure_rand_to_seq(context):
 
     import traceback
     import zope.component
-    from logging import getLogger
     from pmr2.idgen.interfaces import IIdGenerator
     from zope.app.component.hooks import getSite
 
@@ -265,3 +265,34 @@ def exposure_rand_to_seq(context):
     for exposure in exposures:
         newid = '%x' % (counter.next())
         clone(exposure, newid)
+
+def pmr2_v0_4(context):
+    mercurial_storage(context)
+
+def mercurial_storage(context):
+    # In v0.4, workspace must specify its storage backend as mercurial
+    # is no longer implied.  This migration script assumes this is was a
+    # v0.3 instance such that it would assign mercurial to all
+    # workspaces.
+    from zope.component import getUtility
+    from zope.schema.interfaces import IVocabularyFactory
+    v = getUtility(IVocabularyFactory, name='pmr2.vocab.storage')
+    tokens = v(None).by_token
+    if 'mercurial' not in tokens:
+        raise KeyError('mercurial not registered as a backend; '
+                       'please install pmr2.mercurial.')
+    logger = getLogger('pmr2.app')
+    catalog = getToolByName(context, 'portal_catalog')
+
+    counter = 0
+    brains = catalog(portal_type='Workspace')
+    logger.info('%d workspace(s) found...' % len(brains))
+    for b in brains:
+        wks = b.getObject()
+        if wks.storage:
+            continue
+        wks.storage = u'mercurial'
+        counter += 1
+    logger.info('%d workspace(s) with undefined storage backend is now set '
+                'to use mercurial.' % counter)
+    return
