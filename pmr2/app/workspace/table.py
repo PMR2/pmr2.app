@@ -201,17 +201,35 @@ class ShortlogOptionColumn(ItemKeyColumn):
     header = _(u'Options')
     itemkey = 'node'
 
+    def archive_options(self, item):
+        # Return links to acquire the archive of each revision.
+        try:
+            storage = zope.component.queryAdapter(self.context, IStorage)
+        except ValueError:
+            # the source form should have failed to render anyway...
+            # unless this was part of a test.  Ignore this error.
+            return []
+        formats = storage.archiveFormats
+        # XXX configuration for disabling archive types isn't created;
+        # magic here.
+        disabled = ['tar',]
+
+        return [u'<a href="%s/@@archive/%s/%s">[%s]</a>' % (
+            self.context.absolute_url(), self.getItem(item), format, format,)
+            for format in formats if format not in disabled
+        ]
+            
+
     def renderCell(self, item):
-        # also could render changeset link (for diffs)
         result = [
             u'<a href="%s/@@file/%s/">[manifest]</a>' % \
                 (self.context.absolute_url(), self.getItem(item)),
-            u'<a href="%s/@@archive/%s/zip">[zip]</a>' % \
-                (self.context.absolute_url(), self.getItem(item)),
-            u'<a href="%s/@@archive/%s/gz">[gz]</a>' % \
-                (self.context.absolute_url(), self.getItem(item)),
         ]
-        return ' '.join(result)
+        # should render changeset link for diffs and other types once a
+        # more generic version of the option column is implemented
+        # alongside with archive options
+        result.extend(self.archive_options(item))
+        return '\n'.join(result)
 
 
 class IChangelogTable(ITable):

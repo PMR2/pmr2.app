@@ -245,8 +245,87 @@ Main page should render fine, too.
     >>> testpage = browser.WorkspacePage(
     ...     self.portal.workspace.cake, request)
     >>> result = testpage()
-    >>> '<th>Log</th>' in result
-    True
+    >>> print result
+    <h3>Summary</h3>
+    <dl>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+      <dt>Owner</dt>
+      <dd>&#32;&#60;&#62;</dd>
+    <BLANKLINE>
+      <dt>URI for dummy_storage clone/pull/push</dt>
+      <dd><a href="http://nohost/plone/workspace/cake">http://nohost/plone/workspace/cake</a></dd>
+    <BLANKLINE>
+    </dl>
+    <h4>Most recent changes</h4>
+    <div>
+    <div><table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Author</th>
+          <th>Log</th>
+          <th>Options</th>
+          <th>Exposure</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2005-03-18 17:43:07</td>
+          <td>pmr2.teststorage &lt;pmr2.tester@example.com&gt;</td>
+          <td>A:dir1/dummy.txt</td>
+          <td><a href="http://nohost/plone/workspace/cake/@@file/1/">[manifest]</a>
+    <a href="http://nohost/plone/workspace/cake/@@archive/1/dummy">[dummy]</a></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>2005-03-18 14:58:31</td>
+          <td>pmr2.teststorage &lt;pmr2.tester@example.com&gt;</td>
+          <td>A:dir1/dir2/file.xml
+    A:null
+    A:status
+    A:test.png
+    A:test.xml</td>
+          <td><a href="http://nohost/plone/workspace/cake/@@file/0/">[manifest]</a>
+    <a href="http://nohost/plone/workspace/cake/@@archive/0/dummy">[dummy]</a></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table></div>
+    </div>
+    <BLANKLINE>
+
+
+----------------
+Archive Download
+----------------
+
+One important feature is to allow users to download the entire archive
+based on what is supported by the particular backend.  Calling the view
+with the proper subpaths should return the desired archive.
+
+We reuse the path in the previous example, but this time the view will
+return just the contents.
+::
+
+    >>> from cPickle import loads
+    >>> subpath = ['0', 'dummy']
+    >>> page = self.traverse(self.portal.workspace.cake, 
+    ...                      browser.WorkspaceArchive, subpath)
+    >>> page.update()
+    >>> result = page()
+    >>> d = loads(result)
+    >>> sorted(d.keys())
+    ['dir1/dir2/file.xml', 'null', 'status', 'test.png', 'test.xml']
+    >>> page.request.response.getHeader('Content-length')
+    '2317'
+    >>> page.request.response.getHeader('Content-type')
+    'application/x-dummy'
+
+---------------
+File Info Pages
+---------------
 
 Subdirectories should work along with a subpath to access the 
 subdirectories in place, and we do need a proper revision for the

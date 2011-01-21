@@ -149,17 +149,42 @@ class WorkspaceArchive(WorkspaceTraversePage):
 
     def __call__(self, *a, **kw):
         try:
-            storage = zope.component.queryMultiAdapter(
-                (self.context, self.request, self), 
-                name="PMR2StorageRequestView",
-            )
-        except (PathInvalidError,
-                RevisionNotFoundError,
-            ):
+            storage = zope.component.getAdapter(self.context, IStorage)
+        except ValueError:
+            # as this is a deep linked page, if whatever was broken 
+            # further up there wouldn't have been links down to this
+            # point here.
             raise HTTPNotFound(self.context.title_or_id())
 
-        subrepo = self.request.form.get('subrepo', False)
-        return storage.archive(subrepo).getvalue()
+        # ignoring subrepo functionality for now.
+        # subrepo = self.request.form.get('subrepo', False)
+
+        try:
+            storage.checkout(self.request.get('rev', None))
+        except RevisionNotFoundError:
+            raise HTTPNotFound(self.context.title_or_id())
+
+        request_subpath = self.request.get('request_subpath', [])
+        if not request_subpath:
+            # no archive type
+            raise HTTPNotFound(self.context.title_or_id())
+        type_ = request_subpath[0]
+
+        # this is going to hurt so bad if this was a huge archive...
+        archivestr = storage.archive(type_)
+
+        info = storage.archiveInfo(type_)
+        headers = [
+            ('Content-Type', info['mimetype']),
+            ('Content-Length', len(archivestr)),
+            ('Content-Disposition', 'attachment; filename=%s%s' % (
+                self.context.id, info['ext'])),
+        ]
+
+        for header in headers:
+            self.request.response.setHeader(*header)
+
+        return archivestr
 
 
 class WorkspacePage(page.SimplePage):
