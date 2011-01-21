@@ -8,6 +8,7 @@ from zope.app.publisher.browser.menu import BrowserSubMenuItem
 from zope.app.publisher.browser.menu import BrowserMenu
 
 from plone.app.contentmenu.view import ContentMenuProvider
+from pmr2.app.workspace.interfaces import IStorage
 from pmr2.app.workspace.interfaces import IFileMenu
 from pmr2.app.workspace.interfaces import IFileSubMenuItem
 from pmr2.app.workspace.interfaces import IWorkspaceFileUtility
@@ -66,12 +67,13 @@ class FileMenu(BrowserMenu):
     def getMenuItems(self, context, request):
 
         # request should already have rev and path populated.
-        storage = zope.component.queryMultiAdapter(
-            (context, request), name="PMR2StorageRequest")
+        storage = zope.component.getAdapter(context, IStorage)
+        # however we still want the canonical revision identifier.
+        storage.checkout(request['rev'])
 
         rev = storage.rev
         workspace = context.id
-        path = storage.path
+        path = '/'.join(request['filepath'])
 
         if not rev:
             # invalid revision; no available action.
