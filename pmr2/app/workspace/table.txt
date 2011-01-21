@@ -186,6 +186,7 @@ changelog table is tested, using a fake container as context.
 
     >>> class FakeWorkspace(object):
     ...     zope.interface.implements(interfaces.IWorkspace)
+    ...     storage = None
     ...     def absolute_url(self):
     ...         return 'urn:example:'
     ...     def __init__(self, values):

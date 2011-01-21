@@ -132,7 +132,7 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
     # totally handled "correctly".
 
     def __call__(self, *a, **kw):
-        storage = zope.component.queryAdapter(self.context, IStorage)
+        storage = zope.component.getAdapter(self.context, IStorage)
 
         try:
             # Process the request.

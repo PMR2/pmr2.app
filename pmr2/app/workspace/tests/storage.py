@@ -102,7 +102,7 @@ class DummyStorageUtility(StorageUtility):
 class DummyStorage(BaseStorage):
 
     _archiveFormats = {
-        'dummy': ('Dummy Archive', '.dummy'),
+        'dummy': ('Dummy Archive', '.dummy', 'application/x-dummy'),
     }
     
     def __init__(self, context):

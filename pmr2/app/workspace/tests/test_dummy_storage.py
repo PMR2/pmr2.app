@@ -348,6 +348,7 @@ class TestDummyStorage(TestCase):
         self.assertEqual(info, {
             'name': 'Dummy Archive',
             'ext': '.dummy',
+            'mimetype': 'application/x-dummy',
         })
 
     def test_711_archiveInfoValueError(self):

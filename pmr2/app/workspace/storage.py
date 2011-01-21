@@ -54,11 +54,11 @@ class BaseStorage(object):
     __datefmt = 'iso8601'
 
     # this stores the types of archive available, with its key the 
-    # method name with a 2-tuple value that stores the human readable
-    # name and the file name extension.  See tests/storage.py for the
-    # example.
+    # method name with a 3-tuple value that stores the human readable
+    # name, file name extension and mimetype.  See tests/storage.py for
+    # the example.
     _archiveFormats = {}
-    __archiveFormatInfoKeys = ('name', 'ext',)
+    __archiveFormatInfoKeys = ('name', 'ext', 'mimetype')
 
     def _getDatefmt(self):
         return self.__datefmt
@@ -77,7 +77,7 @@ class BaseStorage(object):
 
     @property
     def archiveFormats(self):
-        return self._archiveFormats.keys()
+        return sorted(self._archiveFormats.keys())
 
     # Default implementation for methods
 
