@@ -30,8 +30,8 @@ class IWorkspaceBulkAdd(zope.interface.Interface):
 
     workspace_list = zope.schema.Text(
         title=u'List of Workspaces',
-        description=u'List of Mercurial Repositories created by pmr2_mkhg ' \
-                     'that are already moved into the workspace directory.',
+        description=u'List of workspaces with a corresponding directory ' \
+                     'within this container.',
         required=True,
     )
 

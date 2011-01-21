@@ -124,7 +124,8 @@ class WorkspaceTraversePage(page.TraversePage):
 
 class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
     """\
-    Browser page that encapsulates access to the Mercurial protocol.
+    Browser page to provide raw access to the protocol of this given
+    workspace.
     """
 
     # XXX this class is currently unused until the permissions can be
@@ -309,6 +310,8 @@ WorkspaceStorageCreateFormView = layout.wrap_form(
 class WorkspaceBulkAddForm(z3c.form.form.AddForm):
     """\
     Workspace Bulk Add Form
+
+    XXX - this function is NOT maintained.
     """
 
     fields = z3c.form.field.Fields(IWorkspaceBulkAdd)
@@ -334,7 +337,7 @@ class WorkspaceBulkAddForm(z3c.form.form.AddForm):
         if self.existed:
             result.append(self.result_base % ('Existed', self.existed))
         if self.norepo:
-            result.append(self.failure_base % ('Mercurial Repo Not Found',
+            result.append(self.failure_base % ('Repo Not Found',
             '\n'.join(['<li>%s</li>' % i for i in self.norepo]))
         )
         if self.failed:
@@ -345,6 +348,7 @@ class WorkspaceBulkAddForm(z3c.form.form.AddForm):
         return '\n'.join(result)
 
     def createAndAdd(self, data):
+        # XXX this method does not assign workspace storage backend.
         self.created = self.existed = 0
         self.failed = []
         self.norepo = []
