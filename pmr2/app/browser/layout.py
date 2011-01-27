@@ -21,7 +21,6 @@ from Products.PythonScripts.standard import url_quote
 from pmr2.app.workspace.exceptions import *
 
 import pmr2.app.browser
-from pmr2.app.browser.interfaces import IUpdatablePageView
 from pmr2.app.browser.interfaces import IPlainLayoutWrapper
 from pmr2.app.browser.interfaces import IPloneviewLayoutWrapper
 from pmr2.app.browser.interfaces import IMathMLLayoutWrapper
@@ -79,17 +78,9 @@ class RolloverMacros(plone.z3cform.templates.Macros):
 
 class FormWrapper(layout.FormWrapper):
     """\
-    Wrapper that will call a update method of the form_instance within
-    when called, if present.
-
-    Not calling update because it is used by actual forms.
+    This used to partially enable the update/render pattern for our
+    forms/views that required it.
     """
-
-    def __call__(self):
-        if IUpdatablePageView.providedBy(self.form_instance):
-            # only this interface is known to require updating.
-            self.form_instance.update()
-        return layout.FormWrapper.__call__(self)
 
 
 class PloneviewLayoutWrapper(FormWrapper):

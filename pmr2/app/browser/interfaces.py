@@ -12,18 +12,6 @@ from pmr2.app.schema import ObjectId
 from pmr2.app.content.interfaces import IPMR2Search
 
 
-class IUpdatablePageView(zope.interface.Interface):
-    """\
-    Interface for the Workspace action menu.
-    """
-
-    def update():
-        """
-        Method call to update the internal structure before the view
-        is rendered.
-        """
-
-
 class IThemeSpecific(IDefaultPloneLayer):
     """\
     Marker interface that defines a Zope 3 browser layer.
