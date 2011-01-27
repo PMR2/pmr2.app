@@ -35,15 +35,14 @@ from pmr2.app.browser import interfaces
 from pmr2.app.browser import form
 from pmr2.app.browser import page
 
-from pmr2.app.browser.layout import BorderedStorageFormWrapper
 from pmr2.app.browser.layout import BorderedTraverseFormWrapper
 from pmr2.app.browser.layout import TraverseFormWrapper
 
 from pmr2.app.workspace import table
-
 from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace.browser.interfaces import *
+from pmr2.app.workspace.browser.layout import BorderedStorageFormWrapper
 
 
 # Workspace Container

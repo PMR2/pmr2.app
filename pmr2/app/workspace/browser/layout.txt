@@ -1,0 +1,138 @@
+Layout
+======
+
+We are using plone.z3cform to wrap our forms here primarily due to the
+nice separation of concern it provides (i.e. keeping Acquistion, Plone
+functions and other things away from the core of the content we intend
+to render).  Since the default layout.pt provided is very basic, there
+are extension added default layout module.
+
+To test our extensions, we borrowed some preparation code from
+plone.z3cform and added some more dummies of our own.
+::
+
+    >>> from zope.interface import alsoProvides
+    >>> from zope.interface import Interface, implements
+    >>> from zope.publisher.browser import TestRequest
+    >>> from zope.annotation.interfaces import IAttributeAnnotatable
+    >>> from z3c.form.interfaces import IFormLayer
+    >>> 
+    >>> def make_request(form={}):
+    ...     request = TestRequest()
+    ...     request.form.update(form)
+    ...     alsoProvides(request, IFormLayer)
+    ...     alsoProvides(request, IAttributeAnnotatable)
+    ...     return request
+    ...
+
+Now we build our adapters.
+::
+
+    >>> from zope.component import provideAdapter
+    >>> from zope.component import getMultiAdapter
+    >>> from zope.publisher.interfaces.browser import IBrowserRequest
+    >>> from zope.interface import Interface
+    >>> from pmr2.app.workspace.browser.layout import StorageFormWrapper
+    >>> from pmr2.app.workspace.content import Workspace
+    >>> 
+    >>> provideAdapter(adapts=(Interface, IBrowserRequest),
+    ...                provides=Interface,
+    ...                factory=StorageFormWrapper,
+    ...                name=u"storage-form")
+    ... 
+
+In order to not rely on a real Mercurial repo on disk for these tests,
+we are going to register our own dummies.  We also add another user so
+permission check failures can be tested.
+::
+
+    >>> import zope.interface
+    >>> from pmr2.mercurial.interfaces import IPMR2HgWorkspaceAdapter
+    >>> class IDummyWorkspace(zope.interface.Interface):
+    ...     pass
+    >>> class DummyStorage(object):
+    ...     zope.interface.implements(IPMR2HgWorkspaceAdapter)
+    ...     def __init__(self, context):
+    ...         pass
+    ...     def process_request(self, request):
+    ...         return 'Success'
+    >>> self.portal['test'] = Workspace('test')
+    >>> context = self.portal.test
+    >>> zope.interface.directlyProvides(context, IDummyWorkspace)
+    >>> sm = self.portal.getSiteManager()
+    >>> sm.registerAdapter(DummyStorage, required=(IDummyWorkspace,),
+    ...                    name=u'PMR2Storage')
+    >>> uf = self.folder.acl_users
+    >>> uf.userFolderAddUser('test_user_2_', 'password', [], [])
+
+Standard GET should have no issues.
+::
+
+    >>> request = make_request()
+    >>> request.REQUEST_METHOD = 'GET'
+    >>> form = getMultiAdapter((context, request), name=u"storage-form")
+    >>> form
+    <pmr2.app.workspace.browser.layout.StorageFormWrapper object ...>
+    >>> form()
+    'Success'
+
+POST should not have issues for this user as it created the object above,
+hence it will authenticate as the owner, and despite it not having the
+push role, it will go fine.
+::
+
+    >>> request = make_request()
+    >>> request.REQUEST_METHOD = 'POST'
+    >>> form = getMultiAdapter((context, request), name=u"storage-form")
+    >>> form
+    <pmr2.app.workspace.browser.layout.StorageFormWrapper object ...>
+    >>> form()
+    'Success'
+
+If we change the user, we will have problems as it is not the owner of
+the workspace.
+::
+
+    >>> self.logout()
+    >>> self.login('test_user_2_')
+    >>> request = make_request()
+    >>> request.REQUEST_METHOD = 'POST'
+    >>> form = getMultiAdapter((context, request), name=u"storage-form")
+    >>> form
+    <pmr2.app.workspace.browser.layout.StorageFormWrapper object ...>
+    >>> form()
+    Traceback (most recent call last):
+    ...
+    Unauthorized: ...
+
+Now if we grant the push role to this user, we can push.
+::
+
+    >>> context.manage_setLocalRoles('test_user_2_', ['WorkspacePusher'])
+    >>> request = make_request()
+    >>> request.REQUEST_METHOD = 'POST'
+    >>> form = getMultiAdapter((context, request), name=u"storage-form")
+    >>> form
+    <pmr2.app.workspace.browser.layout.StorageFormWrapper object ...>
+    >>> form()
+    'Success'
+
+On the other hand if the user with the correct role, it will be allowed
+to POST.  Before the form is called, we set the modificate date to a 
+value that is way in the past (as this test almost always finish within
+a millisecond) so we can verify that this value is updated on any POST 
+requests.
+::
+
+    >>> from DateTime import DateTime
+    >>> moddate = DateTime(0)
+    >>> context.setModificationDate(moddate)
+    >>> request = make_request()
+    >>> request.REQUEST_METHOD = 'POST'
+    >>> form = getMultiAdapter((context, request), name=u"storage-form")
+    >>> form
+    <pmr2.app.workspace.browser.layout.StorageFormWrapper object ...>
+    >>> form()
+    'Success'
+    >>> moddate == context.ModificationDate()
+    False

@@ -218,7 +218,6 @@ class ShortlogOptionColumn(ItemKeyColumn):
             self.context.absolute_url(), self.getItem(item), format, format,)
             for format in formats if format not in disabled
         ]
-            
 
     def renderCell(self, item):
         result = [
