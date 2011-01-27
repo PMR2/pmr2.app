@@ -205,13 +205,8 @@ class StorageUtility(object):
     def acquireFrom(self, context):
         raise NotImplementedError
 
+    def protocol(self, context, request):
+        raise NotImplementedError
+
     def __call__(self, context):
         return self.acquireFrom(context)
-
-
-class BaseStorageAdapter(object):
-    """\
-    We do need a quick way to adapt any object into its source storage
-    mechanism, as not all objects contain reference (name) to its
-    storage backend.
-    """

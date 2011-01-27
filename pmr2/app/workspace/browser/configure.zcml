@@ -53,6 +53,20 @@
 
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="protocol_read"
+      class=".browser.WorkspaceProtocol"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="protocol_write"
+      class=".browser.WorkspaceProtocol"
+      permission="pmr2.app.security.HgPush"
+      />
+
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="workspace_edit"
       class=".browser.WorkspaceEditFormView"
       permission="cmf.ModifyPortalContent"

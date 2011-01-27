@@ -98,6 +98,20 @@ class DummyStorageUtility(StorageUtility):
     def acquireFrom(self, context):
         return DummyStorage(context)
 
+    def protocol(self, context, request):
+        storage = self.acquireFrom(context)
+        cmd = request.form.get('cmd', '')
+        if not cmd:
+            return ''
+        if cmd == 'revcount':
+            return len(storage._data())
+        if cmd == 'update':
+            # doesn't do anything, but check that the request is indeed
+            # a push
+            if request.method == 'GET':
+                raise Exception('bad request method')
+            return 'Updated'
+
 
 class DummyStorage(BaseStorage):
 

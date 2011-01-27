@@ -14,4 +14,11 @@
       provides=".interfaces.IStorage"
       />
 
+  <adapter
+      for=".interfaces.IWorkspace
+          zope.publisher.interfaces.browser.IBrowserRequest"
+      factory=".adapter.StorageProtocolAdapter"
+      provides=".interfaces.IStorageProtocol"
+      />
+
 </configure>

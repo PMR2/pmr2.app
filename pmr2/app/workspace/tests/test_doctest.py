@@ -26,7 +26,7 @@ def test_suite():
         # Layout wrapper
         ztc.ZopeDocFileSuite(
             'browser/layout.txt', package='pmr2.app.workspace',
-            test_class=DocTestCase,
+            test_class=base.WorkspaceDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 

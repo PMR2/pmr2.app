@@ -22,14 +22,24 @@ def WorkspaceStorageAdapter(workspace):
     return storage_util(workspace)
 
 
-def WorkspaceRequestStorageAdapter(workspace, request):
+class StorageProtocolAdapter(object):
     """\
-    Adapts a given `Workspace` and request into a `Storage`.
-
-    This facilitates "checking out" the correct requested revision.
+    Adapters a storage and request into a helper that will only process
+    the protocol request.
     """
 
-    # XXX is this really necessary now?
+    # Should we consider adapting a storage object instead?
+
+    zope.interface.implements(IStorageProtocol)
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+        self.storage_util = zope.component.queryUtility(
+            IStorageUtility, name=context.storage)
+
+    def __call__(self):
+        return self.storage_util.protocol(self.context, self.request)
 
 
 class WorkspaceListing(object):

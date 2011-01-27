@@ -24,7 +24,10 @@ import z3c.form.value
 import z3c.form.button
 
 from plone.z3cform import layout
+from AccessControl import getSecurityManager
+from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName
+from DateTime import DateTime
 from Acquisition import aq_parent, aq_inner
 
 from pmr2.app.workspace.interfaces import *
@@ -42,7 +45,7 @@ from pmr2.app.workspace import table
 from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace.browser.interfaces import *
-from pmr2.app.workspace.browser.layout import BorderedStorageFormWrapper
+from pmr2.app.workspace.browser.layout import BorderedWorkspaceProtocolWrapper
 
 
 # Workspace Container
@@ -127,18 +130,70 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
     workspace.
     """
 
-    # XXX this class is currently unused until the permissions can be
-    # totally handled "correctly".
+    def _queryPermission(self):
+        # as I couldn't find the documentation on a utility that will
+        # return the permission registered in the zcml, I copied this
+        # from some other package because they do the same thing when
+        # they need to figure out the permission of this class.
+        permissions = getattr(self.__class__, '__ac_permissions__', [])
+        for permission, methods in permissions:
+            if methods[0] in ('', '__call__'):
+                return permission
+
+    def _checkPermission(self):
+        # manual permission check.  This will need to be here until
+        # we are provided a smarter way that will handle these things
+        # based on protocols.
+        permission = self._queryPermission()
+
+        # this is the main security check, but it doesn't take into
+        # account of roles...
+        main = getSecurityManager().checkPermission(permission, self)
+
+        # and so we need this hackish thing here if this is a post or
+        # we already authenticated already
+        if self.request.method in ['GET'] or main:
+            return main
+
+        # role checking...
+        pm = getToolByName(self.context, 'portal_membership')
+        user = pm.getAuthenticatedMember()
+        if pm.isAnonymousUser():
+            # don't want to deal with anonymous non GETs
+            return False
+
+        user_roles = user.getRolesInContext(self.context)
+        # user either requires a role granted via @@sharing or has the
+        # permission set manually under management.
+        return u'WorkspacePusher' in user_roles or \
+            user.has_permission('Mercurial Push', self.context)
+
+        # I really wish this isn't such a horrible mess and without such
+        # non-agnostic names.
+
 
     def __call__(self, *a, **kw):
-        storage = zope.component.getAdapter(self.context, IStorage)
+        if not self._checkPermission():
+            raise Unauthorized()
 
         try:
-            # Process the request.
-            return storage.process_request(self.request)
+            sproto = zope.component.getMultiAdapter(
+                (self.context, self.request), IStorageProtocol)
+        except ValueError:
+            return ''
+
+        try:
+            # Warning: this method is used to manipulate data inside the
+            # underlying storage backend.
+            results = sproto()
+            if self.request.method in ['POST']:
+                # update modification date if it was one of 
+                # modification methods.
+                self.context.setModificationDate(DateTime())
+                self.context.reindexObject()
+            return results
         except UnsupportedCommandError:
-            # Can't do this command, redirect back to root object.
-            raise HTTPFound(self.context.absolute_url())
+            return ''
 
 
 class WorkspaceArchive(WorkspaceTraversePage):
@@ -191,7 +246,26 @@ class WorkspacePage(page.SimplePage):
     The main workspace page.
     """
 
+    # need interface for this page that handles storage protocol?
     template = ViewPageTemplateFile('workspace.pt')
+    protocol = None
+
+    def update(self):
+        """\
+        As the protocol level of the storage backend may do manipulation
+        via GET or POST, we redirect the requests firstly to the defined
+        form adapters appropriated for this task.
+        """
+
+        if self.request.method in ['POST']:
+            view = zope.component.queryMultiAdapter(
+                (self.context, self.request), name='protocol_write')
+        else:
+            view = zope.component.queryMultiAdapter(
+                (self.context, self.request), name='protocol_read')
+
+        # the view above should have safeguarded this...
+        self.protocol = view()
 
     @property
     def owner(self):
@@ -215,10 +289,15 @@ class WorkspacePage(page.SimplePage):
             self._log.navlist = None
         return self._log()
 
+    def render(self):
+        if self.protocol:
+            return self.protocol
+        return super(WorkspacePage, self).render()
+
 
 WorkspacePageView = layout.wrap_form(
     WorkspacePage,
-    __wrapper_class=BorderedStorageFormWrapper,
+    __wrapper_class=BorderedWorkspaceProtocolWrapper,
 )
 
 
