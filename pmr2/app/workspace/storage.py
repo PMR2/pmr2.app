@@ -180,8 +180,7 @@ class StorageUtility(object):
     """\
     Basic storage utility.
 
-    Reason why we have a utility instead of a straight-up adapter to a
-    Storage object is two-folds.
+    Reasons why we have this instead of straight up adapter follows:
 
     Usage in vocabularies with a context.  The given context may be of a
     type that cannot be adapted into a Storage object.  As the storage
@@ -200,11 +199,14 @@ class StorageUtility(object):
 
     zope.interface.implements(IStorageUtility)
 
-    def __call__(self, workspace):
-        """\
-        Converts workspace into a storage object.
-        """
+    def create(self, context):
         raise NotImplementedError
+
+    def acquireFrom(self, context):
+        raise NotImplementedError
+
+    def __call__(self, context):
+        return self.acquireFrom(context)
 
 
 class BaseStorageAdapter(object):

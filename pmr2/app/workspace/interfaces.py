@@ -129,6 +129,11 @@ class IStorageUtility(zope.interface.Interface):
         Create or instantiate the backend storage for context.
         """
 
+    def acquireFrom(context):
+        """\
+        Acquire a Storage Backend from the given context.
+        """
+
 
 # content
 

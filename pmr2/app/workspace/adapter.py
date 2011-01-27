@@ -29,6 +29,8 @@ def WorkspaceRequestStorageAdapter(workspace, request):
     This facilitates "checking out" the correct requested revision.
     """
 
+    # XXX is this really necessary now?
+
 
 class WorkspaceListing(object):
     """\

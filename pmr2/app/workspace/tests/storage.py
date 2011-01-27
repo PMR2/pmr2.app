@@ -95,7 +95,7 @@ class DummyStorageUtility(StorageUtility):
             return
         _dummy_storage_data[context.id] == [{}]
 
-    def __call__(self, context):
+    def acquireFrom(self, context):
         return DummyStorage(context)
 
 
