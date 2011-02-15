@@ -145,7 +145,7 @@ class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
 
     def generate(self):
         # XXX reimplement using plain rdflib.
-        from pmr2.processor.cmeta import Cmeta
+        from cellml.pmr2.cmeta import Cmeta
         metadata = Cmeta(StringIO(self.input))
         return (
             ('text', unicode(metadata.graph.serialize(format=self.format))),
