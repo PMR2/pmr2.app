@@ -180,15 +180,6 @@
       permission="cmf.ModifyPortalContent"
       />
 
-  <!-- Exposure Notes -->
-
-  <browser:page
-      for="pmr2.app.exposure.content.ExposureFile"
-      name="basic_mathml"
-      class=".browser.MathMLNoteView"
-      permission="zope2.View"
-      />
-
   <!-- Exposure Folder -->
 
   <browser:page

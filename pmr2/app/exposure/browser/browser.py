@@ -928,18 +928,6 @@ class RawContentNote(ExposureFileViewBase):
         return self.note.text
 
 
-class MathMLNote(RawContentNote):
-    """\
-    Wraps an object around the mathml view.
-    """
-
-    template = RawContentNote.content
-
-MathMLNoteView = layout.wrap_form(MathMLNote,
-    __wrapper_class=MathMLLayoutWrapper
-    )
-
-
 class GroupedNoteViewBase(ExposureFileViewBase):
     """\
     This view looks into a valid list of text.
