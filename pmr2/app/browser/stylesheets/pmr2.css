@@ -72,6 +72,12 @@ math > mrow {
     font-size: 100%;
 }
 
+/* styles for the mathjax plugin */
+
+#mathjax-render .eq {
+    overflow: auto;
+}
+
 /* styles for the shjs plugin */
 #shjs-view {
     border: 1px #ccc solid;
@@ -88,4 +94,8 @@ math > mrow {
     background: #fff;
     padding: 0.5em;
     border: 0;
+}
+
+.math > .mrow {
+    display: block;
 }
