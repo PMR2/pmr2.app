@@ -193,7 +193,6 @@ pmr2/app/viewlets/__init__.py
 pmr2/app/viewlets/above_content_body_portlets.pt
 pmr2/app/viewlets/configure.zcml
 pmr2/app/viewlets/manage_pmr2portlets.pt
-pmr2/app/workspace/TODO
 pmr2/app/workspace/__init__.py
 pmr2/app/workspace/adapter.py
 pmr2/app/workspace/adapter.txt
@@ -222,6 +221,8 @@ pmr2/app/workspace/browser/browser.txt
 pmr2/app/workspace/browser/configure.zcml
 pmr2/app/workspace/browser/filerenderer.py
 pmr2/app/workspace/browser/interfaces.py
+pmr2/app/workspace/browser/layout.py
+pmr2/app/workspace/browser/layout.txt
 pmr2/app/workspace/browser/templates/file.pt
 pmr2/app/workspace/browser/templates/image.pt
 pmr2/app/workspace/browser/templates/workspace.pt
