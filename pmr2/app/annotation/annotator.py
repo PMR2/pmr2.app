@@ -38,7 +38,15 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
 
     @property
     def note(self):
-        return zope.component.getAdapter(self.context, name=self.name)
+        note = zope.component.getAdapter(self.context, name=self.name)
+        # XXX not sure where or how the context is "pruned" of all its
+        # parent nodes, sometimes...
+        parent = note.__getattribute__('__parent__')
+        if len(parent.getPhysicalPath()) == 1:
+            # XXX this is a hack in getting the values "correct" in the 
+            # way we need it to be.
+            note.__setattr__('__parent__', note.__parent__)
+        return note
 
     def generate(self):
         raise NotImplementedError
