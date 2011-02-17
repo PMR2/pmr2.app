@@ -195,8 +195,9 @@ class ExposureSourceAdapter(object):
                 return obj, workspace, '/'.join(paths)
             paths.append(obj.getId())
             obj = aq_parent(obj)
+        paths.reverse()
         # XXX could benefit from a better exception type?
-        raise ValueError('cannot acquire Exposure object')
+        raise Exception('cannot acquire Exposure object with `%s`' % paths)
 
     def exposure(self):
         return self.source(False)[0]
