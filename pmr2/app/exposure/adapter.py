@@ -5,95 +5,12 @@ from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 from zope.app.component.hooks import getSite
 
-from pmr2.mercurial.adapter import PMR2StorageFixedRevAdapter
-from pmr2.mercurial.adapter import PMR2StorageRequestAdapter
-from pmr2.mercurial import WebStorage
-import pmr2.mercurial.utils
-from pmr2.mercurial.adapter import PMR2StorageURIResolver
-
 from pmr2.app.workspace.exceptions import PathNotFoundError
 from pmr2.app.workspace.interfaces import IStorage
 
 from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.browser.interfaces import IPublishTraverse
-
-__all__ = [
-    'PMR2ExposureStorageAdapter',
-    'PMR2ExposureStorageURIResolver',
-    'ExposureToWorkspaceAdapter',
-    'ExposureToWorkspaceTraverse',
-    'ExposureStorageAdapter',
-    'ExposureSourceAdapter',
-]
-
-
-class PMR2ExposureStorageAdapter(PMR2StorageFixedRevAdapter):
-    # XXX to be deprecated
-
-    def __init__(self, context):
-
-        self.exposure = context
-        self.workspace = zope.component.queryMultiAdapter(
-            (context,),
-            name='ExposureToWorkspace',
-        )
-        self._rev = context.commit_id
-        self._path = ()
-        PMR2StorageFixedRevAdapter.__init__(self, self.workspace, self._rev)
-        self.context = context
-
-
-class PMR2ExposureStorageURIResolver(
-        PMR2ExposureStorageAdapter, PMR2StorageURIResolver):
-    # XXX to be deprecated
-
-    def __init__(self, *a, **kw):
-        PMR2ExposureStorageAdapter.__init__(self, *a, **kw)
-
-    @property
-    def base_frag(self):
-        """
-        The base fragment would be the workspace's absolute url.
-        """
-
-        return self.workspace.absolute_url(),
-
-    def path_to_uri(self, filepath=None, view=None, validate=True):
-        """
-        Same as above class
-        """
-
-        # XXX find ways to remove premature optmization and unify this
-        # and the above.
-
-        rev = self.context.commit_id
-        if filepath is not None:
-            # we only need to resolve the rest of the path here.
-            if not view:
-                # XXX magic?
-                view = '@@rawfile'
-
-            if not rev:
-                self._changectx()
-                rev = self.rev 
-
-            if validate:
-                try:
-                    test = self.fileinfo(filepath).next()
-                except PathNotFoundError:
-                    # attempt to resolve subrepos
-                    result = pmr2.mercurial.utils.match_subrepo(
-                        self.ctx.substate, filepath)
-                    if not result:
-                        return None
-
-            frag = self.base_frag + (view, rev, filepath,)
-        else:
-            frag = self.base_frag
-
-        result = '/'.join(frag)
-        return result
 
 
 def ExposureToWorkspaceAdapter(context):
@@ -188,8 +105,7 @@ class ExposureSourceAdapter(object):
                     return obj, None, None
                 # as paths were appended...
                 paths.reverse()
-                workspace = zope.component.queryMultiAdapter(
-                    (obj,),
+                workspace = zope.component.queryAdapter(obj,
                     name='ExposureToWorkspace',
                 )
                 return obj, workspace, '/'.join(paths)
@@ -211,9 +127,9 @@ class ExposureSourceAdapter(object):
         # is better to generate the redirect to the actual file in the
         # workspace.
 
+        # caching this potentially expensive OP?
+
         exposure, workspace, path = self.source()
-        storage = zope.component.queryMultiAdapter(
-            (workspace, exposure.commit_id,),
-            name='PMR2StorageFixedRev',
-        )
+        storage = zope.component.queryAdapter(workspace, IStorage)
+        storage.checkout(exposure.commit_id)
         return storage.file(path)

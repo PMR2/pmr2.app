@@ -30,6 +30,7 @@ from Products.statusmessages.interfaces import IStatusMessage
 from pmr2.idgen.interfaces import IIdGenerator
 
 from pmr2.app.workspace.browser.browser import WorkspaceLog
+from pmr2.app.workspace.interfaces import IStorage
 from pmr2.app.workspace.exceptions import *
 
 from pmr2.app.exposure import table
@@ -169,12 +170,11 @@ class CreateExposureForm(form.AddForm, page.TraversePage):
         if not self.traverse_subpath:
             raise HTTPNotFound(self.context.title_or_id())
 
-        # Make sure this is a valid revision.
         try:
-            storage = zope.component.queryMultiAdapter(
-                (self.context, self.request, self), 
-                name="PMR2StorageRequestView",
-            )
+            storage = zope.component.getAdapter(self.context, IStorage)
+            commit_id = unicode(self.traverse_subpath[0])
+            # Make sure this is a valid revision.
+            storage.checkout(commit_id)
         except (PathInvalidError, RevisionNotFoundError,):
             raise HTTPNotFound(self.context.title_or_id())
 

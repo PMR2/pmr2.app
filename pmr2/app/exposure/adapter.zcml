@@ -10,20 +10,6 @@
 
   <adapter
       for="pmr2.app.exposure.interfaces.IExposure"
-      factory=".adapter.PMR2ExposureStorageAdapter"
-      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
-      name="PMR2ExposureStorageAdapter"
-      />
-
-  <adapter
-      for="pmr2.app.exposure.interfaces.IExposure"
-      factory=".adapter.PMR2ExposureStorageURIResolver"
-      provides="pmr2.mercurial.interfaces.IPMR2HgWorkspaceAdapter"
-      name="PMR2ExposureStorageURIResolver"
-      />
-
-  <adapter
-      for="pmr2.app.exposure.interfaces.IExposure"
       factory=".adapter.ExposureToWorkspaceAdapter"
       provides="pmr2.app.workspace.interfaces.IWorkspace"
       name="ExposureToWorkspace"
