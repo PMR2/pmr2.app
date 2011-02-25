@@ -8,9 +8,6 @@ from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.Archetypes import atapi
 
-import pmr2.mercurial
-import pmr2.mercurial.utils
-
 from pmr2.app.content.interfaces import *
 
 
