@@ -1,3 +1,5 @@
+import zope.component
+
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Products.PluggableAuthService.utils import classImplements
@@ -7,42 +9,35 @@ from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 from Products.PluggableAuthService.plugins import HTTPBasicAuthHelper
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
+from pmr2.app.workspace.pas.interfaces import IStorageProtocol
+
 # I can't be bothered adding a ZMI page to add this plugin as it should
 # be completely automated.
-#manage_addHgAuthPluginForm = PageTemplateFile('../zmi/addHgAuthPlugin',
-#    globals(), __name__='manage_addHgAuthPluginForm')
+manage_addProtocolAuthPluginForm = PageTemplateFile(
+    '../zmi/addProtocolAuthPlugin',
+    globals(), 
+    __name__='manage_addProtocolAuthPluginForm')
 
 
-def addHgAuthPlugin(self, id, title='', REQUEST=None):
-    # XXX deprecated.
-    return
+def addProtocolAuthPlugin(self, id, title='', REQUEST=None):
+    o = ProtocolAuthPlugin(id, title)
+    self._setObject(o.getId(), o)
 
-def removeHgAuthPlugin(self, id, title='', REQUEST=None):
+    if REQUEST is not None:
+        REQUEST['RESPONSE'].redirect('%s/manage_main'
+            '?manage_tabs_message=Protocol+PAS+Plugin+removed.' %
+            self.absolute_url())
+
+def removeProtocolAuthPlugin(self, id, title='', REQUEST=None):
     self._delObject(id)
 
     if REQUEST is not None:
         REQUEST['RESPONSE'].redirect('%s/manage_main'
-            '?manage_tabs_message=HgAuth+PAS+Plugin+removed.' %
+            '?manage_tabs_message=Protocol+PAS+Plugin+removed.' %
             self.absolute_url())
 
-def hgSniffer(request):
-    # standard Mercurial compatible client
-    if 'HTTP_ACCEPT' in request.environ:
-        return request.environ['HTTP_ACCEPT'].startswith(
-            'application/mercurial-')
-    # older Mercurial client
-    agent = request.get_header('User-agent')
-    if agent:
-        return agent.startswith('mercurial/proto-')
-    # Assume not Mercurial
-    return False
-
-# XXX we could be doing this, but I am not sure if we need to hook into
-# protocol sniffer.  Hard-coding below works, for now.
-#registerSniffer(IHgProtocolRequest, hgSniffer)
-
-class HgAuthPlugin(BasePlugin):
-    meta_type = 'HgAuth PAS'
+class ProtocolAuthPlugin(BasePlugin):
+    meta_type = 'Protocol PAS'
     security = ClassSecurityInfo()
 
     def __init__(self, id, title=None):
@@ -51,8 +46,15 @@ class HgAuthPlugin(BasePlugin):
 
     security.declarePrivate('challenge')
     def challenge(self, request, response, **kw):
-        # This is only available to the mercurial protocol.
-        if not hgSniffer(request):
+        protocols = zope.component.getUtilitiesFor(IStorageProtocol)
+        result = False
+
+        for key, protocol in protocols:
+            result = protocol(request)
+            if result:
+                break
+
+        if not result:
             return False
 
         # Couldn't inherit from HTTPBasicAuthHelper due to metaclass(?)
@@ -72,5 +74,5 @@ class HgAuthPlugin(BasePlugin):
         response.setStatus(401)
         return 1
 
-classImplements(HgAuthPlugin, IChallengePlugin)
-InitializeClass(HgAuthPlugin)
+classImplements(ProtocolAuthPlugin, IChallengePlugin)
+InitializeClass(ProtocolAuthPlugin)

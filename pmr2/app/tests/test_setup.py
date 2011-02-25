@@ -32,7 +32,7 @@ class TestProductInstall(TestCase):
         site = getSite()
         uf = getToolByName(site, 'acl_users')
         activated_pn = uf.plugins.listPluginIds(IChallengePlugin)
-        self.assertEqual(activated_pn[0], 'hgauthpas')
+        self.assertEqual(activated_pn[0], 'pmr2authpas')
 
 
 def test_suite():

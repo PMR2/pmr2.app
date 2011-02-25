@@ -4,22 +4,22 @@ from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 from Products.CMFCore.utils import getToolByName
 from StringIO import StringIO
-from pmr2.app.pas.mercurial import addHgAuthPlugin
-from pmr2.app.pas.mercurial import removeHgAuthPlugin
+from pmr2.app.workspace.pas.protocol import addProtocolAuthPlugin
+from pmr2.app.workspace.pas.protocol import removeProtocolAuthPlugin
 from pmr2.app.interfaces import IPMR2GlobalSettings
 from pmr2.app.settings import PMR2GlobalSettings
 
 def add_pas_plugin(site):
     """Add our plugin into PAS"""
 
-    out = StringIO()
     uf = getToolByName(site, 'acl_users')
     installed = uf.objectIds()
+    logger = getLogger('pmr2.app')
 
-    id_ = 'hgauthpas'
+    id_ = 'pmr2authpas'
 
     if id_ not in installed:
-        addHgAuthPlugin(uf, id_, 'HgAuth PAS')
+        addProtocolAuthPlugin(uf, id_, 'PMR2 Protocol Auth PAS')
         try:
             activatePluginInterfaces(site, id_)
         except TypeError:
@@ -27,7 +27,7 @@ def add_pas_plugin(site):
             raise
             activatePluginInterfaces(site, id_, out)
     else:
-        print >> out, '%s already installed' % id_
+        logger.info('`%s` already installed', id_)
 
     # check for and activate the wanted plugins
     activated_pn = uf.plugins.listPluginIds(IChallengePlugin)
@@ -35,20 +35,18 @@ def add_pas_plugin(site):
         # activatePluginInterfaces should have done this, but it may
         # not have because something could prevent this from happening.
         uf.plugins.activatePlugin(IChallengePlugin, id_)
-        print >> out, 'IChallengePlugin "%s" activated' % id_
+        logger.info('IChallengePlugin "%s" activated', id_)
         move_pn = activated_pn
     else:
         # Select the plugins to move down.
         move_pn = list(activated_pn)
         move_pn = move_pn[0:move_pn.index(id_)]
 
-    # keep hgauthpas at the bottom (actually, below the cookie auth)
+    # keep our auth at the bottom (actually, below the cookie auth)
     # is the same as deactivating it as it will never have a chance
     # to be triggered (so manual demotion is left alone).
     uf.plugins.movePluginsDown(IChallengePlugin, move_pn)
-    print >> out, 'IChallengePlugin "%s" moved to top' % id_
-
-    return out.getvalue()
+    logger.info('IChallengePlugin "%s" moved to top', id_)
 
 def add_pmr2(site):
     """Add PMR2 settings utility to the site manager"""
@@ -70,7 +68,7 @@ def remove_pmr2(site):
     return out.getvalue()
 
 def importVarious(context):
-    """Install the HgAuthPAS plugin"""
+    """Install the ProtocolAuthPAS plugin"""
 
     site = context.getSite()
     logger = getLogger('pmr2.app')
@@ -291,7 +289,7 @@ def remove_hg_pas_plugin(site):
         logger.info('IChallengePlugin "%s" deactivated' % id_)
 
     if id_ in installed:
-        removeHgAuthPlugin(uf, id_, 'HgAuth PAS')
+        removeProtocolAuthPlugin(uf, id_, 'PMR2 Protocol Auth PAS')
 
 def pmr2_v0_4(context):
     from zope.app.component.hooks import getSite
