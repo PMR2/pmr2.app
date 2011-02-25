@@ -16,12 +16,15 @@ from pmr2.app.pas.interfaces import IHgProtocolRequest
 
 
 def addHgAuthPlugin(self, id, title='', REQUEST=None):
-    o = HgAuthPlugin(id, title)
-    self._setObject(o.getId(), o)
+    # XXX deprecated.
+    return
+
+def removeHgAuthPlugin(self, id, title='', REQUEST=None):
+    self._delObject(id)
 
     if REQUEST is not None:
         REQUEST['RESPONSE'].redirect('%s/manage_main'
-            '?manage_tabs_message=HgAuth+PAS+Plugin+added.' %
+            '?manage_tabs_message=HgAuth+PAS+Plugin+removed.' %
             self.absolute_url())
 
 def hgSniffer(request):

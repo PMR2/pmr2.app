@@ -5,6 +5,7 @@ from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 from Products.CMFCore.utils import getToolByName
 from StringIO import StringIO
 from pmr2.app.pas.mercurial import addHgAuthPlugin
+from pmr2.app.pas.mercurial import removeHgAuthPlugin
 from pmr2.app.interfaces import IPMR2GlobalSettings
 from pmr2.app.settings import PMR2GlobalSettings
 
@@ -19,7 +20,12 @@ def add_pas_plugin(site):
 
     if id_ not in installed:
         addHgAuthPlugin(uf, id_, 'HgAuth PAS')
-        activatePluginInterfaces(site, id_, out)
+        try:
+            activatePluginInterfaces(site, id_)
+        except TypeError:
+            # Plone 3
+            raise
+            activatePluginInterfaces(site, id_, out)
     else:
         print >> out, '%s already installed' % id_
 
@@ -67,8 +73,9 @@ def importVarious(context):
     """Install the HgAuthPAS plugin"""
 
     site = context.getSite()
-    print add_pas_plugin(site)
-    print add_pmr2(site)
+    logger = getLogger('pmr2.app')
+    logger.info(add_pas_plugin(site))
+    logger.info(add_pmr2(site))
 
 def cellml_v0_2tov0_3(context):
     """Migration script specific to models.cellml.org."""
@@ -266,8 +273,31 @@ def exposure_rand_to_seq(context):
         newid = '%x' % (counter.next())
         clone(exposure, newid)
 
+def remove_hg_pas_plugin(site):
+    """Remove Mercurial specific PAS"""
+
+    logger = getLogger('pmr2.app')
+    uf = getToolByName(site, 'acl_users')
+    installed = uf.objectIds()
+
+    id_ = 'hgauthpas'
+
+    # check for status of our plugin, deactivate if active.
+    activated_pn = uf.plugins.listPluginIds(IChallengePlugin)
+    if id_ in activated_pn:
+        # activatePluginInterfaces should have done this, but it may
+        # not have because something could prevent this from happening.
+        uf.plugins.deactivatePlugin(IChallengePlugin, id_)
+        logger.info('IChallengePlugin "%s" deactivated' % id_)
+
+    if id_ in installed:
+        removeHgAuthPlugin(uf, id_, 'HgAuth PAS')
+
 def pmr2_v0_4(context):
+    from zope.app.component.hooks import getSite
+    site = getSite()
     mercurial_storage(context)
+    remove_hg_pas_plugin(site)
 
 def mercurial_storage(context):
     # In v0.4, workspace must specify its storage backend as mercurial
@@ -280,7 +310,7 @@ def mercurial_storage(context):
     tokens = v(None).by_token
     if 'mercurial' not in tokens:
         raise KeyError('mercurial not registered as a backend; '
-                       'please install pmr2.mercurial.')
+                       'please reinstall pmr2.mercurial.')
     logger = getLogger('pmr2.app')
     catalog = getToolByName(context, 'portal_catalog')
 
