@@ -13,6 +13,8 @@ class IObjectId(zope.schema.interfaces.IBytesLine):
     A field containing a valid Zope object id.
     """
 
+    # XXX replace this with DottedName
+
 
 class IWorkspaceList(zope.schema.interfaces.IList):
     """\

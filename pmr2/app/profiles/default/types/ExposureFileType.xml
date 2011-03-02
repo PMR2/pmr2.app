@@ -15,6 +15,7 @@
  <property name="allowed_content_types"/>
  <property name="allow_discussion">False</property>
  <property name="default_view">view</property>
+ <property name="add_view_expr">string:${folder_url}/@@eftype_create</property>
  <property name="view_methods">
   <element value="view"/>
  </property>

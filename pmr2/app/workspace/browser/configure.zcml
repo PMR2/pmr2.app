@@ -172,14 +172,15 @@
 
   <!--
     adapter for the adding view.
+
+    something in Plone4 rendered this not working.  Use @@workspace_create
   -->
 
-  <adapter
-      for="Products.Five.browser.adding.ContentAdding
-           *"
+  <browser:page
+      for="Products.Five.browser.adding.ContentAdding"
       name="addWorkspace"
-      factory=".browser.WorkspaceStorageCreateFormView"
-      provides="z3c.form.interfaces.IAddForm"
+      class=".browser.WorkspaceStorageCreateFormView"
+      permission="cmf.AddPortalContent"
       />
 
 </configure>

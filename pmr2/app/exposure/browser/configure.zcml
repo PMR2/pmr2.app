@@ -198,14 +198,23 @@
 
   <!--
     adapter for the adding view.
+
+    something changed in Plone 4 and broke this, use the alternate view
+    until this can be worked around.
   -->
 
-  <adapter
-      for="Products.Five.browser.adding.ContentAdding
-           *"
+  <browser:page
+      for="Products.Five.browser.adding.ContentAdding"
       name="addExposureFileType"
-      factory=".browser.ExposureFileTypeAddFormView"
-      provides="z3c.form.interfaces.IAddForm"
+      class=".browser.ExposureFileTypeAddFormView"
+      permission="cmf.AddPortalContent"
+      />
+
+  <browser:page
+      for="*"
+      name="eftype_create"
+      class=".browser.ExposureFileTypeAddFormView"
+      permission="cmf.AddPortalContent"
       />
 
   <!-- extensible form adapters -->
