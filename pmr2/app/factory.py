@@ -1,6 +1,7 @@
 import zope.interface
 import zope.component
 from zope.location import Location, locate
+from zope.schema.interfaces import IVocabularyFactory
 
 from pmr2.app.interfaces import *
 
@@ -32,6 +33,12 @@ def named_factory(klass):
     # create/return instance of the factory that instantiates the 
     # classes below.
     return _factory()
+
+def vocab_factory(vocab):
+    def _vocab_factory(context):
+        return vocab(context)
+    zope.interface.alsoProvides(_vocab_factory, IVocabularyFactory)
+    return _vocab_factory
 
 
 class NamedUtilBase(Location):

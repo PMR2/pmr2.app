@@ -6,7 +6,7 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
 from Products.CMFCore.utils import getToolByName
 
-from pmr2.app.vocab import vocab_factory
+from pmr2.app.factory import vocab_factory
 
 from pmr2.app.interfaces import *
 from pmr2.app.workspace.interfaces import IWorkspace

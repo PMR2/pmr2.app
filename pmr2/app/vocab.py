@@ -9,12 +9,10 @@ from Products.CMFCore.utils import getToolByName
 from pmr2.app.interfaces import *
 from pmr2.app.annotation.interfaces import *
 
+from pmr2.app.factory import vocab_factory
 
-def vocab_factory(vocab):
-    def _vocab_factory(context):
-        return vocab(context)
-    zope.interface.alsoProvides(_vocab_factory, IVocabularyFactory)
-    return _vocab_factory
+zope.deprecation.deprecated('vocab_factory',
+    'Please import vocab_factory from pmr2.app.factory before pmr2.app-0.5.')
 
 
 class PMR2IndexesVocab(SimpleVocabulary):
