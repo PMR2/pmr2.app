@@ -27,6 +27,5 @@
   <include file="adapter.zcml" />
   <include file="converter.zcml" />
   <include file="profiles.zcml" />
-  <include file="vocab.zcml" />
 
 </configure>

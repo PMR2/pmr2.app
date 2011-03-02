@@ -4,39 +4,39 @@
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.PMR2IndexesVocabFactory"
+      component="pmr2.app.exposure.vocab.PMR2IndexesVocabFactory"
       name="pmr2.vocab.indexes"
       />
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.EFTypeVocabFactory"
+      component="pmr2.app.exposure.vocab.EFTypeVocabFactory"
       name="pmr2.vocab.eftype"
       />
 
   <!-- need factory method to make class because schemas depend on this -->
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.ExposureFileAnnotatorVocabFactory"
+      component="pmr2.app.exposure.vocab.ExposureFileAnnotatorVocabFactory"
       name="pmr2.vocab.ExposureFileAnnotators"
       />
 
   <!-- factory is the class because we are reusing this without context -->
   <utility
       provides="zope.schema.interfaces.IVocabulary"
-      factory="pmr2.app.vocab.ExposureFileNoteViewVocab"
+      factory="pmr2.app.exposure.vocab.ExposureFileNoteViewVocab"
       name="pmr2.vocab.ExposureFileAnnotators"
       />
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.ExposureFileNotesAvailableVocabFactory"
+      component="pmr2.app.exposure.vocab.ExposureFileNotesAvailableVocabFactory"
       name="pmr2.vocab.ExposureFileNotesAvailable"
       />
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.DocViewGenVocabFactory"
+      component="pmr2.app.exposure.vocab.DocViewGenVocabFactory"
       name="pmr2.vocab.DocViewGen"
       />
 

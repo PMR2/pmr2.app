@@ -10,6 +10,7 @@
   <include file="factory.zcml" />
   <include file="table.zcml" />
   <include file="traverse.zcml" />
+  <include file="vocab.zcml" />
 
   <include package=".portlets" />
 
