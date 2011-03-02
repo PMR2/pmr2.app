@@ -11,26 +11,8 @@ from Products.PluggableAuthService.PluggableAuthService import \
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
 
-    from pmr2.app import content
-    from pmr2.app.pas import mercurial
+    from pmr2.app.workspace import initialize as workspace_init
+    from pmr2.app.exposure import initialize as exposure_init
 
-    content_types, constructors, ftis = atapi.process_types(atapi.listTypes('pmr2.app'), 'pmr2.app')
-
-    cmfutils.ContentInit(
-        'pmr2.app Content',
-        content_types = content_types,
-        permission = ADD_CONTENT_PERMISSION,
-        extra_constructors = constructors,
-        fti = ftis,
-        ).initialize(context)
-
-    registerMultiPlugin(mercurial.HgAuthPlugin.meta_type) # Add to PAS menu
-
-    context.registerClass(
-        mercurial.HgAuthPlugin,
-        constructors = (
-            #mercurial.manage_addHgAuthPluginForm,
-            mercurial.addHgAuthPlugin,
-        ),
-        visibility = None
-    )
+    workspace_init(context)
+    exposure_init(context)

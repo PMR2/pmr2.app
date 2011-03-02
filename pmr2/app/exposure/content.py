@@ -105,8 +105,8 @@ class ExposureFileType(atapi.BaseContent):
     tags = fieldproperty.FieldProperty(IExposureFileType['tags'])
 
 
-atapi.registerType(ExposureContainer, 'pmr2.app')
-atapi.registerType(Exposure, 'pmr2.app')
-atapi.registerType(ExposureFile, 'pmr2.app')
-atapi.registerType(ExposureFileType, 'pmr2.app')
-atapi.registerType(ExposureFolder, 'pmr2.app')
+atapi.registerType(ExposureContainer, 'pmr2.app.exposure')
+atapi.registerType(Exposure, 'pmr2.app.exposure')
+atapi.registerType(ExposureFile, 'pmr2.app.exposure')
+atapi.registerType(ExposureFileType, 'pmr2.app.exposure')
+atapi.registerType(ExposureFolder, 'pmr2.app.exposure')

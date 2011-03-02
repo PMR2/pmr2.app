@@ -41,5 +41,5 @@ class Workspace(BrowserDefaultMixin, atapi.BaseContent):
     storage = fieldproperty.FieldProperty(IWorkspace['storage'])
 
 
-atapi.registerType(WorkspaceContainer, 'pmr2.app')
-atapi.registerType(Workspace, 'pmr2.app')
+atapi.registerType(WorkspaceContainer, 'pmr2.app.workspace')
+atapi.registerType(Workspace, 'pmr2.app.workspace')
