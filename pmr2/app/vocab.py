@@ -7,7 +7,6 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import *
-from pmr2.app.workspace.interfaces import IWorkspaceListing
 from pmr2.app.annotation.interfaces import *
 
 
@@ -16,20 +15,6 @@ def vocab_factory(vocab):
         return vocab(context)
     zope.interface.alsoProvides(_vocab_factory, IVocabularyFactory)
     return _vocab_factory
-
-
-class PMR2TransformsVocab(SimpleVocabulary):
-
-    def __init__(self, context):
-        self.context = context
-        pt = getToolByName(context, 'portal_transforms')
-        transforms = [(i, getattr(pt, i).get_documentation().strip()) \
-                for i in pt.objectIds() if i.startswith('pmr2_processor_')]
-        transforms.sort()
-        terms = [SimpleTerm(*i) for i in transforms]
-        super(PMR2TransformsVocab, self).__init__(terms)
-
-PMR2TransformsVocabFactory = vocab_factory(PMR2TransformsVocab)
 
 
 class PMR2IndexesVocab(SimpleVocabulary):

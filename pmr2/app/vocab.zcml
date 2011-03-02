@@ -4,12 +4,6 @@
 
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"
-      component="pmr2.app.vocab.PMR2TransformsVocabFactory"
-      name="pmr2.vocab.transforms"
-      />
-
-  <utility
-      provides="zope.schema.interfaces.IVocabularyFactory"
       component="pmr2.app.vocab.PMR2IndexesVocabFactory"
       name="pmr2.vocab.indexes"
       />
