@@ -49,12 +49,6 @@ def test_suite():
             setUp=testing.setUp, tearDown=testing.tearDown
         ),
 
-        # test the fields.
-        doctestunit.DocTestSuite(
-            module='pmr2.app.subscriber',
-            setUp=testing.setUp, tearDown=testing.tearDown
-        ),
-
     ])
 
 if __name__ == '__main__':

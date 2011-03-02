@@ -2,58 +2,10 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="pmr2">
 
-  <!-- this only applies to the exposure -->
-  <subscriber
-      for="pmr2.app.exposure.interfaces.IExposure
-          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-      handler=".subscriber.catalog_content"
-      />
-
-  <!-- 
-    During workflow transition, the subobjects need to be recatalogged
-    as they use the parent variable for workflow state.
-  -->
-  <subscriber
-      for="pmr2.app.exposure.interfaces.IExposure
-          Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-      handler=".subscriber.recursive_recatalog_content"
-      />
-
-  <subscriber
-      for="pmr2.app.exposure.interfaces.IExposureFile
-          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-      handler=".subscriber.catalog_content"
-      />
-
-  <subscriber
-      for="pmr2.app.exposure.interfaces.IExposureFileType
-          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-      handler=".subscriber.catalog_content"
-      />
-
-  <subscriber
-      for="pmr2.app.exposure.interfaces.IExposureFolder
-          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-      handler=".subscriber.catalog_content"
-      />
-
   <subscriber
       for="pmr2.app.interfaces.INamedUtilBase
           zope.component.interfaces.IRegistered"
       handler=".factory.name_utility"
-      />
-
-  <!-- this help creates user workspace folders -->
-  <subscriber
-      for="Products.PlonePAS.plugins.ufactory.PloneUser
-          Products.PlonePAS.events.UserLoggedInEvent"
-      handler=".subscriber.create_user_workspace"
-      />
-
-  <subscriber
-      for="Products.PlonePAS.plugins.ufactory.PloneUser
-          Products.PlonePAS.events.UserInitialLoginInEvent"
-      handler=".subscriber.create_user_workspace"
       />
 
 </configure>

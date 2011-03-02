@@ -1,0 +1,40 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <!-- this only applies to the exposure -->
+  <subscriber
+      for="pmr2.app.exposure.interfaces.IExposure
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler=".subscriber.catalog_content"
+      />
+
+  <!-- 
+    During workflow transition, the subobjects need to be recatalogged
+    as they use the parent variable for workflow state.
+  -->
+  <subscriber
+      for="pmr2.app.exposure.interfaces.IExposure
+          Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+      handler=".subscriber.recursive_recatalog_content"
+      />
+
+  <subscriber
+      for="pmr2.app.exposure.interfaces.IExposureFile
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler=".subscriber.catalog_content"
+      />
+
+  <subscriber
+      for="pmr2.app.exposure.interfaces.IExposureFileType
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler=".subscriber.catalog_content"
+      />
+
+  <subscriber
+      for="pmr2.app.exposure.interfaces.IExposureFolder
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler=".subscriber.catalog_content"
+      />
+
+</configure>

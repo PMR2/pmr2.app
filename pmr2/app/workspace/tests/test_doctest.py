@@ -44,6 +44,12 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
+        # Subscriber
+        doctestunit.DocTestSuite(
+            module='pmr2.app.workspace.subscriber',
+            setUp=testing.setUp, tearDown=testing.tearDown
+        ),
+
     ])
 
 if __name__ == '__main__':
