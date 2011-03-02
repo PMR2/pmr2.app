@@ -32,7 +32,7 @@ from Acquisition import aq_parent, aq_inner
 
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace.content import *
-from pmr2.app.util import set_xmlbase, obfuscate, isodate
+from pmr2.app.workspace.browser.util import *
 
 from pmr2.app.browser import interfaces
 from pmr2.app.browser import form

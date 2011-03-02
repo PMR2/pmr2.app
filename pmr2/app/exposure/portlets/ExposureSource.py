@@ -14,8 +14,8 @@ from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
+from pmr2.app.workspace.interfaces import IStorage
 from pmr2.app.browser.page import ViewPageTemplateFile
-from pmr2.app.util import short
 
 
 class IExposureSourcePortlet(IPortletDataProvider):
@@ -46,6 +46,9 @@ class Renderer(base.Renderer):
             values = zope.component.getAdapter(
                 self.context, IExposureSourceAdapter).source()
             self.exposure, self.workspace, self.path = values
+            storage = zope.component.getAdapter(self.exposure, IStorage)
+            storage.checkout(self.exposure.commit_id)
+            self.shortrev = storage.shortrev
 
     @memoize
     def portal_url(self):
@@ -63,7 +66,7 @@ class Renderer(base.Renderer):
                 'href': workspace_uri,
             },
             'manifest': {
-                'label': short(self.context.commit_id),
+                'label': self.shortrev,
                 'href': manifest_uri,
             },
         }

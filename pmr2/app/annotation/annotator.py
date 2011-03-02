@@ -11,7 +11,6 @@ from Products.PortalTransforms.data import datastream
 from pmr2.app.interfaces import *
 from pmr2.app.annotation.interfaces import *
 from pmr2.app.factory import NamedUtilBase
-import pmr2.app.util
 
 
 class ExposureFileAnnotatorBase(NamedUtilBase):

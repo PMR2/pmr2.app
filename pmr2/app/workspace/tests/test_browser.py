@@ -9,6 +9,8 @@ from pmr2.app.workspace.interfaces import *
 # Objects to test
 
 from pmr2.app.workspace.browser.browser import WorkspaceTraversePage
+from pmr2.app.workspace.browser.util import set_xmlbase
+from pmr2.app.workspace.browser.util import obfuscate
 
 
 class TestWorkspaceTraversePage(TestCase):
@@ -54,8 +56,40 @@ class TestWorkspaceTraversePage(TestCase):
         self.assertEqual(request.get('request_subpath'), ['dir1', 'dir2'])
 
 
+class TestWorkspaceBrowserUtil(TestCase):
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_001_set_xmlbase(self):
+        input = (
+            '<?xml version="1.0" encoding="utf-8"?>\n'
+            '<rdf:RDF \n'
+            '  xmlns:pcenv="http://www.cellml.org/tools/pcenv/"\n'
+            '  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"\n'
+            '>\n'
+            ' <rdf:Description rdf:about="#element" pcenv:colour="#aef16d">\n'
+            '   <pcenv:x-variable rdf:resource="#xvar"/>\n'
+            '   <pcenv:y-variable rdf:resource="#yvar"/>\n'
+            ' </rdf:Description>\n'
+            '</rdf:RDF>\n'
+        )
+        uri = 'http://example.com/'
+        output = set_xmlbase(input, uri)
+        self.assert_(
+            output.splitlines()[1].endswith('xml:base="http://example.com/">'))
+
+    def test_002_obfuscate(self):
+        input = 'user@example.com'
+        output = obfuscate(input)
+        self.assertNotEqual(input, output)
+
 def test_suite():
     suite = TestSuite()
     suite.addTest(makeSuite(TestWorkspaceTraversePage))
+    suite.addTest(makeSuite(TestWorkspaceBrowserUtil))
     return suite
 

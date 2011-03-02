@@ -15,7 +15,6 @@ from Products.CMFCore.utils import getToolByName
 from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.browser.page import ViewPageTemplateFile
-from pmr2.app.util import short
 
 
 class IExposureDownloadPortlet(IPortletDataProvider):

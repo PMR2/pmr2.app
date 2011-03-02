@@ -21,13 +21,6 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
-        # Content tests.
-        ztc.ZopeDocFileSuite(
-            'util.txt', package='pmr2.app',
-            test_class=base.DocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
-
         # Root form usage tests.
         ztc.ZopeDocFileSuite(
             'browser/layout.txt', package='pmr2.app',

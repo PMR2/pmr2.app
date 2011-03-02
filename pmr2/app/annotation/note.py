@@ -11,7 +11,6 @@ from Products.CMFCore.utils import getToolByName
 from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.annotation.interfaces import *
-import pmr2.app.util
 
 
 # Basic support for ExposureFileNote annotation adapters.

@@ -43,7 +43,6 @@ from pmr2.app.browser.interfaces import *
 from pmr2.app.annotation.interfaces import *
 from pmr2.app.annotation.factory import has_note, del_note
 from pmr2.app.exposure.content import *
-from pmr2.app.util import *
 
 from pmr2.app.browser import form
 from pmr2.app.browser import page
