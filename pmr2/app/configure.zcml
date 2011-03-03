@@ -24,7 +24,7 @@
   <include package=".viewlets" />
   <include package=".annotation" />
 
-  <include file="adapter.zcml" />
+  <include file="settings.zcml" />
   <include file="converter.zcml" />
   <include file="profiles.zcml" />
 
