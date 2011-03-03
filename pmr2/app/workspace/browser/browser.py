@@ -522,6 +522,11 @@ class FileInfoPage(WorkspaceTraversePage):
     """
 
     template = ViewPageTemplateFile('workspace_file_page.pt')
+    title = ViewPageTemplateFile('workspace_file_label.pt')
+
+    @property
+    def label(self):
+        return self.title()
 
     def absolute_url(self):
         return self.context.absolute_url()

@@ -1,11 +1,3 @@
-<h1>Location: <span 
-  tal:content="context/title_or_id" tal:omit-tag="not:nothing"
-  /> @ <span tal:content="view/shortrev" tal:omit-tag="not:nothing" 
-  /><tal:loop tal:repeat="i request/filepath"
-    > / <span tal:condition="i" tal:content="i" tal:omit-tag="not:nothing"
-  /></tal:loop
-></h1>
-
 <dl>
 <dt>Author:</dt>
 <dd tal:content="view/data/author"/>
