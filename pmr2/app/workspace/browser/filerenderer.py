@@ -8,8 +8,11 @@ from zope.app.pagetemplate.viewpagetemplatefile \
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
 from Products.statusmessages.interfaces import IStatusMessage
+from plone.z3cform.interfaces import IFormWrapper
+from plone.z3cform import layout
 
 from pmr2.app.browser import page
+from pmr2.app.browser.layout import TraverseFormWrapper
 
 from pmr2.app.workspace.interfaces import IWorkspaceFileListProvider
 from pmr2.app.workspace import table
@@ -56,6 +59,8 @@ class FileRendererProvider(ContentProviderBase):
                 fileview = zope.component.getMultiAdapter(
                     (self.context, self.request), name=view)
                 try:
+                    if IFormWrapper.providedBy(fileview):
+                        fileview = fileview.form_instance
                     results = fileview()
                     break
 
@@ -138,3 +143,6 @@ class ImageRenderer(BaseFileRenderer):
     @property
     def contents(self):
         return self.fullpath
+
+ImageRendererView = layout.wrap_form(ImageRenderer, 
+    __wrapper_class=TraverseFormWrapper)

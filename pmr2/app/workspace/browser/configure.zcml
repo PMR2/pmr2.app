@@ -159,7 +159,7 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="image"
-      class=".filerenderer.ImageRenderer"
+      class=".filerenderer.ImageRendererView"
       permission="zope2.View"
       />
 
