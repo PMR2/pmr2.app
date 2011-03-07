@@ -18,7 +18,7 @@ from pmr2.app.workspace.interfaces import IWorkspaceFileListProvider
 from pmr2.app.workspace import table
 from pmr2.app.workspace.browser.interfaces import *
 from pmr2.app.workspace.browser.browser import WorkspaceTraversePage
-from pmr2.app.workspace.browser.browser import FileInfoPage
+from pmr2.app.workspace.browser.browser import FilePage
 
 
 class DefaultRendererDictionary(object):
@@ -34,6 +34,37 @@ class DefaultRendererDictionary(object):
             return 'image'
         else:
             return 'default'
+
+
+class FileInfoProvider(ContentProviderBase):
+
+    def render(self, *a, **kw):
+        errors = []
+        results = ''
+        status = IStatusMessage(self.request)
+        data = self.request['_data']
+        
+        # In the future we might implement other ways to render file
+        # information, either for other types of backends or even file
+        # formats (which file renderer should take over, but...), so
+        # this serves as a placeholder of sort.
+        view = 'fileinfo'
+        fileview = zope.component.getMultiAdapter(
+            (self.context, self.request), name=view)
+        try:
+            if IFormWrapper.providedBy(fileview):
+                fileview = fileview.form_instance
+            results = fileview()
+        except:
+            errors.append('failed to render file information')
+
+        if errors:
+            # probably should only show this info message to users who
+            # can deal with this.
+            status.addStatusMessage(' '.join(errors), 'info')
+
+        if results:
+            return results
 
 
 class FileRendererProvider(ContentProviderBase):
@@ -79,7 +110,7 @@ class FileRendererProvider(ContentProviderBase):
             return results
 
 
-class BaseFileRenderer(FileInfoPage):
+class BaseFileRenderer(FilePage):
     zope.interface.implements(IFileRenderer)
 
     template = ViewPageTemplateFile('file.pt')

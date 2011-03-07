@@ -515,21 +515,11 @@ WorkspaceEditFormView = layout.wrap_form(
     WorkspaceEditForm, label="Workspace Edit Form")
 
 
-class FileInfoPage(WorkspaceTraversePage):
+class BaseFilePage(WorkspaceTraversePage):
     """\
     A Traversal Page that extracts and process the info when updated.
     Provides some properties that is available once that is done.
     """
-
-    template = ViewPageTemplateFile('workspace_file_page.pt')
-    title = ViewPageTemplateFile('workspace_file_label.pt')
-
-    @property
-    def label(self):
-        return self.title()
-
-    def absolute_url(self):
-        return self.context.absolute_url()
 
     @property
     def rev(self):
@@ -569,6 +559,22 @@ class FileInfoPage(WorkspaceTraversePage):
         return '/'.join(self._getpath(view='file',
             path=self.data['file']))
 
+    def absolute_url(self):
+        return self.context.absolute_url()
+
+    def update(self):
+        pass
+
+
+class FilePage(BaseFilePage):
+
+    template = ViewPageTemplateFile('workspace_file_page.pt')
+    title = ViewPageTemplateFile('workspace_file_label.pt')
+
+    @property
+    def label(self):
+        return self.title()
+
     def update(self):
         """\
         Acquire content from request_subpath from storage
@@ -598,13 +604,39 @@ class FileInfoPage(WorkspaceTraversePage):
         self.request['_data'] = data
         self.request['_storage'] = storage
 
-FileInfoPageView = layout.wrap_form(
-    FileInfoPage,
+FilePageView = layout.wrap_form(
+    FilePage,
     __wrapper_class=BorderedTraverseFormWrapper,
 )
 
 
-class WorkspaceRawfileView(FileInfoPage):
+class FileInfoPage(BaseFilePage):
+    """\
+    A Traversal Page that displays the pre-extracted info.
+    """
+
+    showinfo = True
+    template = ViewPageTemplateFile('workspace_file_info.pt')
+
+    def update(self):
+        if not self.data['mimetype']():
+            self.showinfo = False
+
+    def render(self):
+        if not self.showinfo:
+            return ''
+        return super(FileInfoPage, self).render()
+
+    def __call__(self):
+        return super(FileInfoPage, self).__call__()
+
+FileInfoPageView = layout.wrap_form(
+    FileInfoPage,
+    __wrapper_class=TraverseFormWrapper,
+)
+
+
+class WorkspaceRawfileView(FilePage):
 
     def __call__(self):
         self.update()

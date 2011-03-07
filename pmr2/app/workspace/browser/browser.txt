@@ -173,7 +173,7 @@ See if the page renders with expected output.
 ::
 
     >>> request = TestRequest()
-    >>> testpage = browser.FileInfoPage(
+    >>> testpage = browser.FilePage(
     ...     self.portal.workspace.cake, request)
     >>> testpage.update()
     >>> result = testpage()
@@ -433,7 +433,7 @@ request_subpath.
     >>> request = TestRequest()
     >>> request['rev'] = '2'
     >>> request['request_subpath'] = ['dir1']
-    >>> testpage = browser.FileInfoPage(wkspc, request)
+    >>> testpage = browser.FilePage(wkspc, request)
     >>> testpage.update()
     >>> result = testpage()
     >>> 'Location: Delicious Eggs @ 2 / dir1' in testpage.label
@@ -450,7 +450,7 @@ Nested works too.
     >>> request = TestRequest()
     >>> request['rev'] = '3'
     >>> request['request_subpath'] = ['dir1', 'dir2']
-    >>> testpage = browser.FileInfoPage(wkspc, request)
+    >>> testpage = browser.FilePage(wkspc, request)
     >>> testpage.update()
     >>> result = testpage()
     >>> 'Location: Delicious Eggs @ 3 / dir1 / dir2' in testpage.label
@@ -466,7 +466,7 @@ Bad revision results in not found.
     >>> request = TestRequest()
     >>> request['rev'] = '1010'
     >>> request['request_subpath'] = ['dir1']
-    >>> testpage = browser.FileInfoPage(wkspc, request)
+    >>> testpage = browser.FilePage(wkspc, request)
     >>> testpage.update()
     Traceback (most recent call last):
     ...
@@ -479,7 +479,7 @@ As well as non-existent files at a specific revision.
     >>> request = TestRequest()
     >>> request['rev'] = '1'
     >>> request['request_subpath'] = ['dir1']
-    >>> testpage = browser.FileInfoPage(wkspc, request)
+    >>> testpage = browser.FilePage(wkspc, request)
     >>> testpage.update()
     Traceback (most recent call last):
     ...
@@ -504,7 +504,7 @@ Here is a test of basic rendering:
 ::
 
     >>> subpath = ['1', 'file1']
-    >>> page = self.traverse(wkspc, browser.FileInfoPage, subpath)
+    >>> page = self.traverse(wkspc, browser.FilePage, subpath)
     >>> result = page()
     >>> 'file1-rev1\nThis test has changed.\n' in result
     True
@@ -515,7 +515,7 @@ The view should not render it.
 
     >>> subpath = ['0', 'null']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.FileInfoPage, subpath)
+    ...     self.portal.workspace.cake, browser.FilePage, subpath)
     >>> result = page()
     >>> '\0' in result
     False
@@ -527,7 +527,7 @@ Invalid revision should raise a 404.
 
     >>> subpath = ['110', 'null']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.FileInfoPage, subpath)
+    ...     self.portal.workspace.cake, browser.FilePage, subpath)
     >>> result = page()
     Traceback (most recent call last):
     ...
@@ -539,7 +539,7 @@ As well as invalid file entries.
 
     >>> subpath = ['0', 'nullnull']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.FileInfoPage, subpath)
+    ...     self.portal.workspace.cake, browser.FilePage, subpath)
     >>> result = page()
     Traceback (most recent call last):
     ...
@@ -551,7 +551,7 @@ Or traversing down a file as if a directory
 
     >>> subpath = ['0', 'null', 'null']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.FileInfoPage, subpath)
+    ...     self.portal.workspace.cake, browser.FilePage, subpath)
     >>> result = page()
     Traceback (most recent call last):
     ...
