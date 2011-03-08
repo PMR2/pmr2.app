@@ -28,20 +28,6 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
-        ### inline doctests
-
-        # test the fields.
-        doctestunit.DocTestSuite(
-            module='pmr2.app.schema.field',
-            setUp=testing.setUp, tearDown=testing.tearDown
-        ),
-
-        # test the converters.
-        doctestunit.DocTestSuite(
-            module='pmr2.app.converter',
-            setUp=testing.setUp, tearDown=testing.tearDown
-        ),
-
     ])
 
 if __name__ == '__main__':
