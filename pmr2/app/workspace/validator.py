@@ -5,7 +5,7 @@ import z3c.form.validator
 
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 from pmr2.app.interfaces import exceptions
-from pmr2.app.validator import ObjectIdValidator
+from pmr2.app.schema.validator import ObjectIdValidator
 from pmr2.app.workspace.browser.interfaces import IWorkspaceStorageCreate
 
 class StorageExistsValidator(ObjectIdValidator):

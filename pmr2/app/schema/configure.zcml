@@ -2,6 +2,8 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="pmr2">
 
+  <include package=".validator" />
+
   <adapter factory=".converter.AccessorCallConverter"/>
   <adapter factory=".converter.CurationTextAreaConverter"/>
   <adapter factory=".converter.TextLineListTextAreaConverter"/>

@@ -20,7 +20,6 @@
   <include package=".exposure" />
 
   <include package=".browser" />
-  <include package=".validator" />
   <include package=".viewlets" />
   <include package=".annotation" />
 
