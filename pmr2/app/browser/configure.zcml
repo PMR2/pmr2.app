@@ -67,18 +67,6 @@
       />
 
   <!--
-    For the Plone Control Panel, to change PMR2 global settings.
-  -->
-
-  <browser:page
-      for="Products.CMFPlone.Portal.PloneSite"
-      name="pmr2-settings"
-      class=".settings.PMR2GlobalSettingsEditFormView"
-      permission="cmf.ManagePortal"
-      layer="pmr2.app.interfaces.IPMR2AppLayer"
-      />
-
-  <!--
     adapter for the adding view.
   -->
 
@@ -117,13 +105,6 @@
            z3c.form.interfaces.IFormLayer"
       factory=".widget.WorkspaceListingWidgetFactory"
       provides="z3c.form.interfaces.IFieldWidget"
-      />
-
-  <!-- extensible form adapters -->
-
-  <adapter 
-      factory=".settings.PMR2PluginSettingsExtender"
-      name="pmr2.plugin.extender"
       />
 
   <!-- 

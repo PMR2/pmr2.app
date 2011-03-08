@@ -64,7 +64,7 @@ class CompleteDocTestCase(ExposureDocTestCase):
 
         super(CompleteDocTestCase, self).setUp()
 
-        from pmr2.app.settings import IPMR2GlobalSettings
+        from pmr2.app.settings.interfaces import IPMR2GlobalSettings
         from pmr2.idgen.interfaces import IIdGenerator
         from pmr2.app.workspace.content import Workspace
         from pmr2.app.exposure.content import ExposureContainer, Exposure

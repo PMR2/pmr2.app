@@ -4,11 +4,11 @@ Global Settings
 Just to show that the method works
 ::
 
-    >>> from pmr2.app.interfaces import IPMR2GlobalSettings
+    >>> from pmr2.app.settings.interfaces import IPMR2GlobalSettings
     >>> from zope.component import getUtility
     >>> pmr2_settings = getUtility(IPMR2GlobalSettings)
     >>> pmr2_settings
-    <pmr2.app.settings.PMR2GlobalSettingsAnnotation object ...>
+    <pmr2.app.settings.settings.PMR2GlobalSettingsAnnotation object ...>
     >>> 'pmr2' in pmr2_settings.repo_root
     True
 
@@ -16,7 +16,7 @@ Also that the edit form actually works on the gloabl settings.  Note
 how pmr2_settings created from above is not acquired again.
 ::
 
-    >>> from pmr2.app.browser.settings import PMR2GlobalSettingsEditForm
+    >>> from pmr2.app.settings.browser import PMR2GlobalSettingsEditForm
     >>> from pmr2.app.tests.base import TestRequest
     >>> request = TestRequest(
     ...     form={
@@ -171,7 +171,7 @@ will fetch the setting object.
     >>> import zope.interface
     >>> import zope.schema
     >>> from persistent import Persistent
-    >>> from pmr2.app.interfaces import IPMR2PluggableSettings
+    >>> from pmr2.app.settings.interfaces import IPMR2PluggableSettings
     >>> from pmr2.app.settings import settings_factory
     >>> from pmr2.app.factory import named_factory
     >>> class IPluginSetting(zope.interface.Interface):
@@ -218,7 +218,7 @@ Now we have the settings object defined, the settings editor form should
 have this newly adpated setting class rendered along with this value.
 ::
 
-    >>> from pmr2.app.browser.settings import PMR2GlobalSettingsEditForm
+    >>> from pmr2.app.settings.browser import PMR2GlobalSettingsEditForm
     >>> from pmr2.app.tests.browser import GroupTemplate
     >>> request = TestRequest()
     >>> f = PMR2GlobalSettingsEditForm(self.portal, request)

@@ -5,6 +5,8 @@ from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 from zope.app.component.hooks import getSite
 
+from pmr2.app.settings.interfaces import IPMR2GlobalSettings
+
 from pmr2.app.workspace.exceptions import PathNotFoundError
 from pmr2.app.workspace.interfaces import IStorage
 

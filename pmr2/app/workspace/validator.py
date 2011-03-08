@@ -3,8 +3,8 @@ import os.path
 import zope.component
 import z3c.form.validator
 
+from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 from pmr2.app.interfaces import exceptions
-from pmr2.app.interfaces import IPMR2GlobalSettings
 from pmr2.app.validator import ObjectIdValidator
 from pmr2.app.workspace.browser.interfaces import IWorkspaceStorageCreate
 

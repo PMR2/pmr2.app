@@ -23,8 +23,8 @@
   <include package=".validator" />
   <include package=".viewlets" />
   <include package=".annotation" />
+  <include package=".settings" />
 
-  <include file="settings.zcml" />
   <include file="converter.zcml" />
   <include file="profiles.zcml" />
 

@@ -14,13 +14,6 @@ import base
 def test_suite():
     return unittest.TestSuite([
 
-        # Content tests.
-        ztc.ZopeDocFileSuite(
-            'settings.txt', package='pmr2.app',
-            test_class=base.DocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
-
         # Root form usage tests.
         ztc.ZopeDocFileSuite(
             'browser/layout.txt', package='pmr2.app',

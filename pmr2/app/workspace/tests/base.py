@@ -47,7 +47,7 @@ class WorkspaceDocTestCase(DocTestCase):
         DocTestCase.setUp(self)
         from plone.z3cform.tests import setup_defaults
         from pmr2.app.tests import utils
-        from pmr2.app.interfaces import IPMR2GlobalSettings
+        from pmr2.app.settings.interfaces import IPMR2GlobalSettings
         setup_defaults()
         # also set up the root to the tmpdir.
         self.pmr2 = zope.component.getUtility(IPMR2GlobalSettings)

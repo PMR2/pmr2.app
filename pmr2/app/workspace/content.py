@@ -10,7 +10,6 @@ from Products.ATContentTypes.content.folder import ATFolder, ATBTreeFolder
 from Products.ATContentTypes.content.document import ATDocument
 from Products.Archetypes import atapi
 
-from pmr2.app.interfaces import IPMR2GlobalSettings
 from pmr2.app.interfaces.exceptions import *
 
 from pmr2.app.workspace.interfaces import *

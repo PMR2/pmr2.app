@@ -29,6 +29,8 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 from pmr2.idgen.interfaces import IIdGenerator
 
+from pmr2.app.settings.interfaces import IPMR2GlobalSettings
+
 from pmr2.app.workspace.browser.browser import WorkspaceLog
 from pmr2.app.workspace.interfaces import IStorage
 from pmr2.app.workspace.exceptions import *
