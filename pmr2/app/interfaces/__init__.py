@@ -56,12 +56,6 @@ class IExposureContentIndex(zope.interface.Interface):
         pass
 
 
-class INamedUtilBase(zope.interface.Interface):
-    """\
-    Marker interface for the utility generator.
-    """
-
-
 class IExposureSourceAdapter(zope.interface.Interface):
     """\
     Provides any Exposure related objects with methods that will return

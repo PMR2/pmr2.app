@@ -3,9 +3,9 @@
     i18n_domain="pmr2">
 
   <subscriber
-      for="pmr2.app.interfaces.INamedUtilBase
+      for="pmr2.app.factory.interfaces.INamedUtilBase
           zope.component.interfaces.IRegistered"
-      handler=".factory.name_utility"
+      handler=".named.name_utility"
       />
 
 </configure>

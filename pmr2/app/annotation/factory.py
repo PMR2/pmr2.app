@@ -2,7 +2,7 @@ import zope.interface
 from zope.annotation.interfaces import IAnnotations
 from zope.annotation import factory
 from zope.location import Location, locate
-from pmr2.app.interfaces import INamedUtilBase
+from pmr2.app.factory.interfaces import INamedUtilBase
 
 from pmr2.app.exposure.interfaces import IExposureObject
 from pmr2.app.annotation.interfaces import IExposureFileNote

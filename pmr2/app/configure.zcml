@@ -11,10 +11,10 @@
   <include package="z3c.table" />
 
   <!-- 
-    Subscribers need to be registered first so the registrations that
-    will happen below will be handled as intended.
+    As the factory provides named components, we need that to happen
+    first so registration of further components can happen as intended.
   -->
-  <include file="subscriber.zcml" />
+  <include package="pmr2.app.factory" />
 
   <include package=".workspace" />
   <include package=".exposure" />
@@ -23,6 +23,7 @@
   <include package=".validator" />
   <include package=".viewlets" />
   <include package=".annotation" />
+
   <include package="pmr2.app.settings" />
   <include package="pmr2.app.schema" />
 
