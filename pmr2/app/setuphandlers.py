@@ -3,7 +3,6 @@ from logging import getLogger
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 from Products.CMFCore.utils import getToolByName
-from StringIO import StringIO
 from pmr2.app.workspace.pas.protocol import addProtocolAuthPlugin
 from pmr2.app.workspace.pas.protocol import removeProtocolAuthPlugin
 
@@ -51,22 +50,20 @@ def add_pas_plugin(site):
 
 def add_pmr2(site):
     """Add PMR2 settings utility to the site manager"""
-    out = StringIO()
+    logger = getLogger('pmr2.app')
     sm = site.getSiteManager()
     if not sm.queryUtility(IPMR2GlobalSettings):
-        print >> out, 'PMR2 Global Settings registered'
+        logger.info('PMR2 Global Settings registered')
         sm.registerUtility(IPMR2GlobalSettings(site), IPMR2GlobalSettings)
-    return out.getvalue()
 
 def remove_pmr2(site):
     """Remove PMR2 settings utility from the site manager"""
-    out = StringIO()
+    logger = getLogger('pmr2.app')
     sm = site.getSiteManager()
     u = sm.queryUtility(IPMR2GlobalSettings)
     if u:
-        print >> out, 'PMR2 Global Settings unregistered'
+        logger.info('PMR2 Global Settings unregistered')
         sm.unregisterUtility(u, IPMR2GlobalSettings)
-    return out.getvalue()
 
 def importVarious(context):
     """Install the ProtocolAuthPAS plugin"""
