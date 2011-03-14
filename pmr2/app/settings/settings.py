@@ -21,11 +21,6 @@ except ImportError:
 
 from pmr2.app.factory import NamedUtilBase
 
-from pmr2.app.workspace.interfaces import IWorkspaceContainer
-from pmr2.app.workspace.content import WorkspaceContainer
-
-from pmr2.app.exposure.content import ExposureContainer
-
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 from pmr2.app.settings.interfaces import IPMR2PluggableSettings
 
@@ -142,6 +137,9 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         return self.createExposureContainer(*exposure_args)
 
     def createExposureContainer(self, name, root=None):
+        # currently import here to avoid circular import due to
+        # maintenance of deprecated import location.
+        from pmr2.app.exposure.content import ExposureContainer
         return self._createContainer(ExposureContainer, name, root)
 
     def createUserWorkspaceContainer(self, user, override=False):
@@ -156,10 +154,13 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         self.createWorkspaceContainer(user, self.user_workspace_subpath)
 
     def createWorkspaceContainer(self, name, root=None):
+        from pmr2.app.workspace.content import WorkspaceContainer
         return self._createContainer(WorkspaceContainer, name, root, 
                                     createDir=True)
 
     def getWorkspaceContainer(self, user=None):
+        from pmr2.app.workspace.interfaces import IWorkspaceContainer
+
         if user is None:
             path = self.default_workspace_subpath
         else:
