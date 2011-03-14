@@ -64,6 +64,21 @@ def remove_pmr2(site):
     if u:
         logger.info('PMR2 Global Settings unregistered')
         sm.unregisterUtility(u, IPMR2GlobalSettings)
+    # XXX the actual annotation is not removed.
+
+def reregister_pmr2_settings(site):
+    """
+    Re-register PMR2 due to migration.
+    """
+    logger = getLogger('pmr2.app')
+    sm = site.getSiteManager()
+    settings = sm.queryUtility(IPMR2GlobalSettings)
+    if not settings:
+        logger.info('Please install PMR2 first before readding the settings.')
+        return
+    sm.unregisterUtility(settings, IPMR2GlobalSettings)
+    sm.registerUtility(IPMR2GlobalSettings(site), IPMR2GlobalSettings)
+    logger.info('PMR2 Global Settings re-registered')
 
 def importVarious(context):
     """Install the ProtocolAuthPAS plugin"""
@@ -293,6 +308,7 @@ def pmr2_v0_4(context):
     from zope.app.component.hooks import getSite
     site = getSite()
     mercurial_storage(context)
+    reregister_pmr2_settings(site)
     remove_hg_pas_plugin(site)
 
 def mercurial_storage(context):
