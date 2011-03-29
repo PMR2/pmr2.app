@@ -77,7 +77,7 @@ def reregister_pmr2_settings(site):
         logger.info('Please install PMR2 first before readding the settings.')
         return
     sm.unregisterUtility(settings, IPMR2GlobalSettings)
-    sm.registerUtility(IPMR2GlobalSettings(site), IPMR2GlobalSettings)
+    sm.registerUtility(settings, IPMR2GlobalSettings)
     logger.info('PMR2 Global Settings re-registered')
 
 def importVarious(context):
