@@ -652,7 +652,13 @@ class WorkspaceRawfileView(FilePage):
                 # standard file view.
                 raise HTTPFound(self.viewpath)
 
-            self.request.response.setHeader('Content-Type', data['mimetype']())
+            mimetype = data['mimetype']()
+            # Force HTML to be served as plain text.
+            if mimetype == 'text/html':
+                # XXX this isn't enough to satiate MSIE fail, but...
+                mimetype = 'text/plain'
+
+            self.request.response.setHeader('Content-Type', mimetype)
             self.request.response.setHeader('Content-Length', data['size'])
             return contents
         else:

@@ -1,3 +1,6 @@
+# XXX this will be moved into its own module when I can figure out how
+# to make this generic to all data objects.
+
 from os.path import join
 import zope.interface
 from zope.contentprovider.interfaces import IContentProvider
@@ -8,6 +11,9 @@ from zope.app.pagetemplate.viewpagetemplatefile \
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
 from Products.statusmessages.interfaces import IStatusMessage
+from Products.PortalTransforms.data import datastream
+from Products.CMFCore.utils import getToolByName
+
 from plone.z3cform.interfaces import IFormWrapper
 from plone.z3cform import layout
 
@@ -32,6 +38,8 @@ class DefaultRendererDictionary(object):
 
         if mimetype.startswith('image/'):
             return 'image'
+        elif mimetype == 'text/html':
+            return 'safe_html'
         else:
             return 'default'
 
@@ -162,6 +170,26 @@ class DefaultFileRenderer(BaseFileRenderer):
             return '(%s)' % data['mimetype']()
         else:
             return contents
+
+
+class SafeHtmlRenderer(BaseFileRenderer):
+    """\
+    Safe html render.
+    """
+
+    template = ViewPageTemplateFile('safe_html.pt')
+
+    @property
+    def contents(self):
+        data = self.request['_data']
+        contents = data['contents']()
+        pt = getToolByName(self.context, 'portal_transforms')
+        stream = datastream('input')
+        pt.convert('safe_html', contents, stream)
+        return stream.getData()
+
+SafeHtmlRendererView = layout.wrap_form(SafeHtmlRenderer, 
+    __wrapper_class=TraverseFormWrapper)
 
 
 class ImageRenderer(BaseFileRenderer):

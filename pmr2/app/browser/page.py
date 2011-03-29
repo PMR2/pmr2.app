@@ -35,6 +35,8 @@ class SimplePage(BrowserPage):
     def url_expr(self):
         return '%s/@@%s' % (self.context.absolute_url(), self.__name__)
 
+    url_expr_full = url_expr
+
     @property
     def portal_url(self):
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
@@ -71,6 +73,11 @@ class TraversePage(SimplePage):
     def __init__(self, *a, **kw):
         super(TraversePage, self).__init__(*a, **kw)
         self.traverse_subpath = []
+
+    @property
+    def url_expr_full(self):
+        return '/'.join((self.context.absolute_url(), self.__name__) +
+                        tuple(self.traverse_subpath))
 
     def publishTraverse(self, request, name):
         self.traverse_subpath.append(name)
