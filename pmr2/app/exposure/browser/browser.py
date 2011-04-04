@@ -52,6 +52,9 @@ from pmr2.app.browser.page import ViewPageTemplateFile
 from pmr2.app.browser import widget
 from pmr2.app.browser.layout import *
 
+from pmr2.app.exposure.browser.util import fieldvalues
+from pmr2.app.exposure.browser.util import viewinfo
+
 def restrictedGetExposureContainer():
     # If there is a way to "magically" anchor this form at the
     # target exposure container rather than the workspace, this
@@ -993,32 +996,6 @@ class ExposurePort(form.Form):
         self.errors = []
 
     def _export(self, cur, prefix=''):
-
-        def fieldvalues(obj):
-            inf = zope.interface.providedBy(obj).interfaces().next()
-            # XXX no error notification on missing fields.
-            return dict([(fn, getattr(obj, fn, None)) for fn in inf.names()])
-
-        def viewinfo(obj):
-            # maybe make this into generator in the future.
-            v = []
-            for vname in obj.views:
-                note = zope.component.queryAdapter(obj, name=vname)
-                if not note:
-                    # We can't export this
-                    # do we need error reporting? the actual page
-                    # is probably broken...
-                    continue
-                if not IExposureFileEditableNote.providedBy(note):
-                    # assuming standard note, just get none.
-                    v.append((vname, None,))
-                    continue
-                # this should be editable, grab the fields, build
-                # dictionary.
-                # XXX see: ExposureFileNoteEditForm
-
-                v.append((vname, fieldvalues(note),))
-            return v
 
         # we don't have or need leading / to denote root.
         if not prefix:
