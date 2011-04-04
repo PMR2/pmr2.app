@@ -999,20 +999,11 @@ class ExposurePort(form.Form):
             # XXX no error notification on missing fields.
             return dict([(fn, getattr(obj, fn, None)) for fn in inf.names()])
 
-        def get_global_note(obj, key):
-            # related to migration from 0.2 to 0.3
-            notes = IAnnotations(obj)
-            if key in notes:
-                return notes[key]
-
         def viewinfo(obj):
             # maybe make this into generator in the future.
             v = []
             for vname in obj.views:
-                # XXX this is related to migration from 0.2 to 0.3
-                note = get_global_note(obj, vname)
-                if note is None:
-                    note = zope.component.queryAdapter(obj, name=vname)
+                note = zope.component.queryAdapter(obj, name=vname)
                 if not note:
                     # We can't export this
                     # do we need error reporting? the actual page
@@ -1034,10 +1025,6 @@ class ExposurePort(form.Form):
             objpath = lambda x: '%s' % x
         else:
             objpath = lambda x: '%s/%s' % (prefix, x)
-
-        # XXX this is a special case variable for ExposurePMR1Metadoc,
-        # see below.
-        default_fv = None
 
         for obj_id, obj in cur.items():
             p = objpath(obj_id)
@@ -1073,9 +1060,6 @@ class ExposurePort(form.Form):
         fv = fieldvalues(cur)
         # need the subject of the current folder.
         fv['Subject'] = cur.Subject()
-        if default_fv:
-            # XXX legacy default values
-            fv.update(default_fv)
         yield (prefix, fv,)
 
     def export_source(self):
