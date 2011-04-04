@@ -39,4 +39,11 @@
       profile="pmr2.app:default"
       />
 
+  <genericsetup:upgradeStep
+      title="PMR2 - rebuild file type annotations"
+      description="This is used to rebuild all exposure file type annotations in the case of changes in file types."
+      handler="pmr2.app.setuphandlers.filetype_bulk_update"
+      profile="pmr2.app:default"
+      />
+
 </configure>

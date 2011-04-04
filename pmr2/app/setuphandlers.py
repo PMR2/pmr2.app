@@ -360,6 +360,82 @@ def fix_exposure_workspace_path(context):
             exposure.workspace = fp
     logger.info('%d exposures had workspace field updated.' % count)
 
+def filetype_bulk_update(context):
+    import traceback
+    import transaction
+
+    from pmr2.app.annotation.interfaces import IExposureFileNote
+    from pmr2.app.exposure.browser.util import viewinfo
+
+    try:
+        from pmr2.app.exposure.browser.browser import \
+            ExposureFileTypeAnnotatorForm
+    except ImportError:
+        from pmr2.app.browser.exposure import ExposureFileTypeAnnotatorForm
+
+    logger = getLogger('pmr2.app')
+    catalog = getToolByName(context, 'portal_catalog')
+
+    brains = catalog(portal_type='ExposureFileType')
+    filetypes = dict([(b.getPath(), b.pmr2_eftype_views) for b in brains])
+    if not filetypes:
+        logger.error('Please reindex or create some Exposure File Types '
+                     'before running this.')
+        return
+
+    errors = []
+    counter = 0
+    commit_interval = 100
+    files = catalog(portal_type='ExposureFile')
+    for b in files:
+        file_sp = transaction.savepoint()
+        file = b.getObject()
+        logger.info('Rebuilding notes for `%s`.' % 
+                    file.absolute_url_path())
+        ftpath = file.file_type
+        if not ftpath:
+            continue
+
+        if not ftpath in filetypes:
+            # XXX only log this information for now, we may need to give
+            # adminstrators some way to automatically migrate to a new
+            # existing type since the old one was removed.
+            logger.warning('`%s` has `%s` as its filetype but it no longer '
+                           'exists ' % (file.absolute_url_path(), ftpath))
+            continue
+
+        cftviews = filetypes[ftpath]  # file type views for current file
+
+        try:
+            # assign the new set of views
+            # annotate using the form.
+            file.views = cftviews
+            # XXX does not set the new subjects, i.e. not applying tags
+            # via setSubject method of this file object
+            groups = {}
+            for k, v in viewinfo(file):
+                groups[k] = v and v.items() or None
+            form = ExposureFileTypeAnnotatorForm(file, None)
+            form._annotate(groups)
+            file.reindexObject()
+        except:
+            file_sp.rollback()
+            errors.append(file.absolute_url_path())
+            logger.error('Failed to rebuild `%s`' % file.absolute_url_path())
+            logger.warning(traceback.format_exc())
+            continue
+
+        counter += 1
+        if counter > commit_interval:
+            transaction.commit()
+            logger.info('Committed transaction, interval %d reached' % 
+                        commit_interval)
+            counter = 0
+
+    if errors:
+        logger.error('The following file(s) have failed to rebuild:\n%s' %
+                     '\n'.join(errors))
+
 def pmr2_v0_4(context):
     from zope.app.component.hooks import getSite
     site = getSite()

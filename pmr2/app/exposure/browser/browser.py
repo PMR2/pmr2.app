@@ -534,7 +534,7 @@ class ExposureFileTypeAnnotatorForm(
             if IExposureFileEditAnnotator.providedBy(annotator) or \
                     IExposureFilePostEditAnnotator.providedBy(annotator):
                 # The edited annotator will need the fields.
-                if name not in groups:
+                if name not in groups.keys():
                     # well, it looks like somehow the set of views that
                     # this form submittal was based upon is no longer
                     # same as the set of views stored now.  We should 
