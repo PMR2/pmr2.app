@@ -1179,11 +1179,13 @@ class ExposurePort(form.Form):
                 if fields['docview_gensource']:
                     # there is a source
                     container.docview_gensource = fields['docview_gensource']
-                    viewgen = zope.component.getUtility(
+                    viewgen = zope.component.queryUtility(
                         IDocViewGen,
                         name=fields['docview_generator']
                     )
-                    viewgen(container)()
+                    if viewgen:
+                        # and the view generator is still available
+                        viewgen(container)()
 
                 if IExposure.providedBy(container):
                     # only copy curation over, until this becomes an
