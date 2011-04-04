@@ -1,3 +1,4 @@
+import zope.component
 from logging import getLogger
 
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
@@ -97,7 +98,8 @@ def cellml_v0_2tov0_3(context):
     from pmr2.app.annotation.interfaces import IExposureFileNote
 
     try:
-        from pmr2.app.exposure.browser import ExposureFileTypeAnnotatorForm
+        from pmr2.app.exposure.browser.browser import \
+            ExposureFileTypeAnnotatorForm
     except ImportError:
         from pmr2.app.browser.exposure import ExposureFileTypeAnnotatorForm
 
@@ -197,7 +199,6 @@ def exposure_rand_to_seq(context):
     """
 
     import traceback
-    import zope.component
     from pmr2.idgen.interfaces import IIdGenerator
     from zope.app.component.hooks import getSite
 
