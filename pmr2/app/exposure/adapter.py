@@ -30,6 +30,7 @@ def ExposureToWorkspaceAdapter(context):
         # absolute path.
         q = {'path': context.workspace,}
     else:
+        # XXX to be removed
         settings = zope.component.getUtility(IPMR2GlobalSettings)
         workspace = tuple(settings.default_workspace_subpath.split('/'))
         path = '/'.join(root_fragment + workspace)

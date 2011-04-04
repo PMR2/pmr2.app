@@ -333,9 +333,37 @@ def mercurial_storage(context):
                 'to use mercurial.' % counter)
     return
 
+def fix_exposure_workspace_path(context):
+    """\
+    Update the Exposure workspace path to what is expected in future
+    versions.
+    """
+
+    logger = getLogger('pmr2.app')
+    catalog = getToolByName(context, 'portal_catalog')
+    brains = catalog(portal_type='Exposure')
+
+    settings = zope.component.queryUtility(IPMR2GlobalSettings)
+    workspace_root = settings.getWorkspaceContainer().getPhysicalPath()
+    # XXX weirdness with acquisition, we fix it in the case that
+    # something broke.
+    if workspace_root[0] != '':
+        workspace_root = ('',) + workspace_root
+
+    count = 0
+    for brain in brains:
+        exposure = brain.getObject()
+        # update to the new format.
+        if not exposure.workspace.startswith('/'):
+            fp = '/'.join(workspace_root + (exposure.workspace,))
+            count += 1
+            exposure.workspace = fp
+    logger.info('%d exposures had workspace field updated.' % count)
+
 def pmr2_v0_4(context):
     from zope.app.component.hooks import getSite
     site = getSite()
     mercurial_storage(context)
     reregister_pmr2_settings(site)
     remove_hg_pas_plugin(site)
+    fix_exposure_workspace_path(site)
