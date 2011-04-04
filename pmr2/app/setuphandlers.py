@@ -304,13 +304,6 @@ def remove_hg_pas_plugin(site):
     if id_ in installed:
         removeProtocolAuthPlugin(uf, id_, 'PMR2 Protocol Auth PAS')
 
-def pmr2_v0_4(context):
-    from zope.app.component.hooks import getSite
-    site = getSite()
-    mercurial_storage(context)
-    reregister_pmr2_settings(site)
-    remove_hg_pas_plugin(site)
-
 def mercurial_storage(context):
     # In v0.4, workspace must specify its storage backend as mercurial
     # is no longer implied.  This migration script assumes this is was a
@@ -338,3 +331,10 @@ def mercurial_storage(context):
     logger.info('%d workspace(s) with undefined storage backend is now set '
                 'to use mercurial.' % counter)
     return
+
+def pmr2_v0_4(context):
+    from zope.app.component.hooks import getSite
+    site = getSite()
+    mercurial_storage(context)
+    reregister_pmr2_settings(site)
+    remove_hg_pas_plugin(site)
