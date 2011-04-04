@@ -436,6 +436,36 @@ def filetype_bulk_update(context):
         logger.error('The following file(s) have failed to rebuild:\n%s' %
                      '\n'.join(errors))
 
+def purge_unassigned_notes(context):
+    # this indiscriminately purge all notes not found within an file's
+    # specified exposure file type.
+    # XXX implement an alternate option that will retain any specified
+    # notes
+    # XXX don't make this method available in the upgrade step just yet.
+    from zope.annotation.interfaces import IAnnotations
+
+    prefix = 'pmr2.annotation.notes-'
+    catalog = getToolByName(context, 'portal_catalog')
+    files = catalog(portal_type='ExposureFile')
+    for b in files:
+        file = b.getObject()
+        ftpath = file.file_type
+        if not ftpath:
+            continue
+
+        cftviews = filetypes[ftpath]  # file type views for current file
+
+        # remove unreferenced annotations
+        # XXX this assumes users don't manually assign views after
+        # specifying file types.
+        annotations = IAnnotations(file)
+        for k in annotations.keys():
+            if not k.startswith(prefix):
+                continue
+            viewname = k[len(prefix):]
+            if not viewname in cftviews:
+                del annotations[k]
+
 def pmr2_v0_4(context):
     from zope.app.component.hooks import getSite
     site = getSite()
