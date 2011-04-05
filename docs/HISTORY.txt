@@ -18,6 +18,8 @@ Changelog
     appropriate caching mechanism is put into place as the rendering of
     a custom type can trigger CPU intensive processes to construct the
     output that the client expects.
+  - Default rendering of images and safe rendering of HTML are views
+    that are now provided.
 
 * Generalized workspace storage backend
   - While the plan for PMR2 was to allow multiple backends to be
@@ -28,6 +30,19 @@ Changelog
     format PMR2 expects.  Also, even in the case of existing backends,
     a newer/better implementation can be more easily created to replace
     deprecated ones.
+
+0.3.6 - Relased (2011-04-05)
+----------------------------
+
+* Removed the ability to render arbitrary HTML for supported browsers 
+  in the workspace viewer.
+  - https://tracker.physiomeproject.org/show_bug.cgi?id=2878
+
+0.3.5 - Relased (2011-02-15)
+----------------------------
+
+* Corrected dependency on deprecated packages.
+  - https://tracker.physiomeproject.org/show_bug.cgi?id=2835
 
 0.3.4 - Released (2011-01-18)
 -----------------------------
