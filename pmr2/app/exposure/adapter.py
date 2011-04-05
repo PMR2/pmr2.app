@@ -20,28 +20,7 @@ def ExposureToWorkspaceAdapter(context):
     Adapts an exposure object into workspace via the catalog.
     """
 
-    # There are two methods in place, depending on whether or not 
-    # context.workspace starts with '/'.  Formerly the location of
-    # workspaces and exposures are assumed, so only the ids were stored
-    # and not the full path as it will be.
-
-    root_fragment = context.getPhysicalPath()[0:-2]
-    if context.workspace.startswith('/'):
-        # absolute path.
-        q = {'path': context.workspace,}
-    else:
-        # XXX to be removed
-        settings = zope.component.getUtility(IPMR2GlobalSettings)
-        workspace = tuple(settings.default_workspace_subpath.split('/'))
-        path = '/'.join(root_fragment + workspace)
-        q = {
-            'id': context.workspace,
-            'path': {
-                'query': path,
-                'depth': len(workspace),
-            }
-        }
-
+    q = {'path': context.workspace,}
     catalog = getToolByName(context, 'portal_catalog')
 
     result = catalog(**q)
