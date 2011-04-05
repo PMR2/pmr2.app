@@ -187,4 +187,3 @@ pmr2/app/viewlets/__init__.py
 pmr2/app/viewlets/above_content_body_portlets.pt
 pmr2/app/viewlets/configure.zcml
 pmr2/app/viewlets/manage_pmr2portlets.pt
-pmr2/app/workspace/storage.txt
