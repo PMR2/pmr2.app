@@ -714,6 +714,9 @@ class WorkspaceRawfileView(WorkspaceFilePage):
             mt = mimetypes.guess_type(self.storage.path)[0]
             if mt is None or (data and '\0' in data[:4096]):
                 mt = mt or 'application/octet-stream'
+            if mt == 'text/html':
+                # XXX this isn't enough to satiate MSIE fail, but...
+                mt = 'text/plain'
             self.request.response.setHeader('Content-Type', mt)
             self.request.response.setHeader('Content-Length', len(data))
             return data
