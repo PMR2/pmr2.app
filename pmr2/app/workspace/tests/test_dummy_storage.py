@@ -303,7 +303,7 @@ class TestDummyStorage(TestCase):
             'file': 'file1',
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
-        self.assertEqual(result['mimetype'](), 'text/plain; charset=us-ascii')
+        self.assert_(result['mimetype']().startswith('text/plain'))
 
     def test_601_pathinfo_nested_dir(self):
         storage = DummyStorage(self.workspace)
