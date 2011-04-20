@@ -11,8 +11,7 @@ import zope.publisher.browser
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
-from zope.app.pagetemplate.viewpagetemplatefile \
-    import ViewPageTemplateFile as VPTF
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
 from paste.httpexceptions import HTTPNotFound, HTTPFound
