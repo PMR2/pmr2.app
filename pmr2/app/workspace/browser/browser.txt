@@ -147,6 +147,7 @@ earlier.
     ...     form={
     ...         'form.widgets.id': u'cake',
     ...         'form.widgets.title': u'Delicious Cake',
+    ...         'form.widgets.description': u'A Delicious Cake',
     ...         'form.widgets.storage': [u'dummy_storage'],
     ...         'form.buttons.add': 1,
     ...     })
@@ -249,6 +250,9 @@ Main page should render fine, too.
     <h3>Summary</h3>
     <dl>
     <BLANKLINE>
+    <BLANKLINE>
+        <dt>Description</dt>
+        <dd>A Delicious Cake</dd>
     <BLANKLINE>
     <BLANKLINE>
       <dt>Owner</dt>
