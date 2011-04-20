@@ -5,7 +5,6 @@
 
   <!-- Enable "provider:" attribute -->
   <include package="zope.app.pagetemplate" file="meta.zcml" />
-  <include package="zope.contentprovider" />
 
   <include package="pmr2.app.security" />
 
