@@ -19,6 +19,7 @@ from Products.PloneTestCase.layer import PloneSite
 from Products.PloneTestCase.layer import onsetup, onteardown
 
 from pmr2.app.workspace.tests.base import WorkspaceDocTestCase
+from pmr2.testing.base import TestRequest
 
 
 @onsetup
@@ -37,25 +38,6 @@ def teardown():
 setup()
 teardown()
 ptc.setupPloneSite(products=('pmr2.app',))
-
-
-class TestRequest(z3c.form.testing.TestRequest):
-    """\
-    Customized TestRequest to mimic missing actions.
-    """
-
-    zope.interface.implements(IAnnotations)
-    def __init__(self, *a, **kw):
-        super(TestRequest, self).__init__(*a, **kw)
-
-    def __setitem__(self, key, value):
-        self.form[key] = value
-
-    def __getitem__(self, key):
-        try:
-            return super(TestRequest, self).__getitem__(key)
-        except KeyError:
-            return self.form[key]
 
 
 class TestCase(ptc.PloneTestCase):
