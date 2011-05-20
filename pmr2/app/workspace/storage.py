@@ -114,7 +114,10 @@ class BaseStorage(object):
         raise NotImplementedError
 
     def format(self, permissions, node, date, size, path, contents,
-               author='', desc='', *a, **kw):
+               contenttype=None, author='', desc='', *a, **kw):
+
+        # need a way to derive the correct baseview.
+        baseview = 'file'
 
         def mimetype():
             # use the built-in mimetypes, then use magic library
@@ -137,7 +140,10 @@ class BaseStorage(object):
             'node': node,
             'date': date,
             'size': size,
+            'baseview': baseview,
             'file': path,
+            'fullpath': None,
+            'contenttype': contenttype,
             'basename': self.basename(path),
             'contents': contents,
             'mimetype': mimetype,

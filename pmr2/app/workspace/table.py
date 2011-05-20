@@ -337,7 +337,7 @@ class FileOptionColumn(EscapedItemKeyColumn):
 
     def renderCell(self, item):
         # also could render changeset link (for diffs)
-        if item['permissions'][0] != 'd':
+        if item['permissions'][0] == '-':
             result = [u'<a href="%s/@@rawfile/%s/%s">[%s]</a>' % (
                 self.table.context.absolute_url(),
                 item['node'],
