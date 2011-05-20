@@ -84,6 +84,7 @@
 
   <!-- file manifest table -->
 
+  <!--
   <adapter
       for=".interfaces.IWorkspace
            zope.publisher.interfaces.IPublisherRequest
@@ -92,6 +93,7 @@
       factory=".table.FilePermissionColumn"
       name="file_perm"
       />
+  -->
 
   <adapter
       for=".interfaces.IWorkspace
