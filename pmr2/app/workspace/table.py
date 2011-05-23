@@ -324,18 +324,22 @@ class FilenameColumn(EscapedItemKeyColumn):
         if item['fullpath']:
             # XXX this is an override for embedded workspaces, better 
             # solution may be required.
-            return u'<a href="%s">%s</a>' % (
+            return (u'<span class="contentype-%s">'
+                '<a href="%s">%s</a></span>' % (
+                item['contenttype'],
                 item['fullpath'],
                 item['basename'],
-            )
+            ))
 
-        return u'<a href="%s/%s/%s/%s">%s</a>' % (
+        return (u'<span class="contenttype-%s">'
+                '<a href="%s/%s/%s/%s">%s</a></span>' % (
+            item['contenttype'],
             self.table.context.absolute_url(),
             item['baseview'],
             item['node'],
             item['file'],
             self.getItem(item),
-        )
+        ))
 
 
 class FileOptionColumn(EscapedItemKeyColumn):
@@ -382,3 +386,4 @@ class FileManifestTable(z3c.table.table.Table):
 
     sortOn = None
     startBatchingAt = maxint
+    cssClasses = {'table': 'workspace-manifest'}
