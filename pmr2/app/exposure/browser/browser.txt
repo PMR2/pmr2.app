@@ -1326,7 +1326,7 @@ First we create one via the form.
     ...         'form.widgets.title': u'Dummy Type',
     ...         'form.widgets.views': u'edited_note\npost_edited_note',
     ...         'form.widgets.select_view': u'edited_note',
-    ...         'form.widgets.tags': u'Notes',
+    ...         'form.widgets.tags': u'',
     ...         'form.buttons.add': 1,
     ...     })
     >>> testform = exposure.ExposureFileTypeAddForm(self.portal, request)
@@ -1335,6 +1335,8 @@ First we create one via the form.
     <ExposureFileType at /plone/dummy_type>
     >>> self.portal.dummy_type.views
     [u'edited_note', u'post_edited_note']
+    >>> self.portal.dummy_type.tags
+    []
     >>> self.portal.dummy_type.select_view
     u'edited_note'
 
@@ -1344,6 +1346,8 @@ This new data should have been indexed.
     >>> results = catalog(portal_type='ExposureFileType')
     >>> results[0].pmr2_eftype_views
     [u'edited_note', u'post_edited_note']
+    >>> results[0].pmr2_eftype_tags
+    []
 
 The data could also be edited via the edit form.
 ::
@@ -1371,6 +1375,8 @@ The cataloged data should have been updated also.
     >>> results = catalog(portal_type='ExposureFileType')
     >>> results[0].pmr2_eftype_views
     [u'rot13', u'post_edited_note', u'edited_note']
+    >>> results[0].pmr2_eftype_tags
+    [u'Notes']
     >>> self.portal.dummy_type.select_view
     u'post_edited_note'
 

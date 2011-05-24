@@ -172,4 +172,7 @@ class IExposureFileType(zope.interface.Interface):
         description=u'List of tags to be assigned to this file.',
         required=False,
         default=[],
+        # can't be `None` as the value is directly assigned to a field
+        # that cannot accept `None`.
+        missing_value=[],
     )
