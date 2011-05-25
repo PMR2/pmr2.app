@@ -1,4 +1,4 @@
-from os.path import splitext
+from os.path import join
 import zope.interface
 import zope.component
 import zope.event
@@ -27,6 +27,10 @@ from Products.PortalTransforms.data import datastream
 from Products.CMFCore import permissions
 from Products.statusmessages.interfaces import IStatusMessage
 
+from zope.app.pagetemplate.viewpagetemplatefile \
+    import ViewPageTemplateFile as VPTF
+ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
+
 from pmr2.idgen.interfaces import IIdGenerator
 
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
@@ -48,7 +52,6 @@ from pmr2.app.exposure.content import *
 
 from pmr2.app.browser import form
 from pmr2.app.browser import page
-from pmr2.app.browser.page import ViewPageTemplateFile
 from pmr2.app.browser import widget
 from pmr2.app.browser.layout import *
 
