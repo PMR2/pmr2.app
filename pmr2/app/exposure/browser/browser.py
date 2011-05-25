@@ -1310,6 +1310,7 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
 
     shortlog = True
     tbl = table.ExposureRolloverLogTable
+    template = ViewPageTemplateFile('workspace_exposure_rollover.pt')
 
     def export_source(self):
         return self.source_exposure
