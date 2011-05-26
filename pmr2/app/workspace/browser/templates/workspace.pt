@@ -1,9 +1,9 @@
 <h3>Summary</h3>
 <dl>
 
-  <tal:if tal:condition="context/description">
+  <tal:if tal:condition="view/description">
     <dt>Description</dt>
-    <dd tal:content="context/description"/>
+    <dd tal:content="view/description"/>
   </tal:if>
 
   <dt>Owner</dt>

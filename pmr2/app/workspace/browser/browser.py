@@ -267,14 +267,20 @@ class WorkspacePage(page.SimplePage):
         self.protocol = view()
 
     @property
+    def description(self):
+        return self.context.description
+
+    @property
     def owner(self):
         if not hasattr(self, '_owner'):
             # method getOwner is from AccessControl.Owned.Owned
             owner = self.context.getOwner()
-            result = '%s <%s>' % (
-                owner.getProperty('fullname', owner.getId()),
-                owner.getProperty('email', ''),
-            )
+            fullname = owner.getProperty('fullname', owner.getId())
+            email = owner.getProperty('email', None)
+            if email:
+                result = '%s <%s>' % (fullname, email)
+            else:
+                result = fullname
             self._owner = obfuscate(result)
 
         return self._owner
