@@ -256,7 +256,7 @@ Main page should render fine, too.
     <BLANKLINE>
     <BLANKLINE>
       <dt>Owner</dt>
-      <dd>&#32;&#60;&#62;</dd>
+      <dd></dd>
     <BLANKLINE>
       <dt>URI for dummy_storage clone/pull/push</dt>
       <dd><a href="http://nohost/plone/workspace/cake">http://nohost/plone/workspace/cake</a></dd>
