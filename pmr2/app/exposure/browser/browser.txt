@@ -1164,6 +1164,7 @@ with the radio boxes available to be selected.
     >>> request = TestRequest()
     >>> view = zope.component.queryMultiAdapter((context, request), 
     ...                                          name='exposure_rollover')
+    >>> view.update()
     >>> result = view.form_instance()
     >>> '006f11cd9211abd2a879df0f6c7f27b9844a8ff2' in result
     True

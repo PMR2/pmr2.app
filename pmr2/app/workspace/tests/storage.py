@@ -276,7 +276,7 @@ class DummyStorage(BaseStorage):
         results.sort()
         return '\n'.join(results)
 
-    def log(self, start, count, branch=None):
+    def log(self, start, count, branch=None, *a, **kw):
         start = self._validrev(start)
         results = []
         for i in xrange(start, start - count, -1):

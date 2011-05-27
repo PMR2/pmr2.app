@@ -236,6 +236,9 @@ class IChangelogTable(ITable):
     The changelog table.
     """
 
+    def __init__(self, *a, **kw):
+        self.navlist = []
+
 
 class ChangelogTable(z3c.table.table.Table):
 
@@ -278,6 +281,7 @@ class ValuesForChangelogTable(ValuesMixin):
             storage = zope.component.queryAdapter(self.context, IStorage)
             datefmt = self.request.get('datefmt', None)
             rev = self.request.get('rev', None)
+            shortlog = self.request.get('shortlog', False)
             maxchanges = self.request.get('maxchanges', 50)
             if datefmt:
                 storage.datefmt = datefmt
@@ -286,7 +290,9 @@ class ValuesForChangelogTable(ValuesMixin):
             if rev:
                 storage.checkout(rev)
             rev = storage.rev
-            return storage.log(rev, maxchanges)
+            logs = storage.log(rev, maxchanges, shortlog=shortlog)
+            self.table.navlist = storage.lastnav
+            return logs
         except RevisionNotFoundError:
             raise HTTPNotFound(self.context.title_or_id())
 

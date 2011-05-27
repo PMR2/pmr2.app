@@ -264,6 +264,10 @@ Main page should render fine, too.
     </dl>
     <h4>Most recent changes</h4>
     <div>
+    <div>
+    <ul>
+    </ul>
+    </div>
     <div><table>
       <thead>
         <tr>
@@ -297,6 +301,10 @@ Main page should render fine, too.
         </tr>
       </tbody>
     </table></div>
+    <div>
+    <ul>
+    </ul>
+    </div>
     </div>
     <BLANKLINE>
 

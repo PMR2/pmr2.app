@@ -1312,6 +1312,10 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
     tbl = table.ExposureRolloverLogTable
     template = ViewPageTemplateFile('workspace_exposure_rollover.pt')
 
+    def update(self):
+        ExposurePort.update(self)
+        WorkspaceLog.update(self)
+
     def export_source(self):
         return self.source_exposure
 

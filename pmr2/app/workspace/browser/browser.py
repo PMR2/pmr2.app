@@ -306,7 +306,7 @@ WorkspacePageView = layout.wrap_form(
 )
 
 
-class WorkspaceLog(WorkspaceTraversePage):
+class WorkspaceLog(WorkspaceTraversePage, page.NavPage):
 
     zope.interface.implements(IWorkspaceLogProvider)
 
@@ -317,9 +317,8 @@ class WorkspaceLog(WorkspaceTraversePage):
     maxchanges = 50  # default value.
     datefmt = None # default value.
 
-    def content(self):
-        # putting datefmt into request as the value provider for the
-        # table currently uses it to determine output format...
+    def update(self):
+        self.request['shortlog'] = self.shortlog
         self.request['datefmt'] = self.datefmt
         self.request['maxchanges'] = self.maxchanges
 
@@ -327,7 +326,16 @@ class WorkspaceLog(WorkspaceTraversePage):
         # the parent of the table is this form.
         t.__parent__ = self
         t.update()
-        return t.render()
+        self._navlist = t.navlist
+        self.table = t
+
+    def content(self):
+        # putting datefmt into request as the value provider for the
+        # table currently uses it to determine output format...
+        return self.table.render()
+
+    def navlist(self):
+        return self._navlist
 
 WorkspaceLogView = layout.wrap_form(
     WorkspaceLog, 

@@ -79,6 +79,17 @@ class BaseStorage(object):
     def archiveFormats(self):
         return sorted(self._archiveFormats.keys())
 
+    # Navigational list
+
+    _lastnav = None
+
+    @property
+    def lastnav(self):
+        if self._lastnav is None:
+            return []
+        else:
+            return self._lastnav
+
     # Default implementation for methods
 
     def archiveInfo(self, format):
@@ -152,7 +163,7 @@ class BaseStorage(object):
     def listdir(self, path):
         raise NotImplementedError
 
-    def log(self, start, count, branch=None):
+    def log(self, start, count, branch=None, *a, **kw):
         raise NotImplementedError
 
     def pathinfo(self, path):
