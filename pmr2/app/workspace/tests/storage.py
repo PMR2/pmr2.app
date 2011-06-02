@@ -277,6 +277,18 @@ class DummyStorage(BaseStorage):
         return '\n'.join(results)
 
     def log(self, start, count, branch=None, *a, **kw):
+        def buildnav(nav):
+            # mock navigation
+            result = []
+            for i in xrange(1, nav+1):
+                result.append(
+                    {
+                        'href': 'p%d' % i,
+                        'label': 'page %d' % i,
+                    }
+                )
+            return result
+
         start = self._validrev(start)
         results = []
         for i in xrange(start, start - count, -1):
@@ -290,6 +302,7 @@ class DummyStorage(BaseStorage):
                 'author': 'pmr2.teststorage <pmr2.tester@example.com>',
                 'desc': entry,
             })
+        self._lastnav = buildnav(2)
         return results
 
 

@@ -185,24 +185,35 @@ See if the page renders with expected output.
     >>> 'status' in result
     True
 
-The log page should render, too.
+The log page should render, including the mock pagination nav.
 ::
 
     >>> request = TestRequest()
     >>> testpage = browser.WorkspaceLog(
     ...     self.portal.workspace.cake, request)
+    >>> testpage.__name__ = 'log'
     >>> result = testpage()
     >>> '<th>Log</th>' in result
     True
+    >>> 'http://nohost/plone/workspace/cake/@@log/p1' in result
+    True
+    >>> 'http://nohost/plone/workspace/cake/@@log/p2' in result
+    True
 
-Now the short log page should render, too.
+Now the short log page should render with the same mocked pagination
+navigational listing.
 ::
 
     >>> request = TestRequest()
     >>> testpage = browser.WorkspaceShortlog(
     ...     self.portal.workspace.cake, request)
+    >>> testpage.__name__ = 'log'
     >>> result = testpage()
     >>> '<th>Log</th>' in result
+    True
+    >>> 'http://nohost/plone/workspace/cake/@@log/p1' in result
+    True
+    >>> 'http://nohost/plone/workspace/cake/@@log/p2' in result
     True
 
 There is an RSS page for the log, it should render correctly.
