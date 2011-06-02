@@ -84,6 +84,7 @@ math > mrow {
 
 #mathjax-render .eq {
     overflow: auto;
+    padding: 8px;
 }
 
 /* styles for the shjs plugin */
