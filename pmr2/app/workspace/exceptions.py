@@ -1,3 +1,7 @@
+class ProtocolError(Exception):
+    """protocol error"""
+
+
 class PathInvalidError(ValueError):
     """path invalid"""
 
