@@ -222,6 +222,9 @@ class StorageUtility(object):
     def acquireFrom(self, context):
         raise NotImplementedError
 
+    def isprotocol(self, request):
+        raise NotImplementedError
+
     def protocol(self, context, request):
         raise NotImplementedError
 

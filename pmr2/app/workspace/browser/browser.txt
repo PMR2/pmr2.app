@@ -388,6 +388,18 @@ Reading using the protocol layer shouldn't present an issue.
     >>> print revcount
     2
 
+We can attempt to send in a protocol request but with an invalid command
+and watch it puke.
+::
+
+    >>> context = self.portal.workspace.cake
+    >>> request = TestRequest(form={'cmd': 'badcmd'})
+    >>> view = browser.WorkspacePage(context, request)
+    >>> view()
+    Traceback (most recent call last):
+    ...
+    HTTPBadRequest: ...
+
 However, writing to the protocol should fail as the user has no role or
 rights to the protocol write.
 ::

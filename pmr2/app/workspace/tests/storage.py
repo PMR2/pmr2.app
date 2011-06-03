@@ -87,6 +87,7 @@ _dummy_storage_data = {
 
 class DummyStorageUtility(StorageUtility):
     title = 'Dummy Storage'
+    valid_cmds = ['revcount', 'update',]
 
     def create(self, context):
         # creates the datastore for a dummy storage
@@ -98,19 +99,21 @@ class DummyStorageUtility(StorageUtility):
     def acquireFrom(self, context):
         return DummyStorage(context)
 
+    def isprotocol(self, request):
+        return request.form.get('cmd', None) is not None
+
     def protocol(self, context, request):
         storage = self.acquireFrom(context)
         cmd = request.form.get('cmd', '')
-        if not cmd:
-            return ''
         if cmd == 'revcount':
             return len(storage._data())
-        if cmd == 'update':
+        elif cmd == 'update':
             # doesn't do anything, but check that the request is indeed
             # a push
             if request.method == 'GET':
                 raise Exception('bad request method')
             return 'Updated'
+        raise UnsupportedCommandError('%s unsupported' % cmd)
 
 
 class DummyStorage(BaseStorage):
