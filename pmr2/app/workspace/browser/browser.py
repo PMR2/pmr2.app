@@ -199,6 +199,8 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
             results = self.protocol()
         except UnsupportedCommandError:
             raise HTTPBadRequest('unsupported command')
+        except ProtocolError:
+            raise HTTPBadRequest('unsupported command')
 
         # We are successful, check to see if modifications to the
         # underlying data was made and update the context if so.
