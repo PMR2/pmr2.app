@@ -105,7 +105,6 @@ pmr2/app/exposure/browser/browser.py
 pmr2/app/exposure/browser/browser.txt
 pmr2/app/exposure/browser/configure.zcml
 pmr2/app/exposure/browser/interfaces.py
-pmr2/app/exposure/browser/layout.py
 pmr2/app/exposure/browser/util.py
 pmr2/app/exposure/browser/templates/code.pt
 pmr2/app/exposure/browser/templates/exposure_docview.pt
@@ -116,8 +115,6 @@ pmr2/app/exposure/browser/templates/exposure_info.pt
 pmr2/app/exposure/browser/templates/exposure_source.pt
 pmr2/app/exposure/browser/templates/pmr1_curation.pt
 pmr2/app/exposure/browser/templates/raw_content.pt
-pmr2/app/exposure/browser/templates/rollover_form.pt
-pmr2/app/exposure/browser/templates/rollover_macros.pt
 pmr2/app/exposure/browser/templates/sublinks.pt
 pmr2/app/exposure/browser/templates/workspace_exposure_rollover.pt
 pmr2/app/exposure/portlets/ExposureDownload.py
