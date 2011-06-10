@@ -74,10 +74,20 @@ math > mrow {
 
 /* workspace manifest */
 
+table.workspace-manifest {
+    width: 100%;
+}
+
 .icons-on .contentype-external {
     line-height: 2em;
     display: inline-block;
     padding-left: 20px !important;
+}
+
+/* buttons */
+
+a.button.block {
+    display: block;
 }
 
 /* styles for the mathjax plugin */

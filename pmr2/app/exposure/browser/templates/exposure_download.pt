@@ -3,9 +3,10 @@
   <dd>
     <ul class="navTree">
       <li tal:repeat="i view/file_access_uris"
-        ><a 
+        ><a class="button block"
           tal:attributes="href i/href"
-          tal:content="i/label"
+            ><span class="downarrow icon"></span
+              ><tal:text tal:replace="i/label"></tal:text
         ></a></li>
     </ul>
   </dd>
