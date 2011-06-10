@@ -62,8 +62,10 @@ class Renderer(base.Renderer):
     # labels may change, so commenting this out for now
     #@memoize
     def file_access_uris(self):
+        # XXX should refer this to the more verbose download option
+        # page when this is added to the workspace.
         result = []
-        archive_uri = '%s/@@archive/%s/gz' % (
+        archive_uri = '%s/@@archive/%s/tgz' % (
             self.workspace.absolute_url(), self.exposure.commit_id)
         result.append({
             'label': u'Complete Archive as .tgz', 'href': archive_uri})

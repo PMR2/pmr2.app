@@ -243,7 +243,14 @@ class WorkspaceArchive(WorkspaceTraversePage):
         type_ = request_subpath[0]
 
         # this is going to hurt so bad if this was a huge archive...
-        archivestr = storage.archive(type_)
+        try:
+            archivestr = storage.archive(type_)
+        except ValueError:
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(
+                u'The archive format `%s` is unsupported.' % type_)
+            self.request.response.redirect(self.context.absolute_url())
+            return
 
         info = storage.archiveInfo(type_)
         headers = [
