@@ -37,6 +37,7 @@ setup(
         'z3c.form',
         'Paste',
         'python-magic',
+        'collective.css3buttons',
         'z3c.table>=0.6.0',
         'plone.app.content',
         'plone.app.z3cform>=0.3.2',
