@@ -1,20 +1,35 @@
-<h3>Summary</h3>
-<dl>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    tal:define="
+      ajax_load request/ajax_load | nothing;
+    ">
+  <body>
 
-  <tal:if tal:condition="view/description">
-    <dt>Description</dt>
-    <dd tal:content="view/description"/>
-  </tal:if>
+    <div tal:replace="structure provider:pmr2.app.above_content_body_portlets"
+        tal:condition="not:ajax_load">
+    </div>
 
-  <dt>Owner</dt>
-  <dd><span tal:replace="structure view/owner"/></dd>
+    <h3>Summary</h3>
+    <dl>
 
-  <dt>URI for <span tal:omit-tag="not:nothing" tal:content="context/storage" 
-    /> clone/pull/push</dt>
-  <dd><a href="" 
-      tal:attributes="href context/absolute_url"
-      tal:content="context/absolute_url"></a></dd>
+      <tal:if tal:condition="view/description">
+        <dt>Description</dt>
+        <dd tal:content="view/description"/>
+      </tal:if>
 
-</dl>
-<h4>Most recent changes</h4>
-<div tal:content="structure view/shortlog"/>
+      <dt>Owner</dt>
+      <dd><span tal:replace="structure view/owner"/></dd>
+
+      <dt>URI for <span tal:omit-tag="not:nothing" tal:content="context/storage" 
+        /> clone/pull/push</dt>
+      <dd><a href="" 
+          tal:attributes="href context/absolute_url"
+          tal:content="context/absolute_url"></a></dd>
+
+    </dl>
+
+    <h4>Files</h4>
+
+    <div tal:content="structure context/@@file/form_instance"/>
+
+  </body>
+</html>
