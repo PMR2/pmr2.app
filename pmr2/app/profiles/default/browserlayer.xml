@@ -2,4 +2,6 @@
 <layers>
     <layer name="pmr2.app"
            interface="pmr2.app.interfaces.IPMR2AppLayer" />
+    <layer name="pmr2.exposure"
+           interface="pmr2.app.exposure.interfaces.IPMR2ExposureLayer" />
 </layers>

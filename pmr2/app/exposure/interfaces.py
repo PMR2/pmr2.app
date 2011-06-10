@@ -4,6 +4,12 @@ import zope.interface
 from pmr2.app.schema import ObjectId, WorkspaceList, CurationDict, TextLineList
 
 
+class IPMR2ExposureLayer(zope.interface.Interface):
+    """\
+    Marker interface for PMR2 Exposures.
+    """
+
+
 class IExposureContainer(zope.interface.Interface):
     """\
     Container for all exposure pages.
