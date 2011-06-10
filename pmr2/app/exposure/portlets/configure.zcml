@@ -51,4 +51,13 @@
       editview=".ExposureDownload.EditForm"
       />
 
+  <plone:portlet
+      name="pmr2.portlets.workspace_exposure_info"
+      interface=".WorkspaceExposureInfo.IWorkspaceExposureInfoPortlet"
+      assignment=".WorkspaceExposureInfo.Assignment"
+      renderer=".WorkspaceExposureInfo.Renderer"
+      addview=".WorkspaceExposureInfo.AddForm"
+      editview=".WorkspaceExposureInfo.EditForm"
+      />
+
 </configure>
