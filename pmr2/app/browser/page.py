@@ -72,7 +72,8 @@ class TraversePage(SimplePage):
 
     def __init__(self, *a, **kw):
         super(TraversePage, self).__init__(*a, **kw)
-        self.traverse_subpath = []
+        if not self.request.get('traverse_subpath', None):
+            self.request['traverse_subpath'] = []
 
     @property
     def url_expr_full(self):
@@ -82,6 +83,14 @@ class TraversePage(SimplePage):
     def publishTraverse(self, request, name):
         self.traverse_subpath.append(name)
         return self
+
+    def _get_traverse_subpath(self):
+        return self.request['traverse_subpath']
+
+    def _set_traverse_subpath(self, value):
+        self.request['traverse_subpath'] = value
+
+    traverse_subpath = property(_get_traverse_subpath, _set_traverse_subpath)
 
 
 class NavPage(TraversePage):
