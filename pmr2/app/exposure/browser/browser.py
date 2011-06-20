@@ -771,8 +771,9 @@ ExposureDocViewGenFormView = layout.wrap_form(
 
 class ExposureInfo(page.SimplePage):
     """\
-    Inheriting from the TraversalPage because this will be the main view
-    wrapping around exposure.
+    Simple exposure file page
+
+    Renders the documentation that was manually assigned to the file.
     """
 
     render = ViewPageTemplateFile('exposure_docview.pt')
