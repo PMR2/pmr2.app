@@ -4,6 +4,12 @@ import zope.schema
 from pmr2.app.schema import ObjectId
 
 
+class IWorkspacePage(zope.interface.Interface):
+    """\
+    Interface for the main workspace page.
+    """
+
+
 class IWorkspaceFilePageView(zope.interface.Interface):
     """\
     Interface for the Workspace action menu.

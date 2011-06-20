@@ -14,6 +14,7 @@ from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import *
 from pmr2.app.workspace.interfaces import IWorkspace
+from pmr2.app.workspace.browser.interfaces import IWorkspacePage
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
@@ -51,9 +52,31 @@ class Renderer(base.Renderer):
 
     @property
     def available(self):
-        isworkspace = IWorkspace.providedBy(self.context)
-        exposurelayer = IPMR2ExposureLayer.providedBy(self.request)
-        return isworkspace and exposurelayer
+        return (
+            IWorkspace.providedBy(self.context) and
+            IPMR2ExposureLayer.providedBy(self.request) and
+            IWorkspacePage.providedBy(self.view)
+        )
+
+    @property
+    def exposures(self):
+        catalog = getToolByName(self.context, 'portal_catalog')
+        query = {}
+        query['portal_type'] = 'Exposure'
+        query['review_state'] = 'published'
+        query['pmr2_exposure_workspace'] = [
+            u'/'.join(self.context.getPhysicalPath()),
+        ]
+        query['sort_on'] = 'modified'
+        query['sort_order'] = 'reverse'
+        results = catalog(**query)
+        return results
+
+    @property
+    def latest_exposure(self):
+        exposures = self.exposures
+        if exposures:
+            return exposures[0]
 
     def render(self):
         return self._template()

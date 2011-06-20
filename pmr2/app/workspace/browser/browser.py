@@ -271,6 +271,8 @@ class WorkspacePage(page.SimplePage):
     The main workspace page.
     """
 
+    zope.interface.implements(IWorkspacePage)
+
     # need interface for this page that handles storage protocol?
     template = ViewPageTemplateFile('workspace.pt')
     protocolView = None

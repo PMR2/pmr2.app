@@ -8,7 +8,7 @@
         tal:condition="not:ajax_load">
     </div>
 
-    <h3>Summary</h3>
+    <h3>Workspace Summary</h3>
     <dl>
 
       <tal:if tal:condition="view/description">
