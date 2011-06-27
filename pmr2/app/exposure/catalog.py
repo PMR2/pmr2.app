@@ -3,7 +3,7 @@ from plone.indexer import indexer
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.schema.converter import curation_to_textline_list
-from pmr2.app.interfaces import IExposureSourceAdapter, IPMR2KeywordProvider
+from pmr2.app.interfaces import IPMR2KeywordProvider
 from pmr2.app.exposure.interfaces import *
 
 

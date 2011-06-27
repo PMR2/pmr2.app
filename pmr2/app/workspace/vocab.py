@@ -8,7 +8,6 @@ from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.factory import vocab_factory
 
-from pmr2.app.interfaces import *
 from pmr2.app.workspace.interfaces import IWorkspace
 from pmr2.app.workspace.interfaces import IWorkspaceListing
 from pmr2.app.workspace.interfaces import IStorageUtility
@@ -34,6 +33,7 @@ class ManifestListVocab(SimpleVocabulary):
 
         # XXX this part need to be subclassed away into exposure module
         if not IWorkspace.providedBy(self.context):
+            from pmr2.app.exposure.interfaces import IExposureSourceAdapter
             helper = zope.component.queryAdapter(self.context, 
                 IExposureSourceAdapter)
             if not helper:

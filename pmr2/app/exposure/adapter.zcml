@@ -18,7 +18,7 @@
   <adapter
       for="pmr2.app.exposure.interfaces.IExposureObject"
       factory=".adapter.ExposureSourceAdapter"
-      provides="pmr2.app.interfaces.IExposureSourceAdapter"
+      provides="pmr2.app.exposure.interfaces.IExposureSourceAdapter"
       />
 
 </configure> 
