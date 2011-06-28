@@ -21,4 +21,10 @@
       provides="pmr2.app.exposure.interfaces.IExposureSourceAdapter"
       />
 
+  <adapter
+      for="pmr2.app.exposure.interfaces.IExposureObject"
+      factory=".adapter.ExposureObjectWorkspaceAdapter"
+      provides="pmr2.app.workspace.interfaces.IWorkspace"
+      />
+
 </configure> 

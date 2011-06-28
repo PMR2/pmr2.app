@@ -4,6 +4,7 @@ import zope.component
 from zope.schema.interfaces import IVocabulary, IVocabularyFactory, ISource
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
+from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.factory import vocab_factory
@@ -31,14 +32,18 @@ class ManifestListVocab(SimpleVocabulary):
     def __init__(self, context):
         self.context = wks = context
 
-        # XXX this part need to be subclassed away into exposure module
         if not IWorkspace.providedBy(self.context):
-            from pmr2.app.exposure.interfaces import IExposureSourceAdapter
-            helper = zope.component.queryAdapter(self.context, 
-                IExposureSourceAdapter)
-            if not helper:
-                raise TypeError('could not acquire source from context')
-            obj, wks, path = helper.source()
+            wks = None
+            obj = aq_inner(self.context)
+            while obj and not wks and not IWorkspace.providedBy(obj):
+                wks = zope.component.queryAdapter(obj, IWorkspace)
+                if not wks:
+                    # The object that can adapted to the workspace can
+                    # be nested, i.e. a form adapter object.
+                    obj = aq_parent(obj)
+            if not wks:
+                raise Exception("Unable to adapt to a workspace to acquire "
+                                "its manifest.")
 
         self.storage = zope.component.getAdapter(wks, IStorage)
         values = self.storage.files()
