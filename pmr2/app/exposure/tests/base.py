@@ -41,7 +41,7 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
 
         super(ExposureDocTestCase, self).setUp()
 
-        self.pmr2.default_exposure_idgen = 'rand128hex'
+        self.pmr2.default_exposure_idgen = 'autoinc'
         self.pmr2.repo_root = self.tmpdir
 
         from pmr2.app.workspace.content import WorkspaceContainer, Workspace
@@ -77,6 +77,9 @@ class CompleteDocTestCase(ExposureDocTestCase):
         def mkexposure(workspace, commit_id, id_):
             if not id_:
                 id_ = idgen.next()
+            else:
+                # call it anyway.
+                idgen.next()
             e = Exposure(id_)
             e.workspace = workspace
             e.commit_id = commit_id
