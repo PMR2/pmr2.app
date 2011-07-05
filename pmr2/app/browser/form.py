@@ -10,7 +10,7 @@ from Acquisition import aq_parent, aq_inner
 
 import z3c.form.form
 from z3c.form.interfaces import IWidgets
-from z3c.form.form import Form, EditForm
+from z3c.form.form import Form
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.z3cform.fieldsets import group
 
@@ -27,7 +27,24 @@ class DisplayForm(z3c.form.form.DisplayForm):
         return self.render()
 
 
-class AddForm(z3c.form.form.AddForm):
+class PostForm(z3c.form.form.Form):
+    """\
+    Post form mixin class.
+    """
+
+    invalidRequestMessage = _('Invalid form submission method.')
+
+    def extractData(self, *a, **kw):
+        # Form request method MUST be POST
+        if self.request.method == 'POST':
+            return super(PostForm, self).extractData(*a, **kw)
+
+        self.formErrorsMessage = self.invalidRequestMessage
+        # return no data and trigger error on standard button using...
+        return None, True
+
+
+class AddForm(z3c.form.form.AddForm, PostForm):
     """\
     Generic AddForm for the creation of classes in pmr2.app.  Since most
     objects share a similar interface, the process for creating them
@@ -37,6 +54,8 @@ class AddForm(z3c.form.form.AddForm):
     For data assignment of fields and other custom work, redefine the
     method 'add_data'
     """
+
+    extractData = PostForm.extractData
 
     # set clsobj to the object to be created.
     clsobj = None
@@ -136,7 +155,15 @@ class AddForm(z3c.form.form.AddForm):
             return self.ctxobj.absolute_url()
 
 
-class BaseAnnotationForm(z3c.form.form.Form):
+class EditForm(z3c.form.form.EditForm, PostForm):
+    """\
+    Include POST method checking.
+    """
+
+    extractData = PostForm.extractData
+
+
+class BaseAnnotationForm(PostForm):
     """\
     Basic form to generate data and apply them to the object.
     """
@@ -147,6 +174,8 @@ class BaseAnnotationForm(z3c.form.form.Form):
     ignoreReadonly = True
     _finishedAdd = False
     formErrorsMessage = _('There were some errors.')
+
+    extractData = PostForm.extractData
 
     def nextURL(self):
         raise NotImplementedError

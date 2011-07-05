@@ -17,7 +17,7 @@ how pmr2_settings created from above is not acquired again.
 ::
 
     >>> from pmr2.app.settings.browser import PMR2GlobalSettingsEditForm
-    >>> from pmr2.app.tests.base import TestRequest
+    >>> from pmr2.testing.base import TestRequest
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.repo_root': self.tmpdir,

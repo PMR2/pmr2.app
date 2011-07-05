@@ -401,7 +401,7 @@ ExposureFileTypeDisplayFormView = layout.wrap_form(ExposureFileTypeDisplayForm,
     label="Exposure File Type viewer")
 
 
-class ExposureFileTypeChoiceForm(form.Form):
+class ExposureFileTypeChoiceForm(form.PostForm):
     """\
     This form chooses the views available for this page, based on either
     the file type or selecting the list of views to be made available.
@@ -987,7 +987,7 @@ GroupedNoteViewBaseView = layout.wrap_form(
 
 # utility
 
-class ExposurePort(form.Form):
+class ExposurePort(form.PostForm):
     """
     an export/importer for exposures
     """
@@ -1273,7 +1273,7 @@ ExposureFileRegenerateFormView = layout.wrap_form(ExposureFileRegenerateForm,
     label="Exposure Regeneration")
 
 
-class ExposureFileBulkRegenerateForm(form.Form):
+class ExposureFileBulkRegenerateForm(form.PostForm):
     """\
     Exposure bulk regeneration form.
     """

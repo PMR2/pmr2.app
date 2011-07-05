@@ -322,6 +322,7 @@ Reading using the protocol layer shouldn't present an issue.
 
     >>> context = self.portal.workspace.cake
     >>> request = TestRequest(form={'cmd': 'revcount'})
+    >>> request.method = 'GET'
     >>> view = browser.WorkspacePage(context, request)
     >>> revcount = view()
     >>> print revcount
@@ -333,6 +334,7 @@ and watch it puke.
 
     >>> context = self.portal.workspace.cake
     >>> request = TestRequest(form={'cmd': 'badcmd'})
+    >>> request.method = 'GET'
     >>> view = browser.WorkspacePage(context, request)
     >>> view()
     Traceback (most recent call last):
