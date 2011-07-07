@@ -5,86 +5,86 @@
 
   <utility
       name="rdfturtle"
-      component="pmr2.app.tests.adapter.RDFTurtleAnnotatorFactory"
-      provides=".annotation.interfaces.IExposureFileAnnotator"
+      component=".adapter.RDFTurtleAnnotatorFactory"
+      provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
       />
 
   <utility
       name="rdfn3"
-      component="pmr2.app.tests.adapter.RDFn3AnnotatorFactory"
-      provides=".annotation.interfaces.IExposureFileAnnotator"
+      component=".adapter.RDFn3AnnotatorFactory"
+      provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
       />
 
   <utility
       name="rdfxml"
-      component="pmr2.app.tests.adapter.RDFxmlAnnotatorFactory"
-      provides=".annotation.interfaces.IExposureFileAnnotator"
+      component=".adapter.RDFxmlAnnotatorFactory"
+      provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
       />
 
   <utility
       name="rot13"
-      component="pmr2.app.tests.adapter.Rot13NoteAnnotatorFactory"
-      provides=".annotation.interfaces.IExposureFileAnnotator"
+      component=".adapter.Rot13NoteAnnotatorFactory"
+      provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
       />
 
   <utility
       name="edited_note"
-      component="pmr2.app.tests.adapter.EditedNoteAnnotatorFactory"
-      provides=".annotation.interfaces.IExposureFileAnnotator"
+      component=".adapter.EditedNoteAnnotatorFactory"
+      provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
       />
 
   <utility
       name="post_edited_note"
-      component="pmr2.app.tests.adapter.PostEditedNoteAnnotatorFactory"
-      provides=".annotation.interfaces.IExposureFileAnnotator"
+      component=".adapter.PostEditedNoteAnnotatorFactory"
+      provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
       />
 
   <adapter
       for="pmr2.app.exposure.interfaces.IExposureFile"
-      factory="pmr2.app.tests.adapter.RDFTurtleNoteFactory"
-      provides=".annotation.interfaces.IRawTextNote"
+      factory=".adapter.RDFTurtleNoteFactory"
+      provides="pmr2.app.annotation.interfaces.IRawTextNote"
       name="rdfturtle"
       />
 
   <adapter
       for="pmr2.app.exposure.interfaces.IExposureFile"
-      factory="pmr2.app.tests.adapter.RDFn3NoteFactory"
-      provides=".annotation.interfaces.IRawTextNote"
+      factory=".adapter.RDFn3NoteFactory"
+      provides="pmr2.app.annotation.interfaces.IRawTextNote"
       name="rdfn3"
       />
 
   <adapter
       for="pmr2.app.exposure.interfaces.IExposureFile"
-      factory="pmr2.app.tests.adapter.RDFxmlNoteFactory"
-      provides=".annotation.interfaces.IRawTextNote"
+      factory=".adapter.RDFxmlNoteFactory"
+      provides="pmr2.app.annotation.interfaces.IRawTextNote"
       name="rdfxml"
       />
 
   <adapter
       for="pmr2.app.exposure.interfaces.IExposureFile"
-      factory="pmr2.app.tests.adapter.Rot13NoteFactory"
-      provides=".annotation.interfaces.IRawTextNote"
+      factory=".adapter.Rot13NoteFactory"
+      provides="pmr2.app.annotation.interfaces.IRawTextNote"
       name="rot13"
       />
 
   <adapter
       for="pmr2.app.exposure.interfaces.IExposureFile"
-      factory="pmr2.app.tests.adapter.EditedNoteFactory"
-      provides="pmr2.app.tests.content.IEditedNote"
+      factory=".adapter.EditedNoteFactory"
+      provides=".content.IEditedNote"
       name="edited_note"
       />
 
   <adapter
       for="pmr2.app.exposure.interfaces.IExposureFile"
-      factory="pmr2.app.tests.adapter.PostEditedNoteFactory"
-      provides="pmr2.app.tests.content.IPostEditedNote"
+      factory=".adapter.PostEditedNoteFactory"
+      provides=".content.IPostEditedNote"
       name="post_edited_note"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="rdf"
-      class="pmr2.app.tests.browser.RdfGroupedNoteView"
+      class=".browser.RdfGroupedNoteView"
       permission="zope2.View"
       />
 
@@ -119,14 +119,14 @@
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="edited_note"
-      class="pmr2.app.tests.browser.EditedNoteView"
+      class=".browser.EditedNoteView"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="post_edited_note"
-      class="pmr2.app.tests.browser.PostEditedNoteView"
+      class=".browser.PostEditedNoteView"
       permission="zope2.View"
       />
 

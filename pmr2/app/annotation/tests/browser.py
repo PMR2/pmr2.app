@@ -1,6 +1,3 @@
-import os.path
-from z3c.form import tests
-from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from plone.z3cform import layout
 from pmr2.app.exposure.browser.browser import GroupedNoteViewBase
 from pmr2.app.exposure.browser.browser import ExposureFileViewBase
@@ -31,13 +28,3 @@ class PostEditedNoteView(ExposureFileViewBase):
     def __call__(self):
         return 'Post Edited Note is: [%d:%s]' % (
             self.note.chars, self.note.text)
-
-
-class GroupTemplate(object):
-
-    def __init__(self, context):
-        self.context = context
-
-    def __call__(self):
-        return ViewPageTemplateFile('simple_groupedit.pt', os.path.dirname(
-            tests.__file__))(self.context)
