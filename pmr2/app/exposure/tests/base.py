@@ -41,7 +41,7 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
 
         super(ExposureDocTestCase, self).setUp()
 
-        self.pmr2.default_exposure_idgen = 'autoinc'
+        self.pmr2.default_exposure_idgen = 'rand128hex'
         self.pmr2.repo_root = self.tmpdir
 
         from pmr2.app.workspace.content import WorkspaceContainer, Workspace
