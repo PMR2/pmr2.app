@@ -9,5 +9,9 @@
         <div tal:replace="structure view/content">Custom Fields</div>
     </metal:main>
 
+    <metal:main fill-slot="formbottom">
+        <span tal:replace="structure context/@@authenticator/authenticator"/>
+    </metal:main>
+
 </body>
 </html>

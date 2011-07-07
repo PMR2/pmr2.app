@@ -1,3 +1,5 @@
+import os.path
+
 import zope.component
 import zope.event
 from zope.schema.fieldproperty import FieldProperty
@@ -6,6 +8,7 @@ from zope.app.container.interfaces import IAdding
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
+from AccessControl import Unauthorized
 from Acquisition import aq_parent, aq_inner
 
 import z3c.form.form
@@ -13,6 +16,19 @@ from z3c.form.interfaces import IWidgets
 from z3c.form.form import Form
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.z3cform.fieldsets import group
+from plone.z3cform.interfaces import IWrappedForm
+from plone.z3cform.templates import ZopeTwoFormTemplateFactory
+
+from pmr2.app.interfaces import IPMR2AppLayer
+import pmr2.app.browser
+from pmr2.app.browser.interfaces import IPMR2Form
+
+
+path = lambda p: os.path.join(os.path.dirname(pmr2.app.browser.__file__), 
+                              'templates', p)
+
+form_factory = ZopeTwoFormTemplateFactory(path('form.pt'), form=IWrappedForm,
+    request=IPMR2AppLayer)
 
 
 class DisplayForm(z3c.form.form.DisplayForm):
@@ -32,16 +48,27 @@ class PostForm(z3c.form.form.Form):
     Post form mixin class.
     """
 
+    zope.interface.implements(IPMR2Form)
+
     invalidRequestMessage = _('Invalid form submission method.')
 
     def extractData(self, *a, **kw):
         # Form request method MUST be POST
-        if self.request.method == 'POST':
-            return super(PostForm, self).extractData(*a, **kw)
 
-        self.formErrorsMessage = self.invalidRequestMessage
-        # return no data and trigger error on standard button using...
-        return None, True
+        if not self.request.method == 'POST':
+            self.formErrorsMessage = self.invalidRequestMessage
+            # return no data and trigger error on standard button using...
+            return None, True
+
+        authenticator = zope.component.getMultiAdapter(
+            (self.context, self.request),
+            name=u'authenticator',
+        )
+
+        if not authenticator.verify():
+            raise Unauthorized
+
+        return super(PostForm, self).extractData(*a, **kw)
 
 
 class AddForm(z3c.form.form.AddForm, PostForm):
