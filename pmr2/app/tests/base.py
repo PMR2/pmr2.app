@@ -47,8 +47,6 @@ class TestRequest(z3c.form.testing.TestRequest):
     zope.interface.implements(IAnnotations)
     def __init__(self, *a, **kw):
         super(TestRequest, self).__init__(*a, **kw)
-        if self.form:
-            self.method = 'POST'
 
     def __setitem__(self, key, value):
         self.form[key] = value

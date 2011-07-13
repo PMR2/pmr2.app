@@ -16,6 +16,7 @@ from z3c.form.interfaces import IWidgets
 from z3c.form.form import Form, EditForm
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.z3cform.fieldsets import group
+import plone.protect.postonly
 
 from pmr2.app.interfaces import IPMR2AppLayer
 import pmr2.app.browser
@@ -70,8 +71,7 @@ class PostForm(AuthenticatedForm):
     """
 
     def authenticate(self):
-        if not self.request.method == 'POST':
-            raise Unauthorized
+        plone.protect.postonly.check(self.request)
 
         return super(PostForm, self).authenticate()
 

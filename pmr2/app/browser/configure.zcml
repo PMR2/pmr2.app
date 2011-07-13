@@ -11,7 +11,37 @@
   <!-- 
     this is for specifically forms with traverse subpaths, where the
     default supplied with plone.z3cform does not take account of.
+
+    Also force plone authenticator to be rendered.
   -->
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.content.interfaces.IWorkspace"
+      class=".layout.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public" />
+
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.content.interfaces.IWorkspaceContainer"
+      class=".layout.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public" />
+
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.content.interfaces.IExposure"
+      class=".layout.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public" />
+
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.content.interfaces.IExposureContainer"
+      class=".layout.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public" />
+
   <browser:page
       name="ploneform-macros"
       for="pmr2.app.content.interfaces.IExposureFile"
