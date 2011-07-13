@@ -16,8 +16,6 @@ from z3c.form.interfaces import IWidgets
 from z3c.form.form import Form, EditForm
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.z3cform.fieldsets import group
-from plone.z3cform.interfaces import IWrappedForm
-from plone.z3cform.templates import ZopeTwoFormTemplateFactory
 
 from pmr2.app.interfaces import IPMR2AppLayer
 import pmr2.app.browser
@@ -26,9 +24,6 @@ from pmr2.app.browser.interfaces import IPMR2Form
 
 path = lambda p: os.path.join(os.path.dirname(pmr2.app.browser.__file__), 
                               'templates', p)
-
-form_factory = ZopeTwoFormTemplateFactory(path('form.pt'), form=IWrappedForm,
-    request=IPMR2AppLayer)
 
 
 class DisplayForm(z3c.form.form.DisplayForm):

@@ -22,6 +22,8 @@ from Products.PloneTestCase.layer import onsetup, onteardown
 @onsetup
 def setup():
     import pmr2.app
+    import pmr2.app.browser.form
+    pmr2.app.browser.form.AuthenticatedForm.disableAuthenticator = True
     fiveconfigure.debug_mode = True
     zcml.load_config('configure.zcml', pmr2.app)
     zcml.load_config('tests/test.zcml', pmr2.app)
@@ -45,6 +47,8 @@ class TestRequest(z3c.form.testing.TestRequest):
     zope.interface.implements(IAnnotations)
     def __init__(self, *a, **kw):
         super(TestRequest, self).__init__(*a, **kw)
+        if self.form:
+            self.method = 'POST'
 
     def __setitem__(self, key, value):
         self.form[key] = value

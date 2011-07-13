@@ -166,6 +166,7 @@
                 </tal:block>
             </div>
           </metal:define>
+          <span tal:replace="structure context/@@authenticator/authenticator"/>
                     
         </form>
       </metal:define>

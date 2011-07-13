@@ -122,9 +122,7 @@
             </div>
           </metal:define>
 
-          <metal:main fill-slot="formbottom">
-              <span tal:replace="structure context/@@authenticator/authenticator"/>
-          </metal:main>
+          <span tal:replace="structure context/@@authenticator/authenticator"/>
                     
         </form>
       </metal:define>
