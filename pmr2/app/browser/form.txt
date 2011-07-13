@@ -40,8 +40,9 @@ Now we test that GET will fail.
     >>> request.method = 'GET'
     >>> form = TestAddForm(context, request)
     >>> result = form()
-    >>> print form.status
-    Invalid form submission method.
+    Traceback (most recent call last):
+    ...
+    Unauthorized: Unauthorized()
     >>> context == []
     True
 
