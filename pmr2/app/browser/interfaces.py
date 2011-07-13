@@ -72,8 +72,20 @@ class IPublishTraverse(zope.publisher.interfaces.IPublishTraverse):
 
 class IPMR2Form(zope.interface.Interface):
     """\
-    Marker for PMR2 forms.
+    Interface for PMR2 forms.
     """
+
+    disableAuthenticator = zope.schema.Bool(
+        title=_('Disable Authenticator'),
+        description=_('Disable CSRF protection authenticator.'),
+        default=False,
+        required=True,
+    )
+
+    def authenticate():
+        """\
+        Authenticate request.
+        """
 
 
 class IObjectIdMixin(zope.interface.Interface):
