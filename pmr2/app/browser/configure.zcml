@@ -6,37 +6,6 @@
   <include package="pmr2.app.security" />
   <include package=".portlets" />
 
-  <!-- PMR2 Root -->
-
-  <!-- PMR2 specific Zope 3 browser layer -->
-
-  <!-- 
-    Ideally we want to limit the scope of our styles and images, but
-    Either I am doing something wrong, missing something somewhere, or
-    the documentation to make this work was incomplete.  I spent more
-    than enough hours on this, and in the interest of sanity and time
-    I will comment this out.
-
-    When this is fixed, <browser:resourceDirectory/> will need this
-    attribute:
-
-      layer=".interfaces.IThemeSpecific"
-
-  <interface
-      interface=".interfaces.IThemeSpecific"
-      type="zope.publisher.interfaces.browser.IBrowserSkinType"
-      name="Physiome Model Repository 2"
-      />
-
-  <browser:layer name="pmr2.app.layer" />
-
-  <browser:skin
-      name="PMR2Layer"
-      layers=".interfaces.IThemeSpecific"
-      />
-
-  -->
-
   <!-- bug fix/workarounds -->
 
   <!-- 
@@ -424,6 +393,7 @@
       name="pmr2-settings"
       class=".settings.PMR2GlobalSettingsEditFormView"
       permission="cmf.ManagePortal"
+      layer="pmr2.app.interfaces.IPMR2AppLayer"
       />
 
   <!--
@@ -435,6 +405,7 @@
       name="pmr1_folder_listing"
       template="templates/pmr1_folder_listing.pt"
       permission="zope2.View"
+      layer="pmr2.app.interfaces.IPMR2AppLayer"
       />
 
   <!--
@@ -550,11 +521,13 @@
   <browser:resourceDirectory
       name="pmr2.app.images"
       directory="images"
+      layer="pmr2.app.interfaces.IPMR2AppLayer"
       />
 
   <browser:resourceDirectory
       name="pmr2.app.stylesheets"
       directory="stylesheets"
+      layer="pmr2.app.interfaces.IPMR2AppLayer"
       />
 
 </configure>

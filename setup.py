@@ -40,10 +40,10 @@ setup(
         'plone.app.content',
         'plone.app.z3cform>=0.3.2',
         'plone.z3cform>=0.5',
+        'plone.browserlayer',
         'pmr2.mercurial',
         'pmr2.idgen',
         'lxml>=2.1.0',
-        # -*- Extra requirements: -*-
     ],
     entry_points="""
     # -*- Entry points: -*-
