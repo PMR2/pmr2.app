@@ -43,16 +43,18 @@ class DisplayForm(z3c.form.form.DisplayForm):
         return self.render()
 
 
-class PostForm(z3c.form.form.Form):
+class AuthenticatedForm(z3c.form.form.Form):
     """\
-    Post form mixin class.
+    Form with authentication protection.
     """
 
     zope.interface.implements(IPMR2Form)
 
+    disableAuthenticator = False
+
     def authenticate(self):
-        if not self.request.method == 'POST':
-            raise Unauthorized
+        if self.disableAuthenticator:
+            return True
 
         authenticator = zope.component.getMultiAdapter(
             (self.context, self.request),
@@ -64,7 +66,19 @@ class PostForm(z3c.form.form.Form):
 
     def extractData(self, *a, **kw):
         self.authenticate()
-        return super(PostForm, self).extractData(*a, **kw)
+        return super(AuthenticatedForm, self).extractData(*a, **kw)
+
+
+class PostForm(AuthenticatedForm):
+    """\
+    Post form mixin class.
+    """
+
+    def authenticate(self):
+        if not self.request.method == 'POST':
+            raise Unauthorized
+
+        return super(PostForm, self).authenticate()
 
 
 class AddForm(z3c.form.form.AddForm, PostForm):
