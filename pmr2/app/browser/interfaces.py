@@ -70,6 +70,12 @@ class IPublishTraverse(zope.publisher.interfaces.IPublishTraverse):
     )
 
 
+class IPMR2Form(zope.interface.Interface):
+    """\
+    Marker for PMR2 forms.
+    """
+
+
 class IObjectIdMixin(zope.interface.Interface):
     """\
     Provides a generic id field attribute for use by AddForm.

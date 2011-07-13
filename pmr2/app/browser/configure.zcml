@@ -506,6 +506,8 @@
   <adapter factory=".layout.mathml_layout_factory" />
   <adapter factory=".layout.ploneview_layout_factory" />
 
+  <adapter factory=".form.form_factory" />
+
   <!-- widget adapters -->
   
   <adapter
