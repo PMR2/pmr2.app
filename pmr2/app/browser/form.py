@@ -50,15 +50,9 @@ class PostForm(z3c.form.form.Form):
 
     zope.interface.implements(IPMR2Form)
 
-    invalidRequestMessage = _('Invalid form submission method.')
-
-    def extractData(self, *a, **kw):
-        # Form request method MUST be POST
-
+    def authenticate(self):
         if not self.request.method == 'POST':
-            self.formErrorsMessage = self.invalidRequestMessage
-            # return no data and trigger error on standard button using...
-            return None, True
+            raise Unauthorized
 
         authenticator = zope.component.getMultiAdapter(
             (self.context, self.request),
@@ -68,6 +62,8 @@ class PostForm(z3c.form.form.Form):
         if not authenticator.verify():
             raise Unauthorized
 
+    def extractData(self, *a, **kw):
+        self.authenticate()
         return super(PostForm, self).extractData(*a, **kw)
 
 
