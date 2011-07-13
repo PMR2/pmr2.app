@@ -185,6 +185,14 @@ class AddForm(z3c.form.form.AddForm, PostForm):
             return self.ctxobj.absolute_url()
 
 
+class EditForm(z3c.form.form.EditForm, PostForm):
+    """\
+    Include POST method checking.
+    """
+
+    extractData = PostForm.extractData
+
+
 class BaseAnnotationForm(z3c.form.form.Form):
     """\
     Basic form to generate data and apply them to the object.

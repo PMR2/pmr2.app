@@ -85,7 +85,7 @@ ExposureAddFormView = layout.wrap_form(ExposureAddForm,
     label="Exposure Create Form")
 
 
-class ExposureEditForm(z3c.form.form.EditForm):
+class ExposureEditForm(form.EditForm):
     """\
     Exposure editing form.
     """
@@ -99,7 +99,7 @@ ExposureEditFormView = layout.wrap_form(ExposureEditForm,
     label="Exposure Edit Form")
 
 
-class ExposureEditCurationForm(z3c.form.form.EditForm):
+class ExposureEditCurationForm(form.EditForm):
     """\
     Exposure editing form.
     """
@@ -269,7 +269,7 @@ ExposureFileTypeAddFormView = layout.wrap_form(ExposureFileTypeAddForm,
     label="Exposure File Type creator")
 
 
-class ExposureFileTypeEditForm(z3c.form.form.EditForm):
+class ExposureFileTypeEditForm(form.EditForm):
     """\
     ExposureFileType editing form.
     """
@@ -294,7 +294,7 @@ ExposureFileTypeDisplayFormView = layout.wrap_form(ExposureFileTypeDisplayForm,
     label="Exposure File Type viewer")
 
 
-class ExposureFileTypeChoiceForm(form.Form):
+class ExposureFileTypeChoiceForm(form.PostForm):
     """\
     This form chooses the views available for this page, based on either
     the file type or selecting the list of views to be made available.
@@ -891,7 +891,7 @@ GroupedNoteViewBaseView = layout.wrap_form(
 
 # utility
 
-class ExposurePort(form.Form):
+class ExposurePort(form.PostForm):
     """
     an export/importer for exposures
     """
@@ -1217,7 +1217,7 @@ ExposureFileRegenerateFormView = layout.wrap_form(ExposureFileRegenerateForm,
     label="Exposure Regeneration")
 
 
-class ExposureFileBulkRegenerateForm(form.Form):
+class ExposureFileBulkRegenerateForm(form.PostForm):
     """\
     Exposure bulk regeneration form.
     """

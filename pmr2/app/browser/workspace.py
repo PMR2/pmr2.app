@@ -757,7 +757,7 @@ class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
         return data
 
 
-class CreateForm(z3c.form.form.Form):
+class CreateForm(form.PostForm):
 
     # XXX implement the interface that will show the types that users
     # can create from a workspace.
