@@ -58,4 +58,10 @@
      description="A portlet that shows the download options available for the exposure object.">
  </portlet>
 
+ <portlet 
+     addview="pmr2.portlets.workspace_exposure_info"
+     title="Workspace Exposure Info"
+     description="This portlet searches the catalog for the latest exposure for this workspace.">
+ </portlet>
+
 </portlets>

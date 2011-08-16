@@ -100,7 +100,7 @@ class TextLineList(zope.schema.List):
         ITextLineList,
         zope.schema.interfaces.IFromUnicode,
     )
-    value_type=zope.schema.TextLine(title=u'Values',),
+    value_type = zope.schema.TextLine(title=u'Values',),
 
     def fromUnicode(self, u):
         """\

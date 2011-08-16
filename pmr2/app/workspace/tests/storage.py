@@ -87,6 +87,7 @@ _dummy_storage_data = {
 
 class DummyStorageUtility(StorageUtility):
     title = 'Dummy Storage'
+    valid_cmds = ['revcount', 'update',]
 
     def create(self, context):
         # creates the datastore for a dummy storage
@@ -98,19 +99,21 @@ class DummyStorageUtility(StorageUtility):
     def acquireFrom(self, context):
         return DummyStorage(context)
 
+    def isprotocol(self, request):
+        return request.form.get('cmd', None) is not None
+
     def protocol(self, context, request):
         storage = self.acquireFrom(context)
         cmd = request.form.get('cmd', '')
-        if not cmd:
-            return ''
         if cmd == 'revcount':
             return len(storage._data())
-        if cmd == 'update':
+        elif cmd == 'update':
             # doesn't do anything, but check that the request is indeed
             # a push
             if request.method == 'GET':
                 raise Exception('bad request method')
             return 'Updated'
+        raise UnsupportedCommandError('%s unsupported' % cmd)
 
 
 class DummyStorage(BaseStorage):
@@ -276,7 +279,19 @@ class DummyStorage(BaseStorage):
         results.sort()
         return '\n'.join(results)
 
-    def log(self, start, count, branch=None):
+    def log(self, start, count, branch=None, *a, **kw):
+        def buildnav(nav):
+            # mock navigation
+            result = []
+            for i in xrange(1, nav+1):
+                result.append(
+                    {
+                        'href': 'p%d' % i,
+                        'label': 'page %d' % i,
+                    }
+                )
+            return result
+
         start = self._validrev(start)
         results = []
         for i in xrange(start, start - count, -1):
@@ -290,6 +305,7 @@ class DummyStorage(BaseStorage):
                 'author': 'pmr2.teststorage <pmr2.tester@example.com>',
                 'desc': entry,
             })
+        self._lastnav = buildnav(2)
         return results
 
 

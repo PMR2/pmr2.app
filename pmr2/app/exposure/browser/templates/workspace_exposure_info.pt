@@ -1,0 +1,28 @@
+<tal:if tal:define="latest view/latest_exposure"
+        tal:condition="latest">
+  <dl class="portlet" id="pmr2_workspace_exposure_info">
+    <dt class="portletHeader">Exposure Information</dt>
+
+    <dd>
+        <a class="button"
+            tal:attributes="href latest/getURL;">Latest Exposure</a>
+        If you are a new user to the repository, you may wish to view the
+        exposure for this workspace.  An exposure will show the summarized
+        information for the content contained here.
+    </dd>
+
+  </dl>
+</tal:if>
+
+<tal:if tal:define="latest view/latest_exposure"
+        tal:condition="not:latest">
+  <dl class="portlet" id="pmr2_workspace_exposure_info">
+    <dt class="portletHeader">Exposure Information</dt>
+
+    <dd>
+      No simplified view available for this workspace as no related
+      exposures were found.
+    </dd>
+
+  </dl>
+</tal:if>

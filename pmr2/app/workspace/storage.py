@@ -79,6 +79,17 @@ class BaseStorage(object):
     def archiveFormats(self):
         return sorted(self._archiveFormats.keys())
 
+    # Navigational list
+
+    _lastnav = None
+
+    @property
+    def lastnav(self):
+        if self._lastnav is None:
+            return []
+        else:
+            return self._lastnav
+
     # Default implementation for methods
 
     def archiveInfo(self, format):
@@ -114,7 +125,10 @@ class BaseStorage(object):
         raise NotImplementedError
 
     def format(self, permissions, node, date, size, path, contents,
-               author='', desc='', *a, **kw):
+               contenttype=None, author='', desc='', *a, **kw):
+
+        # need a way to derive the correct baseview.
+        baseview = 'file'
 
         def mimetype():
             # use the built-in mimetypes, then use magic library
@@ -137,7 +151,10 @@ class BaseStorage(object):
             'node': node,
             'date': date,
             'size': size,
+            'baseview': baseview,
             'file': path,
+            'fullpath': None,
+            'contenttype': contenttype,
             'basename': self.basename(path),
             'contents': contents,
             'mimetype': mimetype,
@@ -146,7 +163,7 @@ class BaseStorage(object):
     def listdir(self, path):
         raise NotImplementedError
 
-    def log(self, start, count, branch=None):
+    def log(self, start, count, branch=None, *a, **kw):
         raise NotImplementedError
 
     def pathinfo(self, path):
@@ -203,6 +220,9 @@ class StorageUtility(object):
         raise NotImplementedError
 
     def acquireFrom(self, context):
+        raise NotImplementedError
+
+    def isprotocol(self, request):
         raise NotImplementedError
 
     def protocol(self, context, request):

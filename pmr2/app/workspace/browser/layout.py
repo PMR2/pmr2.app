@@ -15,8 +15,8 @@ class WorkspaceProtocolWrapper(FormWrapper):
     """
 
     def render(self):
-        if self.form_instance.protocol:
-            return self.form_instance.protocol
+        if self.form_instance.protocolView.enabled():
+            return self.form_instance.render()
         return super(WorkspaceProtocolWrapper, self).render()
 
 

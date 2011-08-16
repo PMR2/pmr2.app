@@ -25,23 +25,6 @@
       allowed_interface="zope.interface.common.mapping.IItemMapping"
       permission="zope.Public" />
 
-  <!-- 
-    these two are for the rollover.  I wish this isn't needed, will work
-    on making this more reusable for other types when time permits.
-  -->
-
-  <adapter 
-      for="pmr2.app.exposure.browser.interfaces.IExposureRolloverForm
-           zope.publisher.interfaces.IPublisherRequest"
-      factory=".layout.rollover_form_factory" />
-
-  <browser:page
-      name="rollover-macros"
-      for="pmr2.app.workspace.interfaces.IWorkspace"
-      class=".layout.RolloverMacros"
-      allowed_interface="zope.interface.common.mapping.IItemMapping"
-      permission="zope.Public" />
-
   <!-- pages -->
   <!-- PMR2 Custom Search object -->
 
@@ -83,6 +66,8 @@
   <adapter factory=".layout.plain_layout_factory" />
   <adapter factory=".layout.mathml_layout_factory" />
   <adapter factory=".layout.ploneview_layout_factory" />
+
+  <adapter factory=".form.form_factory" />
 
   <!-- widget adapters -->
   

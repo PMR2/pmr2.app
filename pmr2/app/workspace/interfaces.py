@@ -134,6 +134,11 @@ class IStorageUtility(zope.interface.Interface):
         Acquire a Storage Backend from the given context.
         """
 
+    def isprotocol(context, request):
+        """\
+        Verify that the request is a protocol level request.
+        """
+
     def protocol(context, request):
         """\
         Process the request as a protocol request on context.

@@ -4,7 +4,7 @@ from os.path import join
 import zope.component
 from zope.component import testing
 from Testing import ZopeTestCase as ztc
-from Products.Five import zcml
+from Zope2.App import zcml
 from Products.Five import fiveconfigure
 from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import PloneSite
@@ -12,6 +12,7 @@ from Products.PloneTestCase.layer import onsetup
 from Products.PloneTestCase.layer import onteardown
 
 import pmr2.testing
+from pmr2.testing import utils
 from pmr2.testing.base import DocTestCase
 from pmr2.testing.base import TestRequest
 
@@ -46,7 +47,6 @@ class WorkspaceDocTestCase(DocTestCase):
 
         DocTestCase.setUp(self)
         from plone.z3cform.tests import setup_defaults
-        from pmr2.app.tests import utils
         from pmr2.app.settings.interfaces import IPMR2GlobalSettings
         setup_defaults()
         # also set up the root to the tmpdir.

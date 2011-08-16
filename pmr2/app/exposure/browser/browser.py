@@ -1,4 +1,4 @@
-from os.path import splitext
+from os.path import join
 import zope.interface
 import zope.component
 import zope.event
@@ -27,6 +27,10 @@ from Products.PortalTransforms.data import datastream
 from Products.CMFCore import permissions
 from Products.statusmessages.interfaces import IStatusMessage
 
+from zope.app.pagetemplate.viewpagetemplatefile \
+    import ViewPageTemplateFile as VPTF
+ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
+
 from pmr2.idgen.interfaces import IIdGenerator
 
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
@@ -48,7 +52,6 @@ from pmr2.app.exposure.content import *
 
 from pmr2.app.browser import form
 from pmr2.app.browser import page
-from pmr2.app.browser.page import ViewPageTemplateFile
 from pmr2.app.browser import widget
 from pmr2.app.browser.layout import *
 
@@ -398,7 +401,7 @@ ExposureFileTypeDisplayFormView = layout.wrap_form(ExposureFileTypeDisplayForm,
     label="Exposure File Type viewer")
 
 
-class ExposureFileTypeChoiceForm(form.Form):
+class ExposureFileTypeChoiceForm(form.PostForm):
     """\
     This form chooses the views available for this page, based on either
     the file type or selecting the list of views to be made available.
@@ -768,8 +771,9 @@ ExposureDocViewGenFormView = layout.wrap_form(
 
 class ExposureInfo(page.SimplePage):
     """\
-    Inheriting from the TraversalPage because this will be the main view
-    wrapping around exposure.
+    Simple exposure file page
+
+    Renders the documentation that was manually assigned to the file.
     """
 
     render = ViewPageTemplateFile('exposure_docview.pt')
@@ -983,7 +987,7 @@ GroupedNoteViewBaseView = layout.wrap_form(
 
 # utility
 
-class ExposurePort(form.Form):
+class ExposurePort(form.PostForm):
     """
     an export/importer for exposures
     """
@@ -1269,7 +1273,7 @@ ExposureFileRegenerateFormView = layout.wrap_form(ExposureFileRegenerateForm,
     label="Exposure Regeneration")
 
 
-class ExposureFileBulkRegenerateForm(form.Form):
+class ExposureFileBulkRegenerateForm(form.PostForm):
     """\
     Exposure bulk regeneration form.
     """
@@ -1307,6 +1311,11 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
 
     shortlog = True
     tbl = table.ExposureRolloverLogTable
+    template = ViewPageTemplateFile('workspace_exposure_rollover.pt')
+
+    def update(self):
+        ExposurePort.update(self)
+        WorkspaceLog.update(self)
 
     def export_source(self):
         return self.source_exposure

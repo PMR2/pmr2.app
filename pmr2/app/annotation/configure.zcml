@@ -21,7 +21,7 @@
   <adapter
       for=".interfaces.IExposureFileNote"
       factory=".viewgen.ExposureFileNoteSourceAdapter"
-      provides="pmr2.app.interfaces.IExposureSourceAdapter"
+      provides="pmr2.app.exposure.interfaces.IExposureSourceAdapter"
       />
 
   <adapter
@@ -33,7 +33,7 @@
   <adapter
       for="pmr2.app.exposure.browser.interfaces.IExposureDocViewGenForm"
       factory=".viewgen.ExposureDocViewGenFormSourceAdapter"
-      provides="pmr2.app.interfaces.IExposureSourceAdapter"
+      provides="pmr2.app.exposure.interfaces.IExposureSourceAdapter"
       />
 
   <adapter

@@ -236,6 +236,9 @@ class IChangelogTable(ITable):
     The changelog table.
     """
 
+    def __init__(self, *a, **kw):
+        self.navlist = []
+
 
 class ChangelogTable(z3c.table.table.Table):
 
@@ -278,6 +281,7 @@ class ValuesForChangelogTable(ValuesMixin):
             storage = zope.component.queryAdapter(self.context, IStorage)
             datefmt = self.request.get('datefmt', None)
             rev = self.request.get('rev', None)
+            shortlog = self.request.get('shortlog', False)
             maxchanges = self.request.get('maxchanges', 50)
             if datefmt:
                 storage.datefmt = datefmt
@@ -286,7 +290,9 @@ class ValuesForChangelogTable(ValuesMixin):
             if rev:
                 storage.checkout(rev)
             rev = storage.rev
-            return storage.log(rev, maxchanges)
+            logs = storage.log(rev, maxchanges, shortlog=shortlog)
+            self.table.navlist = storage.lastnav
+            return logs
         except RevisionNotFoundError:
             raise HTTPNotFound(self.context.title_or_id())
 
@@ -308,7 +314,7 @@ class FileDatetimeColumn(EscapedItemKeyColumn):
 
 
 class FileSizeColumn(EscapedItemKeyColumn):
-    weight = 30
+    weight = 15
     header = _(u'Size')
     itemkey = 'size'
     defaultValue = u''
@@ -316,18 +322,30 @@ class FileSizeColumn(EscapedItemKeyColumn):
 
 
 class FilenameColumn(EscapedItemKeyColumn):
-    weight = 40
+    weight = 10
     header = _(u'Filename')
     itemkey = 'basename'
 
     def renderCell(self, item):
-        # also could render changeset link (for diffs)
-        return u'<a href="%s/@@file/%s/%s">%s</a>' % (
+        if item['fullpath']:
+            # XXX this is an override for embedded workspaces, better 
+            # solution may be required.
+            return (u'<span class="contentype-%s">'
+                '<a href="%s">%s</a></span>' % (
+                item['contenttype'],
+                item['fullpath'],
+                item['basename'],
+            ))
+
+        return (u'<span class="contenttype-%s">'
+                '<a href="%s/%s/%s/%s">%s</a></span>' % (
+            item['contenttype'],
             self.table.context.absolute_url(),
+            item['baseview'],
             item['node'],
             item['file'],
             self.getItem(item),
-        )
+        ))
 
 
 class FileOptionColumn(EscapedItemKeyColumn):
@@ -337,7 +355,7 @@ class FileOptionColumn(EscapedItemKeyColumn):
 
     def renderCell(self, item):
         # also could render changeset link (for diffs)
-        if item['permissions'][0] != 'd':
+        if item['permissions'][0] == '-':
             result = [u'<a href="%s/@@rawfile/%s/%s">[%s]</a>' % (
                 self.table.context.absolute_url(),
                 item['node'],
@@ -374,3 +392,4 @@ class FileManifestTable(z3c.table.table.Table):
 
     sortOn = None
     startBatchingAt = maxint
+    cssClasses = {'table': 'workspace-manifest'}

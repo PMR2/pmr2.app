@@ -295,6 +295,9 @@ ValuesMixin and friends.  Please fix.
     ...         'basename': 'dir',
     ...         'file': 'dir/',
     ...         'node': 'c0ffee',
+    ...         'baseview': 'file',
+    ...         'fullpath': None,
+    ...         'contenttype': None,
     ...     },
     ...     {
     ...         'permissions': '-rwxr-xr-x',
@@ -303,6 +306,9 @@ ValuesMixin and friends.  Please fix.
     ...         'basename': 'foo',
     ...         'file': 'foo',
     ...         'node': 'c0ffee',
+    ...         'baseview': 'file',
+    ...         'fullpath': None,
+    ...         'contenttype': None,
     ...     },
     ...     {
     ...         'permissions': '-rwxr-xr-x',
@@ -311,6 +317,9 @@ ValuesMixin and friends.  Please fix.
     ...         'basename': 'bar',
     ...         'file': 'bar',
     ...         'node': 'c0ffee',
+    ...         'baseview': 'file',
+    ...         'fullpath': None,
+    ...         'contenttype': None,
     ...     },
     ... ])
     ...
@@ -318,36 +327,32 @@ ValuesMixin and friends.  Please fix.
     >>> t = table.FileManifestTable(context, request)
     >>> t.update()
     >>> print t.render()
-    <table>
+    <table class="workspace-manifest">
       <thead>
         <tr>
-          <th>Permissions</th>
-          <th>Date</th>
-          <th>Size</th>
           <th>Filename</th>
+          <th>Size</th>
+          <th>Date</th>
           <th>Options</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>drwxr-xr-x</td>
+          <td>...<a href="urn:example:/file/c0ffee/dir/">dir</a>...</td>
           <td></td>
           <td></td>
-          <td><a href="urn:example:/@@file/c0ffee/dir/">dir</a></td>
           <td></td>
         </tr>
         <tr>
-          <td>-rwxr-xr-x</td>
-          <td>1970-01-01 00:00</td>
+          <td>...<a href="urn:example:/file/c0ffee/foo">foo</a>...</td>
           <td>0</td>
-          <td><a href="urn:example:/@@file/c0ffee/foo">foo</a></td>
+          <td>1970-01-01 00:00</td>
           <td><a href="urn:example:/@@rawfile/c0ffee/foo">[download]</a></td>
         </tr>
         <tr>
-          <td>-rwxr-xr-x</td>
-          <td>2000-01-01 00:00</td>
+          <td>...<a href="urn:example:/file/c0ffee/bar">bar</a>...</td>
           <td>10</td>
-          <td><a href="urn:example:/@@file/c0ffee/bar">bar</a></td>
+          <td>2000-01-01 00:00</td>
           <td><a href="urn:example:/@@rawfile/c0ffee/bar">[download]</a></td>
         </tr>
       </tbody>

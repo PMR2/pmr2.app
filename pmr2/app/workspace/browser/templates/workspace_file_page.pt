@@ -1,21 +1,3 @@
 <div tal:replace="structure provider:pmr2.workspace.fileinfo"></div>
 
 <div tal:replace="structure provider:pmr2.workspace.filerenderer"></div>
-
-<tal:if tal:condition="exists:view/render_subrepo">
-<tal:if tal:condition="exists:view/subrepo">
-<div>
-<dl tal:condition="view/subrepo">
-<dt>Subrepo listing:</dt>
-<dd>
-<ul>
-<li tal:repeat="i view/subrepo">
-<a tal:attributes="href string:${i/source}/file/${i/rev}"
-   tal:content="i/location"/>
-</li>
-</ul>
-</dd>
-</dl>
-</div>
-</tal:if>
-</tal:if>

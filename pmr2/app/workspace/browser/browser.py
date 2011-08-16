@@ -14,7 +14,7 @@ _ = MessageFactory("pmr2")
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
-from paste.httpexceptions import HTTPNotFound, HTTPFound
+from paste.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
 
 import z3c.form.interfaces
 import z3c.form.field
@@ -28,6 +28,7 @@ from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName
 from DateTime import DateTime
 from Acquisition import aq_parent, aq_inner
+from Products.statusmessages.interfaces import IStatusMessage
 
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace.content import *
@@ -129,6 +130,9 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
     workspace.
     """
 
+    protocol = None
+    enabled = False
+
     def _queryPermission(self):
         # as I couldn't find the documentation on a utility that will
         # return the permission registered in the zcml, I copied this
@@ -164,35 +168,50 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
         user_roles = user.getRolesInContext(self.context)
         # user either requires a role granted via @@sharing or has the
         # permission set manually under management.
+        # FIXME remove Mercurial reference
         return u'WorkspacePusher' in user_roles or \
             user.has_permission('Mercurial Push', self.context)
 
         # I really wish this isn't such a horrible mess and without such
         # non-agnostic names.
 
-
-    def __call__(self, *a, **kw):
+    def update(self):
         if not self._checkPermission():
             raise Unauthorized()
 
         try:
-            sproto = zope.component.getMultiAdapter(
+            self.protocol = zope.component.getMultiAdapter(
                 (self.context, self.request), IStorageProtocol)
-        except ValueError:
-            return ''
+        except UnknownStorageTypeError, e:
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(
+                u'The backend storage utility `%s` is missing. '
+                 'Please contact site administrator.' % e[1])
+            return
 
+    def enabled(self):
+        return self.protocol.enabled
+
+    def render(self):
+        # Warning: this method is used to manipulate data inside the
+        # underlying storage backend.
         try:
-            # Warning: this method is used to manipulate data inside the
-            # underlying storage backend.
-            results = sproto()
-            if self.request.method in ['POST']:
-                # update modification date if it was one of 
-                # modification methods.
-                self.context.setModificationDate(DateTime())
-                self.context.reindexObject()
-            return results
+            results = self.protocol()
         except UnsupportedCommandError:
-            return ''
+            raise HTTPBadRequest('unsupported command')
+        except ProtocolError:
+            raise HTTPBadRequest('unsupported command')
+
+        # We are successful, check to see if modifications to the
+        # underlying data was made and update the context if so.
+        if self.request.method in ['POST']:
+            self.context.setModificationDate(DateTime())
+            self.context.reindexObject()
+        return results
+
+    def __call__(self, *a, **kw):
+        self.update()
+        return self.render()
 
 
 class WorkspaceArchive(WorkspaceTraversePage):
@@ -224,7 +243,14 @@ class WorkspaceArchive(WorkspaceTraversePage):
         type_ = request_subpath[0]
 
         # this is going to hurt so bad if this was a huge archive...
-        archivestr = storage.archive(type_)
+        try:
+            archivestr = storage.archive(type_)
+        except ValueError:
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(
+                u'The archive format `%s` is unsupported.' % type_)
+            self.request.response.redirect(self.context.absolute_url())
+            return
 
         info = storage.archiveInfo(type_)
         headers = [
@@ -245,9 +271,12 @@ class WorkspacePage(page.SimplePage):
     The main workspace page.
     """
 
+    zope.interface.implements(IWorkspacePage)
+
     # need interface for this page that handles storage protocol?
     template = ViewPageTemplateFile('workspace.pt')
-    protocol = None
+    protocolView = None
+    shortlog_maxchange = 10
 
     def update(self):
         """\
@@ -264,17 +293,24 @@ class WorkspacePage(page.SimplePage):
                 (self.context, self.request), name='protocol_read')
 
         # the view above should have safeguarded this...
-        self.protocol = view()
+        self.protocolView = view
+        self.protocolView.update()
+
+    @property
+    def description(self):
+        return self.context.description
 
     @property
     def owner(self):
         if not hasattr(self, '_owner'):
             # method getOwner is from AccessControl.Owned.Owned
             owner = self.context.getOwner()
-            result = '%s <%s>' % (
-                owner.getProperty('fullname', owner.getId()),
-                owner.getProperty('email', ''),
-            )
+            fullname = owner.getProperty('fullname', owner.getId())
+            email = owner.getProperty('email', None)
+            if email:
+                result = '%s <%s>' % (fullname, email)
+            else:
+                result = fullname
             self._owner = obfuscate(result)
 
         return self._owner
@@ -284,13 +320,14 @@ class WorkspacePage(page.SimplePage):
             # XXX aq_inner(self.context) not needed?
             self._log = WorkspaceShortlog(self.context, self.request)
             # set our requirements.
-            self._log.maxchanges = 10  # XXX magic number
+            self._log.maxchanges = self.shortlog_maxchange
             self._log.navlist = None
         return self._log()
 
     def render(self):
-        if self.protocol:
-            return self.protocol
+        if self.protocolView.enabled():
+            return self.protocolView.render()
+
         return super(WorkspacePage, self).render()
 
 
@@ -300,7 +337,7 @@ WorkspacePageView = layout.wrap_form(
 )
 
 
-class WorkspaceLog(WorkspaceTraversePage):
+class WorkspaceLog(WorkspaceTraversePage, page.NavPage):
 
     zope.interface.implements(IWorkspaceLogProvider)
 
@@ -311,9 +348,8 @@ class WorkspaceLog(WorkspaceTraversePage):
     maxchanges = 50  # default value.
     datefmt = None # default value.
 
-    def content(self):
-        # putting datefmt into request as the value provider for the
-        # table currently uses it to determine output format...
+    def update(self):
+        self.request['shortlog'] = self.shortlog
         self.request['datefmt'] = self.datefmt
         self.request['maxchanges'] = self.maxchanges
 
@@ -321,7 +357,16 @@ class WorkspaceLog(WorkspaceTraversePage):
         # the parent of the table is this form.
         t.__parent__ = self
         t.update()
-        return t.render()
+        self._navlist = t.navlist
+        self.table = t
+
+    def content(self):
+        # putting datefmt into request as the value provider for the
+        # table currently uses it to determine output format...
+        return self.table.render()
+
+    def navlist(self):
+        return self._navlist
 
 WorkspaceLogView = layout.wrap_form(
     WorkspaceLog, 

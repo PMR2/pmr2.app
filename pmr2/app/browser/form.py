@@ -1,3 +1,5 @@
+import os.path
+
 import zope.component
 import zope.event
 from zope.schema.fieldproperty import FieldProperty
@@ -6,13 +8,27 @@ from zope.app.container.interfaces import IAdding
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
+from AccessControl import Unauthorized
 from Acquisition import aq_parent, aq_inner
 
 import z3c.form.form
 from z3c.form.interfaces import IWidgets
-from z3c.form.form import Form, EditForm
+from z3c.form.form import Form
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.z3cform.fieldsets import group
+from plone.z3cform.interfaces import IWrappedForm
+from plone.z3cform.templates import ZopeTwoFormTemplateFactory
+
+from pmr2.app.interfaces import IPMR2AppLayer
+import pmr2.app.browser
+from pmr2.app.browser.interfaces import IPMR2Form
+
+
+path = lambda p: os.path.join(os.path.dirname(pmr2.app.browser.__file__), 
+                              'templates', p)
+
+form_factory = ZopeTwoFormTemplateFactory(path('form.pt'), form=IWrappedForm,
+    request=IPMR2AppLayer)
 
 
 class DisplayForm(z3c.form.form.DisplayForm):
@@ -27,7 +43,45 @@ class DisplayForm(z3c.form.form.DisplayForm):
         return self.render()
 
 
-class AddForm(z3c.form.form.AddForm):
+class AuthenticatedForm(z3c.form.form.Form):
+    """\
+    Form with authentication protection.
+    """
+
+    zope.interface.implements(IPMR2Form)
+
+    disableAuthenticator = False
+
+    def authenticate(self):
+        if self.disableAuthenticator:
+            return True
+
+        authenticator = zope.component.getMultiAdapter(
+            (self.context, self.request),
+            name=u'authenticator',
+        )
+
+        if not authenticator.verify():
+            raise Unauthorized
+
+    def extractData(self, *a, **kw):
+        self.authenticate()
+        return super(AuthenticatedForm, self).extractData(*a, **kw)
+
+
+class PostForm(AuthenticatedForm):
+    """\
+    Post form mixin class.
+    """
+
+    def authenticate(self):
+        if not self.request.method == 'POST':
+            raise Unauthorized
+
+        return super(PostForm, self).authenticate()
+
+
+class AddForm(z3c.form.form.AddForm, PostForm):
     """\
     Generic AddForm for the creation of classes in pmr2.app.  Since most
     objects share a similar interface, the process for creating them
@@ -37,6 +91,8 @@ class AddForm(z3c.form.form.AddForm):
     For data assignment of fields and other custom work, redefine the
     method 'add_data'
     """
+
+    extractData = PostForm.extractData
 
     # set clsobj to the object to be created.
     clsobj = None
@@ -136,7 +192,15 @@ class AddForm(z3c.form.form.AddForm):
             return self.ctxobj.absolute_url()
 
 
-class BaseAnnotationForm(z3c.form.form.Form):
+class EditForm(z3c.form.form.EditForm, PostForm):
+    """\
+    Include POST method checking.
+    """
+
+    extractData = PostForm.extractData
+
+
+class BaseAnnotationForm(PostForm):
     """\
     Basic form to generate data and apply them to the object.
     """
@@ -147,6 +211,8 @@ class BaseAnnotationForm(z3c.form.form.Form):
     ignoreReadonly = True
     _finishedAdd = False
     formErrorsMessage = _('There were some errors.')
+
+    extractData = PostForm.extractData
 
     def nextURL(self):
         raise NotImplementedError

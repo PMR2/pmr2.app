@@ -8,6 +8,7 @@ from pmr2.app.interfaces.exceptions import *
 from pmr2.app.browser.interfaces import IPublishTraverse
 
 from pmr2.app.workspace.interfaces import *
+from pmr2.app.workspace.exceptions import *
 
 
 def WorkspaceStorageAdapter(workspace):
@@ -19,7 +20,8 @@ def WorkspaceStorageAdapter(workspace):
     storage_util = zope.component.queryUtility(
         IStorageUtility, name=workspace.storage)
     if storage_util is None:
-        raise ValueError('storage type `%s` unknown' % workspace.storage)
+        raise UnknownStorageTypeError('cannot acquire storage backend',
+            workspace.storage)
     return storage_util(workspace)
 
 
@@ -38,9 +40,15 @@ class StorageProtocolAdapter(object):
         self.request = request
         self.storage_util = zope.component.queryUtility(
             IStorageUtility, name=context.storage)
+        self.enabled = self.storage_util.isprotocol(self.request)
 
     def __call__(self):
-        return self.storage_util.protocol(self.context, self.request)
+        if self.enabled:
+            return self.storage_util.protocol(self.context, self.request)
+        # This isn't a protocol request according to isprotocol.  While
+        # it is still possible to directly call the protocol but that's
+        # unchecked.
+        raise NotProtocolRequestError()
 
 
 class WorkspaceListing(object):

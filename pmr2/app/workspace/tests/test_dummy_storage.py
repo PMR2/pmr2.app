@@ -145,6 +145,9 @@ class TestDummyStorage(TestCase):
             'size': '27',
             'basename': 'file1',
             'file': 'file1',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
@@ -161,6 +164,9 @@ class TestDummyStorage(TestCase):
             'size': '27',
             'basename': 'file',
             'file': 'dir1/nested/file',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
@@ -178,6 +184,9 @@ class TestDummyStorage(TestCase):
             'size': '',
             'basename': 'dir1',
             'file': 'dir1',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         },
         {
             'author': 'pmr2.teststorage <pmr2.tester@example.com>',
@@ -188,6 +197,9 @@ class TestDummyStorage(TestCase):
             'size': '31',
             'basename': 'file1',
             'file': 'file1',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         },
         {
             'author': 'pmr2.teststorage <pmr2.tester@example.com>',
@@ -198,6 +210,9 @@ class TestDummyStorage(TestCase):
             'size': '21',
             'basename': 'file3',
             'file': 'file3',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         },
         ]
         self.assertEqual(answer, self.filter_pathinfo(result))
@@ -216,6 +231,9 @@ class TestDummyStorage(TestCase):
             'size': '',
             'basename': 'dir2',
             'file': 'dir1/dir2',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         },
         {
             'author': '',
@@ -226,6 +244,9 @@ class TestDummyStorage(TestCase):
             'size': '',
             'basename': 'nested',
             'file': 'dir1/nested',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         },
         {
             'author': 'pmr2.teststorage <pmr2.tester@example.com>',
@@ -236,6 +257,9 @@ class TestDummyStorage(TestCase):
             'size': '19',
             'basename': 'f1',
             'file': 'dir1/f1',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         },
         {
             'author': 'pmr2.teststorage <pmr2.tester@example.com>',
@@ -246,6 +270,9 @@ class TestDummyStorage(TestCase):
             'size': '20',
             'basename': 'f2',
             'file': 'dir1/f2',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         },
         ]
         self.assertEqual(answer, self.filter_pathinfo(result))
@@ -267,6 +294,9 @@ class TestDummyStorage(TestCase):
             'size': '27',
             'basename': 'file',
             'file': 'dir1/nested/file',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         }]
         self.assertEqual(answer, self.filter_pathinfo(result))
         # include multiple /
@@ -301,6 +331,9 @@ class TestDummyStorage(TestCase):
             'size': '27',
             'basename': 'file1',
             'file': 'file1',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
         self.assert_(result['mimetype']().startswith('text/plain'))
@@ -318,6 +351,9 @@ class TestDummyStorage(TestCase):
             'size': '',
             'basename': 'nested',
             'file': 'dir1/nested',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
@@ -334,6 +370,9 @@ class TestDummyStorage(TestCase):
             'size': '27',
             'basename': 'file',
             'file': 'dir1/nested/file',
+            'baseview': 'file',
+            'contenttype': None,
+            'fullpath': None,
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 

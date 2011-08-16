@@ -1,0 +1,5 @@
+<metal:use use-macro="context/@@ploneform-macros/titlelessform">
+    <metal:main fill-slot="formbottom">
+        <span tal:replace="structure context/@@authenticator/authenticator"/>
+    </metal:main>
+</metal:use>

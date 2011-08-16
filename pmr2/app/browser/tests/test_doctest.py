@@ -8,22 +8,23 @@ from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import PloneSite
 from Products.PloneTestCase.layer import onsetup
 
-import pmr2.app
-import base
+from pmr2.app.tests import base
+from pmr2.testing import base
+import pmr2.app.browser
 
 def test_suite():
     return unittest.TestSuite([
 
-        # Root form usage tests.
+        # PMR2 Additional form tests
         ztc.ZopeDocFileSuite(
-            'browser/layout.txt', package='pmr2.app',
+            'form.txt', package='pmr2.app.browser',
             test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
         # Root form usage tests.
         ztc.ZopeDocFileSuite(
-            'browser/page.txt', package='pmr2.app',
+            'layout.txt', package='pmr2.app.browser',
             test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),

@@ -1,8 +1,10 @@
 from unittest import TestSuite, makeSuite
-from base import TestCase
+from pmr2.testing.base import TestCase
 from zope.app.component.hooks import getSite
 from Products.CMFCore.utils import getToolByName
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
+
+from pmr2.app.tests import base
 
 class TestProductInstall(TestCase):
 

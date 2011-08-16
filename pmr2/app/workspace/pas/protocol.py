@@ -1,9 +1,9 @@
 import zope.component
 
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Products.PluggableAuthService.utils import classImplements
-from Globals import InitializeClass
 
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 from Products.PluggableAuthService.plugins import HTTPBasicAuthHelper

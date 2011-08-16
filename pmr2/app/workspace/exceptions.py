@@ -1,3 +1,19 @@
+class ProtocolError(Exception):
+    """generic workspace protocol error"""
+
+
+class NotProtocolRequestError(ProtocolError):
+    """not a protocol request."""
+
+
+class UnsupportedCommandError(ProtocolError):
+    """unsupported protocol command"""
+
+
+class UnknownStorageTypeError(ValueError):
+    """unknown storage type error"""
+
+
 class PathInvalidError(ValueError):
     """path invalid"""
 
@@ -28,7 +44,3 @@ class RepoEmptyError(ValueError):
 
 class RepoNotFoundError(ValueError):
     """repository not found"""
-
-
-class UnsupportedCommandError(AttributeError):
-    """unsupported command"""

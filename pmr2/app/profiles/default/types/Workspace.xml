@@ -15,7 +15,7 @@
  <property name="allowed_content_types"/>
  <property name="allow_discussion">False</property>
  <property name="default_view">workspace_view</property>
- <property name="add_view_expr">string:${folder_url}/@@workspace_create</property>
+ <property name="add_view_expr">string:${folder_url}/+/addWorkspace</property>
  <property name="view_methods">
   <element value="workspace_view"/>
  </property>

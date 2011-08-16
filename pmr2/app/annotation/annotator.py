@@ -8,7 +8,7 @@ from zope.annotation import factory
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 
-from pmr2.app.interfaces import *
+from pmr2.app.exposure.interfaces import IExposureSourceAdapter
 from pmr2.app.annotation.interfaces import *
 from pmr2.app.factory import NamedUtilBase
 
