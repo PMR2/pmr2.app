@@ -90,6 +90,7 @@ class FileRendererProvider(ContentProviderBase):
                  'administrator.', 'error')
             return
         # get the default (unamed) to be last one
+        finder.sort()
         finder.reverse()  
 
         for n, u in finder:
