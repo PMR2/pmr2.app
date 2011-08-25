@@ -16,7 +16,10 @@ class WorkspaceProtocolWrapper(FormWrapper):
 
     def render(self):
         if self.form_instance.protocolView.enabled():
-            return self.form_instance.render()
+            # the wrapper's update method actually called form_instance
+            # render method already with output assigned to this 
+            # variable.
+            return self.contents
         return super(WorkspaceProtocolWrapper, self).render()
 
 
