@@ -194,12 +194,17 @@
 
   <!--
     adapter for the adding view.
-
-    something in Plone4 rendered this not working.  Use @@workspace_create
   -->
 
+  <browser:view
+      for="pmr2.app.workspace.interfaces.IWorkspaceContainer"
+      name="+"
+      class="pmr2.app.workspace.browser.adding.WorkspaceContainerAdding"
+      permission="cmf.AddPortalContent"
+      />
+
   <browser:page
-      for="Products.Five.browser.adding.ContentAdding"
+      for="pmr2.app.workspace.browser.adding.WorkspaceContainerAdding"
       name="addWorkspace"
       class=".browser.WorkspaceStorageCreateFormView"
       permission="cmf.AddPortalContent"
