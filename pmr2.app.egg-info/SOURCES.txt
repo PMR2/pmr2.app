@@ -230,6 +230,7 @@ pmr2/app/workspace/viewlets.zcml
 pmr2/app/workspace/vocab.py
 pmr2/app/workspace/vocab.zcml
 pmr2/app/workspace/browser/__init__.py
+pmr2/app/workspace/browser/adding.py
 pmr2/app/workspace/browser/browser.py
 pmr2/app/workspace/browser/browser.txt
 pmr2/app/workspace/browser/configure.zcml
