@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<metadata>
+    <dependencies>
+        <dependency>profile-plone.app.z3cform:default</dependency>
+    </dependencies>
+</metadata>
