@@ -718,9 +718,13 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
     Form to generate the default view of the base exposure.
     """
 
-    # Multiple choice form will need this method, but generalized.
-    # This will become subclass of that.
     ignoreContext = False
+
+    # This is for the root Exposure object, the link verifier event 
+    # triggers our customized exposure traverser, which does not play
+    # nice with it.
+    ignoreEvents = True
+
     zope.interface.implements(IExposureDocViewGenForm)
     fields = z3c.form.field.Fields(IExposureDocViewGenForm)
 

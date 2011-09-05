@@ -206,9 +206,17 @@ class BaseAnnotationForm(PostForm):
     """
 
     # XXX interface declaration needed
+    # XXX should be moved into pmr2.app.exposure
 
     ignoreContext = True
     ignoreReadonly = True
+
+    # Somehow one of the newer events that had been enabled is the link
+    # integrity check, which our customized exposure traverser that 
+    # redirects to the source file at the workspace does not play nice 
+    # with for the root object.
+    ignoreEvents = False
+
     _finishedAdd = False
     formErrorsMessage = _('There were some errors.')
 
@@ -228,8 +236,9 @@ class BaseAnnotationForm(PostForm):
             return
         self._data = data
         self.annotate()
-        zope.event.notify(
-            zope.lifecycleevent.ObjectModifiedEvent(self.context))
+        if not self.ignoreEvents:
+            zope.event.notify(
+                zope.lifecycleevent.ObjectModifiedEvent(self.context))
         self._finishedAdd = True
 
     def render(self):
