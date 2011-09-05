@@ -425,7 +425,7 @@ def filetype_bulk_update(context):
             logger.warning(traceback.format_exc())
             continue
 
-        counter += 1
+        #counter += 1
         if counter > commit_interval:
             transaction.commit()
             logger.info('Committed transaction, interval %d reached' % 
