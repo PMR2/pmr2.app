@@ -1506,8 +1506,10 @@ When requesting this form again, the edited widgets should have the
 values assigned above filled in.
 ::
 
+    >>> from pmr2.testing.browser import GroupTemplate
     >>> request = TestRequest()
     >>> form = exposure.ExposureFileTypeAnnotatorForm(efile_new, request)
+    >>> form.template = GroupTemplate(form)
     >>> result = form()
     >>> u'User Edited Data.' in result
     True

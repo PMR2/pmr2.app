@@ -56,13 +56,6 @@ __all__ = [
 ]
 
 
-class Macros(plone.z3cform.templates.Macros):
-    template = zope.app.pagetemplate.viewpagetemplatefile.ViewPageTemplateFile(
-        path('macros.pt'))
-
-    def __getitem__(self, key):
-        return self.template.macros[key]
-
 
 class FormWrapper(layout.FormWrapper):
     """\

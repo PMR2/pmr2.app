@@ -454,7 +454,7 @@ WorkspaceStorageCreateFormView = layout.wrap_form(
     WorkspaceStorageCreateForm, label="Create a New Workspace")
 
 
-class WorkspaceBulkAddForm(z3c.form.form.AddForm):
+class WorkspaceBulkAddForm(form.AddForm):
     """\
     Workspace Bulk Add Form
 

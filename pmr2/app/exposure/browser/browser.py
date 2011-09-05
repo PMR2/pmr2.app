@@ -192,7 +192,7 @@ CreateExposureFormView = layout.wrap_form(CreateExposureForm,
     label="Select 'Add' to begin creating the exposure")
 
 
-class ExposureEditForm(z3c.form.form.EditForm):
+class ExposureEditForm(form.EditForm):
     """\
     Exposure editing form.
     """
@@ -206,7 +206,7 @@ ExposureEditFormView = layout.wrap_form(ExposureEditForm,
     label="Exposure Edit Form")
 
 
-class ExposureEditCurationForm(z3c.form.form.EditForm):
+class ExposureEditCurationForm(form.EditForm):
     """\
     Exposure editing form.
     """
@@ -376,7 +376,7 @@ ExposureFileTypeAddFormView = layout.wrap_form(ExposureFileTypeAddForm,
     label="Exposure File Type creator")
 
 
-class ExposureFileTypeEditForm(z3c.form.form.EditForm):
+class ExposureFileTypeEditForm(form.EditForm):
     """\
     ExposureFileType editing form.
     """

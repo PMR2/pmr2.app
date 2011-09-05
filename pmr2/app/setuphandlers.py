@@ -86,8 +86,8 @@ def importVarious(context):
 
     site = context.getSite()
     logger = getLogger('pmr2.app')
-    logger.info(add_pas_plugin(site))
-    logger.info(add_pmr2(site))
+    add_pas_plugin(site)
+    add_pmr2(site)
 
 def cellml_v0_2tov0_3(context):
     """Migration script specific to models.cellml.org."""
@@ -425,7 +425,7 @@ def filetype_bulk_update(context):
             logger.warning(traceback.format_exc())
             continue
 
-        counter += 1
+        #counter += 1
         if counter > commit_interval:
             transaction.commit()
             logger.info('Committed transaction, interval %d reached' % 
