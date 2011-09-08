@@ -160,6 +160,7 @@ pmr2/app/profiles/default/controlpanel.xml
 pmr2/app/profiles/default/cssregistry.xml
 pmr2/app/profiles/default/factorytool.xml
 pmr2/app/profiles/default/import_steps.xml
+pmr2/app/profiles/default/metadata.xml
 pmr2/app/profiles/default/portal_atct.xml
 pmr2/app/profiles/default/portlets.xml
 pmr2/app/profiles/default/propertiestool.xml
