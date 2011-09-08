@@ -51,9 +51,9 @@ class TestExposureTraverser(TestCase):
         ExposureTraverser.defaultTraverse = traverse
         zope.component.provideAdapter(MockExposureSource, 
             (MockExposureFolder,), IExposureSourceAdapter)
-        zope.component.provideAdapter(ExposureRedirectView,
+        zope.component.provideAdapter(RedirectView,
             (zope.interface.Interface, IRequest,), zope.interface.Interface,
-            name='exposure_redirect_view')
+            name='redirect_view')
 
     def tearDown(self):
         ExposureTraverser.defaultTraverse = ExposureTraverser.o_defaultTraverse 
@@ -61,7 +61,7 @@ class TestExposureTraverser(TestCase):
 
     def traverseTester(self, traverser, request, name, location):
         view = traverser.publishTraverse(request, name)
-        self.assertEqual(view.target_uri, location)
+        self.assertEqual(view.target, location)
         try:
             view()
         except HTTPFound, e:
@@ -126,6 +126,10 @@ class TestExposureContainerTraverser(ExposureDocTestCase):
 
         self.context = self.portal.exposure
 
+        zope.component.provideAdapter(RedirectView,
+            (zope.interface.Interface, IRequest,), zope.interface.Interface,
+            name='redirect_view')
+
     def beforeTearDown(self):
         ExposureContainerTraverser.defaultTraverse = \
             ExposureContainerTraverser.o_defaultTraverse 
@@ -147,21 +151,20 @@ class TestExposureContainerTraverser(ExposureDocTestCase):
     def testExposureContainerTraverser_002_toomany(self):
         request = TestRequest(TraversalRequestNameStack=[])
         traverser = ExposureContainerTraverser(self.context, request)
-        self.assertRaises(HTTPNotFound, traverser.publishTraverse, request,
-            'abcde')
+        self.assertRaises(AttributeError, traverser.publishTraverse, 
+            request, 'abcde')
 
     def testExposureContainerTraverser_002_one(self):
         request = TestRequest(TraversalRequestNameStack=[])
         traverser = ExposureContainerTraverser(self.context, request)
-        traverser.publishTraverse(request, '1')
-        self.assertEqual(request.response.getHeader('location'), 
-            'http://nohost/plone/exposure/111111')
+        result = traverser.publishTraverse(request, '1')
+        self.assertEqual(result.target, 'http://nohost/plone/exposure/111111')
 
     def testExposureContainerTraverser_003_fine_with_subpath(self):
         request = TestRequest(TraversalRequestNameStack=['@@view', 'test'])
         traverser = ExposureContainerTraverser(self.context, request)
-        traverser.publishTraverse(request, 'abcc')
-        self.assertEqual(request.response.getHeader('location'), 
+        result = traverser.publishTraverse(request, 'abcc')
+        self.assertEqual(result.target,
             'http://nohost/plone/exposure/abcccf/test/@@view')
 
 

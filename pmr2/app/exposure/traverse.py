@@ -12,10 +12,14 @@ from pmr2.app.exposure.interfaces import IExposureFolder
 from pmr2.app.exposure.interfaces import IExposureContainer
 
 
-class ExposureRedirectView(BrowserView):
+class RedirectView(BrowserView):
+
+    target = None
 
     def __call__(self):
-        raise HTTPFound(self.target_uri)
+        if self.target:
+            raise HTTPFound(self.target)
+        raise HTTPNotFound()
 
 
 class ExposureTraverser(DefaultPublishTraverse):
@@ -50,10 +54,9 @@ class ExposureTraverser(DefaultPublishTraverse):
         target_uri = '%s/@@%s/%s/%s' % (workspace.absolute_url(),
             self.target_view, exposure.commit_id, path)
 
-        view = zope.component.getMultiAdapter((self, request),
-            zope.interface.Interface, 'exposure_redirect_view')
-
-        view.target_uri = target_uri
+        view = zope.component.getMultiAdapter((self.context, request),
+            zope.interface.Interface, 'redirect_view')
+        view.target = target_uri
         return view
 
 
@@ -78,8 +81,12 @@ class ExposureContainerTraverser(DefaultPublishTraverse):
         try:
             return self.defaultTraverse(request, name)
         except AttributeError:
-            pass
+            result = self.customTraverse(request, name)
+            if not result:
+                raise
+            return result
 
+    def customTraverse(self, request, name):
         # While it is possible to get the keys using the name as id 
         # fragment to pass into the self.context._tree.keys() method
         # (the internal OOBTree variable), it can be "dangerous", so
@@ -130,6 +137,10 @@ class ExposureContainerTraverser(DefaultPublishTraverse):
             namestack.reverse()
             fragments.extend(namestack)
             target = '/'.join(fragments)
-            return request.response.redirect(target)
 
-        raise HTTPNotFound(name)
+            view = zope.component.getMultiAdapter((self.context, request),
+                zope.interface.Interface, 'redirect_view')
+            view.target = target
+            return view
+
+        return None

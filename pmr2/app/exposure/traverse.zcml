@@ -11,8 +11,8 @@
 
   <browser:page
       for="*"
-      name="exposure_redirect_view"
-      class=".traverse.ExposureRedirectView"
+      name="redirect_view"
+      class=".traverse.RedirectView"
       permission="zope.Public"
       />
 
