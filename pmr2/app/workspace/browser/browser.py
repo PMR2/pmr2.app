@@ -633,11 +633,22 @@ class FilePage(BaseFilePage):
         request_subpath = self.request.get('request_subpath', [])
 
         try:
-            # to do a subrepo redirect, the implementation specific 
-            # pathinfo method should raise a HTTPFound at this stage.
             data = storage.pathinfo('/'.join(request_subpath))
         except PathNotFoundError:
+            # Only if really nothing is found.
             raise HTTPNotFound(self.context.title_or_id())
+
+        # trigger subrepo dir if external is defined.
+        if data['external']:
+            # form the url
+            # XXX this is based on the _subrepo format defined in
+            # pmr2.mercurial - refer to test there because they are
+            # the only users for now until a generic version of this
+            # is implemented in the test storage.
+            keys = data['external']
+            keys['view'] = self.__name__ or 'rawfile'
+            target = '%(location)s/%(view)s/%(rev)s/%(path)s' % keys
+            raise HTTPFound(target)
 
         # update rev using the storage rev
         self.request['rev'] = storage.rev

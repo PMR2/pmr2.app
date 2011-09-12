@@ -1,9 +1,19 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="pmr2">
 
   <!-- Traversal Customization -->
   <adapter factory=".traverse.ExposureTraverser" />
   <adapter factory=".traverse.ExposureContainerTraverser" />
+
+  <!-- Redirection view -->
+
+  <browser:page
+      for="*"
+      name="redirect_view"
+      class=".traverse.RedirectView"
+      permission="zope.Public"
+      />
 
 </configure> 

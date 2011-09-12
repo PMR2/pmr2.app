@@ -210,11 +210,6 @@ class BaseAnnotationForm(PostForm):
 
     ignoreContext = True
     ignoreReadonly = True
-
-    # Somehow one of the newer events that had been enabled is the link
-    # integrity check, which our customized exposure traverser that 
-    # redirects to the source file at the workspace does not play nice 
-    # with for the root object.
     ignoreEvents = False
 
     _finishedAdd = False

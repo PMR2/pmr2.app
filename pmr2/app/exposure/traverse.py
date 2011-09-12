@@ -1,5 +1,8 @@
-from zope.component import queryAdapter, adapts
+import zope.interface
+import zope.component
+
 from zope.publisher.interfaces import IRequest
+from zope.publisher.browser import BrowserView
 from ZPublisher.BaseRequest import DefaultPublishTraverse
 from paste.httpexceptions import HTTPNotFound, HTTPFound
 from Products.CMFCore.utils import getToolByName
@@ -9,13 +12,23 @@ from pmr2.app.exposure.interfaces import IExposureFolder
 from pmr2.app.exposure.interfaces import IExposureContainer
 
 
+class RedirectView(BrowserView):
+
+    target = None
+
+    def __call__(self):
+        if self.target:
+            raise HTTPFound(self.target)
+        raise HTTPNotFound()
+
+
 class ExposureTraverser(DefaultPublishTraverse):
     """\
     Exposure traverser that catches requests for objects which are not 
     inside zope to pass it into its workspace and commit id to handle.
     """
 
-    adapts(IExposureFolder, IRequest)
+    zope.component.adapts(IExposureFolder, IRequest)
 
     # the workspace view that will return the raw content.
     target_view = 'rawfile'
@@ -28,8 +41,10 @@ class ExposureTraverser(DefaultPublishTraverse):
             return self.defaultTraverse(request, name)
         except AttributeError:
             pass
+
         # construct redirection
-        helper = queryAdapter(self.context, IExposureSourceAdapter)
+        helper = zope.component.queryAdapter(self.context,
+            IExposureSourceAdapter)
         exposure, workspace, ctxpath = helper.source()
         cpf = ctxpath and [ctxpath] or []
         namestack = request['TraversalRequestNameStack']
@@ -38,7 +53,11 @@ class ExposureTraverser(DefaultPublishTraverse):
         path = '/'.join(cpf + [name] + namestack)
         target_uri = '%s/@@%s/%s/%s' % (workspace.absolute_url(),
             self.target_view, exposure.commit_id, path)
-        raise HTTPFound(target_uri)
+
+        view = zope.component.getMultiAdapter((self.context, request),
+            zope.interface.Interface, 'redirect_view')
+        view.target = target_uri
+        return view
 
 
 class ExposureContainerTraverser(DefaultPublishTraverse):
@@ -48,7 +67,7 @@ class ExposureContainerTraverser(DefaultPublishTraverse):
     exposure id generator is used.
     """
 
-    adapts(IExposureContainer, IRequest)
+    zope.component.adapts(IExposureContainer, IRequest)
 
     base_query = {
         'portal_type': 'Exposure',
@@ -62,8 +81,12 @@ class ExposureContainerTraverser(DefaultPublishTraverse):
         try:
             return self.defaultTraverse(request, name)
         except AttributeError:
-            pass
+            result = self.customTraverse(request, name)
+            if not result:
+                raise
+            return result
 
+    def customTraverse(self, request, name):
         # While it is possible to get the keys using the name as id 
         # fragment to pass into the self.context._tree.keys() method
         # (the internal OOBTree variable), it can be "dangerous", so
@@ -114,6 +137,10 @@ class ExposureContainerTraverser(DefaultPublishTraverse):
             namestack.reverse()
             fragments.extend(namestack)
             target = '/'.join(fragments)
-            return request.response.redirect(target)
 
-        raise HTTPNotFound(name)
+            view = zope.component.getMultiAdapter((self.context, request),
+                zope.interface.Interface, 'redirect_view')
+            view.target = target
+            return view
+
+        return None

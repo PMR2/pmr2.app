@@ -720,11 +720,6 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
 
     ignoreContext = False
 
-    # This is for the root Exposure object, the link verifier event 
-    # triggers our customized exposure traverser, which does not play
-    # nice with it.
-    ignoreEvents = True
-
     zope.interface.implements(IExposureDocViewGenForm)
     fields = z3c.form.field.Fields(IExposureDocViewGenForm)
 

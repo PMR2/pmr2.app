@@ -1,8 +1,11 @@
 from unittest import TestCase, TestSuite, makeSuite
-from zope.interface import implements
-from zope.component import provideAdapter
+
+import zope.interface
+import zope.component
 from zope.interface.verify import verifyClass
 from zope.publisher.interfaces import IPublishTraverse
+from zope.publisher.interfaces import IRequest
+
 from paste.httpexceptions import HTTPNotFound, HTTPFound
 
 from pmr2.app.interfaces import *
@@ -20,14 +23,14 @@ class MockWorkspace:
 mock_workspace = MockWorkspace()
 
 class MockExposureFolder:
-    implements(IExposureFolder)
+    zope.interface.implements(IExposureFolder)
     commit_id = '123'
     keys = ['valid']
     path = ''
 
 
 class MockExposureSource:
-    implements(IExposureSourceAdapter)
+    zope.interface.implements(IExposureSourceAdapter)
 
     def __init__(self, context):
         self.context = context
@@ -46,20 +49,25 @@ class TestExposureTraverser(TestCase):
 
         ExposureTraverser.o_defaultTraverse = ExposureTraverser.defaultTraverse
         ExposureTraverser.defaultTraverse = traverse
-        provideAdapter(MockExposureSource, (MockExposureFolder,), 
-            IExposureSourceAdapter)
+        zope.component.provideAdapter(MockExposureSource, 
+            (MockExposureFolder,), IExposureSourceAdapter)
+        zope.component.provideAdapter(RedirectView,
+            (zope.interface.Interface, IRequest,), zope.interface.Interface,
+            name='redirect_view')
 
     def tearDown(self):
         ExposureTraverser.defaultTraverse = ExposureTraverser.o_defaultTraverse 
         del ExposureTraverser.o_defaultTraverse 
 
     def traverseTester(self, traverser, request, name, location):
+        view = traverser.publishTraverse(request, name)
+        self.assertEqual(view.target, location)
         try:
-            traverser.publishTraverse(request, name)
+            view()
         except HTTPFound, e:
             self.assertEqual(e.location(), location)
-        except e:
-            self.fail('Unexpected exception thrown: ', e)
+        except Exception, e:
+            self.fail('Unexpected exception thrown: %s' % e)
         else:
             self.fail('HTTPFound not thrown')
 
@@ -118,6 +126,10 @@ class TestExposureContainerTraverser(ExposureDocTestCase):
 
         self.context = self.portal.exposure
 
+        zope.component.provideAdapter(RedirectView,
+            (zope.interface.Interface, IRequest,), zope.interface.Interface,
+            name='redirect_view')
+
     def beforeTearDown(self):
         ExposureContainerTraverser.defaultTraverse = \
             ExposureContainerTraverser.o_defaultTraverse 
@@ -139,21 +151,20 @@ class TestExposureContainerTraverser(ExposureDocTestCase):
     def testExposureContainerTraverser_002_toomany(self):
         request = TestRequest(TraversalRequestNameStack=[])
         traverser = ExposureContainerTraverser(self.context, request)
-        self.assertRaises(HTTPNotFound, traverser.publishTraverse, request,
-            'abcde')
+        self.assertRaises(AttributeError, traverser.publishTraverse, 
+            request, 'abcde')
 
     def testExposureContainerTraverser_002_one(self):
         request = TestRequest(TraversalRequestNameStack=[])
         traverser = ExposureContainerTraverser(self.context, request)
-        traverser.publishTraverse(request, '1')
-        self.assertEqual(request.response.getHeader('location'), 
-            'http://nohost/plone/exposure/111111')
+        result = traverser.publishTraverse(request, '1')
+        self.assertEqual(result.target, 'http://nohost/plone/exposure/111111')
 
     def testExposureContainerTraverser_003_fine_with_subpath(self):
         request = TestRequest(TraversalRequestNameStack=['@@view', 'test'])
         traverser = ExposureContainerTraverser(self.context, request)
-        traverser.publishTraverse(request, 'abcc')
-        self.assertEqual(request.response.getHeader('location'), 
+        result = traverser.publishTraverse(request, 'abcc')
+        self.assertEqual(result.target,
             'http://nohost/plone/exposure/abcccf/test/@@view')
 
 

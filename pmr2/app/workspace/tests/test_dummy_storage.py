@@ -148,6 +148,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
@@ -167,6 +168,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
@@ -187,6 +189,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         },
         {
             'author': 'pmr2.teststorage <pmr2.tester@example.com>',
@@ -200,6 +203,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         },
         {
             'author': 'pmr2.teststorage <pmr2.tester@example.com>',
@@ -213,6 +217,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         },
         ]
         self.assertEqual(answer, self.filter_pathinfo(result))
@@ -234,6 +239,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         },
         {
             'author': '',
@@ -247,6 +253,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         },
         {
             'author': 'pmr2.teststorage <pmr2.tester@example.com>',
@@ -260,6 +267,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         },
         {
             'author': 'pmr2.teststorage <pmr2.tester@example.com>',
@@ -273,6 +281,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         },
         ]
         self.assertEqual(answer, self.filter_pathinfo(result))
@@ -297,6 +306,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         }]
         self.assertEqual(answer, self.filter_pathinfo(result))
         # include multiple /
@@ -334,6 +344,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
         self.assert_(result['mimetype']().startswith('text/plain'))
@@ -354,6 +365,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
@@ -373,6 +385,7 @@ class TestDummyStorage(TestCase):
             'baseview': 'file',
             'contenttype': None,
             'fullpath': None,
+            'external': None,
         }
         self.assertEqual(answer, self.filter_pathinfo(result))
 
