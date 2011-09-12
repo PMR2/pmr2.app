@@ -125,7 +125,7 @@ class BaseStorage(object):
         raise NotImplementedError
 
     def format(self, permissions, node, date, size, path, contents,
-               contenttype=None, author='', desc='', *a, **kw):
+               contenttype=None, author='', desc='', external=None, *a, **kw):
 
         # need a way to derive the correct baseview.
         baseview = 'file'
@@ -158,6 +158,7 @@ class BaseStorage(object):
             'basename': self.basename(path),
             'contents': contents,
             'mimetype': mimetype,
+            'external': external,
         }
 
     def listdir(self, path):

@@ -633,11 +633,12 @@ class FilePage(BaseFilePage):
         request_subpath = self.request.get('request_subpath', [])
 
         try:
-            # to do a subrepo redirect, the implementation specific 
-            # pathinfo method should raise a HTTPFound at this stage.
             data = storage.pathinfo('/'.join(request_subpath))
         except PathNotFoundError:
+            # Only if really nothing is found.
             raise HTTPNotFound(self.context.title_or_id())
+
+        # trigger subrepo dir.
 
         # update rev using the storage rev
         self.request['rev'] = storage.rev
