@@ -9,6 +9,9 @@
           src string:${view/portal_url}/++resource++pmr2.app.images/c${i/stars}.png"
         /></li>
     </ul>
+    <p tal:condition="view/data/curator_uri">
+      <a tal:attributes="href view/data/curator_uri">Report curation issue</a>
+    </p>
   </dd>
 </dl>
 <div class="visualClear"></div>

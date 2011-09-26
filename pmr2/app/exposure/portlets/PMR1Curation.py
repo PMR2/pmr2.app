@@ -9,6 +9,7 @@ from plone.app.portlets.cache import render_cachekey
 from plone.memoize.view import memoize
 
 from Acquisition import aq_inner, aq_parent
+# XXX change this i18n to something specific to pmr2.app.exposure
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFCore.utils import getToolByName
 
@@ -22,12 +23,20 @@ class IPMR1CurationPortlet(IPortletDataProvider):
     Exposure Information portlet.
     """
 
+    curator_uri = zope.schema.ASCIILine(
+        title=_(u'Curator contact'),
+        description=_(u'The URI where the curator can be contacted.'),
+        required=False,
+    )
+
 
 class Assignment(base.Assignment):
     implements(IPMR1CurationPortlet)
 
-    def __init__(self):
-        pass
+    curator_uri = ''  # could fieldproperty be used here?
+
+    def __init__(self, curator_uri=''):
+        self.curator_uri = curator_uri
 
     @property
     def title(self):
@@ -37,9 +46,15 @@ class Assignment(base.Assignment):
 class Renderer(base.Renderer):
     _template = ViewPageTemplateFile('pmr1_curation.pt')
 
+    exposure = None
+    workspace = None
+    path = None
+
     def __init__(self, *args):
         base.Renderer.__init__(self, *args)
         self.title = u'Curation'
+
+    def update(self):
         if self.available:
             values = zope.component.getAdapter(
                 self.context, IExposureSourceAdapter).source()
@@ -63,7 +78,7 @@ class Renderer(base.Renderer):
             ('pmr_cor_star', u'COR:'),
         )
         required = ['pmr_curation_star']
-        curation = self.exposure.curation or {}
+        curation = self.exposure is not None and self.exposure.curation or {}
         result = []
         for key, label in pairs:
             # first item or character
@@ -91,7 +106,7 @@ class AddForm(base.AddForm):
     description = _(u"This portlet displays curation information about an Exposure, but using PMR1 style.")
 
     def create(self, data):
-        return Assignment()
+        return Assignment(**data)
 
 
 class EditForm(base.EditForm):
