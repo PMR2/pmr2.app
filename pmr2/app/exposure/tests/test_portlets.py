@@ -82,6 +82,16 @@ class TestRenderer(TestCase):
         r.update()
         output = r.render()
         self.assertTrue('http://example.com' in output)
+        self.assertTrue('Report curation issue.' in output)
+
+    def test_modded_label_render(self):
+        r = self.renderer(context=self.portal, assignment=PMR1Curation.Assignment(curator_uri='http://example.com', contact_label=u'Contact.'))
+        r = r.__of__(self.folder)
+        r.update()
+        output = r.render()
+        self.assertTrue('http://example.com' in output)
+        self.assertFalse('Report curation issue.' in output)
+        self.assertTrue('Contact.' in output)
 
 
 class TestPMR1CurationValues(TestCase):

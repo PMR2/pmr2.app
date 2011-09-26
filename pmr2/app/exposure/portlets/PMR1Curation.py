@@ -29,14 +29,28 @@ class IPMR1CurationPortlet(IPortletDataProvider):
         required=False,
     )
 
+    # XXX to faciliate easy modification...
+    contact_label = zope.schema.TextLine(
+        title=_(u'Contact text'),
+        description=_(u'The text label for the curator contact.'),
+        default=u'Report curation issue.',
+        required=False,
+    )
+
 
 class Assignment(base.Assignment):
     implements(IPMR1CurationPortlet)
 
-    curator_uri = ''  # could fieldproperty be used here?
+    curator_uri = schema.fieldproperty.FieldProperty(
+        IPMR1CurationPortlet['curator_uri'])
+    contact_label = schema.fieldproperty.FieldProperty(
+        IPMR1CurationPortlet['contact_label'])
 
-    def __init__(self, curator_uri=''):
-        self.curator_uri = curator_uri
+    def __init__(self, curator_uri='', contact_label=u''):
+        if curator_uri:
+            self.curator_uri = curator_uri
+        if contact_label:
+            self.contact_label = contact_label
 
     @property
     def title(self):
