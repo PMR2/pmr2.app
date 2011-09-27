@@ -140,6 +140,7 @@ pmr2/app/exposure/tests/__init__.py
 pmr2/app/exposure/tests/base.py
 pmr2/app/exposure/tests/test_adapters.py
 pmr2/app/exposure/tests/test_doctest.py
+pmr2/app/exposure/tests/test_portlets.py
 pmr2/app/exposure/tests/test_traverse.py
 pmr2/app/factory/__init__.py
 pmr2/app/factory/configure.zcml
