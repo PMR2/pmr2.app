@@ -24,9 +24,9 @@ def named_factory(klass):
             self.title = klass.title
             self.label = klass.label
             self.description = klass.description
-        def __call__(self, context):
+        def __call__(self, *a, **kw):
             # returns an instantiated factory with a context
-            factory = klass(context)
+            factory = klass(*a, **kw)
             factory.__name__ = self.__name__
             return factory
     # create/return instance of the factory that instantiates the 
