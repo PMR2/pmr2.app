@@ -333,11 +333,12 @@ class ExposureFileAnnotatorForm(form.BaseAnnotationForm):
         self.baseAnnotate(action)
 
     def annotate(self):
-        annotator = zope.component.getUtility(
+        annotatorFactory = zope.component.getUtility(
             IExposureFileAnnotator,
             name=self._data['annotators']
         )
-        annotator(self.context)()
+        annotator = annotatorFactory(self.context, self.request)
+        annotator()
 
     def nextURL(self):
         # if there are multiple choices, redirect to default view.
@@ -533,7 +534,7 @@ class ExposureFileTypeAnnotatorForm(
             args = ()
 
             # Instantiate annotator with our context.
-            annotator = annotatorFactory(self.context)
+            annotator = annotatorFactory(self.context, self.request)
             if IExposureFileEditAnnotator.providedBy(annotator) or \
                     IExposureFilePostEditAnnotator.providedBy(annotator):
                 # The edited annotator will need the fields.
@@ -568,13 +569,13 @@ class ExposureFileTypeAnnotatorExtender(extensible.FormExtender):
             # XXX self.context.views should be a tuple of ascii values
             # taken from the constraint vocabulary of installed views.
             name = name.encode('ascii', 'replace')
-            a_factory = zope.component.queryUtility(IExposureFileAnnotator, 
-                                                    name=name)
-            if not a_factory:
+            annotatorFactory = zope.component.queryUtility(
+                IExposureFileAnnotator, name=name)
+            if not annotatorFactory:
                 # silently ignore missing fields.
                 continue
 
-            annotator = a_factory(self.context)
+            annotator = annotatorFactory(self.context, self.request)
             self.add(annotator)
 
     def add(self, annotator):
@@ -643,12 +644,13 @@ class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
     def applyChanges(self, data):
         results = super(ExposureFileNoteEditForm, self).applyChanges(data)
         name = '/'.join(self.traverse_subpath)
-        annotator = zope.component.getUtility(
+        annotatorFactory = zope.component.getUtility(
             IExposureFileAnnotator, name=name)
         # since this form already assigns the data, we don't need to
         # pass in data for the call method for assignment, but we need
         # an empty tuple (for now)
-        annotator(self.context)(())
+        annotator = annotatorFactory(self.context, self.request)
+        annotator(())
         return results
 
     def update(self):
@@ -1093,7 +1095,7 @@ class ExposurePort(form.PostForm):
 
                 for view, view_fields in fields['views']:
                     # generate views
-                    annotator = zope.component.getUtility(
+                    annotatorFactory = zope.component.getUtility(
                         IExposureFileAnnotator,
                         name=view,
                     )
@@ -1102,7 +1104,8 @@ class ExposurePort(form.PostForm):
                     # data ignored.
                     data = view_fields and view_fields.items() or None
                     try:
-                        annotator(ctxobj)(data)
+                        annotator = annotatorFactory(ctxobj, self.request)
+                        annotator(data)
                     except RequiredMissing:
                         # this does not cover cases where schema have
                         # changed, or the old scheme into the new scheme.

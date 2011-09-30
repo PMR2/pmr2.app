@@ -18,11 +18,12 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
     The base annotator.
     """
 
-    def __init__(self, context):
+    def __init__(self, context, request):
         # Lock the context - should never be changed.  Instantiate
         # another annotator class with another context if it is needed
         # on another one.
         self.__context = context
+        self.__request = request
 
     @property
     def input(self):
@@ -34,6 +35,10 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
     @property
     def context(self):
         return self.__context
+
+    @property
+    def request(self):
+        return self.__request
 
     @property
     def note(self):
