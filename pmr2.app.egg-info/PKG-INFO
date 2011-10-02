@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: pmr2.app
-Version: 0.4rc5
+Version: 0.4
 Summary: The PMR2 Application
 Home-page: http://www.cellml.org/
 Author: Tommy Yu
@@ -15,8 +15,8 @@ Description: Introduction
         Changelog
         =========
         
-        0.4 - Unreleased
-        ----------------
+        0.4 - Released (2011-10-03)
+        ---------------------------
         
         * Major reorganization done to the code base.
         - The code is in the process of being split up and reorganized based
