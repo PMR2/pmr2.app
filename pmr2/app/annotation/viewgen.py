@@ -8,7 +8,6 @@ from elementtree import HTMLTreeBuilder
 
 from pmr2.app.interfaces import *
 from pmr2.app.browser.interfaces import *
-from pmr2.app.content.interfaces import *
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.browser.interfaces import *
 from pmr2.app.exposure.adapter import ExposureSourceAdapter

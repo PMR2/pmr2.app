@@ -20,7 +20,4 @@
       meta_type="Factory-based Type Information with dynamic views" />
   <object name="ExposureFolder"
       meta_type="Factory-based Type Information with dynamic views" />
-
-  <object name="PMR2Search"
-      meta_type="Factory-based Type Information with dynamic views" />
 </object>

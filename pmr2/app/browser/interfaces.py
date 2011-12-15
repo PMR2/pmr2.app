@@ -9,8 +9,6 @@ _ = MessageFactory("pmr2")
 
 from pmr2.app.schema import ObjectId
 
-from pmr2.app.content.interfaces import IPMR2Search
-
 
 class IThemeSpecific(IDefaultPloneLayer):
     """\
@@ -74,9 +72,3 @@ class IObjectIdMixin(zope.interface.Interface):
         title=u'Id',
         description=u'The identifier of the object, used for URI.',
     )
-
-
-class IPMR2SearchAdd(IObjectIdMixin, IPMR2Search):
-    """\
-    Interface for the use by PMR2AddForm.
-    """

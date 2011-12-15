@@ -31,42 +31,6 @@
       permission="zope.Public"
       />
 
-  <!-- pages -->
-  <!-- PMR2 Custom Search object -->
-
-  <browser:page
-      for="pmr2.app.content.PMR2Search"
-      name="pmr2search_edit"
-      class=".support.PMR2SearchEditFormView"
-      permission="pmr2.app.security.ManagePMR2"
-      />
-
-  <browser:page
-      for="pmr2.app.content.PMR2Search"
-      name="pmr2search_view"
-      class=".support.PMR2SearchPageView"
-      permission="zope2.View"
-      />
-
-  <browser:page
-      for="pmr2.app.content.PMR2Search"
-      name="atct_view"
-      class=".support.PMR2SearchPageView"
-      permission="zope2.View"
-      />
-
-  <!--
-    adapter for the adding view.
-  -->
-
-  <adapter
-      for="Products.Five.browser.adding.ContentAdding
-           *"
-      name="addPMR2Search"
-      factory=".support.PMR2SearchAddFormView"
-      provides="z3c.form.interfaces.IAddForm"
-      />
-
   <!-- layout adapters -->
 
   <adapter factory=".layout.plain_layout_factory" />
