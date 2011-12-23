@@ -263,13 +263,18 @@ a workspace with actual data.
     >>> context
     <Exposure at ...>
 
-Now we have an exposure, try to use one of its default views on it.
+Now we have an exposure, try to use one of its default views on it.  As
+this is a fresh exposure without any files created for it, render should
+return a fairly blank result and not trigger any redirection.
 ::
 
     >>> request = TestRequest()
     >>> view = exposure.ExposureInfo(context, request)
+    >>> view.update()
     >>> print view.render()
     <div></div>
+    >>> request.response.getHeader('Location') is None
+    True
 
 As the exposure is a wrapper around the changeset of a workspace, all
 paths within it should map correctly back to its source.  We can test
@@ -340,6 +345,17 @@ Test it with the default view.  There should be no adapters added yet.
     <h3>Views generated for this file</h3>
     <dl>
     </dl>
+
+Calling render on the parent exposure should result in a redirection to
+this exposure file.
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureInfo(context, request)
+    >>> view.update()
+    >>> result = view.render()
+    >>> request.response.getHeader('Location')
+    '.../file1/view'
 
 The redirect view should redirect to the actual file within the 
 workspace.
@@ -697,6 +713,17 @@ workspace.
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/module.cellml'
 
+Calling render on the parent of this file should also result in a 
+redirection to much like the root object.
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureInfo(context[path2[0]], request)
+    >>> view.update()
+    >>> result = view.render()
+    >>> request.response.getHeader('Location')
+    '.../component/module.cellml/view'
+
 We can try the same with another nested file.  Since the 'component'
 folder is already created, it should not be recreated and reused and
 remain accessible.
@@ -748,6 +775,19 @@ the redirection view.
     >>> result = view()
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/docs/index.rst'
+
+In this case, on this particular level (/component/docs/) there are now
+two files - this should disable the redirection of the ExposureInfo 
+view.
+::
+
+    >>> request = TestRequest()
+    >>> view = exposure.ExposureInfo(context[path4[0]][path4[1]], request)
+    >>> view.update()
+    >>> result = view.render()
+    >>> request.response.getHeader('Location')
+    >>> print result
+    <div></div>
 
 It is possible to define a custom note adapter with its own view and
 annotator to store custom-defined values, and this is the preferred

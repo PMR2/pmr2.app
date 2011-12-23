@@ -736,14 +736,16 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
         self.baseAnnotate(action)
 
     def annotate(self):
-        if self._data['docview_gensource'] is not None:
+        if not self._data['docview_gensource'] is None:
             # XXX manual unicode call, because vocab derives data directly
             # from manifest in mercurial, which is str.
             self.context.docview_gensource = \
                 unicode(self._data['docview_gensource'])
         self.context.docview_generator = self._data['docview_generator']
         if not self.context.docview_generator:
-            # do nothing if we have no generator.
+            # reset the gensource to None when we don't have a 
+            # generator, and do nothing.
+            self.context.docview_gensource = None
             return None 
         viewgen = zope.component.getUtility(
             IDocViewGen,
@@ -772,9 +774,14 @@ ExposureDocViewGenFormView = layout.wrap_form(
 
 class ExposureInfo(page.SimplePage):
     """\
-    Simple exposure file page
+    Simple exposure information display 
+    
+    This is for folder-like Exposure obejcts.  This should redirect to
+    the actual content if there is only one item, or display a page that
+    will direct to those items.
 
-    Renders the documentation that was manually assigned to the file.
+    If there are documentation assigned to this item, render them
+    instead.
     """
 
     render = ViewPageTemplateFile('exposure_docview.pt')
@@ -784,6 +791,32 @@ class ExposureInfo(page.SimplePage):
 
     def content(self):
         return self.context.getText()
+
+    def render(self):
+        # could check for source, but users can manually edit this page,
+        # no need to take away this feature, yet.
+        if self.content():
+            return super(ExposureInfo, self).render()
+
+        catalog = getToolByName(self.context, 'portal_catalog')
+        efiles = catalog(path={
+            'query': '/'.join(self.context.getPhysicalPath()),
+            'depth': 1
+        })
+
+        if len(efiles) == 0:
+            # no item to render, do default thing.
+            return super(ExposureInfo, self).render()
+
+        if len(efiles) > 1:
+            # should figure out how to generate a list of available
+            # items for user consumption.  For now, default.
+            return super(ExposureInfo, self).render()
+
+        # XXX maybe control this with another setting too?
+        # since we have exactly one item, it should redirect to its
+        # default view.
+        return self.request.response.redirect(efiles[0].getURL() + '/view')
 
 ExposureInfoView = layout.wrap_form(ExposureInfo,
     __wrapper_class=PloneviewLayoutWrapper)
