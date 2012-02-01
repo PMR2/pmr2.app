@@ -12,11 +12,12 @@ from AccessControl import Unauthorized
 from Acquisition import aq_parent, aq_inner
 
 import z3c.form.form
+import z3c.form.interfaces
 from z3c.form.interfaces import IWidgets
 from z3c.form.form import Form
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.z3cform.fieldsets import group
-from plone.z3cform.interfaces import IWrappedForm
+from plone.z3cform.interfaces import IForm, IWrappedForm
 from plone.z3cform.templates import ZopeTwoFormTemplateFactory
 
 from pmr2.app.interfaces import IPMR2AppLayer
@@ -27,7 +28,12 @@ from pmr2.app.browser.interfaces import IPMR2Form
 path = lambda p: os.path.join(os.path.dirname(pmr2.app.browser.__file__), 
                               'templates', p)
 
-form_factory = ZopeTwoFormTemplateFactory(path('form.pt'), form=IWrappedForm,
+wrapped_form_factory = ZopeTwoFormTemplateFactory(
+    path('wrapped_form.pt'), form=IWrappedForm,
+    request=IPMR2AppLayer)
+
+form_factory = ZopeTwoFormTemplateFactory(path('form.pt'), 
+    form=z3c.form.interfaces.IForm,
     request=IPMR2AppLayer)
 
 
