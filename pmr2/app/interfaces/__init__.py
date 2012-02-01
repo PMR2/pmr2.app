@@ -5,6 +5,7 @@ import zope.interface
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
+from plone.app.z3cform.interfaces import IPloneFormLayer
 from pmr2.app.schema import ObjectId
 from pmr2.app.interfaces.exceptions import *
 
@@ -21,7 +22,7 @@ __all__ = [
 
 # Interfaces
 
-class IPMR2AppLayer(zope.interface.Interface):
+class IPMR2AppLayer(IPloneFormLayer):
     """\
     Marker interface for this product.
     """

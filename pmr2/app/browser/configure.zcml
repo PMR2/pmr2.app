@@ -38,6 +38,7 @@
   <adapter factory=".layout.ploneview_layout_factory" />
 
   <adapter factory=".form.form_factory" />
+  <adapter factory=".form.wrapped_form_factory" />
 
   <!-- widget adapters -->
   
