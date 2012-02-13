@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.5 - Released (2012-02-13)
+---------------------------
+
+* Deprecation and form cleanups
+  - Corrected the iro (interface resolution order) for the layer such
+    that the authenticator is always rendered.
+  - Removed pmr2.app.contents as that was deprecated and marked for
+    removal.
+
+* Annotator now adapts both context and request to be more compatible
+  with typical usage.
+
 0.4 - Released (2011-10-03)
 ---------------------------
 
