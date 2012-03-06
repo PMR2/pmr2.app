@@ -144,6 +144,16 @@ class IStorageUtility(zope.interface.Interface):
         Process the request as a protocol request on context.
         """
 
+    def sync(context, source):
+        """\
+        Sync context with the source
+
+        Context will be updated with the data in source.
+        Source should be some sort of identifier.
+
+        Returns a tuple with result and optional message.
+        """
+
 
 class IStorageProtocol(zope.interface.Interface):
     """\

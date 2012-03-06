@@ -412,6 +412,16 @@ class TestDummyStorage(TestCase):
         archive = storage.archive('dummy')
         self.assert_(archive.startswith('(dp1\nS'))
 
+    def test_800_sync(self):
+        # mostly a dummy at this stage.
+        utility = DummyStorageUtility()
+        newworkspace = DummyWorkspace('new')
+        utility.sync(newworkspace, 'cake')
+
+        storage = DummyStorage(newworkspace)
+        storage.checkout()
+        self.assert_('null' in storage.files())
+
 
 def test_suite():
     suite = TestSuite()

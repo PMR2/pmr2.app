@@ -231,3 +231,6 @@ class StorageUtility(object):
 
     def __call__(self, context):
         return self.acquireFrom(context)
+
+    def sync(self, context, source):
+        raise NotImplementedError

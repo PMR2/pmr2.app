@@ -19,82 +19,83 @@ def readfile(fn):
 
 test_png = readfile(join(dirname(__file__), 'test.png'))
 
-_dummy_storage_data = {
-
-    'test': [
-        {
-            'file1': 'file1-rev0\nThis is a test.\n',
-            'file2': 'file2-rev0\nThis is also a test.\n',
-        },
-        {
-            'file1': 'file1-rev1\nThis test has changed.\n',
-            'file2': 'file2-rev1\nThis is also a test.\n',
-            'file3': 'A new test file.\n',
-        },
-        {
-            'file2': 'file2-rev1\nThis is also a test.\n',
-            'file3': 'Yes file1 is removed\n',
-            'dir1/f1': 'first file in dir1\n',
-            'dir1/f2': 'second file in dir1\n',
-        },
-        {
-            'file1': 'file1-rev1\nThis file re-added.\n',
-            'file3': 'Yes file1 is removed\n',
-            'dir1/f1': 'first file in dir1\n',
-            'dir1/f2': 'second file in dir1\n',
-            'dir1/dir2/f1': 'first file in dir2\n',
-            'dir1/dir2/f2': 'second file in dir2\n',
-            'dir1/nested/file': 'some three level deep file\n',
-        },
-    ],
-
-    'cake': [
-        {
-            'null': '\0',
-            'status': 'is a lie.',
-            'test.png': test_png,
-            'test.xml':
-                '<?xml version="1.0"?>\n'
-                '<ex xmlns="http://ns.example.com/">\n'
-                '  <node>Some text</node>\n'
-                '</ex>\n',
-            'dir1/dir2/file.xml':
-                '<?xml version="1.0"?>\n'
-                '<ex xmlns="http://ns.example.com/">\n'
-                '  <node>Some file</node>\n'
-                '</ex>\n',
-        },
-        {
-            'null': '\0',
-            'status': 'is a lie.',
-            'test.png': test_png,
-            'test.xml':
-                '<?xml version="1.0"?>\n'
-                '<ex xmlns="http://ns.example.com/">\n'
-                '  <node>Some text</node>\n'
-                '</ex>\n',
-            'dir1/dummy.txt': 'Dummy txt file\n',
-            'dir1/dir2/file.xml':
-                '<?xml version="1.0"?>\n'
-                '<ex xmlns="http://ns.example.com/">\n'
-                '  <node>Some file</node>\n'
-                '</ex>\n',
-        },
-    ],
-
-}
-
 
 class DummyStorageUtility(StorageUtility):
+
+    _dummy_storage_data = {
+
+        'test': [
+            {
+                'file1': 'file1-rev0\nThis is a test.\n',
+                'file2': 'file2-rev0\nThis is also a test.\n',
+            },
+            {
+                'file1': 'file1-rev1\nThis test has changed.\n',
+                'file2': 'file2-rev1\nThis is also a test.\n',
+                'file3': 'A new test file.\n',
+            },
+            {
+                'file2': 'file2-rev1\nThis is also a test.\n',
+                'file3': 'Yes file1 is removed\n',
+                'dir1/f1': 'first file in dir1\n',
+                'dir1/f2': 'second file in dir1\n',
+            },
+            {
+                'file1': 'file1-rev1\nThis file re-added.\n',
+                'file3': 'Yes file1 is removed\n',
+                'dir1/f1': 'first file in dir1\n',
+                'dir1/f2': 'second file in dir1\n',
+                'dir1/dir2/f1': 'first file in dir2\n',
+                'dir1/dir2/f2': 'second file in dir2\n',
+                'dir1/nested/file': 'some three level deep file\n',
+            },
+        ],
+
+        'cake': [
+            {
+                'null': '\0',
+                'status': 'is a lie.',
+                'test.png': test_png,
+                'test.xml':
+                    '<?xml version="1.0"?>\n'
+                    '<ex xmlns="http://ns.example.com/">\n'
+                    '  <node>Some text</node>\n'
+                    '</ex>\n',
+                'dir1/dir2/file.xml':
+                    '<?xml version="1.0"?>\n'
+                    '<ex xmlns="http://ns.example.com/">\n'
+                    '  <node>Some file</node>\n'
+                    '</ex>\n',
+            },
+            {
+                'null': '\0',
+                'status': 'is a lie.',
+                'test.png': test_png,
+                'test.xml':
+                    '<?xml version="1.0"?>\n'
+                    '<ex xmlns="http://ns.example.com/">\n'
+                    '  <node>Some text</node>\n'
+                    '</ex>\n',
+                'dir1/dummy.txt': 'Dummy txt file\n',
+                'dir1/dir2/file.xml':
+                    '<?xml version="1.0"?>\n'
+                    '<ex xmlns="http://ns.example.com/">\n'
+                    '  <node>Some file</node>\n'
+                    '</ex>\n',
+            },
+        ],
+
+    }
+
     title = 'Dummy Storage'
     valid_cmds = ['revcount', 'update',]
 
     def create(self, context):
         # creates the datastore for a dummy storage
-        if context.id in _dummy_storage_data:
+        if context.id in self._dummy_storage_data:
             # don't overwrite existing data
             return
-        _dummy_storage_data[context.id] == [{}]
+        self._dummy_storage_data[context.id] == [{}]
 
     def acquireFrom(self, context):
         return DummyStorage(context)
@@ -114,6 +115,14 @@ class DummyStorageUtility(StorageUtility):
                 raise Exception('bad request method')
             return 'Updated'
         raise UnsupportedCommandError('%s unsupported' % cmd)
+
+    def sync(self, context, source):
+        # as this is a local test, we are not going to bother with going
+        # over any kind of protocol.  Resolve workspace at path:
+
+        self._dummy_storage_data[context.id] = \
+            self._dummy_storage_data[source]
+        return True, None
 
 
 class DummyStorage(BaseStorage):
@@ -135,7 +144,7 @@ class DummyStorage(BaseStorage):
         return ts.strftime(self.datefmtstr)
 
     def _data(self):
-        return _dummy_storage_data[self.__id]
+        return DummyStorageUtility._dummy_storage_data[self.__id]
 
     def _changeset(self, rev=None):
         if rev is None:
@@ -311,7 +320,7 @@ class DummyStorage(BaseStorage):
 
 class DummyWorkspace(object):
     """\
-    To avoid the vocab and the rest of Plone Archetypes.
+    To avoid dealing with the vocab and the rest of Plone Archetypes.
     """
 
     zope.interface.implements(IWorkspace)
@@ -319,3 +328,7 @@ class DummyWorkspace(object):
     def __init__(self, id_):
         self.id = id_
         self.storage = None
+
+    def restrictedTraverse(self, path):
+        # dummy
+        return DummyWorkspace(path)
