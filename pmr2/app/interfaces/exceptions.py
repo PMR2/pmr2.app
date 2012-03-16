@@ -42,15 +42,3 @@ class WorkspaceDirNotExistsError(zope.schema.ValidationError):
 
 class WorkspaceObjNotFoundError(zope.schema.ValidationError):
     __doc__ = _("""The workspace object is not found.""")
-
-
-class ExposureContainerInaccessibleError(zope.schema.ValidationError):
-    __doc__ = _("""The exposure container cannot be accessed.""")
-
-
-class ExposureInaccessibleError(zope.schema.ValidationError):
-    __doc__ = _("""The exposure cannot be accessed.""")
-
-
-class ExposureIdGeneratorMissingError(zope.schema.ValidationError):
-    __doc__ = _("""The exposure id generator is missing.""")

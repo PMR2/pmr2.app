@@ -1,8 +1,27 @@
 import zope.schema
 import zope.interface
 
+from zope.i18nmessageid import MessageFactory
+_ = MessageFactory("pmr2")
+
 from pmr2.app.schema import ObjectId, WorkspaceList, CurationDict, TextLineList
 
+
+# exceptions
+
+class ExposureContainerInaccessibleError(zope.schema.ValidationError):
+    __doc__ = _("""The exposure container cannot be accessed.""")
+
+
+class ExposureInaccessibleError(zope.schema.ValidationError):
+    __doc__ = _("""The exposure cannot be accessed.""")
+
+
+class ExposureIdGeneratorMissingError(zope.schema.ValidationError):
+    __doc__ = _("""The exposure id generator is missing.""")
+
+
+# interfaces
 
 class IPMR2ExposureLayer(zope.interface.Interface):
     """\
