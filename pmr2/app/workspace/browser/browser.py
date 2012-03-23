@@ -559,28 +559,21 @@ WorkspaceEditFormView = layout.wrap_form(
     WorkspaceEditForm, label="Workspace Edit Form")
 
 
-class WorkspaceSyncForm(form.PostForm):
+class WorkspaceSyncFormBase(form.PostForm):
     """\
-    Synchronize with data from another repository/workspace.
+    The base sync form.
     """
 
-    fields = z3c.form.field.Fields(IWorkspaceSync)
     ignoreContext = True
 
-    @button.buttonAndHandler(u'Synchronize', name='syncWithTarget')
-    def syncWithTarget(self, action):
-        data, errors = self.extractData()
-        if errors:
-            self.status = self.formErrorsMessage
-            return
-        external_uri = data.get('external_uri', None)
-        
+    def _sync(self, external_uri):
         utility = zope.component.getUtility(
             IStorageUtility, name=self.context.storage)
+        return utility.sync(self.context, external_uri)
 
-        # XXX figure out how to present errors here.
+    def sync(self, external_uri):
         try:
-            result, msg = utility.sync(self.context, external_uri)
+            result, msg = self._sync(external_uri)
         except Exception, e:
             self.status = u'Error syncing with %s: %s' % (
                 external_uri, str(e))
@@ -597,6 +590,25 @@ class WorkspaceSyncForm(form.PostForm):
 
         self.status = u'Failure to sync.'
 
+
+class WorkspaceSyncForm(WorkspaceSyncFormBase):
+    """\
+    Synchronize with data from another repository/workspace.
+    """
+
+    fields = z3c.form.field.Fields(IWorkspaceSync)
+
+    @button.buttonAndHandler(u'Synchronize', name='syncWithTarget')
+    def syncWithTarget(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+        external_uri = data.get('external_uri', None)
+        return self.sync(external_uri)
+
+
+# Internal traverse views
 
 class BaseFilePage(WorkspaceTraversePage):
     """\
