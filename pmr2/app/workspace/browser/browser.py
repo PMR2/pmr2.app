@@ -20,7 +20,7 @@ import z3c.form.interfaces
 import z3c.form.field
 import z3c.form.form
 import z3c.form.value
-import z3c.form.button
+from z3c.form import button
 
 from plone.z3cform import layout
 from AccessControl import getSecurityManager
@@ -557,6 +557,45 @@ class WorkspaceEditForm(form.EditForm):
 
 WorkspaceEditFormView = layout.wrap_form(
     WorkspaceEditForm, label="Workspace Edit Form")
+
+
+class WorkspaceSyncForm(form.PostForm):
+    """\
+    Synchronize with data from another repository/workspace.
+    """
+
+    fields = z3c.form.field.Fields(IWorkspaceSync)
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Synchronize', name='syncWithTarget')
+    def syncWithTarget(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+        external_uri = data.get('external_uri', None)
+        
+        utility = zope.component.getUtility(
+            IStorageUtility, name=self.context.storage)
+
+        # XXX figure out how to present errors here.
+        try:
+            result, msg = utility.sync(self.context, external_uri)
+        except Exception, e:
+            self.status = u'Error syncing with %s: %s' % (
+                external_uri, str(e))
+            return
+
+        if result:
+            # redirect with message
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(
+                u'Successfully synced with %s.' % external_uri)
+            if msg:
+                status.addStatusMessage(msg)
+            return self.request.response.redirect(self.context.absolute_url())
+
+        self.status = u'Failure to sync.'
 
 
 class BaseFilePage(WorkspaceTraversePage):

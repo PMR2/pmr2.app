@@ -42,6 +42,18 @@ class IWorkspaceBulkAdd(zope.interface.Interface):
     )
 
 
+class IWorkspaceSync(zope.interface.Interface):
+    """\
+    Interface for workspace sync form.
+    """
+
+    external_uri = zope.schema.ASCIILine(
+        title=u'URI',
+        description=u'The URI to the data source to sync this workspace with.',
+        required=True,
+    )
+
+
 class IFileRenderer(zope.interface.Interface):
     """\
     This provides file rendering capability.

@@ -127,6 +127,13 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="sync"
+      class=".browser.WorkspaceSyncForm"
+      permission="zope2.View"
+      />
+
   <!--
     file renderer manager
 
