@@ -18,6 +18,7 @@ try:
     from Products.CMFCore.interfaces import ISiteRoot
 except ImportError:
     ISiteRoot = None
+from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.factory import NamedUtilBase
 
@@ -157,6 +158,13 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         from pmr2.app.workspace.content import WorkspaceContainer
         return self._createContainer(WorkspaceContainer, name, root, 
                                     createDir=True)
+
+    def getCurrentUserWorkspaceContainer(self):
+        pm = getToolByName(self.__parent__, 'portal_membership')
+        if pm.isAnonymousUser():
+            return None
+        user = pm.getAuthenticatedMember()
+        return self.getWorkspaceContainer(user.id)
 
     def getWorkspaceContainer(self, user=None):
         from pmr2.app.workspace.interfaces import IWorkspaceContainer

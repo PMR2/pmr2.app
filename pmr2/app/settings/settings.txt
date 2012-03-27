@@ -111,18 +111,22 @@ setting is disabled, nothing should have happened.
 ::
 
     >>> from Products.ATContentTypes.content.folder import ATFolder
+    >>> from Products.PloneTestCase.setup import default_user
     >>> self.portal['w'] = ATFolder('w')
-    >>> userid = 'tester'
+    >>> userid = default_user
     >>> pmr2_settings.createUserWorkspaceContainer(userid)
     >>> userid in self.portal.w
     False
 
 Of course there is a way to override this.
+::
 
     >>> pmr2_settings.createUserWorkspaceContainer(userid, True)
     >>> userwc = self.portal.w[userid]
     >>> userwc
-    <WorkspaceContainer at /plone/w/tester>
+    <WorkspaceContainer at /plone/w/...>
+    >>> userwc.id == default_user
+    True
     >>> pmr2_settings.dirCreatedFor(userwc) is not None
     True
 
@@ -132,6 +136,14 @@ specific user's workspace container.
 
     >>> result = pmr2_settings.getWorkspaceContainer(userid)
     >>> userwc == result
+    True
+
+A method is also provided to quickly retrieve the current user's
+container.
+::
+
+    >>> result = pmr2_settings.getCurrentUserWorkspaceContainer()
+    >>> result == userwc
     True
 
 Attempt recreation of the WorkspaceContainer will not result in an error
@@ -190,14 +202,6 @@ will fetch the setting object.
     >>> sm = zope.component.getSiteManager()
     >>> sm.registerUtility(PluginSettingFactory, IPMR2PluggableSettings,
     ...     name='pluginsetting')
-
-Now we get the pluggable settings utility with the same name, 
-instantiate against the global settings object to get back our data.
-
-While the actual class/data can be directly accessed through the 
-internal subsettings dictionary, it's best to do it through this method
-via the component registry for consistency (much like zope annotations).
-::
 
 Now we get the pluggable settings utility with the same name, 
 instantiate against the global settings object to get back our data.
