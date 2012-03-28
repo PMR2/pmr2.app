@@ -144,12 +144,26 @@ class IStorageUtility(zope.interface.Interface):
         Process the request as a protocol request on context.
         """
 
+    def syncWorkspace(context, workspace):
+        """\
+        Sync context with source workspace object.
+
+        Returns a tuple with result and optional message.
+        """
+
+    def syncIdentifier(context, identifier):
+        """\
+        Sync context with source identified by identifier.
+
+        Returns a tuple with result and optional message.
+        """
+
     def sync(context, source):
         """\
-        Sync context with the source
+        Generic sync function
 
-        Context will be updated with the data in source.
-        Source should be some sort of identifier.
+        Context will be updated with the data in source, which will
+        automatically resolve to the correct method based on the input.
 
         Returns a tuple with result and optional message.
         """

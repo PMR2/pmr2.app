@@ -256,7 +256,54 @@ Main page should render fine, too.
     >>> request = TestRequest()
     >>> testpage = browser.WorkspacePage(
     ...     self.portal.workspace.cake, request)
-    >>> result = testpage()
+    >>> wp_result = testpage()
+
+
+-----------------
+Workspace Forking
+-----------------
+
+To take full advantage of the user workspaces in certain instances, the
+ability to quickly clone a workspace from an existing one directly on
+the instance itself would save significant time, not to mention make it
+potentially easier to track the heritiage of any given model.
+
+- XXX make sure all settings are defined correctly such that user
+  workspaces are functional
+
+As this feature makes use of the user workspace, we ensure that it is
+created.
+
+    >>> self.pmr2.createUserWorkspaceContainer('test_user_1_')
+
+Let's instantiate the cloning form, with the desired workspace created.
+Only the 'Create Fork' button should be visible as there shouldn't be
+any complications.
+::
+
+    >>> source = self.portal.workspace.cake
+    >>> request = TestRequest()
+    >>> form = browser.WorkspaceForkForm(source, request)
+    >>> result = form()
+    >>> 'Fork' in result
+    True
+
+Now activate that button.
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.buttons.fork': 1,
+    ...     }
+    ... )
+    >>> form = browser.WorkspaceForkForm(source, request)
+    >>> form.update()
+
+Now acquire the user workspace
+
+    >>> w = self.pmr2.getWorkspaceContainer('test_user_1_')
+    >>> clone = w.get(source.id)
+    >>> clone.id == source.id
+    True
 
 ---------------------
 Protocol Level Access
@@ -314,7 +361,7 @@ have been the same as the original result from earlier.
     >>> context = self.portal.workspace.cake
     >>> request = TestRequest()
     >>> view = browser.WorkspacePage(context, request)
-    >>> view() == result
+    >>> view() == wp_result
     True
 
 Reading using the protocol layer shouldn't present an issue.

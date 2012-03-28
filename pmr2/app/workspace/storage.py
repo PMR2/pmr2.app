@@ -3,8 +3,8 @@ from magic import Magic
 import zope.interface
 
 from pmr2.app.workspace.exceptions import *
-from pmr2.app.workspace.interfaces import IStorage
-from pmr2.app.workspace.interfaces import IStorageUtility
+from pmr2.app.workspace.interfaces import IStorage, IStorageUtility
+from pmr2.app.workspace.interfaces import IWorkspace
 
 
 class BaseStorage(object):
@@ -232,5 +232,13 @@ class StorageUtility(object):
     def __call__(self, context):
         return self.acquireFrom(context)
 
-    def sync(self, context, source):
+    def syncWorkspace(self, context, workspace):
         raise NotImplementedError
+
+    def syncIdentifier(self, context, identifier):
+        raise NotImplementedError
+
+    def sync(self, context, source):
+        if IWorkspace.providedBy(source):
+            return self.syncWorkspace(context, source)
+        return self.syncIdentifier(context, source)

@@ -30,9 +30,9 @@ from DateTime import DateTime
 from Acquisition import aq_parent, aq_inner
 from Products.statusmessages.interfaces import IStatusMessage
 
-from pmr2.app.workspace.interfaces import *
-from pmr2.app.workspace.content import *
-from pmr2.app.workspace.browser.util import *
+from pmr2.app.settings.interfaces import IPMR2GlobalSettings
+
+from pmr2.app.interfaces.exceptions import *
 
 from pmr2.app.browser import interfaces
 from pmr2.app.browser import form
@@ -44,6 +44,8 @@ from pmr2.app.browser.layout import TraverseFormWrapper
 from pmr2.app.workspace import table
 from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import *
+from pmr2.app.workspace.content import *
+from pmr2.app.workspace.browser.util import *
 from pmr2.app.workspace.browser.interfaces import *
 from pmr2.app.workspace.browser.layout import BorderedWorkspaceProtocolWrapper
 
@@ -606,6 +608,51 @@ class WorkspaceSyncForm(WorkspaceSyncFormBase):
             return
         external_uri = data.get('external_uri', None)
         return self.sync(external_uri)
+
+
+class WorkspaceForkForm(form.PostForm):
+    """\
+    Clone a remote workspace
+    """
+
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Fork', name='fork')
+    def forkWorkspace(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+        try:
+            ctxobj = self.cloneToUserWorkspace()
+        except:
+            raise
+            # XXX do this eventually.
+            # raise z3c.form.interfaces.ActionExecutionError(e)
+
+    def cloneToUserWorkspace(self):
+        settings = zope.component.getUtility(IPMR2GlobalSettings)
+        target_root = settings.getCurrentUserWorkspaceContainer()
+
+        # 1. Create workspace object.
+        if target_root.get(self.context.id) is not None:
+            raise ObjectIdExistsError()
+        obj = Workspace(self.context.id)
+        target_root[self.context.id] = obj
+        ctxobj = target_root[self.context.id]
+        ctxobj.title = self.context.title
+        ctxobj.description = self.context.description
+        ctxobj.storage = self.context.storage
+
+        # 2. Create the storage.
+        utility = zope.component.getUtility(
+            IStorageUtility, name=ctxobj.storage)
+        utility.create(ctxobj)
+
+        # 3. Find the local filesystem path
+        utility.syncWorkspace(ctxobj, self.context)
+
+        return ctxobj
 
 
 # Internal traverse views

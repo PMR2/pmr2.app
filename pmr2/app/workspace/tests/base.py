@@ -11,6 +11,8 @@ from Products.PloneTestCase.layer import PloneSite
 from Products.PloneTestCase.layer import onsetup
 from Products.PloneTestCase.layer import onteardown
 
+from Products.CMFPlone.utils import _createObjectByType
+
 import pmr2.testing
 from pmr2.testing import utils
 from pmr2.testing.base import DocTestCase
@@ -49,9 +51,15 @@ class WorkspaceDocTestCase(DocTestCase):
         from plone.z3cform.tests import setup_defaults
         from pmr2.app.settings.interfaces import IPMR2GlobalSettings
         setup_defaults()
-        # also set up the root to the tmpdir.
+
+        # point the physical root for repo_root to the tmpdir.
         self.pmr2 = zope.component.getUtility(IPMR2GlobalSettings)
         self.pmr2.repo_root = self.tmpdir
+
+        # user workspace
+        _createObjectByType('Folder', self.portal, id='w')
+        self.pmr2.user_workspace_subpath = u'w'
+        self.pmr2.create_user_workspace = True
 
     def traverse(self, context, browserClass, traverse_subpath, request=None):
         """\

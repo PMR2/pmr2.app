@@ -116,13 +116,17 @@ class DummyStorageUtility(StorageUtility):
             return 'Updated'
         raise UnsupportedCommandError('%s unsupported' % cmd)
 
-    def sync(self, context, source):
+    def syncIdentifier(self, context, identifier):
         # as this is a local test, we are not going to bother with going
         # over any kind of protocol.  Resolve workspace at path:
 
         self._dummy_storage_data[context.id] = \
-            self._dummy_storage_data[source]
+            self._dummy_storage_data[identifier]
         return True, None
+
+    def syncWorkspace(self, context, source):
+        identifier = source.id
+        return self.syncIdentifier(context, identifier)
 
 
 class DummyStorage(BaseStorage):
