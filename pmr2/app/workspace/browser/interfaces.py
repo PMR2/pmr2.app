@@ -29,19 +29,6 @@ class IWorkspaceStorageCreate(zope.interface.Interface):
     )
 
 
-class IWorkspaceBulkAdd(zope.interface.Interface):
-    """\
-    Interface for the use by WorkspaceAddForm.
-    """
-
-    workspace_list = zope.schema.Text(
-        title=u'List of Workspaces',
-        description=u'List of workspaces with a corresponding directory ' \
-                     'within this container.',
-        required=True,
-    )
-
-
 class IWorkspaceSync(zope.interface.Interface):
     """\
     Interface for workspace sync form.

@@ -33,14 +33,6 @@
       permission="cmf.AddPortalContent"
       />
 
-  <!-- this view will be broken in v0.4 -->
-  <browser:page
-      for="pmr2.app.workspace.interfaces.IWorkspaceContainer"
-      name="workspace_bulk_create"
-      class=".browser.WorkspaceBulkAddFormView"
-      permission="pmr2.app.security.ManagePMR2"
-      />
-
   <!-- Workspace -->
 
   <browser:page
