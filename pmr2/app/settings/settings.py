@@ -173,7 +173,9 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
             path = self.default_workspace_subpath
         else:
             path = '%s/%s' % (self.user_workspace_subpath, user)
-        obj = self.siteManagerUnrestrictedTraverse(path)
+        # have to use getSite for this.
+        site = getSite()
+        obj = site.unrestrictedTraverse(str(path), None)
         if obj is not None and not IWorkspaceContainer.providedBy(obj):
             if user is None:
                 raise TypeError('the content at the workspace container '
