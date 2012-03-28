@@ -226,11 +226,16 @@ class StorageUtility(object):
     def isprotocol(self, request):
         raise NotImplementedError
 
+    def validateExternalURI(self, uri):
+        # hardcoding these as default valid for now.
+        validURI = ['http://', 'https://', ]
+        for i in validURI:
+            if uri.startswith(i):
+                return True
+        return False
+
     def protocol(self, context, request):
         raise NotImplementedError
-
-    def __call__(self, context):
-        return self.acquireFrom(context)
 
     def syncWorkspace(self, context, workspace):
         raise NotImplementedError
@@ -242,3 +247,6 @@ class StorageUtility(object):
         if IWorkspace.providedBy(source):
             return self.syncWorkspace(context, source)
         return self.syncIdentifier(context, source)
+
+    def __call__(self, context):
+        return self.acquireFrom(context)

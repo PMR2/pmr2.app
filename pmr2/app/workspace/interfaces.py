@@ -144,6 +144,11 @@ class IStorageUtility(zope.interface.Interface):
         Process the request as a protocol request on context.
         """
 
+    def validateExternalURI(uri):
+        """\
+        Checks whether uri is a valid external URI.
+        """
+
     def syncWorkspace(context, workspace):
         """\
         Sync context with source workspace object.

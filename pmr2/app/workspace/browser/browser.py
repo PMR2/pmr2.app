@@ -477,6 +477,9 @@ class WorkspaceSyncFormBase(form.PostForm):
     def _sync(self, external_uri):
         utility = zope.component.getUtility(
             IStorageUtility, name=self.context.storage)
+        if not utility.validateExternalURI(external_uri):
+            raise ValueError('`%s` is using a forbiddened protocol.' % 
+                             external_uri)
         return utility.sync(self.context, external_uri)
 
     def sync(self, external_uri):

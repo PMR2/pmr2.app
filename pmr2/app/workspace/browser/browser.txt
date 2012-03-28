@@ -268,11 +268,9 @@ ability to quickly clone a workspace from an existing one directly on
 the instance itself would save significant time, not to mention make it
 potentially easier to track the heritiage of any given model.
 
-- XXX make sure all settings are defined correctly such that user
-  workspaces are functional
-
 As this feature makes use of the user workspace, we ensure that it is
 created.
+::
 
     >>> self.pmr2.createUserWorkspaceContainer('test_user_1_')
 
@@ -289,6 +287,7 @@ any complications.
     True
 
 Now activate that button.
+::
 
     >>> request = TestRequest(
     ...     form={
@@ -299,6 +298,7 @@ Now activate that button.
     >>> form.update()
 
 Now acquire the user workspace
+::
 
     >>> w = self.pmr2.getWorkspaceContainer('test_user_1_')
     >>> clone = w.get(source.id)
