@@ -123,6 +123,13 @@
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="sync"
       class=".browser.WorkspaceSyncForm"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="fork"
+      class=".browser.WorkspaceForkForm"
       permission="zope2.View"
       />
 

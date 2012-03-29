@@ -100,6 +100,10 @@ class DummyStorageUtility(StorageUtility):
     def acquireFrom(self, context):
         return DummyStorage(context)
 
+    def validateExternalURI(self, uri):
+        # Nothing sensitive here, nope.
+        return True
+
     def isprotocol(self, request):
         return request.form.get('cmd', None) is not None
 
@@ -120,8 +124,12 @@ class DummyStorageUtility(StorageUtility):
         # as this is a local test, we are not going to bother with going
         # over any kind of protocol.  Resolve workspace at path:
 
-        self._dummy_storage_data[context.id] = \
-            self._dummy_storage_data[identifier]
+        # This is also a more advance version where we make use of the
+        # path if it's available.
+        id_ = context.id
+        if hasattr(context, 'getPhysicalPath'):
+            id_ = context.getPhysicalPath()
+        self._dummy_storage_data[id_] = self._dummy_storage_data[identifier]
         return True, None
 
     def syncWorkspace(self, context, source):
@@ -148,7 +156,11 @@ class DummyStorage(BaseStorage):
         return ts.strftime(self.datefmtstr)
 
     def _data(self):
-        return DummyStorageUtility._dummy_storage_data[self.__id]
+        rawdata = DummyStorageUtility._dummy_storage_data
+        if hasattr(self.context, 'getPhysicalPath') and \
+                self.context.getPhysicalPath() in rawdata:
+            return rawdata[self.context.getPhysicalPath()]
+        return rawdata[self.__id]
 
     def _changeset(self, rev=None):
         if rev is None:

@@ -526,6 +526,21 @@ class WorkspaceForkForm(form.PostForm):
 
     ignoreContext = True
 
+    def update(self):
+        # manual role checking
+        # This is needed because this form is anchored onto the target,
+        # and anyone (authenticated) that could view this workspace
+        # should be able to clone this.  This may change when we have a
+        # specific permission setting to allow the viewing of this form.
+        # For now, the default view permission is sufficient, but this
+        # means anonymous users must be kicked out.
+        pm = getToolByName(self.context, 'portal_membership')
+        user = pm.getAuthenticatedMember()
+        if pm.isAnonymousUser():
+            # don't want to deal with anonymous non GETs
+            raise Unauthorized()
+        return super(WorkspaceForkForm, self).update()
+
     @button.buttonAndHandler(u'Fork', name='fork')
     def forkWorkspace(self, action):
         data, errors = self.extractData()
@@ -534,18 +549,24 @@ class WorkspaceForkForm(form.PostForm):
             return
         try:
             ctxobj = self.cloneToUserWorkspace()
-        except:
-            raise
-            # XXX do this eventually.
-            # raise z3c.form.interfaces.ActionExecutionError(e)
+        except Exception, e:
+            raise z3c.form.interfaces.ActionExecutionError(e)
+
+        if ctxobj is not None:
+            self.request.response.redirect(ctxobj.absolute_url())
 
     def cloneToUserWorkspace(self):
         settings = zope.component.getUtility(IPMR2GlobalSettings)
         target_root = settings.getCurrentUserWorkspaceContainer()
 
+        if target_root is None:
+            raise ProcessingError('User workspace container not found.')
+
         # 1. Create workspace object.
         if target_root.get(self.context.id) is not None:
-            raise ObjectIdExistsError()
+            raise ProcessingError('You already have a workspace with the '
+                'same name.  If they have the same origin, please use the '
+                'synchronize option of your copy of the workspace.')
         obj = Workspace(self.context.id)
         target_root[self.context.id] = obj
         ctxobj = target_root[self.context.id]
@@ -553,12 +574,10 @@ class WorkspaceForkForm(form.PostForm):
         ctxobj.description = self.context.description
         ctxobj.storage = self.context.storage
 
-        # 2. Create the storage.
+        # 2. Create the storage and synchronize it with context.
         utility = zope.component.getUtility(
             IStorageUtility, name=ctxobj.storage)
         utility.create(ctxobj)
-
-        # 3. Find the local filesystem path
         utility.syncWorkspace(ctxobj, self.context)
 
         return ctxobj

@@ -42,3 +42,16 @@ class WorkspaceDirNotExistsError(zope.schema.ValidationError):
 
 class WorkspaceObjNotFoundError(zope.schema.ValidationError):
     __doc__ = _("""The workspace object is not found.""")
+
+
+# Generic validation error
+
+class ProcessingError(zope.schema.ValidationError):
+    """
+    Processing error.
+    """
+
+    def doc(self):
+        if self.args:
+            return ', '.join(self.args)
+        return super(ProcessingError, self).doc()

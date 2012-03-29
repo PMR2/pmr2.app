@@ -17,6 +17,8 @@ the test environment.
     >>> self.portal.workspace.test
     <Workspace at /plone/workspace/test>
     >>> self.portal.workspace.test.storage = u'dummy_storage'
+    >>> self.portal.workspace['test2'] = Workspace('test2')
+    >>> self.portal.workspace.test2.storage = u'dummy_storage'
     >>> request = TestRequest()
 
 We will test the Repository Listing form first.  As the workspace path
@@ -56,11 +58,12 @@ show up on the table.
     >>> 'Not Found' in html
     True
 
-Now we create the repository for test.  It should no longer appear 
-broken.
+Now we create the repository for test and test2, they should no longer 
+appear broken.
 ::
 
-    >>> test_workspace = self.pmr2.createDir(self.portal.workspace.test)
+    >>> result = self.pmr2.createDir(self.portal.workspace.test)
+    >>> result = self.pmr2.createDir(self.portal.workspace.test2)
     >>> html = repolist_page()
     >>> 'test' in html
     True
@@ -164,7 +167,7 @@ Make sure the storage behind this workspace is set up.
 ::
 
     >>> import zope.component
-    >>> from pmr2.app.workspace.interfaces import IStorage
+    >>> from pmr2.app.workspace.interfaces import IStorage, IStorageUtility
     >>> cake = self.portal.workspace.cake
     >>> cake_store = zope.component.queryAdapter(cake, IStorage)
     >>> cake_store.file('status') == 'is a lie.'
@@ -268,41 +271,112 @@ ability to quickly clone a workspace from an existing one directly on
 the instance itself would save significant time, not to mention make it
 potentially easier to track the heritiage of any given model.
 
-As this feature makes use of the user workspace, we ensure that it is
-created.
+As this feature makes use of the user workspace, and how the permissions
+for this view is managed manually, we will need the test browser class
+for this.
+
+Instantiate the environment and log in the default user.
 ::
 
-    >>> self.pmr2.createUserWorkspaceContainer('test_user_1_')
+    >>> from Testing.testbrowser import Browser
+    >>> from Products.PloneTestCase.setup import default_user, default_password
+    >>> tb = Browser()
+    >>> portal_url = self.portal.absolute_url()
+    >>> tb.open(portal_url + '/login')
+    >>> tb.getControl(name='__ac_name').value = default_user
+    >>> tb.getControl(name='__ac_password').value = default_password
+    >>> tb.getControl(name='submit').click()
 
-Let's instantiate the cloning form, with the desired workspace created.
-Only the 'Create Fork' button should be visible as there shouldn't be
-any complications.
+The user's workspace container should have been created:
+::
+
+    >>> self.pmr2.getCurrentUserWorkspaceContainer()
+    <WorkspaceContainer at /plone/w/test_user_1_>
+
+Now we navigate to the source workspace we want to fork.
+::
+
+    >>> cakeurl = self.portal.workspace.cake.absolute_url()
+    >>> tb.open(cakeurl + '/fork')
+
+Push button, receive cake.
+::
+
+    >>> tb.getControl(name='form.buttons.fork').click()
+    >>> usercake = tb.url
+    >>> usercake
+    'http://nohost/plone/w/test_user_1_/cake'
+
+Now acquire the user workspace workspace and verify that the values are
+indeed cloned.
 ::
 
     >>> source = self.portal.workspace.cake
-    >>> request = TestRequest()
-    >>> form = browser.WorkspaceForkForm(source, request)
-    >>> result = form()
-    >>> 'Fork' in result
-    True
-
-Now activate that button.
-::
-
-    >>> request = TestRequest(
-    ...     form={
-    ...         'form.buttons.fork': 1,
-    ...     }
-    ... )
-    >>> form = browser.WorkspaceForkForm(source, request)
-    >>> form.update()
-
-Now acquire the user workspace
-::
-
     >>> w = self.pmr2.getWorkspaceContainer('test_user_1_')
     >>> clone = w.get(source.id)
-    >>> clone.id == source.id
+    >>> clone.id == self.portal.workspace.cake.id
+    True
+    >>> clone.storage == self.portal.workspace.cake.storage
+    True
+    >>> su = zope.component.getUtility(IStorageUtility, name='dummy_storage')
+    >>> sud = su._dummy_storage_data
+    >>> clone.getPhysicalPath() in sud.keys()
+    True
+    >>> sud[clone.getPhysicalPath()] == sud['cake']
+    True
+
+The fork view itself is accessible via the view permission.  This may be
+fine for private workspaces, but workspaces can be publicly viewable and
+so a check must be in place.  So we log out first.
+::
+
+    >>> tb.open(self.portal.absolute_url() + '/logout')
+
+Publish the cake too to make it publicly accessible.
+::
+
+    >>> from Products.CMFCore.utils import getToolByName
+    >>> from Products.PloneTestCase.setup import portal_owner
+    >>> self.setRoles(('Manager',))
+    >>> wft = getToolByName(self.portal, 'portal_workflow')
+    >>> wft.doActionFor(self.portal.workspace.cake, 'publish')
+    >>> self.setRoles(('Member', 'Authenticated',))
+
+Now navigate back to the fork page, and user should be redirected to a
+login page.
+::
+
+    >>> tb.open(cakeurl + '/fork')
+    >>> tb.url == cakeurl + '/fork'
+    False
+
+--------------
+Workspace Sync
+--------------
+
+After forking a workspace, a user may desire to sync with a source
+workspace or external one.  Log the browser user back in.
+::
+
+    >>> tb.open(portal_url + '/login')
+    >>> tb.getControl(name='__ac_name').value = default_user
+    >>> tb.getControl(name='__ac_password').value = default_password
+    >>> tb.getControl(name='submit').click()
+
+As we are using the dummy class, we can use our dummy identifiers as the
+URI to the workspaces.  Open and push button.
+::
+
+    >>> tb.open(usercake + '/sync')
+    >>> tb.getControl(name='form.widgets.external_uri').value = 'test'
+    >>> tb.getControl(name='form.buttons.syncWithTarget').click()
+
+The user workspace should now have the same file listing as test.
+::
+
+    >>> sud[clone.getPhysicalPath()] == sud['cake']
+    False
+    >>> sud[clone.getPhysicalPath()] == sud['test']
     True
 
 ---------------------
@@ -341,14 +415,6 @@ same user account that created this object.
     >>> updated = view()
     >>> print updated
     Updated
-
-Before moving on, this object should be published.
-::
-
-    >>> from Products.CMFCore.utils import getToolByName
-    >>> self.setRoles(('Manager',))
-    >>> wft = getToolByName(self.portal, 'portal_workflow')
-    >>> wft.doActionFor(self.portal.workspace.cake, 'publish')
 
 Now if we were to use a different user account, the main view should 
 have been the same as the original result from earlier.
