@@ -1393,9 +1393,7 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
             exposure_container = self.getDefaultExposureContainer()
             self.source_exposure = self.acquireSource(data['exposure_path'])
         except ProcessingError, e:
-            status = IStatusMessage(self.request)
-            status.addStatusMessage(unicode(e), 'error')
-            return
+            raise z3c.form.interfaces.ActionExecutionError(e)
 
         eaf = ExposureAddForm(exposure_container, None)
         data = {

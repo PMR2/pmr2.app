@@ -1304,7 +1304,7 @@ Or completely bogus values:
     ...                                         name='exposure_rollover')
     >>> result = view.form_instance()
     >>> request.response.getHeader('Location')
-    >>> 'statusmessages' in request
+    >>> 'There were some errors.' in result
     True
 
 Exposure Rollover and changed default exposure subpath
