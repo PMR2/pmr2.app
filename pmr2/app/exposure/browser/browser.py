@@ -45,6 +45,7 @@ from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.browser.interfaces import *
 
 from pmr2.app.interfaces import *
+from pmr2.app.interfaces.exceptions import *
 from pmr2.app.browser.interfaces import *
 from pmr2.app.annotation.interfaces import *
 from pmr2.app.annotation.factory import has_note, del_note
@@ -1055,7 +1056,7 @@ class ExposurePort(form.PostForm):
                 d['Subject'] = obj.Subject()
                 yield (p, d,)
             elif IExposureFolder.providedBy(obj):
-                # we are ignorning other folder types, let an adapter
+                # we are ignoring other folder types, let an adapter
                 # handle it below.
                 for i in self._export(obj, p):
                     yield i
@@ -1355,6 +1356,28 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
     def export_source(self):
         return self.source_exposure
 
+    # acquire default container
+    def getDefaultExposureContainer(self):
+        try:
+            exposure_container = restrictedGetExposureContainer()
+            self._gotExposureContainer = True
+        except:
+            raise ProcessingError(
+                u'Unauthorized to create new exposure at default location.')
+        return exposure_container
+
+    def acquireSource(self, exposure_path):
+        try:
+            source_exposure = self.context.restrictedTraverse(
+               exposure_path)
+        except Unauthorized:
+            raise ProcessingError(
+                u'Unauthorized to read exposure at selected location')
+        except (AttributeError, KeyError):
+            raise ProcessingError(
+                u'Cannot find exposure at selected location.')
+        return source_exposure
+
     @z3c.form.button.buttonAndHandler(_('Migrate'), name='apply')
     def handleMigrate(self, action):
         data, errors = self.extractData()
@@ -1366,35 +1389,13 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
                 'error')
             return
 
-        # acquire default container
         try:
-            exposure_container = restrictedGetExposureContainer()
-            self.exposure_container = exposure_container
-            self._gotExposureContainer = True
-        except Unauthorized:
+            exposure_container = self.getDefaultExposureContainer()
+            self.source_exposure = self.acquireSource(data['exposure_path'])
+        except ProcessingError, e:
             status = IStatusMessage(self.request)
-            status.addStatusMessage(
-                u'Unauthorized to create new exposure at default location.',
-                'error')
+            status.addStatusMessage(unicode(e), 'error')
             return
-
-        # acquire source
-        try:
-            self.source_exposure = self.context.restrictedTraverse(
-                data['exposure_path'])
-        except Unauthorized:
-            status = IStatusMessage(self.request)
-            status.addStatusMessage(
-                u'Unauthorized to read exposure at selected location',
-                'error')
-            return
-        except (AttributeError, KeyError):
-            status = IStatusMessage(self.request)
-            status.addStatusMessage(
-                u'Cannot find exposure at selected location.',
-                'error')
-            return
-
 
         eaf = ExposureAddForm(exposure_container, None)
         data = {
