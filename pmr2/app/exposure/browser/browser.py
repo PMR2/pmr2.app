@@ -3,7 +3,6 @@ import zope.interface
 import zope.component
 import zope.event
 import zope.lifecycleevent
-from zope.app.component.hooks import getSite
 from zope.schema.interfaces import RequiredMissing
 from zope.annotation.interfaces import IAnnotations
 from zope.publisher.browser import BrowserPage
@@ -20,20 +19,14 @@ from plone.z3cform import layout
 from plone.z3cform.fieldsets import group, extensible
 
 from Acquisition import aq_parent, aq_inner
-from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
-from Products.CMFCore import permissions
 from Products.statusmessages.interfaces import IStatusMessage
 
 from zope.app.pagetemplate.viewpagetemplatefile \
     import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
-
-from pmr2.idgen.interfaces import IIdGenerator
-
-from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from pmr2.app.workspace.browser.browser import WorkspaceLog
 from pmr2.app.workspace.interfaces import IStorage
@@ -56,41 +49,7 @@ from pmr2.app.browser import page
 from pmr2.app.browser import widget
 from pmr2.app.browser.layout import *
 
-from pmr2.app.exposure.browser.util import fieldvalues
-from pmr2.app.exposure.browser.util import viewinfo
-
-def restrictedGetExposureContainer():
-    # If there is a way to "magically" anchor this form at the
-    # target exposure container rather than the workspace, this
-    # would be unnecesary.
-    settings = zope.component.queryUtility(IPMR2GlobalSettings)
-    site = getSite()
-    exposure_container = site.restrictedTraverse(
-        str(settings.default_exposure_subpath), None)
-    if exposure_container is None:
-        # assume lack of permission.
-        raise Unauthorized('No permission to make exposures.')
-    security = getSecurityManager()
-    if not security.checkPermission(permissions.AddPortalContent, 
-            exposure_container):
-        raise Unauthorized('No permission to make exposures.')
-    return exposure_container
-
-def getGenerator(form):
-    # Using default id generator as specified by global settings. 
-    # Will need to change this if exposure containers can specify
-    # its own id generation scheme.
-    settings = zope.component.queryUtility(IPMR2GlobalSettings)
-    name = settings.default_exposure_idgen
-    idgen = zope.component.queryUtility(IIdGenerator, name=name)
-    if idgen is None:
-        status = IStatusMessage(form.request)
-        status.addStatusMessage(
-            u'The exposure id generator `%s` cannot be found; '
-            'please contact site administrator.' % name, 'error')
-        raise z3c.form.interfaces.ActionExecutionError(
-            ExposureIdGeneratorMissingError())
-    return idgen
+from pmr2.app.exposure.browser.util import *
 
 
 class ExposureAddForm(form.AddForm):
@@ -119,7 +78,6 @@ class ExposureAddForm(form.AddForm):
             exposure, workspace, path = helper.source()
             ctxobj.setTitle(workspace.title)
         
-
 ExposureAddFormView = layout.wrap_form(ExposureAddForm, 
     label="Exposure Create Form")
 
