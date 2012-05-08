@@ -3,6 +3,7 @@ import zope.component
 from zope.app.component.hooks import getSite
 
 import z3c.form.interfaces
+from plone.z3cform.interfaces import IFormWrapper
 
 from AccessControl import getSecurityManager, Unauthorized
 from Products.CMFCore import permissions
@@ -11,9 +12,11 @@ from Products.statusmessages.interfaces import IStatusMessage
 from pmr2.idgen.interfaces import IIdGenerator
 
 from pmr2.app.annotation.interfaces import IExposureFileEditableNote
+from pmr2.app.annotation.interfaces import IDocViewGen, IExposureFileAnnotator
+
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
-from pmr2.app.exposure.interfaces import *
+from pmr2.app.exposure.interfaces import IExposure, IExposureFile
 
 
 __all__ = [
@@ -21,6 +24,7 @@ __all__ = [
     'viewinfo',
     'restrictedGetExposureContainer',
     'getGenerator',
+    'moldExposure',
 ]
 
 def fieldvalues(obj):
@@ -81,4 +85,114 @@ def getGenerator(form):
         raise z3c.form.interfaces.ActionExecutionError(
             ExposureIdGeneratorMissingError())
     return idgen
+
+def moldExposure(exposure_context, request, exported):
+    """\
+    Mold an exposure structure at the exposure context, using the 
+    structure provided by the exported dictionary.
+    """
+
+    for path, fields in exported:
+        # We will be calling methods that modify internal states of that
+        # form, so we will require fresh instances for every file.
+        fgen = zope.component.getMultiAdapter(
+            (exposure_context, request), name='filegen')
+        # XXX when forms are properly redefined to not use wrappers,
+        # remove this
+        if IFormWrapper.providedBy(fgen):
+            fgen = fgen.form_instance
+
+        if 'views' in fields:
+            # since we may use this in a regenerative context, check
+            # whether file had been created.
+            try:
+                ctxobj = fgen.resolve_file(path)
+            except ValueError:
+                # I guess not.
+                d = {
+                    'filename': path,
+                }
+                fgen.createAndAdd(d)
+                # XXX using something that is magic in nature
+                # <form>.ctxobj is created by our customized object
+                # creation method for the form, and we are using 
+                # this informally declared object.
+                ctxobj = fgen.ctxobj
+
+            # generate docview
+            if fields['docview_generator']:
+                ctxobj.docview_gensource = fields['docview_gensource']
+                viewgen = zope.component.getUtility(
+                    IDocViewGen,
+                    name=fields['docview_generator'],
+                )
+                viewgen(ctxobj)()
+
+            for view, view_fields in fields['views']:
+                # generate views
+                annotatorFactory = zope.component.getUtility(
+                    IExposureFileAnnotator,
+                    name=view,
+                )
+                # pass in the view_fields regardless whether it is
+                # editable or not because editable notes will have
+                # data ignored.
+                data = view_fields and view_fields.items() or None
+                try:
+                    # Annotator factory can expect request to be
+                    # present.  Refer to commit d5d308226767
+                    annotator = annotatorFactory(ctxobj, request)
+                    annotator(data)
+                except RequiredMissing:
+                    # this does not cover cases where schema have
+                    # changed, or the old scheme into the new scheme.
+                    note = zope.component.queryAdapter(
+                        ctxobj,
+                        name=view
+                    )
+                    if note:
+                        # This editable note is missing some data,
+                        # probably because it never existed, bad
+                        # export data, updated schema or other
+                        # errors.  We ignore it for now, and purge
+                        # the stillborn note from the new object.
+                        del_note(ctxobj, view)
+                    else:
+                        # However, the automatic generated ones we
+                        # will continue to raise errors.  Maybe in
+                        # the future we group these together, or
+                        # make some way to adapt this to something
+                        # that will handle the migration case.
+                        raise
+
+            # only ExposureFiles have this
+            if IExposureFile.providedBy(ctxobj):
+                ctxobj.selected_view = fields['selected_view']
+                ctxobj.file_type = fields['file_type']
+                ctxobj.setSubject(fields['Subject'])
+
+            ctxobj.reindexObject()
+        else:
+
+            # XXX couldn't this just create the folder first for out
+            # of order exports?
+            container = fgen.resolve_folder(path)
+
+            if fields['docview_gensource']:
+                # there is a source
+                container.docview_gensource = fields['docview_gensource']
+                viewgen = zope.component.queryUtility(
+                    IDocViewGen,
+                    name=fields['docview_generator']
+                )
+                if viewgen:
+                    # and the view generator is still available
+                    viewgen(container)()
+
+            if IExposure.providedBy(container):
+                # only copy curation over, until this becomes an
+                # annotation.
+                container.curation = fields['curation']
+            container.setSubject(fields['Subject'])
+            container.reindexObject()
 

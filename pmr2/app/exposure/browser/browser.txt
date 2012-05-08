@@ -1019,7 +1019,8 @@ utility defined for this task.
     <Exposure at /.../exposure/...>
     >>> context.curation = {'key': ['value1', 'value2']}
     >>> context.setSubject(('Test',))
-    >>> porter = exposure.ExposurePort(context, None)
+    >>> request = TestRequest()
+    >>> porter = exposure.ExposurePort(context, request)
     >>> result = list(porter.export())
     >>> answer = [
     ...     ('example_model.cellml', {
