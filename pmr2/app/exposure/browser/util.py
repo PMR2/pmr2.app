@@ -1,6 +1,7 @@
 import zope.interface
 import zope.component
 from zope.app.component.hooks import getSite
+from zope.schema.interfaces import RequiredMissing
 
 import z3c.form.interfaces
 from plone.z3cform.interfaces import IFormWrapper
@@ -92,7 +93,21 @@ def moldExposure(exposure_context, request, exported):
     structure provided by the exported dictionary.
     """
 
+    def caststr(s):
+        # as the exported structure could be a json structure, according
+        # to that spec, all strings will be in unicode, however some of
+        # the internal types have been defined to be of type str.  This
+        # method provides a way to properly cast them, maybe extended to
+        # provide the correct encoding while retaining undefined types
+        # (such as null/None).
+
+        if not isinstance(s, basestring):
+            return s
+        # XXX forced casting for now
+        return str(s)
+
     for path, fields in exported:
+        path = caststr(path)
         # We will be calling methods that modify internal states of that
         # form, so we will require fresh instances for every file.
         fgen = zope.component.getMultiAdapter(
@@ -168,7 +183,7 @@ def moldExposure(exposure_context, request, exported):
             # only ExposureFiles have this
             if IExposureFile.providedBy(ctxobj):
                 ctxobj.selected_view = fields['selected_view']
-                ctxobj.file_type = fields['file_type']
+                ctxobj.file_type = caststr(fields['file_type'])
                 ctxobj.setSubject(fields['Subject'])
 
             ctxobj.reindexObject()

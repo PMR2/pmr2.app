@@ -1,4 +1,7 @@
 from os.path import join
+import json
+import urllib2
+
 import zope.interface
 import zope.component
 import zope.event
@@ -50,6 +53,7 @@ from pmr2.app.browser import widget
 from pmr2.app.browser.layout import *
 
 from pmr2.app.exposure.browser.util import *
+from pmr2.app.exposure.urlopen import urlopen
 
 
 class ExposureAddForm(form.AddForm):
@@ -88,10 +92,13 @@ class CreateExposureForm(form.AddForm, page.TraversePage):
     container from within a workspace.
     """
 
+    fields = z3c.form.field.Fields(ICreateExposureForm)
+
     _gotExposureContainer = False
 
     def create(self, data):
         # no data assignments here
+        self._data = data
         generator = getGenerator(self)
         eid = generator.next()
         return Exposure(eid)
@@ -126,6 +133,16 @@ class CreateExposureForm(form.AddForm, page.TraversePage):
         # so redirection via self.getURL will work.
         self.ctxobj = exposure
 
+        if 'export_uri' in self._data and self._data['export_uri']:
+            # XXX trap only the right exceptions.
+            self.moldURI(self._data['export_uri'])
+
+    def moldURI(self, uri):
+        u = urlopen(uri)
+        exported = json.load(u)
+        u.close()
+        moldExposure(self.ctxobj, self.request, exported)
+
     def render(self):
         if not self._gotExposureContainer:
             # we didn't finish.
@@ -142,7 +159,7 @@ class CreateExposureForm(form.AddForm, page.TraversePage):
             # Make sure this is a valid revision.
             storage.checkout(commit_id)
         except (PathInvalidError, RevisionNotFoundError,):
-            raise HTTPNotFound(self.context.title_or_id())
+            raise HTTPNotFound(commit_id)
 
         return super(CreateExposureForm, self).__call__(*a, **kw)
 
@@ -1058,6 +1075,16 @@ class ExposurePort(form.PostForm):
 
         exported = self.export()
         return moldExposure(target, self.request, exported)
+
+
+class ExposurePortJsonExport(ExposurePort):
+    """\
+    Export the structure as json.
+    """
+
+    def render(self):
+        result = list(self.export())
+        return json.dumps(result)
 
 
 class ExposurePortCommitIdForm(ExposurePort):

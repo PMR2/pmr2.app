@@ -1337,6 +1337,72 @@ source is used.
     ...     pp(answer)
     ...     pp(result)
 
+Exposure Rollover json export/import
+------------------------------------
+
+To facilitate interoperability with other PMR2 instances, a page that
+provide the structure of a given exposure can be exported.
+::
+
+    >>> import json
+    >>> request = TestRequest()
+    >>> view = zope.component.queryMultiAdapter((next_ex, request), 
+    ...                                         name='rollover_export')
+    >>> jsonstr = view()
+    >>> 'eef1e9af39a79b2fc47ef978f8e61e853bad54e2' in jsonstr
+    True
+
+For compatibility with testing, we override the default pmr2 exposure
+url opener with the one from the test browser so it can access the
+nohost urls.
+::
+
+    >>> from Testing.testbrowser import Browser
+    >>> b = Browser()
+    >>> import pmr2.app.exposure.urlopen
+    >>> pmr2.app.exposure.urlopen._opener = b.mech_browser
+
+Also make the item public.
+::
+
+    >>> self.setRoles(('Manager',))
+    >>> wft = getToolByName(self.portal, 'portal_workflow')
+    >>> wft.doActionFor(next_ex, 'publish')
+
+The mirror operation is naturally the import.  The appropriate form with
+the desired workspace context will be instantiated and called.
+::
+
+    >>> wkspc = self.portal.workspace['rdfmodel']
+    >>> request = TestRequest(form={
+    ...     'form.widgets.export_uri': nextURL + '/rollover_export',
+    ...     'form.buttons.add': 1,
+    ... })
+    >>> form = exposure.CreateExposureForm(wkspc, request)
+    >>> commit_id = rawrevs[-1]
+    >>> form.traverse_subpath = [commit_id]
+    >>> result = form()
+    >>> next = request.response.getHeader('Location')
+    >>> next
+    'http://.../e/...'
+
+Now use the browser to get this export and verify that it is also the 
+same as the jsonstr retrieved earlier.  Publish that new object first
+before viewing.
+::
+
+    >>> wft.doActionFor(form.ctxobj, 'publish')
+    >>> b.open(next + '/rollover_export')
+    >>> json.loads(b.contents) == json.loads(jsonstr)
+    True
+
+Restore the url opener back to default.
+::
+
+    >>> pmr2.app.exposure.urlopen._opener = None
+    >>> self.setRoles(('Member', 'Authenticated',))
+
+
 Miscellenous
 ------------
 
@@ -1429,6 +1495,7 @@ available for use.
     >>> self.setRoles(('Manager',))
     >>> wft = getToolByName(self.portal, 'portal_workflow')
     >>> wft.doActionFor(self.portal.dummy_type, 'publish')
+    >>> self.setRoles(('Member', 'Authenticated',))
 
 They will populate the selections available within the annotation by
 filetype form.

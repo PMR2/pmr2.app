@@ -26,6 +26,3 @@ def urlopen(url, data=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
             DisabledFileHandler, DisabledFTPHandler)
     # client headers?
     return _opener.open(url, data, timeout)
-
-
-

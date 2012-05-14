@@ -139,3 +139,15 @@ class IExposureRolloverForm(zope.interface.Interface):
     )
 
 
+class ICreateExposureForm(zope.interface.Interface):
+    """\
+    Interface for the form that will handle the generation of an
+    ExposureFile object.
+    """
+
+    export_uri = zope.schema.ASCIILine(
+        title=u'Exposure Export URI',
+        description=u'URI of an exported exposure structure, if importing '
+                     'from an external PMR2 instance.',
+        required=False,
+    )

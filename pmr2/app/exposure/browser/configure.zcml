@@ -92,6 +92,13 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <browser:page
+      for="pmr2.app.exposure.content.Exposure"
+      name="rollover_export"
+      class=".browser.ExposurePortJsonExport"
+      permission="zope2.View"
+      />
+
   <!-- Exposure File -->
 
   <browser:page
