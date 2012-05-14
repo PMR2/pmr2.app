@@ -45,18 +45,18 @@
  </action>
 
  <action title="Log" action_id="log" category="object" condition_expr=""
-    url_expr="string:${object_url}/@@log" visible="True"
+    url_expr="string:${object_url}/@@log" visible="False"
     i18n:attributes="title">
   <permission value="View"/>
  </action>
 
- <action title="Shortlog" action_id="shortlog" category="object" 
+ <action title="History" action_id="shortlog" category="object" 
     condition_expr="" url_expr="string:${object_url}/@@shortlog" visible="True"
     i18n:attributes="title">
   <permission value="View"/>
  </action>
 
- <action title="Manifest" action_id="file" category="object" condition_expr=""
+ <action title="Files" action_id="file" category="object" condition_expr=""
     url_expr="string:${object_url}/@@file" visible="True"
     i18n:attributes="title">
   <permission value="View"/>
@@ -66,6 +66,19 @@
     condition_expr="" url_expr="string:${object_url}/@@rawfile" visible="False"
     i18n:attributes="title">
   <permission value="View"/>
+ </action>
+
+ <action title="Fork" action_id="fork" category="object" 
+    condition_expr="" url_expr="string:${object_url}/@@fork" visible="True" 
+    i18n:attributes="title">
+  <permission value="View"/>
+ </action>
+
+ <action title="Synchronize" action_id="sync" 
+    category="object" condition_expr="" 
+    url_expr="string:${object_url}/@@sync" 
+    visible="True" i18n:attributes="title">
+  <permission value="Modify portal content"/>
  </action>
 
  <action title="Exposure Rollover" action_id="exposure_rollover" 
