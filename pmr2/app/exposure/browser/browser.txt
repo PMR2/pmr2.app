@@ -282,9 +282,9 @@ this feature using the testbrowser.  However, the testing stack does not
 work correctly due to the differences between this and the paste/wsgi
 framework that is used on an actual server, so an exception is raised
 instead, but we have enough information to figure out that the correct
-exception type (HTTPFound) is raised.
+exception type (Redirect) is raised.
 
-The reason why we raise HTTPFound is to skip the rest of the 
+The reason why we raise Redirect is to skip the rest of the 
 authentication steps for these nonexistential subpaths, not to mention
 it raises security error.  If the security error can be debugged, the
 standard way of using request.response.redirect(uri) can then be used.
@@ -610,13 +610,13 @@ result in a not found error.
     >>> view()
     Traceback (most recent call last):
     ...
-    HTTPNotFound: 404 Not Found
+    NotFound: ...
     ...
     >>> view.traverse_subpath = ['rdf']
     >>> view()
     Traceback (most recent call last):
     ...
-    HTTPNotFound: 404 Not Found
+    NotFound: ...
     ...
 
 Then apply on the edit form for the note, and the note will have its

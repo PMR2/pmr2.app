@@ -8,13 +8,13 @@ import zope.event
 import zope.lifecycleevent
 from zope.schema.interfaces import RequiredMissing
 from zope.annotation.interfaces import IAnnotations
+from zope.publisher.interfaces import NotFound
 from zope.publisher.browser import BrowserPage
 from zope.i18nmessageid import MessageFactory
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.app.container.interfaces import IContainer
 _ = MessageFactory("pmr2")
 
-from paste.httpexceptions import HTTPNotFound
 import z3c.form.field
 from z3c.form import button
 from plone.memoize.view import memoize
@@ -108,7 +108,7 @@ class CreateExposureForm(form.AddForm, page.TraversePage):
         The generic add method.
         """
         if not self.traverse_subpath:
-            raise HTTPNotFound(self.context.title_or_id())
+            raise NotFound(self.context, self.context.title_or_id())
 
         exposure = obj
         workspace = u'/'.join(self.context.getPhysicalPath())
@@ -151,7 +151,7 @@ class CreateExposureForm(form.AddForm, page.TraversePage):
 
     def __call__(self, *a, **kw):
         if not self.traverse_subpath:
-            raise HTTPNotFound(self.context.title_or_id())
+            raise NotFound(self.context, self.context.title_or_id())
 
         try:
             storage = zope.component.getAdapter(self.context, IStorage)
@@ -159,7 +159,7 @@ class CreateExposureForm(form.AddForm, page.TraversePage):
             # Make sure this is a valid revision.
             storage.checkout(commit_id)
         except (PathInvalidError, RevisionNotFoundError,):
-            raise HTTPNotFound(commit_id)
+            raise NotFound(self.context, commit_id)
 
         return super(CreateExposureForm, self).__call__(*a, **kw)
 
@@ -645,7 +645,7 @@ class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
             # or an unspecified note.
             # maybe later if note is None, we return a view that lists
             # links to the editable notes.
-            raise HTTPNotFound()
+            raise NotFound(self.context, self.context.title_or_id())
         self.note = note
 
         # This might be worth some thought.

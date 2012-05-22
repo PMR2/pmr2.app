@@ -14,7 +14,7 @@ _ = MessageFactory("pmr2")
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
-from paste.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
+from zope.publisher.interfaces import NotFound, Redirect, BadRequest
 
 import z3c.form.interfaces
 import z3c.form.field
@@ -200,9 +200,9 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
         try:
             results = self.protocol()
         except UnsupportedCommandError:
-            raise HTTPBadRequest('unsupported command')
+            raise BadRequest('unsupported command')
         except ProtocolError:
-            raise HTTPBadRequest('unsupported command')
+            raise BadRequest('unsupported command')
 
         # We are successful, check to see if modifications to the
         # underlying data was made and update the context if so.
@@ -228,7 +228,7 @@ class WorkspaceArchive(WorkspaceTraversePage):
             # as this is a deep linked page, if whatever was broken 
             # further up there wouldn't have been links down to this
             # point here.
-            raise HTTPNotFound(self.context.title_or_id())
+            raise NotFound(self.context, self.context.title_or_id())
 
         # ignoring subrepo functionality for now.
         # subrepo = self.request.form.get('subrepo', False)
@@ -236,12 +236,12 @@ class WorkspaceArchive(WorkspaceTraversePage):
         try:
             storage.checkout(self.request.get('rev', None))
         except RevisionNotFoundError:
-            raise HTTPNotFound(self.context.title_or_id())
+            raise NotFound(self.context, self.context.title_or_id())
 
         request_subpath = self.request.get('request_subpath', [])
         if not request_subpath:
             # no archive type
-            raise HTTPNotFound(self.context.title_or_id())
+            raise NotFound(self.context, self.context.title_or_id())
         type_ = request_subpath[0]
 
         # this is going to hurt so bad if this was a huge archive...
@@ -654,7 +654,7 @@ class FilePage(BaseFilePage):
         try:
             storage.checkout(self.request.get('rev', None))
         except RevisionNotFoundError:
-            raise HTTPNotFound(self.context.title_or_id())
+            raise NotFound(self.context, self.context.title_or_id())
 
         request_subpath = self.request.get('request_subpath', [])
 
@@ -662,7 +662,7 @@ class FilePage(BaseFilePage):
             data = storage.pathinfo('/'.join(request_subpath))
         except PathNotFoundError:
             # Only if really nothing is found.
-            raise HTTPNotFound(self.context.title_or_id())
+            raise NotFound(self.context, self.context.title_or_id())
 
         # trigger subrepo dir if external is defined.
         if data['external']:
@@ -674,7 +674,11 @@ class FilePage(BaseFilePage):
             keys = data['external']
             keys['view'] = self.__name__ or 'rawfile'
             target = '%(location)s/%(view)s/%(rev)s/%(path)s' % keys
-            raise HTTPFound(target)
+            try:
+                return self.request.response.redirect(target, trusted=True)
+            except TypeError:
+                # XXX wsgi response doesn't have trusted?
+                return self.request.response.redirect(target)
 
         # update rev using the storage rev
         self.request['rev'] = storage.rev
@@ -731,7 +735,7 @@ class WorkspaceRawfileView(FilePage):
                 # this is a rawfile view, this can be triggered by 
                 # attempting to access a directory.  we redirect to the
                 # standard file view.
-                raise HTTPFound(self.viewpath)
+                return self.request.response.redirect(self.viewpath)
 
             mimetype = data['mimetype']()
             # Force HTML to be served as plain text.
@@ -743,7 +747,7 @@ class WorkspaceRawfileView(FilePage):
             self.request.response.setHeader('Content-Length', data['size'])
             return contents
         else:
-            raise HTTPNotFound(self.context.title_or_id())
+            raise NotFound(self.context, self.context.title_or_id())
 
 
 class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):

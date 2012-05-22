@@ -1,5 +1,4 @@
 from zope.component import getMultiAdapter
-from paste.httpexceptions import HTTPNotFound
 
 from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName

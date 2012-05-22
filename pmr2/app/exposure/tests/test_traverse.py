@@ -3,10 +3,7 @@ from unittest import TestCase, TestSuite, makeSuite
 import zope.interface
 import zope.component
 from zope.interface.verify import verifyClass
-from zope.publisher.interfaces import IPublishTraverse
-from zope.publisher.interfaces import IRequest
-
-from paste.httpexceptions import HTTPNotFound, HTTPFound
+from zope.publisher.interfaces import IPublishTraverse, IRequest, Redirect
 
 from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
@@ -62,14 +59,9 @@ class TestExposureTraverser(TestCase):
     def traverseTester(self, traverser, request, name, location):
         view = traverser.publishTraverse(request, name)
         self.assertEqual(view.target, location)
-        try:
-            view()
-        except HTTPFound, e:
-            self.assertEqual(e.location(), location)
-        except Exception, e:
-            self.fail('Unexpected exception thrown: %s' % e)
-        else:
-            self.fail('HTTPFound not thrown')
+        view()
+        nlocation = request.response.getHeader('Location')
+        self.assertEqual(nlocation, location)
 
     def testInterface(self):
         self.failUnless(verifyClass(IPublishTraverse, ExposureTraverser))

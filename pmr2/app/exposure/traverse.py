@@ -3,8 +3,8 @@ import zope.component
 
 from zope.publisher.interfaces import IRequest
 from zope.publisher.browser import BrowserView
+from zope.publisher.interfaces import NotFound, Redirect
 from ZPublisher.BaseRequest import DefaultPublishTraverse
-from paste.httpexceptions import HTTPNotFound, HTTPFound
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.exposure.interfaces import IExposureSourceAdapter
@@ -18,8 +18,8 @@ class RedirectView(BrowserView):
 
     def __call__(self):
         if self.target:
-            raise HTTPFound(self.target)
-        raise HTTPNotFound()
+            return self.request.response.redirect(self.target)
+        raise NotFound()
 
 
 class ExposureTraverser(DefaultPublishTraverse):

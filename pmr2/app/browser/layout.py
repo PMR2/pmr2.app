@@ -10,7 +10,6 @@ import plone.z3cform
 from plone.z3cform import layout
 from plone.z3cform.templates import FormTemplateFactory
 from plone.z3cform.templates import ZopeTwoFormTemplateFactory
-from paste.httpexceptions import HTTPFound, HTTPNotFound, HTTPForbidden
 
 from Acquisition import aq_inner
 from AccessControl import Unauthorized

@@ -452,7 +452,7 @@ and watch it puke.
     >>> view()
     Traceback (most recent call last):
     ...
-    HTTPBadRequest: ...
+    BadRequest: ...
 
 However, writing to the protocol should fail as the user has no role or
 rights to the protocol write.
@@ -559,7 +559,7 @@ Bad revision results in not found.
     >>> testpage.update()
     Traceback (most recent call last):
     ...
-    HTTPNotFound: 404 Not Found
+    NotFound: ...
     ...
 
 As well as non-existent files at a specific revision.
@@ -572,7 +572,7 @@ As well as non-existent files at a specific revision.
     >>> testpage.update()
     Traceback (most recent call last):
     ...
-    HTTPNotFound: 404 Not Found
+    NotFound: ...
     ...
 
 --------------
@@ -620,7 +620,7 @@ Invalid revision should raise a 404.
     >>> result = page()
     Traceback (most recent call last):
     ...
-    HTTPNotFound: 404 Not Found
+    NotFound: ...
     ...
 
 As well as invalid file entries.
@@ -632,7 +632,7 @@ As well as invalid file entries.
     >>> result = page()
     Traceback (most recent call last):
     ...
-    HTTPNotFound: 404 Not Found
+    NotFound: ...
     ...
 
 Or traversing down a file as if a directory
@@ -644,7 +644,7 @@ Or traversing down a file as if a directory
     >>> result = page()
     Traceback (most recent call last):
     ...
-    HTTPNotFound: 404 Not Found
+    NotFound: ...
     ...
 
 ---------------
@@ -687,7 +687,7 @@ Invalid revision should raise a 404.
     >>> result = page()
     Traceback (most recent call last):
     ...
-    HTTPNotFound: 404 Not Found
+    NotFound: ...
     ...
 
 As well as invalid file entries.
@@ -699,7 +699,7 @@ As well as invalid file entries.
     >>> result = page()
     Traceback (most recent call last):
     ...
-    HTTPNotFound: 404 Not Found
+    NotFound: ...
     ...
 
 Or traversing down a file as if a directory.
@@ -711,7 +711,7 @@ Or traversing down a file as if a directory.
     >>> result = page()
     Traceback (most recent call last):
     ...
-    HTTPNotFound: 404 Not Found
+    NotFound: ...
     ...
 
 Obviously, this view cannot render directories at all.  Instead of 
@@ -722,11 +722,7 @@ throwing an error we redirect to the FileInfo view.
     >>> page = self.traverse(
     ...     self.portal.workspace.cake, browser.WorkspaceRawfileView, subpath)
     >>> page()
-    Traceback (most recent call last):
-    ...
-    HTTPFound: 302 Found
-    The resource was found at
-    http://nohost/plone/workspace/cake/file/0
+    'http://nohost/plone/workspace/cake/file/0'
 
 This should work for nested directories.
 ::
@@ -735,11 +731,7 @@ This should work for nested directories.
     >>> page = self.traverse(
     ...     self.portal.workspace.test, browser.WorkspaceRawfileView, subpath)
     >>> page()
-    Traceback (most recent call last):
-    ...
-    HTTPFound: 302 Found
-    The resource was found at
-    http://nohost/plone/workspace/test/file/3/dir1/dir2
+    'http://nohost/plone/workspace/test/file/3/dir1/dir2'
 
 ---------------
 XML Base Viewer
