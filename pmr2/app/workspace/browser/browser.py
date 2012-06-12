@@ -524,6 +524,8 @@ class WorkspaceForkForm(form.PostForm):
     Clone a remote workspace
     """
 
+    label = u'Create personal fork of this workspace'
+    fields = z3c.form.field.Fields(IWorkspaceFork)
     ignoreContext = True
 
     def update(self):
@@ -539,6 +541,11 @@ class WorkspaceForkForm(form.PostForm):
         if pm.isAnonymousUser():
             # don't want to deal with anonymous non GETs
             raise Unauthorized()
+
+        # set the id to the current value.
+        if 'form.widgets.id' not in self.request:
+            self.request['form.widgets.id'] = self.context.id
+
         return super(WorkspaceForkForm, self).update()
 
     @button.buttonAndHandler(u'Fork', name='fork')
@@ -547,10 +554,15 @@ class WorkspaceForkForm(form.PostForm):
         if errors:
             self.status = self.formErrorsMessage
             return
+
+        self._data = data
         try:
             ctxobj = self.cloneToUserWorkspace()
         except Exception, e:
-            raise z3c.form.interfaces.ActionExecutionError(e)
+            # XXX failure could be anything. Log error?
+            raise z3c.form.interfaces.ActionExecutionError(
+                ProcessingError(str(e)))
+
 
         if ctxobj is not None:
             self.request.response.redirect(ctxobj.absolute_url())
@@ -558,18 +570,18 @@ class WorkspaceForkForm(form.PostForm):
     def cloneToUserWorkspace(self):
         settings = zope.component.getUtility(IPMR2GlobalSettings)
         target_root = settings.getCurrentUserWorkspaceContainer()
+        newid = self._data['id']
 
         if target_root is None:
             raise ProcessingError('User workspace container not found.')
 
         # 1. Create workspace object.
-        if target_root.get(self.context.id) is not None:
+        if target_root.get(newid) is not None:
             raise ProcessingError('You already have a workspace with the '
-                'same name.  If they have the same origin, please use the '
-                'synchronize option of your copy of the workspace.')
-        obj = Workspace(self.context.id)
-        target_root[self.context.id] = obj
-        ctxobj = target_root[self.context.id]
+                'same name, please try again with another name.')
+        obj = Workspace(newid)
+        target_root[newid] = obj
+        ctxobj = target_root[newid]
         ctxobj.title = self.context.title
         ctxobj.description = self.context.description
         ctxobj.storage = self.context.storage

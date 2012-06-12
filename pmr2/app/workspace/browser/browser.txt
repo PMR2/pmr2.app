@@ -325,6 +325,17 @@ indeed cloned.
     >>> sud[clone.getPhysicalPath()] == sud['cake']
     True
 
+It should be possible to specify the name to avoid conflicting with one
+that's already been taken by the user.
+::
+
+    >>> tb.open(cakeurl + '/fork')
+    >>> tb.getControl(name='form.widgets.id').value = u'cake2'
+    >>> tb.getControl(name='form.buttons.fork').click()
+    >>> usercake2 = tb.url
+    >>> usercake2
+    'http://nohost/plone/w/test_user_1_/cake2'
+
 The fork view itself is accessible via the view permission.  This may be
 fine for private workspaces, but workspaces can be publicly viewable and
 so a check must be in place.  So we log out first.

@@ -95,7 +95,7 @@ class DummyStorageUtility(StorageUtility):
         if context.id in self._dummy_storage_data:
             # don't overwrite existing data
             return
-        self._dummy_storage_data[context.id] == [{}]
+        self._dummy_storage_data[context.id] = [{}]
 
     def acquireFrom(self, context):
         return DummyStorage(context)

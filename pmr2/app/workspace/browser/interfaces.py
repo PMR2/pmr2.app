@@ -29,6 +29,17 @@ class IWorkspaceStorageCreate(zope.interface.Interface):
     )
 
 
+class IWorkspaceFork(zope.interface.Interface):
+    """\
+    Interface for the Fork page.
+    """
+
+    id = ObjectId(
+        title=u'Id',
+        description=u'The identifier for the new workspace.',
+    )
+
+
 class IWorkspaceSync(zope.interface.Interface):
     """\
     Interface for workspace sync form.
