@@ -1,0 +1,45 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <!-- default view generators -->
+
+  <utility
+      name="safe_html"
+      component=".viewgen.HTMLDocViewGenFactory"
+      provides=".interfaces.IDocViewGen"
+      />
+
+  <utility
+      name="rest_to_html"
+      component=".viewgen.RSTDocViewGenFactory"
+      provides=".interfaces.IDocViewGen"
+      />
+
+  <!-- adapters to make view generation easy -->
+
+  <adapter
+      for=".interfaces.IExposureFileNote"
+      factory=".viewgen.ExposureFileNoteSourceAdapter"
+      provides="pmr2.app.exposure.interfaces.IExposureSourceAdapter"
+      />
+
+  <adapter
+      for="pmr2.app.exposure.interfaces.IExposureObject"
+      factory=".viewgen.ExposureDocViewGenSourceAdapter"
+      provides=".interfaces.IExposureDocViewGenSourceAdapter"
+      />
+
+  <adapter
+      for="pmr2.app.exposure.browser.interfaces.IExposureDocViewGenForm"
+      factory=".viewgen.ExposureDocViewGenFormSourceAdapter"
+      provides="pmr2.app.exposure.interfaces.IExposureSourceAdapter"
+      />
+
+  <adapter
+      for="pmr2.app.exposure.interfaces.IExposureObject"
+      factory=".viewgen.ExposureDocViewGenForm"
+      provides="pmr2.app.exposure.browser.interfaces.IExposureDocViewGenForm"
+      />
+
+</configure>
