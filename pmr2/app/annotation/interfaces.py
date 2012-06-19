@@ -148,6 +148,31 @@ class IDocViewGen(zope.interface.Interface):
         """
 
 
+class IDocGenNote(zope.interface.Interface):
+    """\
+    For the storage of sources and the generator used for the 
+    documentation of exposure type objects.
+    """
+
+    source = zope.schema.Choice(
+        title=u'Documentation File',
+        description=u'The file where the documentation resides in.  If this '
+                     'object is already a file, leaving this field unselected '
+                     'means the current file will provide the data from which '
+                     'the document will be generated from.',
+        vocabulary='pmr2.vocab.manifest',
+        required=False,
+    )
+
+    generator = zope.schema.Choice(
+        title=u'View Generator',
+        description=u'The selected generator will be used to attempt to ' \
+                     'generate text for the default document view.',
+        vocabulary='pmr2.vocab.DocViewGen',
+        required=False,
+    )
+
+
 class IExposurePortDataProvider(zope.interface.Interface):
     """\
     Provides generator whenever unknown datatypes are encountered.

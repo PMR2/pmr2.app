@@ -28,10 +28,12 @@ class DocViewGenBase(NamedUtilBase):
 
     mimetype = 'text/html'
 
-    def __init__(self, context):
+    def __init__(self, context, input=None):
         super(DocViewGenBase, self).__init__(context)
-        self.input = zope.component.getAdapter(
-            self.context, IExposureDocViewGenSourceAdapter).file()
+        self.input = input
+        if input is None:
+            self.input = zope.component.getAdapter(
+                self.context, IExposureDocViewGenSourceAdapter).file()
 
     def generateTitle(self):
         raise NotImplementedError

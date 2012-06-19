@@ -1,0 +1,23 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="pmr2.app">
+
+  <!-- Note storage -->
+
+  <adapter
+      for="pmr2.app.exposure.interfaces.IExposureFile"
+      factory=".note.DocGenNoteFactory"
+      provides="pmr2.app.annotation.interfaces.IDocGenNote"
+      name="docgen"
+      />
+
+  <!-- Note Generation -->
+
+  <utility
+      name="docgen"
+      component=".annotator.DocGenAnnotatorFactory"
+      provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
+      />
+
+</configure>

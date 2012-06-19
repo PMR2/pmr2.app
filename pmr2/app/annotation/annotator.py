@@ -8,9 +8,10 @@ from zope.annotation import factory
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 
+from pmr2.app.workspace.interfaces import IStorage
 from pmr2.app.exposure.interfaces import IExposureSourceAdapter
 from pmr2.app.annotation.interfaces import *
-from pmr2.app.factory import NamedUtilBase
+from pmr2.app.factory import NamedUtilBase, named_factory
 
 
 class ExposureFileAnnotatorBase(NamedUtilBase):
@@ -24,6 +25,7 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
         # on another one.
         self.__context = context
         self.__request = request
+        self.data = None
 
     @property
     def input(self):
@@ -100,6 +102,8 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
         the method generate will be called.
         """
 
+        self.data = data
+
         if not IExposureFileEditableNote.providedBy(self.note):
             data = self.generate()
             # XXX could verify all the data is generated based on what
@@ -161,3 +165,35 @@ class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
         return (
             ('text', unicode(graph.serialize(format=self.format))),
         )
+
+
+class DocGenAnnotator(ExposureFileAnnotatorBase):
+    """\
+    Documentation generator annotator.
+    """
+
+    zope.interface.implements(IExposureFileAnnotator, 
+                              IExposureFilePostEditAnnotator)
+    title = u'Documentation Generator'
+    label = u'Documentation'
+    description = u''
+    for_interface = IDocGenNote
+    edited_names = ('source', 'generator',)
+
+    def generate(self):
+        # set to note.
+        d = dict(self.data)
+        # XXX Fix the implementation of this thing so I don't have to
+        # manually assign the file like this...
+        dvgu = zope.component.getUtility(IDocViewGen, name=d['generator'])
+        exp, workspace, p = zope.component.getAdapter(self.context, 
+            IExposureSourceAdapter).source()
+        storage = zope.component.queryAdapter(workspace, IStorage)
+        docviewgen = dvgu(self.context, storage.file(d['source']))
+        docviewgen()
+
+        # As this is what's really needed after we affect the context.
+        return self.data
+
+
+DocGenAnnotatorFactory = named_factory(DocGenAnnotator)

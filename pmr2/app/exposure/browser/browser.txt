@@ -1464,7 +1464,9 @@ The data could also be edited via the edit form.
     ...     form={
     ...         'form.widgets.id': u'dummy_type',
     ...         'form.widgets.title': u'Dummy Type',
-    ...         'form.widgets.views': u'rot13\npost_edited_note\nedited_note',
+    ...         'form.widgets.views': u'rot13\n'
+    ...                                'post_edited_note\n'
+    ...                                'edited_note',
     ...         'form.widgets.select_view': u'post_edited_note',
     ...         'form.widgets.tags': u'Notes',
     ...         'form.buttons.apply': 1,
@@ -1691,3 +1693,74 @@ Now for the actual request to change values
     >>> result = view.form_instance()
     >>> ef.views
     [u'edited_note', u'rdfxml', u'rdfturtle']
+
+
+----------------------------------------
+Document Generation (Annotation Version)
+----------------------------------------
+
+As part of the effort to unify the interfaces, the document generator is
+moved into the annotation / exposure notes infrastructure.  Here we add
+the docgen into our type.
+::
+
+    >>> efile_new.setText(u'')  # Reset due to unclean data.
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.id': u'docgen_type',
+    ...         'form.widgets.title': u'Docgen Type',
+    ...         'form.widgets.views': u'docgen',
+    ...         'form.widgets.select_view': u'',
+    ...         'form.widgets.tags': u'',
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = exposure.ExposureFileTypeAddForm(self.portal, request)
+    >>> testform.update()
+    >>> self.portal.docgen_type.views
+    [u'docgen']
+    >>> self.setRoles(('Manager',))
+    >>> wft = getToolByName(self.portal, 'portal_workflow')
+    >>> wft.doActionFor(self.portal.docgen_type, 'publish')
+    >>> self.setRoles(('Member', 'Authenticated',))
+
+Now we use this modified type for a file.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.eftypes': [u'Docgen Type'],
+    ...         'form.buttons.next': 1,
+    ...     })
+    >>> form = exposure.ExposureFileTypeChoiceForm(efile_new, request)
+    >>> result = form()
+    >>> efile_new.views
+    [u'docgen']
+    >>> efile_new.file_type
+    '/plone/docgen_type'
+
+The fields should have been properly added.
+::
+
+    >>> request = TestRequest()
+    >>> form = exposure.ExposureFileTypeAnnotatorForm(efile_new, request)
+    >>> form.update()
+    >>> [g.fields.keys() for g in form.groups]
+    [['docgen.source', 'docgen.generator']]
+
+Now we submit the form.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.docgen.source': u'component/docs/index.html',
+    ...         'form.widgets.docgen.generator': u'safe_html',
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> form = exposure.ExposureFileTypeAnnotatorForm(efile_new, request)
+    >>> result = form()
+
+Data should be assigned properly.
+::
+
+    >>> efile_new.getText()
+    '\n<p>Lorem ipsum dolar sit amet</p>\n'

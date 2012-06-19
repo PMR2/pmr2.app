@@ -1,7 +1,6 @@
 import zope.interface
 import zope.component
 from zope.app.container.contained import Contained
-from zope.annotation import factory
 from zope.annotation.interfaces import IAnnotations
 from zope.schema import fieldproperty
 from persistent import Persistent
@@ -11,6 +10,7 @@ from Products.CMFCore.utils import getToolByName
 from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.annotation.interfaces import *
+from pmr2.app.annotation.factory import note_factory
 
 
 # Basic support for ExposureFileNote annotation adapters.
@@ -41,8 +41,6 @@ class StandardExposureFile(ExposureFileNoteBase):
 
     zope.interface.implements(IStandardExposureFile)
 
-StandardExposureFileFactory = factory(StandardExposureFile)
-
 
 class RawTextNote(ExposureFileNoteBase):
     """\
@@ -54,6 +52,18 @@ class RawTextNote(ExposureFileNoteBase):
 
     def raw_text(self):
         return self.text
+
+
+class DocGenNote(ExposureFileNoteBase):
+    """\
+    See IRawText interface.
+    """
+
+    zope.interface.implements(IDocGenNote)
+    source = fieldproperty.FieldProperty(IDocGenNote['source'])
+    generator = fieldproperty.FieldProperty(IDocGenNote['generator'])
+
+DocGenNoteFactory = note_factory(DocGenNote, 'docgen')
 
 
 class GroupedNote(ExposureFileNoteBase):
