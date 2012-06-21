@@ -181,7 +181,6 @@ class DocGenAnnotator(ExposureFileAnnotatorBase):
     edited_names = ('source', 'generator',)
 
     def generate(self):
-        # set to note.
         d = dict(self.data)
         # XXX Fix the implementation of this thing so I don't have to
         # manually assign the file like this...
@@ -189,11 +188,11 @@ class DocGenAnnotator(ExposureFileAnnotatorBase):
         exp, workspace, p = zope.component.getAdapter(self.context, 
             IExposureSourceAdapter).source()
         storage = zope.component.queryAdapter(workspace, IStorage)
+        # XXX specifically this thing.
         docviewgen = dvgu(self.context, storage.file(d['source']))
         docviewgen()
 
-        # As this is what's really needed after we affect the context.
+        # We don't need to change the data that got passed in.
         return self.data
-
 
 DocGenAnnotatorFactory = named_factory(DocGenAnnotator)
