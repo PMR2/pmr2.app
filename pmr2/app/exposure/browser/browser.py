@@ -463,6 +463,8 @@ class ExposureFileTypeAnnotatorForm(
     the resulting data will be inconsistent.
     """
 
+    enable_form_tabbing = False
+
     def __init__(self, *a, **kw):
         super(ExposureFileTypeAnnotatorForm, self).__init__(*a, **kw)
         self.groups = []
