@@ -1,0 +1,50 @@
+========================
+Exposure Creation Wizard
+========================
+
+In an effort to streamline the exposure creation process, a wizard that
+unifies the disparate forms (documentation, file type, annotations, 
+rollover) into a unified form that can serve as the base form for users
+to interact with.  This is based on the rollover interface and data
+structure used in the rollover interface.  There are a few components,
+which includes an annotation object on the exposure object containing a
+work-in-progress exposure structure, the json export version of this 
+item to allow more dynamic user experience, along with the javascript
+interactive controls that interface with the underlying form.  The
+structure would also need to be reused later if necessary, allowing the
+user to regenerate the form or load a new exposure structure from the
+objects created through other means.
+
+To demonstrate, we initialize the set of imports.
+::
+
+    >>> import zope.interface
+    >>> import zope.component
+    >>> from Products.CMFCore.utils import getToolByName
+    >>> from plone.z3cform.tests import setup_defaults
+    >>> from pmr2.testing.base import TestRequest
+    >>> from pmr2.app.exposure.browser import browser as exposure
+    >>> from pmr2.app.workspace import browser as workspace
+    >>> from pmr2.app.interfaces import *
+    >>> from pmr2.app.workspace.content import *
+    >>> from pmr2.app.workspace.interfaces import *
+    >>> from pmr2.app.exposure.content import *
+    >>> from pmr2.app.exposure.interfaces import *
+
+    >>> from pmr2.app.exposure.browser import wizard
+
+Find the exposure container
+::
+
+    >>> self.portal.exposure
+    <ExposureContainer at /plone/exposure>
+
+Render the wizard:
+::
+
+    >>> request = TestRequest()
+    >>> context = self.portal.exposure['1']
+    >>> form = wizard.ExposureWizard(context, request)
+    >>> result = form()
+    >>> 'export_uri' in result
+    True

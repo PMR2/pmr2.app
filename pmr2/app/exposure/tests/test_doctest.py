@@ -42,6 +42,13 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
+        # Exposure creation wizard
+        ztc.ZopeDocFileSuite(
+            'browser/wizard.txt', package='pmr2.app.exposure',
+            test_class=CompleteDocTestCase,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
+        ),
+
         # Catalog
         ztc.ZopeDocFileSuite(
             'catalog.txt', package='pmr2.app.exposure',
