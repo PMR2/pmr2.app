@@ -1,0 +1,11 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <adapter
+      for=".interfaces.IExposure"
+      factory=".wizard.ExposureWizardFactory"
+      provides=".interfaces.IExposureWizard"
+      />
+
+</configure> 

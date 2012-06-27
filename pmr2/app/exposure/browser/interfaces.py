@@ -151,3 +151,9 @@ class ICreateExposureForm(zope.interface.Interface):
                      'from an external PMR2 instance.',
         required=False,
     )
+
+
+class IExposureWizardForm(zope.interface.Interface):
+    """
+    Marker for Exposure Wizard Form.
+    """

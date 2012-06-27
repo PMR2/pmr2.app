@@ -8,4 +8,8 @@
       provides="pmr2.app.exposure.browser.interfaces.IExposureFileSelectView"
       />
 
+  <!-- form factory -->
+
+  <adapter factory=".templates.wizard_form_factory" />
+
 </configure> 

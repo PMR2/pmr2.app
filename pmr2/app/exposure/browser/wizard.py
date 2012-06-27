@@ -2,6 +2,10 @@ import json
 
 import zope.interface
 import zope.component
+from zope.publisher.interfaces.browser import IBrowserRequest
+
+from zope.i18nmessageid import MessageFactory
+_ = MessageFactory("pmr2")
 
 import z3c.form
 
@@ -13,19 +17,23 @@ from pmr2.app.browser import page
 from pmr2.app.browser import widget
 from pmr2.app.browser.layout import *
 
+from pmr2.app.exposure.interfaces import IExposure
 from pmr2.app.exposure.browser.interfaces import ICreateExposureForm
+from pmr2.app.exposure.browser.interfaces import IExposureFileGenForm
+from pmr2.app.exposure.browser.interfaces import IExposureWizardForm
 from pmr2.app.exposure.browser.workspace import CreateExposureForm
+from pmr2.app.exposure.browser.browser import ExposureFileTypeAnnotatorForm
+from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
 
-class ExposureWizard(form.EditForm):
+class ExposureWizardForm(form.PostForm):
     """\
     The exposure wizard.
     """
+
+    zope.interface.implements(IExposureWizardForm)
 
     # XXX temporary.
     ignoreContext = True
     fields = z3c.form.field.Fields(ICreateExposureForm)
 
-ExposureWizardView = layout.wrap_form(ExposureWizard,
-    __wrapper_class=TraverseFormWrapper,
-    label="Exposure Wizard")

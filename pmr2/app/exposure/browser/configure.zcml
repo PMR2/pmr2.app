@@ -99,6 +99,13 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="pmr2.app.exposure.interfaces.IExposure"
+      name="wizard"
+      class=".wizard.ExposureWizardForm"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <!-- Exposure File -->
 
   <browser:page

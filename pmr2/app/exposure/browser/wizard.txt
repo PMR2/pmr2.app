@@ -33,18 +33,27 @@ To demonstrate, we initialize the set of imports.
 
     >>> from pmr2.app.exposure.browser import wizard
 
-Find the exposure container
+We acquire an exposure object that's already been created.
 ::
 
-    >>> self.portal.exposure
-    <ExposureContainer at /plone/exposure>
+    >>> context = self.portal.exposure['1']
+    >>> context
+    <Exposure at /plone/exposure/1>
+
+Then adapt that into an exposure wizard, which provides some helper
+methods and the place to store a work-in-progress exposure structure.
+::
+
+    >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
+    >>> IExposureWizard.providedBy(ewiz)
+    True
 
 Render the wizard:
 ::
 
     >>> request = TestRequest()
     >>> context = self.portal.exposure['1']
-    >>> form = wizard.ExposureWizard(context, request)
+    >>> form = wizard.ExposureWizardForm(context, request)
     >>> result = form()
     >>> 'export_uri' in result
     True

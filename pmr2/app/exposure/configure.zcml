@@ -15,6 +15,7 @@
   <include file="table.zcml" />
   <include file="traverse.zcml" />
   <include file="vocab.zcml" />
+  <include file="wizard.zcml" />
 
   <include package=".portlets" />
 

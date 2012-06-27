@@ -1,0 +1,4 @@
+<metal:use use-macro="context/@@ploneform-macros/titlelessform">
+    <metal:main fill-slot="formbottom">
+    </metal:main>
+</metal:use>
