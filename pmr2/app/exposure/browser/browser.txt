@@ -12,8 +12,8 @@ directories required should have been already set up by the script.
     >>> from Products.CMFCore.utils import getToolByName
     >>> from plone.z3cform.tests import setup_defaults
     >>> from pmr2.testing.base import TestRequest
-    >>> from pmr2.app.exposure.browser import browser as exposure
-    >>> from pmr2.app.workspace import browser as workspace
+    >>> from pmr2.app.exposure.browser import browser
+    >>> from pmr2.app.exposure.browser import workspace
     >>> from pmr2.app.interfaces import *
     >>> from pmr2.app.workspace.content import *
     >>> from pmr2.app.workspace.interfaces import *
@@ -38,7 +38,7 @@ Exposure container creates new exposure, we test it here.
     ...         'form.widgets.commit_id': u'00000000',
     ...         'form.buttons.add': 1,
     ...     })
-    >>> testform = exposure.ExposureAddForm(
+    >>> testform = browser.ExposureAddForm(
     ...     self.portal.exposure, request)
     >>> testform.update()
     >>> oid = self.portal.exposure.objectIds()[0]
@@ -53,16 +53,17 @@ Exposure object is created with fields properly populated.
     >>> self.portal.exposure[oid].commit_id
     u'00000000'
 
------------------
-Exposure creation
------------------
+--------------------------------------------
+Exposure creation from a workspace changeset
+--------------------------------------------
 
-Exposures can be created via the creation form defined here.
+Exposures can be created via the creation form defined for usage from
+a workspace via this traverse enabled form.
 ::
 
     >>> wkspc = self.portal.workspace.pmr2hgtest
     >>> request = TestRequest(form={'form.buttons.add': 1,})
-    >>> form = exposure.CreateExposureForm(wkspc, request)
+    >>> form = workspace.CreateExposureForm(wkspc, request)
     >>> commit_id = self.pmr2hgtest_revs[-1]
     >>> form.traverse_subpath = [commit_id]
     >>> result = form()
@@ -255,7 +256,7 @@ a workspace with actual data.
     ...         'form.widgets.commit_id': rev,
     ...         'form.buttons.add': 1,
     ...     })
-    >>> testform = exposure.ExposureAddForm(
+    >>> testform = browser.ExposureAddForm(
     ...     self.portal.exposure, request)
     >>> testform.update()
     >>> exp_id = testform._data['id']
@@ -269,7 +270,7 @@ return a fairly blank result and not trigger any redirection.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureInfo(context, request)
+    >>> view = browser.ExposureInfo(context, request)
     >>> view.update()
     >>> print view.render()
     <div></div>
@@ -292,13 +293,13 @@ standard way of using request.response.redirect(uri) can then be used.
 
     # XXX this is a broken test because login is required...
     # >>> from Products.Five.testbrowser import Browser
-    # >>> browser = Browser()
+    # >>> b = Browser()
     # >>> target = context.absolute_url() + '/file1'
-    # >>> browser.open(target)
+    # >>> b.open(target)
     # Traceback (most recent call last):
     # ...
     # HTTPError: HTTP Error 500: Internal Server Error
-    # >>> browser.headers['bobo-exception-type']
+    # >>> b.headers['bobo-exception-type']
     # 'HTTPFound'
 
 We need to wrap around one of the interesting files inside with the
@@ -312,7 +313,7 @@ standard ExposureFile object.
     ...         'form.widgets.filename': [file1],
     ...         'form.buttons.add': 1,
     ...     })
-    >>> testform = exposure.ExposureFileGenForm(context, request)
+    >>> testform = browser.ExposureFileGenForm(context, request)
     >>> testform.update()
     >>> efile1 = context[file1]
     >>> efile1
@@ -340,7 +341,7 @@ Test it with the default view.  There should be no adapters added yet.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileInfo(context[file1], request)
+    >>> view = browser.ExposureFileInfo(context[file1], request)
     >>> print view.content()
     <h3>Views generated for this file</h3>
     <dl>
@@ -351,7 +352,7 @@ this exposure file.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureInfo(context, request)
+    >>> view = browser.ExposureInfo(context, request)
     >>> view.update()
     >>> result = view.render()
     >>> request.response.getHeader('Location')
@@ -362,7 +363,7 @@ workspace.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileRedirectView(context[file1], request)
+    >>> view = browser.ExposureFileRedirectView(context[file1], request)
     >>> result = view()
     >>> request.response.getHeader('Location')
     'http://.../workspace/pmr2hgtest/@@rawfile/.../file1'
@@ -384,7 +385,7 @@ Now we do the same with our set of data, with more content.
     ...         'form.widgets.commit_id': rev,
     ...         'form.buttons.add': 1,
     ...     })
-    >>> testform = exposure.ExposureAddForm(
+    >>> testform = browser.ExposureAddForm(
     ...     self.portal.exposure, request)
     >>> testform.update()
     >>> exp_id = testform._data['id']
@@ -403,7 +404,7 @@ files with the standard ExposureFile object.
     ...         'form.widgets.filename': [file1],
     ...         'form.buttons.add': 1,
     ...     })
-    >>> testform = exposure.ExposureFileGenForm(context, request)
+    >>> testform = browser.ExposureFileGenForm(context, request)
     >>> testform.update()
     >>> context[file1]
     <ExposureFile at ...>
@@ -415,7 +416,7 @@ see whether the form has the annotator we needed.
 
     >>> filectx = context[file1]
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
+    >>> view = browser.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
     >>> 'rdfturtle' in result
     True
@@ -431,7 +432,7 @@ Good, now we use that transform to generate the Turtle RDF.
     ...         'form.widgets.annotators': [u'rdfturtle'],
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
+    >>> view = browser.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
     >>> result == ''
     True
@@ -440,7 +441,7 @@ Now the default view should show the new adapter.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileInfo(context[file1], request)
+    >>> view = browser.ExposureFileInfo(context[file1], request)
     >>> print view.content()
     <h3>Views generated for this file</h3>
     <dl>
@@ -458,7 +459,7 @@ data (should not really be part of code).
 
     >>> filectx = context[file1]
     >>> request = TestRequest()
-    >>> view = exposure.RawTextNote(filectx, request)
+    >>> view = browser.RawTextNote(filectx, request)
     >>> view.__name__ = 'rdfturtle'
     >>> print view()
     <h3>...</h3>
@@ -476,7 +477,7 @@ We will do the same thing with the xml format.
     ...         'form.widgets.annotators': [u'rdfxml'],
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
+    >>> view = browser.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
     >>> result == ''
     True
@@ -485,7 +486,7 @@ Now the default view should show the new adapter.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileInfo(context[file1], request)
+    >>> view = browser.ExposureFileInfo(context[file1], request)
     >>> print view.content()
     <h3>Views generated for this file</h3>
     <dl>
@@ -504,7 +505,7 @@ they are just data (should not really be part of code).
 
     >>> filectx = context[file1]
     >>> request = TestRequest()
-    >>> view = exposure.RawTextNote(filectx, request)
+    >>> view = browser.RawTextNote(filectx, request)
     >>> view.__name__ = 'rdfxml'
     >>> print view()
     <h3>...</h3>
@@ -518,7 +519,7 @@ other note class because it has a distinct annotation key.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.RawTextNote(filectx, request)
+    >>> view = browser.RawTextNote(filectx, request)
     >>> view.__name__ = 'rdfturtle'
     >>> print view()
     <h3>...</h3>
@@ -579,7 +580,7 @@ editing first on the note editor/annotator
     ...         'form.widgets.annotators': [u'edited_note'],
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> view = exposure.ExposureFileAnnotatorForm(filectx, request)
+    >>> view = browser.ExposureFileAnnotatorForm(filectx, request)
     >>> result = view()
     >>> result == ''
     True
@@ -593,7 +594,7 @@ what the request would see here and render the note edit view.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileNoteEditForm(filectx, request)
+    >>> view = browser.ExposureFileNoteEditForm(filectx, request)
     >>> view.traverse_subpath = ['edited_note']
     >>> result = view()
     >>> 'note' in result
@@ -605,7 +606,7 @@ result in a not found error.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileNoteEditForm(filectx, request)
+    >>> view = browser.ExposureFileNoteEditForm(filectx, request)
     >>> view.traverse_subpath = []
     >>> view()
     Traceback (most recent call last):
@@ -629,7 +630,7 @@ field updated.
     ...         'form.widgets.note': note,
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> view = exposure.ExposureFileNoteEditForm(filectx, request)
+    >>> view = browser.ExposureFileNoteEditForm(filectx, request)
     >>> view.traverse_subpath = ['edited_note']
     >>> result = view()
 
@@ -666,7 +667,7 @@ note.  We will do this on a new file.
     ...         'form.widgets.text': text,
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> view = exposure.ExposureFileNoteEditForm(readmectx, request)
+    >>> view = browser.ExposureFileNoteEditForm(readmectx, request)
     >>> view.traverse_subpath = ['post_edited_note']
     >>> result = view()
 
@@ -697,7 +698,7 @@ we have not looked at yet.  Let's see what happens when we try that.
     ...         'form.widgets.filename': [file2],
     ...         'form.buttons.add': 1,
     ...     })
-    >>> testform = exposure.ExposureFileGenForm(context, request)
+    >>> testform = browser.ExposureFileGenForm(context, request)
     >>> testform.update()
     >>> efile2 = context[path2[0]][path2[1]]
     >>> efile2
@@ -708,7 +709,7 @@ workspace.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileRedirectView(efile2, request)
+    >>> view = browser.ExposureFileRedirectView(efile2, request)
     >>> result = view()
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/module.cellml'
@@ -718,7 +719,7 @@ redirection to much like the root object.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureInfo(context[path2[0]], request)
+    >>> view = browser.ExposureInfo(context[path2[0]], request)
     >>> view.update()
     >>> result = view.render()
     >>> request.response.getHeader('Location')
@@ -737,7 +738,7 @@ remain accessible.
     ...         'form.widgets.filename': [file3],
     ...         'form.buttons.add': 1,
     ...     })
-    >>> testform = exposure.ExposureFileGenForm(context, request)
+    >>> testform = browser.ExposureFileGenForm(context, request)
     >>> testform.update()
     >>> efile3 = context[path3[0]][path3[1]][path3[2]]
     >>> efile3
@@ -750,7 +751,7 @@ Again, redirection should remain in place.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileRedirectView(efile3, request)
+    >>> view = browser.ExposureFileRedirectView(efile3, request)
     >>> result = view()
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/docs/index.html'
@@ -767,11 +768,11 @@ the redirection view.
     ...         'form.widgets.filename': [file4],
     ...         'form.buttons.add': 1,
     ...     })
-    >>> testform = exposure.ExposureFileGenForm(context, request)
+    >>> testform = browser.ExposureFileGenForm(context, request)
     >>> testform.update()
     >>> efile4 = context[path4[0]][path4[1]][path4[2]]
     >>> request = TestRequest()
-    >>> view = exposure.ExposureFileRedirectView(efile4, request)
+    >>> view = browser.ExposureFileRedirectView(efile4, request)
     >>> result = view()
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/docs/index.rst'
@@ -782,7 +783,7 @@ view.
 ::
 
     >>> request = TestRequest()
-    >>> view = exposure.ExposureInfo(context[path4[0]][path4[1]], request)
+    >>> view = browser.ExposureInfo(context[path4[0]][path4[1]], request)
     >>> view.update()
     >>> result = view.render()
     >>> request.response.getHeader('Location')
@@ -818,7 +819,7 @@ For the HTML file
     ...         'form.widgets.docview_generator': [u'safe_html'],
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> view = exposure.ExposureDocViewGenForm(filectx, request)
+    >>> view = browser.ExposureDocViewGenForm(filectx, request)
     >>> result = view()
     >>> filectx.Title()
     'Simple HTML'
@@ -837,7 +838,7 @@ For the reStructureText file
     ...         'form.widgets.docview_generator': [u'rest_to_html'],
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> view = exposure.ExposureDocViewGenForm(filectx, request)
+    >>> view = browser.ExposureDocViewGenForm(filectx, request)
     >>> result = view()
     >>> filectx.getText()
     '<h2 class="title">Simple reStructureText</h2>\n<p>...</p>\n'
@@ -1020,7 +1021,7 @@ utility defined for this task.
     >>> context.curation = {'key': ['value1', 'value2']}
     >>> context.setSubject(('Test',))
     >>> request = TestRequest()
-    >>> porter = exposure.ExposurePort(context, request)
+    >>> porter = browser.ExposurePort(context, request)
     >>> result = list(porter.export())
     >>> answer = [
     ...     ('example_model.cellml', {
@@ -1104,7 +1105,7 @@ First we need need a new exposure object.
 ::
 
     >>> old_ex = context
-    >>> eaf = exposure.ExposureAddForm(self.portal.exposure, None)
+    >>> eaf = browser.ExposureAddForm(self.portal.exposure, None)
     >>> rawrev = rawrevs[2]
     >>> rev = unicode(rawrev)
     >>> data = {
@@ -1124,7 +1125,7 @@ Now we use the porter to mold the new exposure based on what it knows.
 ::
 
     >>> porter.mold(new_ex)
-    >>> newport = exposure.ExposurePort(new_ex, None)
+    >>> newport = browser.ExposurePort(new_ex, None)
     >>> result = list(newport.export())
     >>> if not result == answer:
     ...     pp(answer)
@@ -1148,7 +1149,7 @@ supply an existing commit id.
     http://.../exposure/...
     >>> new_id = nextURL.split('/')[-1]
     >>> new_ex = self.portal.exposure[new_id]
-    >>> newport = exposure.ExposurePort(new_ex, None)
+    >>> newport = browser.ExposurePort(new_ex, None)
     >>> result = list(newport.export())
     >>> if not result == answer:
     ...     pp(answer)
@@ -1184,7 +1185,7 @@ commit.
     http://.../exposure/...
     >>> new_id = nextURL.split('/')[-1]
     >>> new_ex = self.portal.exposure[new_id]
-    >>> newport = exposure.ExposurePort(new_ex, None)
+    >>> newport = browser.ExposurePort(new_ex, None)
     >>> result = list(newport.export())
     >>> if not result == answer:
     ...     pp(answer)
@@ -1234,7 +1235,7 @@ Then we can submit the form, and see that the data still match.
     http://.../exposure/...
     >>> next_id = nextURL.split('/')[-1]
     >>> next_ex = self.portal.exposure[next_id]
-    >>> nextport = exposure.ExposurePort(next_ex, None)
+    >>> nextport = browser.ExposurePort(next_ex, None)
     >>> result = list(nextport.export())
     >>> if not result == answer:
     ...     pp(answer)
@@ -1331,7 +1332,7 @@ source is used.
     http://.../e/...
     >>> next_id = nextURL.split('/')[-1]
     >>> next_ex = self.portal.e[next_id]
-    >>> nextport = exposure.ExposurePort(next_ex, None)
+    >>> nextport = browser.ExposurePort(next_ex, None)
     >>> result = list(nextport.export())
     >>> if not result == answer:
     ...     pp(answer)
@@ -1378,7 +1379,7 @@ the desired workspace context will be instantiated and called.
     ...     'form.widgets.export_uri': nextURL + '/rollover_export',
     ...     'form.buttons.add': 1,
     ... })
-    >>> form = exposure.CreateExposureForm(wkspc, request)
+    >>> form = workspace.CreateExposureForm(wkspc, request)
     >>> commit_id = rawrevs[-1]
     >>> form.traverse_subpath = [commit_id]
     >>> result = form()
@@ -1437,7 +1438,7 @@ First we create one via the form.
     ...         'form.widgets.tags': u'',
     ...         'form.buttons.add': 1,
     ...     })
-    >>> testform = exposure.ExposureFileTypeAddForm(self.portal, request)
+    >>> testform = browser.ExposureFileTypeAddForm(self.portal, request)
     >>> testform.update()
     >>> self.portal.dummy_type
     <ExposureFileType at /plone/dummy_type>
@@ -1471,7 +1472,7 @@ The data could also be edited via the edit form.
     ...         'form.widgets.tags': u'Notes',
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> testform = exposure.ExposureFileTypeEditForm(
+    >>> testform = browser.ExposureFileTypeEditForm(
     ...     self.portal.dummy_type, request)
     >>> testform.update()
     >>> self.portal.dummy_type.views
@@ -1505,7 +1506,7 @@ filetype form.
 
     >>> request = TestRequest()
     >>> efile_new = new_ex.component.docs['index.html']
-    >>> form = exposure.ExposureFileTypeChoiceForm(efile_new, request)
+    >>> form = browser.ExposureFileTypeChoiceForm(efile_new, request)
     >>> result = form()
     >>> 'Dummy Type' in result
     True
@@ -1520,7 +1521,7 @@ We can choose to not use the predefined type and assign views manually,
     ...         'form.widgets.annotators': [u'rot13', u'post_edited_note'],
     ...         'form.buttons.next': 1,
     ...     })
-    >>> form = exposure.ExposureFileTypeChoiceForm(efile_new, request)
+    >>> form = browser.ExposureFileTypeChoiceForm(efile_new, request)
     >>> result = form()
     >>> request.response.getHeader('Location')
     'http://nohost/plone/.../@@edit_annotations'
@@ -1544,7 +1545,7 @@ tag the file with the appropriate subjects.
     ...         'form.widgets.eftypes': [u'Dummy Type'],
     ...         'form.buttons.next': 1,
     ...     })
-    >>> form = exposure.ExposureFileTypeChoiceForm(efile_new, request)
+    >>> form = browser.ExposureFileTypeChoiceForm(efile_new, request)
     >>> result = form()
     >>> request.response.getHeader('Location')
     'http://nohost/plone/.../@@edit_annotations'
@@ -1564,7 +1565,7 @@ The next form should contain all the fields specified for editing.
 ::
 
     >>> request = TestRequest()
-    >>> form = exposure.ExposureFileTypeAnnotatorForm(efile_new, request)
+    >>> form = browser.ExposureFileTypeAnnotatorForm(efile_new, request)
     >>> form.update()
     >>> [g.fields.keys() for g in form.groups]
     [[], ['post_edited_note.chars'], ['edited_note.note']]
@@ -1587,7 +1588,7 @@ generated and added.
     ...         'form.widgets.edited_note.note': u'User Edited Data.',
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> form = exposure.ExposureFileTypeAnnotatorForm(efile_new, request)
+    >>> form = browser.ExposureFileTypeAnnotatorForm(efile_new, request)
     >>> result = form()
 
 All three annotations should have worked, with its appropriate notes
@@ -1618,7 +1619,7 @@ values assigned above filled in.
 
     >>> from pmr2.testing.browser import GroupTemplate
     >>> request = TestRequest()
-    >>> form = exposure.ExposureFileTypeAnnotatorForm(efile_new, request)
+    >>> form = browser.ExposureFileTypeAnnotatorForm(efile_new, request)
     >>> form.template = GroupTemplate(form)
     >>> result = form()
     >>> u'User Edited Data.' in result
@@ -1654,7 +1655,7 @@ Finally, we test that these data will also work with the migration.
     http://.../exposure/...
     >>> new_id = nextURL.split('/')[-1]
     >>> new_ex2 = self.portal.exposure[new_id]
-    >>> newport = exposure.ExposurePort(new_ex2, None)
+    >>> newport = browser.ExposurePort(new_ex2, None)
     >>> result = list(newport.export())
     >>> if not result == answer:
     ...     pp(answer)
@@ -1714,7 +1715,7 @@ the docgen into our type.
     ...         'form.widgets.tags': u'',
     ...         'form.buttons.add': 1,
     ...     })
-    >>> testform = exposure.ExposureFileTypeAddForm(self.portal, request)
+    >>> testform = browser.ExposureFileTypeAddForm(self.portal, request)
     >>> testform.update()
     >>> self.portal.docgen_type.views
     [u'docgen']
@@ -1731,7 +1732,7 @@ Now we use this modified type for a file.
     ...         'form.widgets.eftypes': [u'Docgen Type'],
     ...         'form.buttons.next': 1,
     ...     })
-    >>> form = exposure.ExposureFileTypeChoiceForm(efile_new, request)
+    >>> form = browser.ExposureFileTypeChoiceForm(efile_new, request)
     >>> result = form()
     >>> efile_new.views
     [u'docgen']
@@ -1742,7 +1743,7 @@ The fields should have been properly added.
 ::
 
     >>> request = TestRequest()
-    >>> form = exposure.ExposureFileTypeAnnotatorForm(efile_new, request)
+    >>> form = browser.ExposureFileTypeAnnotatorForm(efile_new, request)
     >>> form.update()
     >>> [g.fields.keys() for g in form.groups]
     [['docgen.source', 'docgen.generator']]
@@ -1756,7 +1757,7 @@ Now we submit the form.
     ...         'form.widgets.docgen.generator': u'safe_html',
     ...         'form.buttons.apply': 1,
     ...     })
-    >>> form = exposure.ExposureFileTypeAnnotatorForm(efile_new, request)
+    >>> form = browser.ExposureFileTypeAnnotatorForm(efile_new, request)
     >>> result = form()
 
 Data should be assigned properly.

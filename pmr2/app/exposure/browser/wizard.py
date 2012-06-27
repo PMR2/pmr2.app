@@ -14,7 +14,7 @@ from pmr2.app.browser import widget
 from pmr2.app.browser.layout import *
 
 from pmr2.app.exposure.browser.interfaces import ICreateExposureForm
-from pmr2.app.exposure.browser.browser import CreateExposureForm
+from pmr2.app.exposure.browser.workspace import CreateExposureForm
 
 
 class ExposureWizard(form.EditForm):

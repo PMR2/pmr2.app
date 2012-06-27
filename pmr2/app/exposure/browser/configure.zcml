@@ -44,7 +44,7 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="create_exposure"
-      class=".browser.CreateExposureFormView"
+      class=".workspace.CreateExposureFormView"
       permission="cmf.ModifyPortalContent"
       />
 
