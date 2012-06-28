@@ -58,10 +58,10 @@ class TestExposureStorageAdapter(ExposureDocTestCase):
     def setUp(self):
         ExposureDocTestCase.setUp(self)
         self.portal['exposure'] = ExposureContainer('exposure')
-        self.workspace = self.portal.workspace.cake
+        self.workspace = self.portal.workspace.blank
         tester = Exposure('tester')
         tester.commit_id = u'0'
-        tester.workspace = u'/plone/workspace/cake'
+        tester.workspace = u'/plone/workspace/blank'
         self.portal.exposure['tester'] = tester
         self.exposure = self.portal.exposure['tester']
 

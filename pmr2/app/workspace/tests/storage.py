@@ -85,6 +85,11 @@ class DummyStorageUtility(StorageUtility):
             },
         ],
 
+        'blank': [
+            {
+            },
+        ],
+
     }
 
     title = 'Dummy Storage'

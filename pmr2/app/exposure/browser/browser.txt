@@ -34,8 +34,8 @@ Exposure container creates new exposure, we test it here.
 
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.workspace': u'/plone/workspace/eggs',
-    ...         'form.widgets.commit_id': u'00000000',
+    ...         'form.widgets.workspace': u'/plone/workspace/blank',
+    ...         'form.widgets.commit_id': u'0',
     ...         'form.buttons.add': 1,
     ...     })
     >>> testform = browser.ExposureAddForm(
@@ -49,9 +49,9 @@ Exposure object is created with fields properly populated.
 ::
 
     >>> self.portal.exposure[oid].workspace
-    u'/plone/workspace/eggs'
+    u'/plone/workspace/blank'
     >>> self.portal.exposure[oid].commit_id
-    u'00000000'
+    u'0'
 
 --------------------------------------------
 Exposure creation from a workspace changeset
@@ -235,9 +235,53 @@ Associated Views
     ExposureFile object, as the data it requires may or may not be
     generated or available.
 
-------------
-Demostration
-------------
+------------------
+Base Demonstration
+------------------
+
+First navigate to the exposure add form at one of the demo workspace
+with a dummy workspace.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.workspace': u'/plone/workspace/test',
+    ...         'form.widgets.commit_id': u'0',
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = browser.ExposureAddForm(
+    ...     self.portal.exposure, request)
+    >>> testform.update()
+    >>> exp_id = testform._data['id']
+    >>> context = self.portal.exposure[exp_id]
+    >>> context
+    <Exposure at ...>
+
+Now we can add a file to display.  First we render the form that will
+let us add the file to the exposure.
+::
+
+    >>> request = TestRequest()
+    >>> testform = browser.ExposureFileGenForm(context, request)
+    >>> result = testform()
+
+Since we used one of the earlier revisions, the list of files provided
+in the options should only contain these entries and not ones that are
+found in later revisions.
+::
+
+    >>> 'file1' in result
+    True
+    >>> 'file2' in result
+    True
+    >>> 'file3' in result
+    False
+    >>> 'dir1' in result
+    False
+
+--------------------------------
+Demostration with pmr2.mercurial
+--------------------------------
 
 Disclaimer: The doctests here only test the "workflow" (not Plone
 workflow but how the objects are created/used), there isn't enough
