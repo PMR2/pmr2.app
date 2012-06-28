@@ -9,10 +9,9 @@ from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.factory import vocab_factory
 
-from pmr2.app.workspace.interfaces import IWorkspace
-from pmr2.app.workspace.interfaces import IWorkspaceListing
-from pmr2.app.workspace.interfaces import IStorageUtility
-from pmr2.app.workspace.interfaces import IStorage
+from pmr2.app.workspace.interfaces import IWorkspace, IWorkspaceListing
+from pmr2.app.workspace.interfaces import IStorageUtility, IStorage
+from pmr2.app.workspace.interfaces import ICurrentCommitIdProvider
 
 
 class WorkspaceDirObjListVocab(SimpleVocabulary):
@@ -49,6 +48,17 @@ class ManifestListVocab(SimpleVocabulary):
                                 "its manifest.")
 
         self.storage = zope.component.getAdapter(wks, IStorage)
+
+        if ICurrentCommitIdProvider.providedBy(context):
+            commit_id = context.current_commit_id()
+        else:
+            # in the future we might attempt to adapt the context into
+            # something that will do the resolving.
+            commit_id = None
+
+        if commit_id:
+            self.storage.checkout(commit_id)
+
         values = self.storage.files()
         values.sort()
 

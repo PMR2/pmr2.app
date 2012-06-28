@@ -287,3 +287,16 @@ class IFileMenu(IBrowserMenu):
 
 class IFileSubMenuItem(IBrowserSubMenuItem):
     """workspace submenu item"""
+
+
+# Misc.
+
+class ICurrentCommitIdProvider(zope.interface.Interface):
+    """\
+    A utility that will provide the current commit id for this object.
+    """
+
+    def current_commit_id(self):
+        """\
+        Return the current commit id.
+        """
