@@ -1338,8 +1338,8 @@ source is used.
     ...     pp(answer)
     ...     pp(result)
 
-Exposure Rollover json export/import
-------------------------------------
+Exposure Rollover json export
+-----------------------------
 
 To facilitate interoperability with other PMR2 instances, a page that
 provide the structure of a given exposure can be exported.
@@ -1370,8 +1370,10 @@ Also make the item public.
     >>> wft = getToolByName(self.portal, 'portal_workflow')
     >>> wft.doActionFor(next_ex, 'publish')
 
-The mirror operation is naturally the import.  The appropriate form with
-the desired workspace context will be instantiated and called.
+This URI can be used with the import group on the exposure creation
+form.  Instead of manually assigning the initial documentation then
+start from scratch with the wizard, with an export URI the initial
+dataset can be populated.
 ::
 
     >>> wkspc = self.portal.workspace['rdfmodel']
@@ -1387,14 +1389,11 @@ the desired workspace context will be instantiated and called.
     >>> next
     'http://.../e/...'
 
-Now use the browser to get this export and verify that it is also the 
-same as the jsonstr retrieved earlier.  Publish that new object first
-before viewing.
+The wizard annotation should contain this list.
 ::
 
-    >>> wft.doActionFor(form.ctxobj, 'publish')
-    >>> b.open(next + '/rollover_export')
-    >>> json.loads(b.contents) == json.loads(jsonstr)
+    >>> wh = zope.component.getAdapter(form.ctxobj, IExposureWizard)
+    >>> wh.structure == json.loads(jsonstr)
     True
 
 Restore the url opener back to default.

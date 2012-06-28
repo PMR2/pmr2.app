@@ -14,9 +14,6 @@ from Products.statusmessages.interfaces import IStatusMessage
 from pmr2.app.workspace.interfaces import IStorage, IWorkspace
 from pmr2.app.workspace.exceptions import *
 
-from pmr2.app.exposure.interfaces import *
-from pmr2.app.exposure.browser.interfaces import *
-
 from pmr2.app.interfaces import *
 from pmr2.app.interfaces.exceptions import *
 from pmr2.app.browser.interfaces import *
@@ -28,6 +25,8 @@ from pmr2.app.browser import page
 from pmr2.app.browser import widget
 from pmr2.app.browser.layout import *
 
+from pmr2.app.exposure.interfaces import *
+from pmr2.app.exposure.browser.interfaces import *
 from pmr2.app.exposure.browser.util import *
 from pmr2.app.exposure.urlopen import urlopen
 
@@ -91,13 +90,18 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
 
         if 'export_uri' in self._data and self._data['export_uri']:
             # XXX trap only the right exceptions.
-            self.moldURI(self._data['export_uri'])
+            self.prepareWizard(self._data['export_uri'])
 
-    def moldURI(self, uri):
+    def prepareWizard(self, uri):
+        """\
+        Import this structure into the exposure wizard.
+        """
         u = urlopen(uri)
         exported = json.load(u)
         u.close()
-        moldExposure(self.ctxobj, self.request, exported)
+
+        wizard = zope.component.getAdapter(self.ctxobj, IExposureWizard)
+        wizard.structure = exported
 
     def render(self):
         if not self._gotExposureContainer:
@@ -129,4 +133,4 @@ class CreateExposureFormExtender(extensible.FormExtender):
         IWorkspace, IBrowserRequest, CreateExposureForm)
 
     def update(self):
-        self.add(ICreateExposureForm)
+        self.add(IExposureExportImportGroup)

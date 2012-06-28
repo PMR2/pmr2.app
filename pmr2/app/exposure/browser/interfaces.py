@@ -139,7 +139,7 @@ class IExposureRolloverForm(zope.interface.Interface):
     )
 
 
-class ICreateExposureForm(zope.interface.Interface):
+class IExposureExportImportGroup(zope.interface.Interface):
     """\
     Interface for the form that will handle the generation of an
     ExposureFile object.

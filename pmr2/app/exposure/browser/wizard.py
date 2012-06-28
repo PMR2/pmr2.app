@@ -18,10 +18,9 @@ from pmr2.app.browser import widget
 from pmr2.app.browser.layout import *
 
 from pmr2.app.exposure.interfaces import IExposure
-from pmr2.app.exposure.browser.interfaces import ICreateExposureForm
+from pmr2.app.exposure.browser.interfaces import IExposureExportImportGroup
 from pmr2.app.exposure.browser.interfaces import IExposureFileGenForm
 from pmr2.app.exposure.browser.interfaces import IExposureWizardForm
-from pmr2.app.exposure.browser.workspace import CreateExposureForm
 from pmr2.app.exposure.browser.browser import ExposureFileTypeAnnotatorForm
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
