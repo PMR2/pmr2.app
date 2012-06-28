@@ -20,4 +20,9 @@
       name="pmr2.vocab.storage"
       />
 
+  <!-- ITerms -->
+  <adapter
+      factory=".term.StorageFileChoiceTerms"
+      />
+
 </configure>
