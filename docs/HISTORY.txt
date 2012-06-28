@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.5.1 - Released (2012-06-28)
+-----------------------------
+
+* Bug-fix release.
+  - The exposure file listings for the exposure documentation and the
+    file builder form should return the correct list of files.
+
 0.5 - Released (2012-02-13)
 ---------------------------
 
