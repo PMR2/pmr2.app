@@ -36,7 +36,7 @@ from pmr2.idgen.interfaces import IIdGenerator
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from pmr2.app.workspace.browser.browser import WorkspaceLog
-from pmr2.app.workspace.interfaces import IStorage
+from pmr2.app.workspace.interfaces import IStorage, ICurrentCommitIdProvider
 from pmr2.app.workspace.exceptions import *
 
 from pmr2.app.exposure import table
@@ -228,6 +228,11 @@ class ExposureFileGenForm(form.AddForm):
     # Multiple choice form will need this method, but generalized.
     # This will become subclass of that.
     fields = z3c.form.field.Fields(IExposureFileGenForm)
+
+    zope.interface.implements(ICurrentCommitIdProvider)
+
+    def current_commit_id(self):
+        return self.context.commit_id
 
     def create(self, data):
         self._data = data
@@ -722,8 +727,13 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
 
     ignoreContext = False
 
-    zope.interface.implements(IExposureDocViewGenForm)
+    zope.interface.implements(ICurrentCommitIdProvider, 
+        IExposureDocViewGenForm)
+
     fields = z3c.form.field.Fields(IExposureDocViewGenForm)
+
+    def current_commit_id(self):
+        return self.context.commit_id
 
     def getContent(self):
         # since we are not using the same interface as the exposure
