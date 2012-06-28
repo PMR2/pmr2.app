@@ -238,4 +238,9 @@
       name="pmr2.eft_annotator.extender"
       />
 
+  <adapter 
+      factory=".workspace.CreateExposureFormExtender"
+      name="pmr2.exposure.worspacecreate"
+      />
+
 </configure>

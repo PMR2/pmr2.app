@@ -2,6 +2,7 @@ import json
 
 import zope.component
 from zope.publisher.interfaces import NotFound
+from zope.publisher.interfaces.browser import IBrowserRequest
 
 import z3c.form
 from plone.z3cform import layout
@@ -10,7 +11,7 @@ from plone.z3cform.fieldsets import group, extensible
 from AccessControl import Unauthorized
 from Products.statusmessages.interfaces import IStatusMessage
 
-from pmr2.app.workspace.interfaces import IStorage
+from pmr2.app.workspace.interfaces import IStorage, IWorkspace
 from pmr2.app.workspace.exceptions import *
 
 from pmr2.app.exposure.interfaces import *
@@ -31,13 +32,23 @@ from pmr2.app.exposure.browser.util import *
 from pmr2.app.exposure.urlopen import urlopen
 
 
-class CreateExposureForm(form.AddForm, page.TraversePage):
+class ExtensibleAddForm(form.AddForm, extensible.ExtensibleForm):
+
+    def __init__(self, *a, **kw):
+        super(ExtensibleAddForm, self).__init__(*a, **kw)
+        self.groups = []
+        self.fields = z3c.form.field.Fields()
+
+    def update(self):
+        extensible.ExtensibleForm.update(self)
+        form.AddForm.update(self)
+
+
+class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
     """\
     Page that will create an exposure inside the default exposure
     container from within a workspace.
     """
-
-    fields = z3c.form.field.Fields(ICreateExposureForm)
 
     _gotExposureContainer = False
 
@@ -112,3 +123,10 @@ CreateExposureFormView = layout.wrap_form(CreateExposureForm,
     __wrapper_class=TraverseFormWrapper,
     label="Select 'Add' to begin creating the exposure")
 
+
+class CreateExposureFormExtender(extensible.FormExtender):
+    zope.component.adapts(
+        IWorkspace, IBrowserRequest, CreateExposureForm)
+
+    def update(self):
+        self.add(ICreateExposureForm)
