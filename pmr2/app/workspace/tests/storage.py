@@ -82,6 +82,11 @@ _dummy_storage_data = {
         },
     ],
 
+    'blank': [
+        {
+        },
+    ],
+
 }
 
 

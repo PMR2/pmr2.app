@@ -48,12 +48,23 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
         self.pmr2.repo_root = self.tmpdir
 
         from pmr2.app.workspace.content import WorkspaceContainer, Workspace
+
         self.portal['workspace'] = WorkspaceContainer()
+        def mkdummywks(name):
+            w = Workspace(name)
+            w.storage = 'dummy_storage'
+            self.portal.workspace[name] = w
+
+        mkdummywks('test')
+        mkdummywks('cake')
+
+        # unassigned
+        self.portal.workspace['blank'] = Workspace('blank')
+
+        # legacy test case.
         self.portal.workspace['eggs'] = Workspace('eggs')
         utils.mkreporoot(self.pmr2.createDir(self.portal))
         utils.mkrepo(self.pmr2.dirOf(self.portal.workspace.eggs))
-
-        self.portal.workspace['cake'] = Workspace('cake')
 
 
 class CompleteDocTestCase(ExposureDocTestCase):
@@ -87,16 +98,6 @@ class CompleteDocTestCase(ExposureDocTestCase):
             e.commit_id = commit_id
             self.portal.exposure[id_] = e
             self.portal.exposure[id_].reindexObject()
-
-        def mkdummywks(name):
-            w = Workspace(name)
-            w.storage = 'dummy_storage'
-            self.portal.workspace[name] = w
-
-        # we made a cake in parent
-        # mkdummywks('cake')
-        self.portal.workspace['cake'].storage = 'dummy_storage'
-        mkdummywks('test')
 
         mkexposure(u'/plone/workspace/test', u'2', '1')
         mkexposure(u'/plone/workspace/eggs', u'1', '2')
