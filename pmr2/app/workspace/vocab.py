@@ -41,6 +41,9 @@ class ManifestListVocab(SimpleVocabulary):
                     # The object that can adapted to the workspace can
                     # be nested, i.e. a form adapter object.
                     obj = aq_parent(obj)
+                    if IWorkspace.providedBy(obj):
+                        # We actually have one.
+                        wks = obj
             if not wks:
                 raise Exception("Unable to adapt to a workspace to acquire "
                                 "its manifest.")

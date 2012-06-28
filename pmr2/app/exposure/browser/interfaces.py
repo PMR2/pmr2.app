@@ -1,6 +1,8 @@
 import zope.schema
 import zope.interface
 
+from pmr2.app.workspace.schema import StorageFileChoice
+
 
 class IExposureFileGenForm(zope.interface.Interface):
     """\
@@ -8,7 +10,7 @@ class IExposureFileGenForm(zope.interface.Interface):
     ExposureFile object.
     """
 
-    filename = zope.schema.Choice(
+    filename = StorageFileChoice(
         title=u'File',
         description=u'The file within the workspace that requires special '\
                      'processing to be presentable in this exposure.',
@@ -80,7 +82,7 @@ class IExposureDocViewGenForm(zope.interface.Interface):
     the ExposureFile default document_view.
     """
 
-    docview_gensource = zope.schema.Choice(
+    docview_gensource = StorageFileChoice(
         title=u'Documentation File',
         description=u'The file where the documentation resides in.  If this '
                      'object is already a file, leaving this field unselected '
