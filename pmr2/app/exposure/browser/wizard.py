@@ -34,5 +34,5 @@ class ExposureWizardForm(form.PostForm):
 
     # XXX temporary.
     ignoreContext = True
-    fields = z3c.form.field.Fields(ICreateExposureForm)
+    fields = z3c.form.field.Fields(IExposureExportImportGroup)
 
