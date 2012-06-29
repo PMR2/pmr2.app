@@ -350,7 +350,6 @@ We need to wrap around one of the interesting files inside with the
 standard ExposureFile object.
 ::
 
-    >>> pmr2hgtest = self.portal.workspace.pmr2hgtest
     >>> file1 = u'file1'
     >>> request = TestRequest(
     ...     form={
@@ -368,6 +367,7 @@ required methods into its own adapter, so we utilize it and call the
 method that will return the source
 ::
 
+    >>> pmr2hgtest = self.portal.workspace.pmr2hgtest
     >>> helper = zope.component.queryAdapter(efile1, IExposureSourceAdapter)
     >>> answer = (context, pmr2hgtest, 'file1')
     >>> result = helper.source()
@@ -1421,8 +1421,9 @@ dataset can be populated.
 ::
 
     >>> wkspc = self.portal.workspace['rdfmodel']
+    >>> export_uri = nextURL + '/rollover_export'
     >>> request = TestRequest(form={
-    ...     'form.widgets.export_uri': nextURL + '/rollover_export',
+    ...     'exportimport.widgets.export_uri': export_uri,
     ...     'form.buttons.add': 1,
     ... })
     >>> form = workspace.CreateExposureForm(wkspc, request)

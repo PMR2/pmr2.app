@@ -1,6 +1,7 @@
 import json
 
 import zope.component
+import zope.interface
 from zope.publisher.interfaces import NotFound
 from zope.publisher.interfaces.browser import IBrowserRequest
 
@@ -49,7 +50,18 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
     container from within a workspace.
     """
 
+    zope.interface.implements(ICreateExposureForm)
+
+    label = u"Exposure Creation Wizard"
+    description = u"Please fill out the options of only one for the " \
+                   "following sets of fields below to begin the exposure " \
+                   "creation process."
     _gotExposureContainer = False
+
+    def createAndAdd(self, data):
+        obj = super(CreateExposureForm, self).createAndAdd(self)
+        self.processGroups()
+        return obj
 
     def create(self, data):
         # no data assignments here
@@ -88,20 +100,13 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
         # so redirection via self.getURL will work.
         self.ctxobj = exposure
 
-        if 'export_uri' in self._data and self._data['export_uri']:
-            # XXX trap only the right exceptions.
-            self.prepareWizard(self._data['export_uri'])
-
-    def prepareWizard(self, uri):
+    def processGroups(self):
         """\
-        Import this structure into the exposure wizard.
+        Process groups that are here.
         """
-        u = urlopen(uri)
-        exported = json.load(u)
-        u.close()
 
-        wizard = zope.component.getAdapter(self.ctxobj, IExposureWizard)
-        wizard.structure = exported
+        for g in self.groups:
+            g.populateExposure(self.ctxobj)
 
     def render(self):
         if not self._gotExposureContainer:
@@ -123,14 +128,73 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
 
         return super(CreateExposureForm, self).__call__(*a, **kw)
 
-CreateExposureFormView = layout.wrap_form(CreateExposureForm,
-    __wrapper_class=TraverseFormWrapper,
-    label="Select 'Add' to begin creating the exposure")
+
+class CreateExposureGroupBase(form.Group):
+    """\
+    Base group for extending the exposure creator.
+    """
+
+    zope.interface.implements(ICreateExposureGroup)
+
+    ignoreContext = True
+
+    def populateExposure(self, exposure):
+        """\
+        """
+
+        raise NotImplementedError
+
+
+class DocGenGroup(CreateExposureGroupBase):
+    """\
+    Group for the document generation.
+    """
+
+    fields = z3c.form.field.Fields(IExposureDocViewGenForm)
+    label = "Root Documentation"
+    description = "Please select the base file and/or the generation method."
+    prefix = 'docgen'
+
+    def populateExposure(self, exposure):
+        pass
+
+
+class ExposureImportExportGroup(CreateExposureGroupBase):
+    """\
+    Group for the document generation.
+    """
+
+    fields = z3c.form.field.Fields(IExposureExportImportGroup)
+    label = "Exposure Import via URI"
+    prefix = 'exportimport'
+
+    def populateExposure(self, exposure):
+        data, errors = self.extractData()
+        uri = data.get('export_uri', None)
+
+        if uri:
+            # XXX no exception handling here.
+            u = urlopen(uri)
+            exported = json.load(u)
+            u.close()
+
+            wizard = zope.component.getAdapter(exposure, IExposureWizard)
+            wizard.structure = exported
 
 
 class CreateExposureFormExtender(extensible.FormExtender):
     zope.component.adapts(
-        IWorkspace, IBrowserRequest, CreateExposureForm)
+        IWorkspace, IBrowserRequest, ICreateExposureForm)
 
     def update(self):
-        self.add(IExposureExportImportGroup)
+        # Collect all the groups, instantiate them, add them to parent.
+        groups = zope.component.getAdapters(
+            (self.context, self.request, self.form),
+            ICreateExposureGroup,
+        )
+        for k, g in groups:
+            self.add(g)
+
+    def add(self, group):
+        self.form.groups.append(group)
+

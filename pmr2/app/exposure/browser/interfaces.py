@@ -141,6 +141,24 @@ class IExposureRolloverForm(zope.interface.Interface):
     )
 
 
+class ICreateExposureForm(zope.interface.Interface):
+    """\
+    Interface for the CreateExposureForm.
+    """
+
+
+class ICreateExposureGroup(zope.interface.Interface):
+    """\
+    Interface for the groups for the above form.
+    """
+
+    def populateExposure(self, exposure):
+        """\
+        CreateExposureForm will call this method on successful creation
+        of an exposure, which this group will populate it with data.
+        """
+
+
 class IExposureExportImportGroup(zope.interface.Interface):
     """\
     Interface for the form that will handle the generation of an

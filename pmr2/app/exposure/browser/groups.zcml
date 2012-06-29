@@ -1,0 +1,24 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="pmr2.app">
+
+  <adapter
+      for="*
+           *
+           .interfaces.ICreateExposureForm"
+      factory=".workspace.DocGenGroup"
+      provides=".interfaces.ICreateExposureGroup"
+      name="docgen"
+      />
+
+  <adapter
+      for="*
+           *
+           .interfaces.ICreateExposureForm"
+      factory=".workspace.ExposureImportExportGroup"
+      provides=".interfaces.ICreateExposureGroup"
+      name="exposure_import_export"
+      />
+
+</configure>

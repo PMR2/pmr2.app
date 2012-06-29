@@ -4,6 +4,7 @@
     i18n_domain="pmr2.app">
 
   <include file="adapter.zcml"/>
+  <include file="groups.zcml"/>
 
   <!-- Exposure Container -->
 
@@ -44,7 +45,7 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="create_exposure"
-      class=".workspace.CreateExposureFormView"
+      class=".workspace.CreateExposureForm"
       permission="cmf.ModifyPortalContent"
       />
 

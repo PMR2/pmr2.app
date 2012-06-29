@@ -399,7 +399,7 @@ class ExposureFileTypeAnnotatorForm(
 
     def annotate(self):
         """
-        Goes through the notes and adapt to each specifc annotator.
+        Goes through the notes and adapt to each specific annotator.
 
         XXX this assumes nobody changed what this form had and what the
         self.context.views contains now.
