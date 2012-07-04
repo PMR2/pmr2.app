@@ -97,8 +97,11 @@
                               </metal:define>
                           </fieldset>
 
+                          <metal:define define-macro="group_rendering">
+
                           <!-- Secondary fieldsets -->
                           <tal:block tal:repeat="group groups" condition="has_groups">
+
                               <fieldset
                                   tal:define="fieldset_name repeat/group/index"
                                   tal:attributes="id string:fieldset-${fieldset_name};
@@ -129,8 +132,16 @@
                                           <metal:block use-macro="context/@@ploneform-macros/widget_rendering" />
                                       </tal:block>
 
+                                      <tal:block define="
+                                              groups nocall:group/groups;
+                                              has_groups python:bool(groups);">
+                                          <metal:block use-macro="context/@@ploneform-macros/group_rendering" />
+                                      </tal:block>
+
                               </fieldset>
                           </tal:block>
+
+                          </metal:define>
 
                       </metal:define>
                     </metal:fields-slot>
