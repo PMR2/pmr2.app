@@ -278,6 +278,21 @@ found in later revisions.
     >>> 'dir1' in result
     False
 
+We still need to submit this form to see that all the internal bits are
+all working correctly.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.filename': [u'file2'],
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = browser.ExposureFileGenForm(context, request)
+    >>> testform.update()
+    >>> result = context['file2']
+    >>> result
+    <ExposureFile at /plone/.../file2>
+
 --------------------------------
 Demostration with pmr2.mercurial
 --------------------------------
