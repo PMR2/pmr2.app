@@ -4,4 +4,14 @@
 
   <adapter factory=".validator.StorageExistsValidator"/>
 
+  <adapter 
+      for="*
+           z3c.form.interfaces.IFormLayer
+           *
+           pmr2.app.workspace.schema.interfaces.IStorageFileChoice
+           z3c.form.interfaces.IWidget"
+      factory=".validator.StorageFileChoiceFieldValidator"
+      provides="z3c.form.interfaces.IValidator"
+      />
+
 </configure>
