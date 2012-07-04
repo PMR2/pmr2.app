@@ -13,6 +13,7 @@ from AccessControl import Unauthorized
 from Products.statusmessages.interfaces import IStatusMessage
 
 from pmr2.app.workspace.interfaces import IStorage, IWorkspace
+from pmr2.app.workspace.interfaces import ICurrentCommitIdProvider
 from pmr2.app.workspace.exceptions import *
 
 from pmr2.app.interfaces import *
@@ -106,7 +107,12 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
         """
 
         for g in self.groups:
-            g.populateExposure(self.ctxobj)
+            structure = g.populateExposure(self.ctxobj)
+            wh = zope.component.getAdapter(self.ctxobj, 
+                IExposureWizard)
+            if structure:
+                wh.structure = structure
+                break
 
     def render(self):
         if not self._gotExposureContainer:
@@ -145,18 +151,76 @@ class CreateExposureGroupBase(form.Group):
         raise NotImplementedError
 
 
+class DocGenSubgroup(form.Group):
+    """\
+    Subgroup for docgen.
+    """
+
+    zope.interface.implements(ICurrentCommitIdProvider)
+    ignoreContext = True
+
+    def current_commit_id(self):
+        # XXX this is a hack, should use some sort of adapter.
+        return self.parentForm.parentForm.traverse_subpath[0]
+
+
+class ExposureViewGenGroup(DocGenSubgroup):
+    """\
+    Subgroup for the main exposure view generator.
+    """
+
+    label = 'Exposure main view'
+    fields = z3c.form.field.Fields(IExposureViewGenGroup)
+
+
+class ExposureFileChoiceTypeGroup(DocGenSubgroup):
+    """\
+    Subgroup for the main exposure view generator.
+    """
+
+    label = 'Add model file'
+    fields = z3c.form.field.Fields(IExposureFileChoiceTypeGroup)
+
+
 class DocGenGroup(CreateExposureGroupBase):
     """\
     Group for the document generation.
     """
 
-    fields = z3c.form.field.Fields(IExposureDocViewGenForm)
-    label = "Root Documentation"
+    label = "Standard exposure creator"
     description = "Please select the base file and/or the generation method."
     prefix = 'docgen'
 
+    def update(self):
+        # XXX once the following are properly for the wizard, maybe we
+        # reuse the ones there.
+        self.groups = []
+        self.groups.append(ExposureViewGenGroup(
+            self.context, self.request, self))
+        self.groups.append(ExposureFileChoiceTypeGroup(
+            self.context, self.request, self))
+
+        return super(DocGenGroup, self).update()
+
     def populateExposure(self, exposure):
-        pass
+        data, errors = self.extractData()
+        if errors:
+            return
+
+        structure = [
+            ('', {
+                # XXX see above hack.
+                'commit_id': self.parentForm.traverse_subpath[0],
+                'curation': {},  # XXX no interface yet
+                'docview_generator': data['generator'],
+                'docview_gensource': data['source'],
+                'title': u'',  # XXX copy context?
+                'workspace': u'/'.join(self.context.getPhysicalPath()),
+                'Subject': (),  # XXX to be assigned by filetype?
+            }),
+        ]
+
+        return structure
 
 
 class ExposureImportExportGroup(CreateExposureGroupBase):
@@ -177,9 +241,7 @@ class ExposureImportExportGroup(CreateExposureGroupBase):
             u = urlopen(uri)
             exported = json.load(u)
             u.close()
-
-            wizard = zope.component.getAdapter(exposure, IExposureWizard)
-            wizard.structure = exported
+            return exported
 
 
 class CreateExposureFormExtender(extensible.FormExtender):

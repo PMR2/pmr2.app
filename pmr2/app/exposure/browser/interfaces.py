@@ -152,6 +152,7 @@ class ICreateExposureGroup(zope.interface.Interface):
     Interface for the groups for the above form.
     """
 
+    # XXX maybe rename to acquire structure?
     def populateExposure(self, exposure):
         """\
         CreateExposureForm will call this method on successful creation
@@ -169,6 +170,51 @@ class IExposureExportImportGroup(zope.interface.Interface):
         title=u'Exposure Export URI',
         description=u'URI of an exported exposure structure, if importing '
                      'from an external PMR2 instance.',
+        required=False,
+    )
+
+
+class IExposureViewGenGroup(zope.interface.Interface):
+    """\
+    Group for the root documentation generation.
+    """
+
+    generator = zope.schema.Choice(
+        title=u'View Generator',
+        description=u'The selected generator will be used to generate the '
+                     'text and/or view for the exposure index, or the root '
+                     'documentation view.',
+        vocabulary='pmr2.vocab.DocViewGen',
+        required=False,
+    )
+
+    source = StorageFileChoice(
+        title=u'Generator Source',
+        description=u'The source for the above generator.  The selected file '
+                     'must be compatible with the selected generator.',
+        vocabulary='pmr2.vocab.manifest',
+        required=False,
+    )
+
+
+class IExposureFileChoiceTypeGroup(zope.interface.Interface):
+    """\
+    Interface with fields for filename and type.
+    """
+
+    filename = StorageFileChoice(
+        title=u'File',
+        description=u'The file within the workspace that requires special '
+                     'processing to be presentable in this exposure.',
+        vocabulary='pmr2.vocab.manifest',
+        required=False,
+    )
+
+    eftypes = zope.schema.Choice(
+        title=u'File Type',
+        description=u'Select the appropriate type for this file if one had '
+                     'been defined.  Will override the choices below.',
+        vocabulary='pmr2.vocab.eftype',
         required=False,
     )
 

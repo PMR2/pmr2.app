@@ -80,6 +80,41 @@ The new exposure object should have the right values.
     >>> new_exposure.commit_id == commit_id
     True
 
+Optionally, the user can fill out some information to get started on the
+exposure wizard.
+::
+
+    >>> wkspc = self.portal.workspace.test
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.generator': 'safe_html',
+    ...         'form.widgets.source': 'file2',
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> form = workspace.CreateExposureForm(wkspc, request)
+    >>> commit_id = '1'
+    >>> form.traverse_subpath = [commit_id]
+    >>> result = form()
+    >>> next = request.response.getHeader('Location')
+    >>> next
+    'http://.../exposure/...'
+    >>> wh = zope.component.getAdapter(form.ctxobj, IExposureWizard)
+    >>> result = wh.structure
+    >>> answer = [
+    ...     ('', {
+    ...         'commit_id': u'1',
+    ...         'curation': {},
+    ...         'docview_generator': u'safe_html',
+    ...         'docview_gensource': u'file2',
+    ...         'title': u'',
+    ...         'workspace': u'/plone/workspace/test',
+    ...         'Subject': (),
+    ...     })
+    ... ]
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
+
 Need test on the exposure listing and the rollover forms, namely for
 user workspaces.
 
