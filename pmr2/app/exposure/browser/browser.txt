@@ -22,14 +22,8 @@ directories required should have been already set up by the script.
     >>> pp = lambda x: pprint(x, indent=4, width=1)
     >>> catalog = getToolByName(self.portal, 'portal_catalog')
 
-Create the exposure container.
-::
-
-    >>> self.portal['exposure'] = ExposureContainer()
-    >>> self.portal.exposure
-    <ExposureContainer at /plone/exposure>
-
-Exposure container creates new exposure, we test it here.
+We use the simple exposure add form, which is the parent class for a
+number of forms.
 ::
 
     >>> request = TestRequest(

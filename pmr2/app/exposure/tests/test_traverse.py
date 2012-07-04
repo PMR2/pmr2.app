@@ -9,7 +9,7 @@ from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.content import ExposureContainer, Exposure
 from pmr2.app.exposure.traverse import *
-from pmr2.app.exposure.tests.base import ExposureDocTestCase
+from pmr2.app.exposure.tests.base import ExposureUnitTestCase
 from pmr2.testing.base import TestRequest
 
 
@@ -94,7 +94,7 @@ class TestExposureTraverser(TestCase):
             'http://nohost/mw/@@rawfile/123/valid/fail')
 
 
-class TestExposureContainerTraverser(ExposureDocTestCase):
+class TestExposureContainerTraverser(ExposureUnitTestCase):
 
     def afterSetUp(self):
         ids = ['abcded', 'abcdee', 'abcdef', 'abcccf', '111111']

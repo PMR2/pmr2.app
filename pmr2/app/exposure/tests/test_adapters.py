@@ -6,10 +6,10 @@ from pmr2.app.workspace.tests.storage import DummyStorage
 from pmr2.app.exposure.content import ExposureContainer, Exposure
 from pmr2.app.exposure.adapter import *
 
-from pmr2.app.exposure.tests.base import ExposureDocTestCase
+from pmr2.app.exposure.tests.base import ExposureUnitTestCase
 
 
-class TestAdapters(ExposureDocTestCase):
+class TestAdapters(ExposureUnitTestCase):
 
     def afterSetUp(self):
         self.portal['exposure'] = ExposureContainer('exposure')
@@ -49,14 +49,14 @@ class TestAdapters(ExposureDocTestCase):
             '/plone/workspace/cake')
 
 
-class TestExposureStorageAdapter(ExposureDocTestCase):
+class TestExposureStorageAdapter(ExposureUnitTestCase):
     """\
     This tests the dummy framework and implementation, along with the
     adapter with manual registration.
     """
 
     def setUp(self):
-        ExposureDocTestCase.setUp(self)
+        ExposureUnitTestCase.setUp(self)
         self.portal['exposure'] = ExposureContainer('exposure')
         self.workspace = self.portal.workspace.blank
         tester = Exposure('tester')

@@ -36,14 +36,16 @@ teardown()
 ptc.setupPloneSite(products=('pmr2.app',))
 
 
-class ExposureDocTestCase(WorkspaceDocTestCase):
+class ExposureUnitTestCase(WorkspaceDocTestCase):
+    # XXX should really inherit from WorspaceUnitTest case, but that
+    # doesn't exist since they are the same.
 
     def setUp(self):
         """\
-        Sets up the environment that the exposure doctest needs.
+        Sets up the environment that the exposure unit testing needs.
         """
 
-        super(ExposureDocTestCase, self).setUp()
+        super(ExposureUnitTestCase, self).setUp()
 
         self.pmr2.default_exposure_idgen = 'rand128hex'
         self.pmr2.repo_root = self.tmpdir
@@ -68,6 +70,20 @@ class ExposureDocTestCase(WorkspaceDocTestCase):
         utils.mkrepo(self.pmr2.dirOf(self.portal.workspace.eggs))
 
 
+class ExposureDocTestCase(ExposureUnitTestCase):
+
+    def setUp(self):
+        """\
+        Sets up the environment that the exposure doctest needs.
+        """
+
+        super(ExposureDocTestCase, self).setUp()
+
+        from pmr2.app.exposure.content import ExposureContainer
+
+        self.portal['exposure'] = ExposureContainer()
+
+
 class CompleteDocTestCase(ExposureDocTestCase):
 
     def setUp(self):
@@ -87,7 +103,6 @@ class CompleteDocTestCase(ExposureDocTestCase):
         idgen = zope.component.queryUtility(IIdGenerator,
             name=settings.default_exposure_idgen)
 
-        self.portal['exposure'] = ExposureContainer()
         def mkexposure(workspace, commit_id, id_):
             if not id_:
                 id_ = idgen.next()
