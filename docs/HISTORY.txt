@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.5.2 - Released (2012-07-04)
+-----------------------------
+
+* Bug-fix release.
+  - The correct rendering does not mean the correct set of validations
+    will be done.  Completely fixes the issue with regards to the list
+    of exposure files.
+
 0.5.1 - Released (2012-06-28)
 -----------------------------
 
