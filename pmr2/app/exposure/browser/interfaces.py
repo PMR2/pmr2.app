@@ -210,7 +210,7 @@ class IExposureFileChoiceTypeGroup(zope.interface.Interface):
         required=False,
     )
 
-    eftypes = zope.schema.Choice(
+    filetype = zope.schema.Choice(
         title=u'File Type',
         description=u'Select the appropriate type for this file if one had '
                      'been defined.  Will override the choices below.',

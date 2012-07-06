@@ -143,6 +143,7 @@ class CreateExposureGroupBase(form.Group):
     zope.interface.implements(ICreateExposureGroup)
 
     ignoreContext = True
+    order = 0
 
     def populateExposure(self, exposure):
         """\
@@ -190,10 +191,13 @@ class DocGenGroup(CreateExposureGroupBase):
     label = "Standard exposure creator"
     description = "Please select the base file and/or the generation method."
     prefix = 'docgen'
+    order = -10
 
     def update(self):
         # XXX once the following are properly for the wizard, maybe we
         # reuse the ones there.
+        # XXX also turn these into adapters, but they need to implement
+        # the handelers.
         self.groups = []
         self.groups.append(ExposureViewGenGroup(
             self.context, self.request, self))
@@ -207,18 +211,32 @@ class DocGenGroup(CreateExposureGroupBase):
         if errors:
             return
 
-        structure = [
-            ('', {
-                # XXX see above hack.
-                'commit_id': self.parentForm.traverse_subpath[0],
-                'curation': {},  # XXX no interface yet
-                'docview_generator': data['generator'],
-                'docview_gensource': data['source'],
-                'title': u'',  # XXX copy context?
-                'workspace': u'/'.join(self.context.getPhysicalPath()),
-                'Subject': (),  # XXX to be assigned by filetype?
-            }),
-        ]
+        if not data['generator'] and not data['filename']:
+            # no root document and no filename to the first file.
+            return
+
+        first_file = (data['filename'], {
+            'file_type': data['filetype'],
+            'views': [],
+            'selected_view': None,
+            'Subject': (),
+        })
+
+        root = ('', {
+            # XXX again, assuming parentForm (see above hack).
+            'commit_id': self.parentForm.traverse_subpath[0],
+            'curation': {},  # XXX no interface yet
+            'docview_generator': data['generator'],
+            'docview_gensource': data['source'],
+            'title': u'',  # XXX copy context?
+            'workspace': u'/'.join(self.context.getPhysicalPath()),
+            'Subject': (),  # XXX to be assigned by filetype?
+        })
+
+        if data['filename']:
+            structure = [first_file, root]
+        else:
+            structure = [root]
 
         return structure
 
@@ -254,7 +272,7 @@ class CreateExposureFormExtender(extensible.FormExtender):
             (self.context, self.request, self.form),
             ICreateExposureGroup,
         )
-        for k, g in groups:
+        for k, g in sorted(groups, key=extensible.order_key):
             self.add(g)
 
     def add(self, group):
