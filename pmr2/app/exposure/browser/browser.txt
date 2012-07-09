@@ -87,8 +87,8 @@ exposure wizard.
     >>> wkspc = self.portal.workspace.test
     >>> request = TestRequest(
     ...     form={
-    ...         'form.widgets.generator': 'safe_html',
-    ...         'form.widgets.source': 'file2',
+    ...         'view.widgets.generator': 'safe_html',
+    ...         'view.widgets.source': 'file2',
     ...         'form.buttons.add': 1,
     ...     })
     >>> form = workspace.CreateExposureForm(wkspc, request)
@@ -101,6 +101,48 @@ exposure wizard.
     >>> wh = zope.component.getAdapter(form.ctxobj, IExposureWizard)
     >>> result = wh.structure
     >>> answer = [
+    ...     ('', {
+    ...         'commit_id': u'1',
+    ...         'curation': {},
+    ...         'docview_generator': u'safe_html',
+    ...         'docview_gensource': u'file2',
+    ...         'title': u'',
+    ...         'workspace': u'/plone/workspace/test',
+    ...         'Subject': (),
+    ...     })
+    ... ]
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
+
+If the file entry is includled, a file entry should be generated.
+::
+
+    >>> wkspc = self.portal.workspace.test
+    >>> request = TestRequest(
+    ...     form={
+    ...         'file.widgets.filetype': 'Test Type',
+    ...         'file.widgets.filename': 'file2',
+    ...         'view.widgets.generator': 'safe_html',
+    ...         'view.widgets.source': 'file2',
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> form = workspace.CreateExposureForm(wkspc, request)
+    >>> commit_id = '1'
+    >>> form.traverse_subpath = [commit_id]
+    >>> result = form()
+    >>> next = request.response.getHeader('Location')
+    >>> next
+    'http://.../exposure/...'
+    >>> wh = zope.component.getAdapter(form.ctxobj, IExposureWizard)
+    >>> result = wh.structure
+    >>> answer = [
+    ...     ('file2', {
+    ...         'file_type': '/plone/test_type',
+    ...         'Subject': [u'please_ignore'],
+    ...         'selected_view': None,
+    ...         'views': [u'edited_note', u'post_edited_note'],
+    ...     }),
     ...     ('', {
     ...         'commit_id': u'1',
     ...         'curation': {},

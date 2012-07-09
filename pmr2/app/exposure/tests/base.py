@@ -85,6 +85,9 @@ class ExposureDocTestCase(ExposureUnitTestCase):
 
         self.portal['exposure'] = ExposureContainer('exposure')
         self.portal['test_type'] = ExposureFileType('test_type')
+        self.portal.test_type.title = u'Test Type'
+        self.portal.test_type.views = [u'edited_note', u'post_edited_note']
+        self.portal.test_type.tags = [u'please_ignore']
 
         # XXX figure out a better way to force workflow states right
         # without messing with permissions.

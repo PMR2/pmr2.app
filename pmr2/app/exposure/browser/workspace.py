@@ -10,6 +10,7 @@ from plone.z3cform import layout
 from plone.z3cform.fieldsets import group, extensible
 
 from AccessControl import Unauthorized
+from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 
 from pmr2.app.workspace.interfaces import IStorage, IWorkspace
@@ -172,6 +173,7 @@ class ExposureViewGenGroup(DocGenSubgroup):
 
     label = 'Exposure main view'
     fields = z3c.form.field.Fields(IExposureViewGenGroup)
+    prefix = 'view'
 
 
 class ExposureFileChoiceTypeGroup(DocGenSubgroup):
@@ -181,6 +183,7 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
 
     label = 'Add model file'
     fields = z3c.form.field.Fields(IExposureFileChoiceTypeGroup)
+    prefix = 'file'
 
 
 class DocGenGroup(CreateExposureGroupBase):
@@ -234,11 +237,30 @@ class DocGenGroup(CreateExposureGroupBase):
         })
 
         if data['filename']:
+            self.populateExposureFile(first_file[1], data['filetype'])
             structure = [first_file, root]
         else:
             structure = [root]
 
         return structure
+
+    def populateExposureFile(self, filestruct, eftypeid):
+        catalog = getToolByName(self.context, 'portal_catalog')
+        if not catalog:
+            return
+
+        results = catalog(
+            portal_type='ExposureFileType',
+            review_state='published',
+            path=eftypeid,
+        )
+        if not results:
+            return
+
+        eftype = results[0]
+        filestruct['views'] = eftype.pmr2_eftype_views
+        filestruct['selected_view'] = eftype.pmr2_eftype_select_view
+        filestruct['Subject'] = eftype.pmr2_eftype_tags
 
 
 class ExposureImportExportGroup(CreateExposureGroupBase):
