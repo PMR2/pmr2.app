@@ -1540,7 +1540,7 @@ First we create one via the form.
 This new data should have been indexed.
 ::
 
-    >>> results = catalog(portal_type='ExposureFileType')
+    >>> results = catalog(portal_type='ExposureFileType', id='dummy_type')
     >>> results[0].pmr2_eftype_views
     [u'edited_note', u'post_edited_note']
     >>> results[0].pmr2_eftype_tags
@@ -1571,7 +1571,7 @@ The data could also be edited via the edit form.
 The cataloged data should have been updated also.
 ::
 
-    >>> results = catalog(portal_type='ExposureFileType')
+    >>> results = catalog(portal_type='ExposureFileType', id='dummy_type')
     >>> results[0].pmr2_eftype_views
     [u'rot13', u'post_edited_note', u'edited_note']
     >>> results[0].pmr2_eftype_tags

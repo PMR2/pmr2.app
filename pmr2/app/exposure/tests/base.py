@@ -5,6 +5,7 @@ import zope.component
 from zope.component import testing
 from Testing import ZopeTestCase as ztc
 from Zope2.App import zcml
+from Products.CMFCore.utils import getToolByName
 from Products.Five import fiveconfigure
 from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import PloneSite
@@ -80,8 +81,17 @@ class ExposureDocTestCase(ExposureUnitTestCase):
         super(ExposureDocTestCase, self).setUp()
 
         from pmr2.app.exposure.content import ExposureContainer
+        from pmr2.app.exposure.content import ExposureFileType
 
-        self.portal['exposure'] = ExposureContainer()
+        self.portal['exposure'] = ExposureContainer('exposure')
+        self.portal['test_type'] = ExposureFileType('test_type')
+
+        # XXX figure out a better way to force workflow states right
+        # without messing with permissions.
+        pw = getToolByName(self.portal.test_type, "portal_workflow")
+        self.setRoles(('Manager',))
+        pw.doActionFor(self.portal.test_type, "publish")
+        self.setRoles(('Member', 'Authenticated',))
 
 
 class CompleteDocTestCase(ExposureDocTestCase):
