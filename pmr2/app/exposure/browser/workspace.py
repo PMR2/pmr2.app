@@ -178,6 +178,9 @@ class DocGenSubgroup(form.Group, ParentCurrentCommitIdProvider):
 
     ignoreContext = True
 
+    def generateStructure(self):
+        raise NotImplementedError
+
 
 class ExposureViewGenGroup(DocGenSubgroup):
     """\
@@ -188,6 +191,21 @@ class ExposureViewGenGroup(DocGenSubgroup):
     fields = z3c.form.field.Fields(IExposureViewGenGroup)
     prefix = 'view'
 
+    def generateStructure(self):
+        data, errors = self.extractData()
+
+        structure = ('', {
+            'commit_id': self.current_commit_id(),
+            'curation': {},  # XXX no interface yet
+            'docview_generator': data['generator'],
+            'docview_gensource': data['source'],
+            'title': u'',  # XXX copy context?
+            'workspace': u'/'.join(self.context.getPhysicalPath()),
+            'Subject': (),  # XXX to be assigned by filetype?
+        })
+
+        return structure
+
 
 class ExposureFileChoiceTypeGroup(DocGenSubgroup):
     """\
@@ -197,6 +215,42 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
     label = 'Add model file'
     fields = z3c.form.field.Fields(IExposureFileChoiceTypeGroup)
     prefix = 'file'
+
+    def generateStructure(self):
+        data, errors = self.extractData()
+
+        catalog = getToolByName(self.context, 'portal_catalog')
+        if not catalog:
+            # XXX might be better to raise an exception here as this
+            # shouldn't happen.
+            return
+
+        items = {
+            'file_type': data['filetype'],
+            'views': [],
+            'selected_view': None,
+            'Subject': (),
+        }
+
+        results = catalog(
+            portal_type='ExposureFileType',
+            review_state='published',
+            path=data['filetype'],
+        )
+        if results:
+            # update the structure with the indexed information of the
+            # selected view.
+            eftype = results[0]
+            items['views'] = eftype.pmr2_eftype_views
+            items['selected_view'] = eftype.pmr2_eftype_select_view
+            items['Subject'] = eftype.pmr2_eftype_tags
+        else:
+            # Could possibly manually acquire the object, but might be
+            # better if we raise an exception here.
+            pass
+
+        structure = (data['filename'], items)
+        return structure
 
 
 class DocGenGroup(CreateExposureGroupBase):
@@ -210,69 +264,36 @@ class DocGenGroup(CreateExposureGroupBase):
     order = -10
 
     def update(self):
-        # XXX once the following are properly for the wizard, maybe we
-        # reuse the ones there.
-        # XXX also turn these into adapters, but they need to implement
-        # the handelers.
+        # While adapters can be nice, the structure for this is rather
+        # rigid at this point.  If adapters are to be included we will
+        # have to rethink how this is to be integrated with the object
+        # types that these groups represent.
         self.groups = []
-        self.groups.append(ExposureViewGenGroup(
-            self.context, self.request, self))
-        self.groups.append(ExposureFileChoiceTypeGroup(
-            self.context, self.request, self))
+        self.viewGroup = ExposureViewGenGroup(
+            self.context, self.request, self)
+        self.fileGroup = ExposureFileChoiceTypeGroup(
+            self.context, self.request, self)
+        self.groups.append(self.viewGroup)
+        self.groups.append(self.fileGroup)
 
         return super(DocGenGroup, self).update()
 
     def populateExposure(self, exposure):
         data, errors = self.extractData()
         if errors:
+            # might need to notify the errors.
             return
 
         if not data['generator'] and not data['filename']:
             # no root document and no filename to the first file.
             return
 
-        first_file = (data['filename'], {
-            'file_type': data['filetype'],
-            'views': [],
-            'selected_view': None,
-            'Subject': (),
-        })
-
-        root = ('', {
-            'commit_id': self.current_commit_id(),
-            'curation': {},  # XXX no interface yet
-            'docview_generator': data['generator'],
-            'docview_gensource': data['source'],
-            'title': u'',  # XXX copy context?
-            'workspace': u'/'.join(self.context.getPhysicalPath()),
-            'Subject': (),  # XXX to be assigned by filetype?
-        })
-
+        structure = []
         if data['filename']:
-            self.populateExposureFile(first_file[1], data['filetype'])
-            structure = [first_file, root]
-        else:
-            structure = [root]
+            structure.append(self.fileGroup.generateStructure())
+        structure.append(self.viewGroup.generateStructure())
 
         return structure
-
-    def populateExposureFile(self, filestruct, eftypeid):
-        catalog = getToolByName(self.context, 'portal_catalog')
-        if not catalog:
-            return
-
-        results = catalog(
-            portal_type='ExposureFileType',
-            review_state='published',
-            path=eftypeid,
-        )
-        if not results:
-            return
-
-        eftype = results[0]
-        filestruct['views'] = eftype.pmr2_eftype_views
-        filestruct['selected_view'] = eftype.pmr2_eftype_select_view
-        filestruct['Subject'] = eftype.pmr2_eftype_tags
 
 
 class ExposureImportExportGroup(CreateExposureGroupBase):
