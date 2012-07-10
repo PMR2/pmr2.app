@@ -9,6 +9,7 @@ import z3c.form
 from plone.z3cform import layout
 from plone.z3cform.fieldsets import group, extensible
 
+from Acquisition import aq_inner, aq_parent
 from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
@@ -34,6 +35,19 @@ from pmr2.app.exposure.browser.util import *
 from pmr2.app.exposure.urlopen import urlopen
 
 
+class ParentCurrentCommitIdProvider(object):
+    """\
+    Parent commit id provider mixin.
+    """
+
+    zope.interface.implements(ICurrentCommitIdProvider)
+
+    def current_commit_id(self):
+        parent = aq_parent(aq_inner(self))
+        if ICurrentCommitIdProvider.providedBy(parent):
+            return parent.current_commit_id()
+
+
 class ExtensibleAddForm(form.AddForm, extensible.ExtensibleForm):
 
     def __init__(self, *a, **kw):
@@ -52,13 +66,17 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
     container from within a workspace.
     """
 
-    zope.interface.implements(ICreateExposureForm)
+    zope.interface.implements(ICreateExposureForm, ICurrentCommitIdProvider)
 
     label = u"Exposure Creation Wizard"
     description = u"Please fill out the options of only one for the " \
                    "following sets of fields below to begin the exposure " \
                    "creation process."
     _gotExposureContainer = False
+
+    def current_commit_id(self):
+        commit_id = unicode(self.traverse_subpath[0])
+        return commit_id
 
     def createAndAdd(self, data):
         obj = super(CreateExposureForm, self).createAndAdd(self)
@@ -81,7 +99,7 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
 
         exposure = obj
         workspace = u'/'.join(self.context.getPhysicalPath())
-        commit_id = unicode(self.traverse_subpath[0])
+        commit_id = self.current_commit_id()
 
         try:
             exposure_container = restrictedGetExposureContainer()
@@ -136,7 +154,7 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
         return super(CreateExposureForm, self).__call__(*a, **kw)
 
 
-class CreateExposureGroupBase(form.Group):
+class CreateExposureGroupBase(form.Group, ParentCurrentCommitIdProvider):
     """\
     Base group for extending the exposure creator.
     """
@@ -153,17 +171,12 @@ class CreateExposureGroupBase(form.Group):
         raise NotImplementedError
 
 
-class DocGenSubgroup(form.Group):
+class DocGenSubgroup(form.Group, ParentCurrentCommitIdProvider):
     """\
     Subgroup for docgen.
     """
 
-    zope.interface.implements(ICurrentCommitIdProvider)
     ignoreContext = True
-
-    def current_commit_id(self):
-        # XXX this is a hack, should use some sort of adapter.
-        return self.parentForm.parentForm.traverse_subpath[0]
 
 
 class ExposureViewGenGroup(DocGenSubgroup):
@@ -226,8 +239,7 @@ class DocGenGroup(CreateExposureGroupBase):
         })
 
         root = ('', {
-            # XXX again, assuming parentForm (see above hack).
-            'commit_id': self.parentForm.traverse_subpath[0],
+            'commit_id': self.current_commit_id(),
             'curation': {},  # XXX no interface yet
             'docview_generator': data['generator'],
             'docview_gensource': data['source'],
