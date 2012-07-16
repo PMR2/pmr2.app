@@ -107,13 +107,13 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
     def updateGroups(self):
         self.groups = []
 
-        self.viewGroup = ExposureViewGenWizard(
-            self.context, self.request, self)
-        # XXX
-        self.viewGroup.structure = {}
         wh = zope.component.getAdapter(self.context, 
             IExposureWizard)
-        # XXX placeholder assumption
+
+        # XXX hack of sort to add the view group to the beginning.
+        self.viewGroup = ExposureViewGenWizard(
+            self.context, self.request, self)
+        self.viewGroup.structure = {}
         if wh.structure:
             self.viewGroup.structure = wh.structure[-1][1]
         self.viewGroup.update()

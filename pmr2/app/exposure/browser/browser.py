@@ -368,7 +368,7 @@ ExposureFileTypeChoiceFormView = layout.wrap_form(
     label="Add an annotation to an Exposure File.")
 
 
-class ExposureFileTypeAnnotatorForm(
+class BaseExposureFileTypeAnnotatorForm(
         extensible.ExtensibleForm, 
         form.BaseAnnotationForm):
     """\
@@ -389,13 +389,9 @@ class ExposureFileTypeAnnotatorForm(
     enable_form_tabbing = False
 
     def __init__(self, *a, **kw):
-        super(ExposureFileTypeAnnotatorForm, self).__init__(*a, **kw)
+        super(BaseExposureFileTypeAnnotatorForm, self).__init__(*a, **kw)
         self.groups = []
         self.fields = z3c.form.field.Fields()
-
-    @button.buttonAndHandler(_('Annotate'), name='apply')
-    def handleAnnotate(self, action):
-        self.baseAnnotate(action)
 
     def annotate(self):
         """
@@ -455,6 +451,13 @@ class ExposureFileTypeAnnotatorForm(
 
     def nextURL(self):
         return '%s/view' % self.context.absolute_url() 
+
+
+class ExposureFileTypeAnnotatorForm(BaseExposureFileTypeAnnotatorForm):
+
+    @button.buttonAndHandler(_('Annotate'), name='apply')
+    def handleAnnotate(self, action):
+        self.baseAnnotate(action)
 
 ExposureFileTypeAnnotatorFormView = layout.wrap_form(
     ExposureFileTypeAnnotatorForm, 

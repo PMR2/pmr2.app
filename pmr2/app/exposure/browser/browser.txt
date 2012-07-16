@@ -140,7 +140,10 @@ If the file entry is includled, a file entry should be generated.
     ...         'file_type': '/plone/test_type',
     ...         'Subject': [u'please_ignore'],
     ...         'selected_view': None,
-    ...         'views': [u'edited_note', u'post_edited_note'],
+    ...         'views': [
+    ...             (u'edited_note', None),
+    ...             (u'post_edited_note', None),
+    ...         ],
     ...     }),
     ...     ('', {
     ...         'commit_id': u'1',

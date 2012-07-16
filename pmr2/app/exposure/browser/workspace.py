@@ -246,7 +246,8 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
             # update the structure with the indexed information of the
             # selected view.
             eftype = results[0]
-            items['views'] = eftype.pmr2_eftype_views
+            views = [(i, None) for i in eftype.pmr2_eftype_views]
+            items['views'] = views
             items['selected_view'] = eftype.pmr2_eftype_select_view
             items['Subject'] = eftype.pmr2_eftype_tags
         else:
