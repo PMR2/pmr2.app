@@ -48,9 +48,7 @@ class WorkspaceDocTestCase(DocTestCase):
         """
 
         DocTestCase.setUp(self)
-        from plone.z3cform.tests import setup_defaults
         from pmr2.app.settings.interfaces import IPMR2GlobalSettings
-        setup_defaults()
 
         # point the physical root for repo_root to the tmpdir.
         self.pmr2 = zope.component.getUtility(IPMR2GlobalSettings)

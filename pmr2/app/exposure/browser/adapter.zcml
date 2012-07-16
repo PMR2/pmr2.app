@@ -10,6 +10,8 @@
 
   <!-- form factory -->
 
+  <!--
   <adapter factory=".templates.wizard_form_factory" />
+  -->
 
 </configure> 

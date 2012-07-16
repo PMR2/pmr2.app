@@ -138,6 +138,10 @@
                                           <metal:block use-macro="context/@@ploneform-macros/group_rendering" />
                                       </tal:block>
 
+                                      <tal:block define="view nocall:group">
+                                          <metal:block use-macro="context/@@ploneform-macros/actions" />
+                                      </tal:block>
+
                               </fieldset>
                           </tal:block>
 

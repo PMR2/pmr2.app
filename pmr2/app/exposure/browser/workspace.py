@@ -177,6 +177,7 @@ class DocGenSubgroup(form.Group, ParentCurrentCommitIdProvider):
     """
 
     ignoreContext = True
+    for_interface = None
 
     def generateStructure(self):
         raise NotImplementedError
@@ -188,6 +189,7 @@ class ExposureViewGenGroup(DocGenSubgroup):
     """
 
     label = 'Exposure main view'
+    for_interface = IExposureViewGenGroup
     fields = z3c.form.field.Fields(IExposureViewGenGroup)
     prefix = 'view'
 
@@ -213,6 +215,7 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
     """
 
     label = 'Add model file'
+    for_interface = IExposureFileChoiceTypeGroup
     fields = z3c.form.field.Fields(IExposureFileChoiceTypeGroup)
     prefix = 'file'
 
