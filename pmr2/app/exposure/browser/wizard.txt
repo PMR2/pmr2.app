@@ -71,8 +71,8 @@ exposure.
     ...     form={
     ...         'file.widgets.filetype': 'Test Type',
     ...         'file.widgets.filename': 'file2',
-    ...         'view.widgets.generator': 'safe_html',
-    ...         'view.widgets.source': 'file2',
+    ...         'view.widgets.docview_generator': 'safe_html',
+    ...         'view.widgets.docview_gensource': 'file2',
     ...         'form.buttons.add': 1,
     ...     })
     >>> form = workspace.CreateExposureForm(wkspc, request)
@@ -81,12 +81,8 @@ exposure.
     >>> result = form()
     >>> context = form.ctxobj
 
-We can render the form again using this new exposure.
-::
-
-    >>> request = TestRequest()
-    >>> form = wizard.ExposureWizardForm(context, request)
-    >>> result = form()
+We can render the form again using this new exposure, but we will use
+the browser.
 
 Due to the way ploneform-macros is current set up, it is not possible to
 override the default testing one.  Until we customize the entire testing
@@ -114,3 +110,11 @@ Find that the update button for that subgroup is in place.
 
     >>> b.getControl(name='view.buttons.update')
     <SubmitControl name='view.buttons.update' type='submit'>
+
+Validate the values are correctly populated.
+::
+
+    >>> b.getControl(name='view.widgets.docview_generator:list').value
+    ['safe_html']
+    >>> b.getControl(name='view.widgets.docview_gensource:list').value
+    ['file2']

@@ -86,8 +86,8 @@ exposure wizard.
     >>> wkspc = self.portal.workspace.test
     >>> request = TestRequest(
     ...     form={
-    ...         'view.widgets.generator': 'safe_html',
-    ...         'view.widgets.source': 'file2',
+    ...         'view.widgets.docview_generator': 'safe_html',
+    ...         'view.widgets.docview_gensource': 'file2',
     ...         'form.buttons.add': 1,
     ...     })
     >>> form = workspace.CreateExposureForm(wkspc, request)
@@ -122,8 +122,8 @@ If the file entry is includled, a file entry should be generated.
     ...     form={
     ...         'file.widgets.filetype': 'Test Type',
     ...         'file.widgets.filename': 'file2',
-    ...         'view.widgets.generator': 'safe_html',
-    ...         'view.widgets.source': 'file2',
+    ...         'view.widgets.docview_generator': 'safe_html',
+    ...         'view.widgets.docview_gensource': 'file2',
     ...         'form.buttons.add': 1,
     ...     })
     >>> form = workspace.CreateExposureForm(wkspc, request)

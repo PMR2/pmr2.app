@@ -17,6 +17,8 @@ from pmr2.app.browser import page
 from pmr2.app.browser import widget
 from pmr2.app.browser.layout import *
 
+from pmr2.app.workspace.interfaces import ICurrentCommitIdProvider
+
 from pmr2.app.exposure.interfaces import IExposure
 from pmr2.app.exposure.browser.interfaces import IExposureExportImportGroup
 from pmr2.app.exposure.browser.interfaces import IExposureFileGenForm
@@ -37,16 +39,21 @@ class BaseWizardGroup(form.Form, form.Group):
     This is a mixin.
     """
 
+    zope.interface.implements(ICurrentCommitIdProvider)
+
     ignoreContext = False
     structure = None
+
+    def current_commit_id(self):
+        return self.context.commit_id
 
     def getContent(self):
         # assigned by constructor.
         obj = self.dummy()
         for k, v in self.structure.iteritems():
             setattr(obj, k, v)
-        if self.for_interface:
-            zope.interface.alsoProvides(obj, self.for_interface)
+        if self.field_iface:
+            zope.interface.alsoProvides(obj, self.field_iface)
         return obj
 
     @z3c.form.button.buttonAndHandler(_('Update'), name='update')

@@ -177,7 +177,9 @@ class DocGenSubgroup(form.Group, ParentCurrentCommitIdProvider):
     """
 
     ignoreContext = True
-    for_interface = None
+    # this is to identify the marker to apply to the dummy object that
+    # wraps around the actual structure.
+    field_iface = None
 
     def generateStructure(self):
         raise NotImplementedError
@@ -189,7 +191,7 @@ class ExposureViewGenGroup(DocGenSubgroup):
     """
 
     label = 'Exposure main view'
-    for_interface = IExposureViewGenGroup
+    field_iface = IExposureViewGenGroup
     fields = z3c.form.field.Fields(IExposureViewGenGroup)
     prefix = 'view'
 
@@ -199,8 +201,8 @@ class ExposureViewGenGroup(DocGenSubgroup):
         structure = ('', {
             'commit_id': self.current_commit_id(),
             'curation': {},  # XXX no interface yet
-            'docview_generator': data['generator'],
-            'docview_gensource': data['source'],
+            'docview_generator': data['docview_generator'],
+            'docview_gensource': data['docview_gensource'],
             'title': u'',  # XXX copy context?
             'workspace': u'/'.join(self.context.getPhysicalPath()),
             'Subject': (),  # XXX to be assigned by filetype?
@@ -215,7 +217,7 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
     """
 
     label = 'Add model file'
-    for_interface = IExposureFileChoiceTypeGroup
+    field_iface = IExposureFileChoiceTypeGroup
     fields = z3c.form.field.Fields(IExposureFileChoiceTypeGroup)
     prefix = 'file'
 
@@ -287,7 +289,7 @@ class DocGenGroup(CreateExposureGroupBase):
             # might need to notify the errors.
             return
 
-        if not data['generator'] and not data['filename']:
+        if not data['docview_generator'] and not data['filename']:
             # no root document and no filename to the first file.
             return
 

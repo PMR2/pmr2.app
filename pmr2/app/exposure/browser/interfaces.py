@@ -179,7 +179,7 @@ class IExposureViewGenGroup(zope.interface.Interface):
     Group for the root documentation generation.
     """
 
-    generator = zope.schema.Choice(
+    docview_generator = zope.schema.Choice(
         title=u'View Generator',
         description=u'The selected generator will be used to generate the '
                      'text and/or view for the exposure index, or the root '
@@ -188,7 +188,7 @@ class IExposureViewGenGroup(zope.interface.Interface):
         required=False,
     )
 
-    source = StorageFileChoice(
+    docview_gensource = StorageFileChoice(
         title=u'Generator Source',
         description=u'The source for the above generator.  The selected file '
                      'must be compatible with the selected generator.',
