@@ -244,4 +244,9 @@
       name="pmr2.exposure.worspacecreate"
       />
 
+  <adapter 
+      factory=".wizard.ExposureFileTypeAnnotatorSubFormExtender"
+      name="pmr2.wizard_eft.extender"
+      />
+
 </configure>

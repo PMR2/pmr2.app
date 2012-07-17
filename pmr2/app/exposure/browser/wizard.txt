@@ -18,6 +18,7 @@ objects created through other means.
 To demonstrate, we initialize the set of imports.
 ::
 
+    >>> from pprint import pprint
     >>> import zope.interface
     >>> import zope.component
     >>> from Products.CMFCore.utils import getToolByName
@@ -30,6 +31,7 @@ To demonstrate, we initialize the set of imports.
 
     >>> from pmr2.app.exposure.browser import wizard
     >>> from pmr2.app.exposure.browser import workspace
+    >>> pp = lambda x: pprint(x, indent=4, width=1)
 
 We acquire an exposure object that's already been created.
 ::
@@ -54,13 +56,14 @@ Render the wizard:
     >>> form = wizard.ExposureWizardForm(context, request)
     >>> result = form()
 
-That form should be fairly unpopulated. 
+That form should be fairly unpopulated, with only the view gen group in
+place.
+::
 
-    >>> wkspc = self.portal.workspace.test
-    >>> request = TestRequest()
-    >>> form = workspace.CreateExposureForm(wkspc, request)
-    >>> form.traverse_subpath = ['1']
-    >>> # print form()
+    >>> len(form.groups)
+    1
+    >>> form.groups[0].fields.keys()
+    ['docview_generator', 'docview_gensource']
 
 Alternatively, we can use the create exposure form to create our initial
 exposure.
@@ -81,27 +84,34 @@ exposure.
     >>> result = form()
     >>> context = form.ctxobj
 
-We can render the form again using this new exposure, but we will use
-the browser.
-
 Due to the way ploneform-macros is current set up, it is not possible to
 override the default testing one.  Until we customize the entire testing
-stack, to see the subgroups in action we have to use the full browser 
-suite to test the rendering.  First we instantiate and then log in.
+stack, to properly visualize the subgroups and to see them in action the
+testbrowser must be used.  For now we resort to verifying the attributes
+that should have been updated manually through the update methods.
 ::
 
-    >>> from Testing.testbrowser import Browser
-    >>> from Products.PloneTestCase.setup import default_user, default_password
-    >>> b = Browser()
-    >>> portal_url = self.portal.absolute_url()
-    >>> b.open(portal_url + '/login')
-    >>> b.getControl(name='__ac_name').value = default_user
-    >>> b.getControl(name='__ac_password').value = default_password
-    >>> b.getControl(name='submit').click()
 
-Next open the form.
+    >>> request = TestRequest()
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> result = form()
+    >>> len(form.groups)
+    2
+    >>> form.groups[0].fields.keys()
+    ['docview_generator', 'docview_gensource']
+    >>> form.groups[1].fields.keys()
+    []
+    >>> len(form.groups[1].groups)
+    2
+    >>> form.groups[1].groups[0].fields.keys()
+    ['edited_note.note']
+    >>> form.groups[1].groups[1].fields.keys()
+    ['post_edited_note.chars']
+
+Now we open the wizard using the prepared TestBrowser instance.
 ::
 
+    >>> b = self.testbrowser
     >>> target = context.absolute_url() + '/@@wizard'
     >>> b.open(target)
 

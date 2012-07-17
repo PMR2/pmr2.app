@@ -3,46 +3,4 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="pmr2">
 
-  <adapter factory=".templates.wizard_form_factory" />
-
-  <browser:page
-      name="ploneform-macros"
-      for="pmr2.app.workspace.interfaces.IWorkspace"
-      layer="pmr2.testing.base.IPMR2TestRequest"
-      class="plone.app.z3cform.templates.Macros"
-      template="../../browser/templates/macros.pt"
-      allowed_interface="zope.interface.common.mapping.IItemMapping"
-      permission="zope.Public"
-      />
-
-  <browser:page
-      name="ploneform-macros"
-      for="pmr2.app.exposure.interfaces.IExposure"
-      layer="plone.app.z3cform.interfaces.IPloneFormLayer"
-      class="plone.app.z3cform.templates.Macros"
-      template="../../browser/templates/macros.pt"
-      allowed_interface="zope.interface.common.mapping.IItemMapping"
-      permission="zope.Public"
-      />
-
-  <browser:page
-      name="ploneform-macros"
-      for="pmr2.app.exposure.interfaces.IExposureFile"
-      layer="plone.app.z3cform.interfaces.IPloneFormLayer"
-      class="plone.app.z3cform.templates.Macros"
-      template="../../browser/templates/macros.pt"
-      allowed_interface="zope.interface.common.mapping.IItemMapping"
-      permission="zope.Public"
-      />
-
-  <browser:page
-      name="ploneform-macros"
-      for="pmr2.app.exposure.interfaces.IExposureFileType"
-      layer="plone.app.z3cform.interfaces.IPloneFormLayer"
-      class="plone.app.z3cform.templates.Macros"
-      template="../../browser/templates/macros.pt"
-      allowed_interface="zope.interface.common.mapping.IItemMapping"
-      permission="zope.Public"
-      />
-
 </configure> 

@@ -48,6 +48,9 @@ class WorkspaceDocTestCase(DocTestCase):
         """
 
         DocTestCase.setUp(self)
+        from Testing.testbrowser import Browser
+        from Products.PloneTestCase.setup import default_user, default_password
+
         from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
         # point the physical root for repo_root to the tmpdir.
@@ -58,6 +61,16 @@ class WorkspaceDocTestCase(DocTestCase):
         _createObjectByType('Folder', self.portal, id='w')
         self.pmr2.user_workspace_subpath = u'w'
         self.pmr2.create_user_workspace = True
+
+        # set up test browser with default user logged in.
+        b = Browser()
+        portal_url = self.portal.absolute_url()
+        b.open(portal_url + '/login')
+        b.getControl(name='__ac_name').value = default_user
+        b.getControl(name='__ac_password').value = default_password
+        b.getControl(name='submit').click()
+
+        self.testbrowser = b
 
     def traverse(self, context, browserClass, traverse_subpath, request=None):
         """\
