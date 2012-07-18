@@ -100,7 +100,7 @@ that should have been updated manually through the update methods.
     >>> form.groups[0].fields.keys()
     ['docview_generator', 'docview_gensource']
     >>> form.groups[1].fields.keys()
-    []
+    ['filename']
     >>> len(form.groups[1].groups)
     2
     >>> form.groups[1].groups[0].fields.keys()
@@ -121,10 +121,16 @@ Find that the update button for that subgroup is in place.
     >>> b.getControl(name='view.buttons.update')
     <SubmitControl name='view.buttons.update' type='submit'>
 
-Validate the values are correctly populated.
+Validate the values for the root subform are correctly populated.
 ::
 
     >>> b.getControl(name='view.widgets.docview_generator:list').value
     ['safe_html']
     >>> b.getControl(name='view.widgets.docview_gensource:list').value
+    ['file2']
+
+Now we take a look at the first file sub group.
+::
+
+    >>> b.getControl(name='annotate0.widgets.filename:list').value
     ['file2']

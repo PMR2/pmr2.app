@@ -391,7 +391,6 @@ class BaseExposureFileTypeAnnotatorForm(
     def __init__(self, *a, **kw):
         super(BaseExposureFileTypeAnnotatorForm, self).__init__(*a, **kw)
         self.groups = []
-        self.fields = z3c.form.field.Fields()
 
     def annotate(self):
         """

@@ -47,8 +47,14 @@ class BaseWizardGroup(form.Form, form.Group):
     This is a mixin.
     """
 
+    zope.interface.implements(ICurrentCommitIdProvider)
+
     ignoreContext = False
     structure = None
+    filename = None
+
+    def current_commit_id(self):
+        return self.context.commit_id
 
     def getContent(self):
         # assigned by constructor.
@@ -79,10 +85,8 @@ class BaseWizardGroup(form.Form, form.Group):
 def mixin_wizard(groupform, object_cls=DummyObject):
     class WizardGroupMixed(BaseWizardGroup, groupform):
         dummy = object_cls
-        def current_commit_id(self):
-            return self.context.commit_id
         def __repr__(self):
-            return '<%s for <%s.%s> object at %x' % (
+            return '<%s for <%s.%s> object at %x>' % (
                 self.__class__.__name__, 
                 groupform.__module__,
                 groupform.__name__,
@@ -92,19 +96,27 @@ def mixin_wizard(groupform, object_cls=DummyObject):
     #assert IDocGenSubgroup.implementedBy(groupform)
     return WizardGroupMixed
 
-
-class ExposureFileTypeAnnotatorSubForm(BaseExposureFileTypeAnnotatorForm):
-    zope.interface.implements(z3c.form.interfaces.ISubForm)
-    #fields = z3c.form.field.Fields(IExposureFileGenForm)
-    prefix = 'annotate'  # XXX need to be a property based on file.
-
-    ignoreContext = True
-
+# The subforms that need this.
 
 ExposureViewGenWizard = mixin_wizard(ExposureViewGenGroup)
 ExposureFileChoiceTypeWizard = mixin_wizard(ExposureFileChoiceTypeGroup)
-ExposureFileTypeAnnotatorWizard = \
-    mixin_wizard(ExposureFileTypeAnnotatorSubForm)
+
+
+class ExposureFileTypeAnnotatorWizard(
+        BaseWizardGroup,
+        BaseExposureFileTypeAnnotatorForm,
+        ):
+    
+    zope.interface.implements(z3c.form.interfaces.ISubForm)
+    fields = z3c.form.field.Fields(IExposureFileGenForm)
+    field_iface = IExposureFileGenForm
+    dummy = DummyObject
+    prefix = 'annotate'  # XXX need to be a property based on file.
+
+    def getContent(self):
+        obj = BaseWizardGroup.getContent(self)
+        obj.filename = self.filename
+        return obj
 
 
 class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
@@ -136,20 +148,24 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         self.viewGroup = ExposureViewGenWizard(
             self.context, self.request, self)
         self.viewGroup.structure = {}
+        self.viewGroup.filename = ''
         if wh.structure:
             self.viewGroup.structure = wh.structure[-1][1]
         self.viewGroup.update()
         self.groups.append(self.viewGroup)
 
-        # handle the rest.
         if not wh.structure:
+            # That's it.
             return
+
+        # handle the rest.
         structures = wh.structure[:-1]
 
         for i, o in enumerate(structures):
             grp = ExposureFileTypeAnnotatorWizard(
                 self.context, self.request, self)
             filename, structure = o
+            grp.filename = filename
             grp.structure = structure
             grp.prefix = grp.prefix + str(i)
             self.groups.append(grp)
@@ -183,12 +199,12 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         return super(ExposureWizardForm, self).render()
 
 
-class ExposureFileTypeAnnotatorSubFormExtender(extensible.FormExtender):
+class ExposureFileTypeAnnotatorExtender(extensible.FormExtender):
     # For subform
     # XXX refactor and merge this with the standard form
 
     zope.component.adapts(
-        IExposure, IBrowserRequest, ExposureFileTypeAnnotatorSubForm)
+        IExposure, IBrowserRequest, ExposureFileTypeAnnotatorWizard)
 
     @property
     def viewsEnabled(self):
