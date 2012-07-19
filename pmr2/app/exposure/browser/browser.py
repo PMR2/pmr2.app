@@ -392,6 +392,21 @@ class BaseExposureFileTypeAnnotatorForm(
         super(BaseExposureFileTypeAnnotatorForm, self).__init__(*a, **kw)
         self.groups = []
 
+    def split_groups(self, data):
+        # have to process the data as it's merged between all the forms
+        # due to heavy customization of this particular subgroup 
+        # processing method.
+        groups = {}
+        for k, value in data.iteritems():
+            if '.' not in k:
+                # data can be mixed, only prefixed ids are wanted.
+                continue
+            group, key = k.split('.', 1)
+            if not group in groups:
+                groups[group] = []
+            groups[group].append((key, value,))
+        return groups
+
     def annotate(self):
         """
         Goes through the notes and adapt to each specific annotator.
@@ -400,14 +415,7 @@ class BaseExposureFileTypeAnnotatorForm(
         self.context.views contains now.
         """
 
-        # have to process the data as it's merged between all the forms.
-        groups = {}
-        for k, value in self._data.iteritems():
-            group, key = k.split('.', 1)
-            if not group in groups:
-                groups[group] = []
-            groups[group].append((key, value,))
-
+        groups = self.split_groups(self._data)
         self._annotate(groups)
 
     def _annotate(self, groups):
