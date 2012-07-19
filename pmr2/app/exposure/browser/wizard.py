@@ -37,7 +37,18 @@ def _changeWizard(exposure):
 
 
 class DummyObject(object):
-    pass
+    """\
+    Internal use dummy wrapper of sort.
+    """
+    
+    def __init__(self, structure=None):
+        self._structure = structure
+        if structure:
+            for k, v in structure.iteritems():
+                setattr(self, k, v)
+
+    def _original(self):
+        return self._structure
 
 
 class BaseWizardGroup(form.Form, form.Group):
@@ -58,9 +69,7 @@ class BaseWizardGroup(form.Form, form.Group):
 
     def getContent(self):
         # assigned by constructor.
-        obj = self.dummy()
-        for k, v in self.structure.iteritems():
-            setattr(obj, k, v)
+        obj = self.dummy(self.structure)
         if hasattr(self, 'field_iface') and self.field_iface:
             zope.interface.alsoProvides(obj, self.field_iface)
         else:
@@ -117,6 +126,31 @@ class ExposureFileTypeAnnotatorWizard(
         obj = BaseWizardGroup.getContent(self)
         obj.filename = self.filename
         return obj
+
+    def generateStructure(self):
+        data, errors = self.extractData()
+        obj = self.getContent()
+
+        # grab original
+        groups = dict(obj.views)
+        new_groups = self.split_groups(data)
+        groups.update(new_groups)
+        # maintain original ordering.
+        views = [(k, groups.get(k, None)) for k, v in obj.views]
+
+        # XXX this will mean the file name is not modifiable.
+        filename = self.filename 
+
+        # XXX at some point figure out how to do this when the headaches
+        # of dupes are dealt with.
+        # filename = data['filename']
+
+        # final result to update the parent structure with.
+        structure = (filename, {
+            'views': views,
+        })
+
+        return structure
 
 
 class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
@@ -246,6 +280,7 @@ class ExposureFileTypeAnnotatorExtender(extensible.FormExtender):
         g.__name__ = annotator.title
         g.label = annotator.title
         g.fields = fields
+        g.prefix = self.form.prefix
         # XXX ignore it for now since we don't have the temporary one
         g.ignoreContext = True # ignoreContext
         if not fields.keys():

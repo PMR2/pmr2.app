@@ -143,6 +143,7 @@ If the file entry is includled, a file entry should be generated.
     ...         'views': [
     ...             (u'edited_note', None),
     ...             (u'post_edited_note', None),
+    ...             (u'rot13', None),
     ...         ],
     ...     }),
     ...     ('', {
