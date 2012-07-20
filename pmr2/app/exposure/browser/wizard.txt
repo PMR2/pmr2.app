@@ -59,6 +59,14 @@ Render the wizard:
     >>> form = wizard.ExposureWizardForm(context, request)
     >>> result = form()
 
+It should have initialized the wizard's structure.
+::
+
+    >>> len(ewiz.structure)
+    1
+    >>> ewiz.structure[0][0]
+    ''
+
 That form should be fairly unpopulated, with only the view gen group in
 place.
 ::
@@ -67,6 +75,18 @@ place.
     1
     >>> form.groups[0].fields.keys()
     ['docview_generator', 'docview_gensource']
+
+Adding a file should succeed.
+
+    >>> request = TestRequest(form={
+    ...     'form.buttons.add_file': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> len(ewiz.structure)
+    2
+    >>> ewiz.structure[0]
+    (None, {'file_type': None})
 
 Alternatively, we can use the create exposure form to create our initial
 exposure.
@@ -104,7 +124,7 @@ that should have been updated manually through the update methods.
     >>> form.groups[1].fields.keys()
     ['filename']
     >>> len(form.groups[1].groups)
-    3
+    2
     >>> form.groups[1].groups[0].fields.keys()
     ['edited_note.note']
     >>> form.groups[1].groups[1].fields.keys()
@@ -163,9 +183,13 @@ modify the structure represented by the wizard.
     True
     >>> ewiz.structure[-1][1]['docview_generator'] == 'rest_to_html'
     True
+    >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
+    >>> len(ewiz.structure)
+    2
 
 Doing the same on the subgroup for the file should update that subgroup
-only, even if the main view subgroup attributes are submitted.
+only, even if the main view subgroup attributes are submitted.  Also,
+the ordering specified in the file type must be maintained.
 ::
 
     >>> request = TestRequest(form={
@@ -191,3 +215,56 @@ only, even if the main view subgroup attributes are submitted.
     ...     (u'rot13', None),
     ... ]
     True
+
+To add more files, select the add button.  This should spawn a new file
+choice selection subgroup for the user to specify the file type.
+::
+
+    >>> request = TestRequest(form={
+    ...     'form.buttons.add_file': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> ewiz.structure[1]
+    (None, {'file_type': None})
+    >>> len(ewiz.structure)
+    3
+
+Rendering should show a new group for the user to select the file type.
+::
+
+    >>> target = context.absolute_url() + '/@@wizard'
+    >>> b.open(target)
+    >>> b.getControl(name='file1.widgets.filename:list').value
+    ['--NOVALUE--']
+    >>> b.getControl(name='file1.widgets.filename:list').displayOptions
+    ['no value', 'file1', 'file2', 'file3']
+    >>> b.getControl(name='file1.widgets.filetype:list').value
+    ['--NOVALUE--']
+    >>> b.getControl(name='file1.widgets.filetype:list').displayOptions
+    ['no value', 'Test Type']
+
+We now update the form.
+::
+
+    >>> request = TestRequest(form={
+    ...     'file1.widgets.filename': [u'file2'],
+    ...     'file1.widgets.filetype': [u'Test Type'],
+    ...     'file1.buttons.update': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> len(form.groups)
+    3
+    >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
+    >>> ewiz.structure[1][0] == 'file2'
+    True
+    >>> ewiz.structure[1][1]['views'] == [
+    ...     (u'edited_note', None),
+    ...     (u'post_edited_note', None),
+    ...     (u'rot13', None),
+    ... ]
+    True
+
+Given that structure, we should be able to generate the exposure with
+the build button.

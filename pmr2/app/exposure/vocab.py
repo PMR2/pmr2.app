@@ -3,6 +3,7 @@ import zope.component
 
 from zope.schema.interfaces import IVocabulary, IVocabularyFactory, ISource
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
+from zope.app.component.hooks import getSite
 
 from Products.CMFCore.utils import getToolByName
 
@@ -155,16 +156,18 @@ class EFTypeVocab(SimpleVocabulary):
 
     def __init__(self, context):
         self.context = context
-        self.pt = None
-        try:
-            self.pt = getToolByName(context, 'portal_catalog')
+        self.pt = getToolByName(context, 'portal_catalog', None)
+        if self.pt is None:
+            # fallback
+            self.pt = getToolByName(getSite(), 'portal_catalog', None)
+
+        if self.pt is None:
+            terms = []
+        else:
             results = self.pt(
                 portal_type='ExposureFileType',
                 review_state='published',
             )
-        except AttributeError:
-            terms = []
-        else:
             terms = [SimpleTerm(i.getPath(), i.Title) for i in results]
         super(EFTypeVocab, self).__init__(terms)
 

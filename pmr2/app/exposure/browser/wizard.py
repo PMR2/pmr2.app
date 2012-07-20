@@ -12,6 +12,8 @@ import z3c.form
 from plone.z3cform import layout
 from plone.z3cform.fieldsets import group, extensible
 
+from Products.statusmessages.interfaces import IStatusMessage
+
 from pmr2.app.browser import form
 from pmr2.app.browser import page
 from pmr2.app.browser import widget
@@ -32,7 +34,8 @@ from pmr2.app.exposure.browser.workspace import *
 def _changeWizard(exposure):
     wh = zope.component.getAdapter(exposure, IExposureWizard)
     structure = []
-    structure.extend(wh.structure)
+    if wh.structure:
+        structure.extend(wh.structure)
     wh.structure = structure
 
 
@@ -63,6 +66,8 @@ class BaseWizardGroup(form.Form, form.Group):
     ignoreContext = False
     structure = None
     filename = None
+    new_filename = None
+    pos = None
 
     def current_commit_id(self):
         return self.context.commit_id
@@ -85,10 +90,14 @@ class BaseWizardGroup(form.Form, form.Group):
         """
 
         filename, structure = self.generateStructure()
+        # as this is a direct reference to the wizard's structure, it
+        # will be updated if the structure attribute is pinged.
         self.structure.update(structure)
 
-        # trigger the update
-        _changeWizard(self.context)
+        if self.filename != filename:
+            self.new_filename = filename
+
+        self.parentForm._updated = True
 
 
 def mixin_wizard(groupform, object_cls=DummyObject):
@@ -172,16 +181,20 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
     ignoreContext = True
     enable_form_tabbing = False
 
+    _updated = False
+
     def __init__(self, *a, **kw):
         super(ExposureWizardForm, self).__init__(*a, **kw)
         self.fields = z3c.form.field.Fields()
 
     def update(self):
-        form.PostForm.update(self)
-        self.updateGroups()
+        # No need to call form.PostForm.update because that path added
+        # nothing.
+        self.appendGroups()
         extensible.ExtensibleForm.update(self)
+        self.updateGroups()
 
-    def updateGroups(self):
+    def appendGroups(self):
         self.groups = []
 
         wh = zope.component.getAdapter(self.context, 
@@ -192,22 +205,37 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
             self.context, self.request, self)
         self.viewGroup.structure = {}
         self.viewGroup.filename = ''
-        if wh.structure:
+        if isinstance(wh.structure, list) and wh.structure:
+            # is a list and not empty.
             self.viewGroup.structure = wh.structure[-1][1]
-        self.viewGroup.update()
-        self.groups.append(self.viewGroup)
+        else:
+            # initiate with empty set.
+            wh.structure = [('', {
+                # XXX this structure is duping.
+                'commit_id': self.viewGroup.current_commit_id(),
+                'curation': {},
+                'docview_generator': None,
+                'docview_gensource': None,
+                'title': u'',
+                'workspace': u'/'.join(self.context.getPhysicalPath()),
+                'Subject': (),
+            })]
 
-        if not wh.structure:
-            # That's it.
-            return
+        self.groups.append(self.viewGroup)
 
         # handle the rest.
         structures = wh.structure[:-1]
 
         for i, o in enumerate(structures):
-            grp = ExposureFileTypeAnnotatorWizardGroup(
-                self.context, self.request, self)
             filename, structure = o
+            if filename is None:
+                grp = ExposureFileChoiceTypeWizardGroup(
+                    self.context, self.request, self)
+            else:
+                grp = ExposureFileTypeAnnotatorWizardGroup(
+                    self.context, self.request, self)
+
+            grp.pos = i
             grp.filename = filename
             grp.structure = structure
             grp.prefix = grp.prefix + str(i)
@@ -218,6 +246,27 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
             #self.context, self.request, self)
         #self.groups.append(self.fileGroup)
 
+    def updateGroups(self):
+        # XXX this is a hack around the current implementation. it might 
+        # be better to keep the data in the groups and do the mass 
+        # manipulation here and just here only.  See the method 
+        # associated with the update button in the mixin class above.
+
+        wh = zope.component.getAdapter(self.context, 
+            IExposureWizard)
+
+        # XXX skip the first one, base on assumption that the view is
+        # going to be first.
+        for g in self.groups[1:]:
+            if g.new_filename is None:
+                continue
+
+            # so we have a new file name, the entry will be replaced.
+            wh.structure[g.pos] = (g.new_filename, g.structure)
+
+        # trigger the update (ping it).
+        _changeWizard(self.context)
+
     @z3c.form.button.buttonAndHandler(_('Build'), name='build')
     def handleBuild(self, action):
         """\
@@ -227,8 +276,16 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
     @z3c.form.button.buttonAndHandler(_('Add File'), name='add_file')
     def handleAddFile(self, action):
         """\
-        Add a file
+        Add a blank file structure.
         """
+
+        structure = (None, {
+           'file_type': None,
+        })
+        wh = zope.component.getAdapter(self.context, IExposureWizard)
+        wh.structure.insert(-1, structure)
+        _changeWizard(self.context)
+        self._updated = True
 
     # subform removes file.
 
@@ -237,6 +294,14 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         """\
         Cancel, revert the states to what is in the structure.
         """
+
+    def render(self):
+        if self._updated:
+            self.request.response.redirect(
+                self.context.absolute_url() + '/@@wizard')
+            return ''
+            
+        return super(ExposureWizardForm, self).render()
 
 
 class ExposureFileTypeWizardGroupExtender(extensible.FormExtender):
@@ -251,8 +316,7 @@ class ExposureFileTypeWizardGroupExtender(extensible.FormExtender):
         # return a list of views that are enabled.
         return [k for k, v in self.form.structure['views']]
 
-    def update(self):
-        # XXX files not included.
+    def _update(self):
         for name in self.viewsEnabled:
             # XXX self.context.views should be a tuple of ascii values
             # taken from the constraint vocabulary of installed views.
@@ -265,6 +329,20 @@ class ExposureFileTypeWizardGroupExtender(extensible.FormExtender):
 
             annotator = annotatorFactory(self.context, self.request)
             self.add(annotator)
+
+    def update(self):
+        # for the format may have changed, we have a wrapper of sort.
+        try:
+            self._update()
+        except:
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(
+                _(
+                    'There were errors loading the wizard due to corrupted '
+                    'data.  Please discard all changes and restart the wizard.'
+                ),
+                'error'
+            )
 
     def add(self, annotator):
         fields = self.makeField(annotator)
