@@ -182,8 +182,9 @@ only, even if the main view subgroup attributes are submitted.
     True
     >>> ewiz.structure[-1][1]['docview_generator'] == 'rest_to_html'
     True
-    >>> ewiz.structure[-1][1]['views'] == [
-    ...     (u'edited_note', None),
-    ...     (u'post_edited_note', None),
+    >>> ewiz.structure[0][1]['views'] == [
+    ...     (u'edited_note', [('note', u'Testing')]),
+    ...     (u'post_edited_note', [('chars', 2)]),
     ...     (u'rot13', None),
     ... ]
+    True
