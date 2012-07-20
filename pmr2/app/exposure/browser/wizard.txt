@@ -42,10 +42,13 @@ We acquire an exposure object that's already been created.
 
 Then adapt that into an exposure wizard, which provides some helper
 methods and the place to store a work-in-progress exposure structure.
+Currently it should be unintialized.
 ::
 
     >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
     >>> IExposureWizard.providedBy(ewiz)
+    True
+    >>> ewiz.structure is None
     True
 
 Render the wizard:

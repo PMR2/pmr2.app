@@ -107,11 +107,11 @@ def mixin_wizard(groupform, object_cls=DummyObject):
 
 # The subforms that need this.
 
-ExposureViewGenWizard = mixin_wizard(ExposureViewGenGroup)
-ExposureFileChoiceTypeWizard = mixin_wizard(ExposureFileChoiceTypeGroup)
+ExposureViewGenWizardGroup = mixin_wizard(ExposureViewGenGroup)
+ExposureFileChoiceTypeWizardGroup = mixin_wizard(ExposureFileChoiceTypeGroup)
 
 
-class ExposureFileTypeAnnotatorWizard(
+class ExposureFileTypeAnnotatorWizardGroup(
         BaseWizardGroup,
         BaseExposureFileTypeAnnotatorForm,
         ):
@@ -120,7 +120,16 @@ class ExposureFileTypeAnnotatorWizard(
     fields = z3c.form.field.Fields(IExposureFileGenForm)
     field_iface = IExposureFileGenForm
     dummy = DummyObject
-    prefix = 'annotate'  # XXX need to be a property based on file.
+
+    # while this can be a property based on file name, this assumption
+    # is subject to change.
+    prefix = 'annotate'
+
+    empty_groups = None
+
+    def __init__(self, *a, **kw):
+        super(ExposureFileTypeAnnotatorWizardGroup, self).__init__(*a, **kw)
+        self.empty_groups = []
 
     def getContent(self):
         obj = BaseWizardGroup.getContent(self)
@@ -179,7 +188,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
             IExposureWizard)
 
         # XXX hack of sort to add the view group to the beginning.
-        self.viewGroup = ExposureViewGenWizard(
+        self.viewGroup = ExposureViewGenWizardGroup(
             self.context, self.request, self)
         self.viewGroup.structure = {}
         self.viewGroup.filename = ''
@@ -196,7 +205,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         structures = wh.structure[:-1]
 
         for i, o in enumerate(structures):
-            grp = ExposureFileTypeAnnotatorWizard(
+            grp = ExposureFileTypeAnnotatorWizardGroup(
                 self.context, self.request, self)
             filename, structure = o
             grp.filename = filename
@@ -229,16 +238,13 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         Cancel, revert the states to what is in the structure.
         """
 
-    def render(self):
-        return super(ExposureWizardForm, self).render()
 
-
-class ExposureFileTypeAnnotatorExtender(extensible.FormExtender):
+class ExposureFileTypeWizardGroupExtender(extensible.FormExtender):
     # For subform
     # XXX refactor and merge this with the standard form
 
     zope.component.adapts(
-        IExposure, IBrowserRequest, ExposureFileTypeAnnotatorWizard)
+        IExposure, IBrowserRequest, ExposureFileTypeAnnotatorWizardGroup)
 
     @property
     def viewsEnabled(self):
@@ -262,6 +268,11 @@ class ExposureFileTypeAnnotatorExtender(extensible.FormExtender):
 
     def add(self, annotator):
         fields = self.makeField(annotator)
+        if not fields.keys():
+            # Rather than rendering an empty box, return nothing
+            self.form.empty_groups.append(annotator.title)
+            return
+
         # XXX name may need to reference the path to the file
         name = str(annotator.__name__)
         context = self.context
@@ -283,10 +294,6 @@ class ExposureFileTypeAnnotatorExtender(extensible.FormExtender):
         g.prefix = self.form.prefix
         # XXX ignore it for now since we don't have the temporary one
         g.ignoreContext = True # ignoreContext
-        if not fields.keys():
-            g.description = u''\
-                'There are no editable attributes for this note as values ' \
-                'for this annotation are automatically generated.'
 
         # finally append this group
         self.form.groups.append(g)

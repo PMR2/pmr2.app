@@ -71,7 +71,7 @@ The new exposure object should have the right values.
     >>> from pmr2.app.settings.interfaces import IPMR2GlobalSettings
     >>> settings = getUtility(IPMR2GlobalSettings)
     >>> frags = next.split('/')
-    >>> eid = frags[-1]  # assume default_view == immediate_view in fti
+    >>> eid = form.ctxobj.id
     >>> exposures = settings.getExposureContainer()
     >>> new_exposure = exposures[eid]
     >>> new_exposure.workspace == wkspc.absolute_url_path()

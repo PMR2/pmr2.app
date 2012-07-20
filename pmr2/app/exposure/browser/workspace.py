@@ -117,8 +117,10 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
         exposure.notifyWorkflowCreated()
         exposure.reindexObject()
 
-        # so redirection via self.getURL will work.
         self.ctxobj = exposure
+
+    def nextURL(self):
+        return self.ctxobj.absolute_url() + '/@@wizard'
 
     def processGroups(self):
         """\

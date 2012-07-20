@@ -245,7 +245,7 @@
       />
 
   <adapter 
-      factory=".wizard.ExposureFileTypeAnnotatorExtender"
+      factory=".wizard.ExposureFileTypeWizardGroupExtender"
       name="pmr2.wizard_eft.extender"
       />
 
