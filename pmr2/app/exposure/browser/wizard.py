@@ -27,6 +27,7 @@ from pmr2.app.exposure.browser.interfaces import IExposureFileGenForm
 from pmr2.app.exposure.browser.interfaces import IExposureWizardForm
 from pmr2.app.exposure.browser.browser import BaseExposureFileTypeAnnotatorForm
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
+from pmr2.app.exposure.browser.util import moldExposure
 
 from pmr2.app.exposure.browser.workspace import *
 
@@ -150,11 +151,10 @@ class ExposureFileTypeAnnotatorWizardGroup(
         obj = self.getContent()
 
         # grab original
-        groups = dict(obj.views)
-        new_groups = self.split_groups(data)
-        groups.update(new_groups)
+        groups = self.split_groups(data)
         # maintain original ordering.
-        views = [(k, groups.get(k, None)) for k, v in obj.views]
+        views = [(k, k in groups and dict(groups[k]) or None) 
+            for k, v in obj.views]
 
         # XXX this will mean the file name is not modifiable.
         filename = self.filename 
@@ -182,6 +182,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
     enable_form_tabbing = False
 
     _updated = False
+    _next = None
 
     def __init__(self, *a, **kw):
         super(ExposureWizardForm, self).__init__(*a, **kw)
@@ -217,7 +218,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
                 'docview_generator': None,
                 'docview_gensource': None,
                 'title': u'',
-                'workspace': u'/'.join(self.context.getPhysicalPath()),
+                'workspace': u'/'.join(self.context.workspace),
                 'Subject': (),
             })]
 
@@ -252,8 +253,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         # manipulation here and just here only.  See the method 
         # associated with the update button in the mixin class above.
 
-        wh = zope.component.getAdapter(self.context, 
-            IExposureWizard)
+        wh = zope.component.getAdapter(self.context, IExposureWizard)
 
         # XXX skip the first one, base on assumption that the view is
         # going to be first.
@@ -273,6 +273,11 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         Build the thing
         """
 
+        wh = zope.component.getAdapter(self.context, IExposureWizard)
+        moldExposure(self.context, self.request, wh.structure)
+        self._updated = True
+        self._next = ''
+
     @z3c.form.button.buttonAndHandler(_('Add File'), name='add_file')
     def handleAddFile(self, action):
         """\
@@ -289,16 +294,20 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
 
     # subform removes file.
 
-    @z3c.form.button.buttonAndHandler(_('Cancel'), name='cancel')
-    def handleCancel(self, action):
+    @z3c.form.button.buttonAndHandler(_('Revert'), name='revert')
+    def handleRevert(self, action):
         """\
-        Cancel, revert the states to what is in the structure.
+        Revert the states to what is in the structure.
         """
 
     def render(self):
+        next = self._next
+        if self._next is None:
+            next = '/@@wizard'
+
         if self._updated:
             self.request.response.redirect(
-                self.context.absolute_url() + '/@@wizard')
+                self.context.absolute_url() + next)
             return ''
             
         return super(ExposureWizardForm, self).render()

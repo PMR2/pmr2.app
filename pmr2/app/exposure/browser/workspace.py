@@ -200,13 +200,19 @@ class ExposureViewGenGroup(DocGenSubgroup):
     def generateStructure(self):
         data, errors = self.extractData()
 
+        wks_path = None
+        if IWorkspace.providedBy(self.context):
+            wks_path = u'/'.join(self.context.getPhysicalPath())
+        elif IExposure.providedBy(self.context):
+            wks_path = self.context.workspace
+
         structure = ('', {
             'commit_id': self.current_commit_id(),
             'curation': {},  # XXX no interface yet
             'docview_generator': data['docview_generator'],
             'docview_gensource': data['docview_gensource'],
             'title': u'',  # XXX copy context?
-            'workspace': u'/'.join(self.context.getPhysicalPath()),
+            'workspace': wks_path,
             'Subject': (),  # XXX to be assigned by filetype?
         })
 
@@ -237,6 +243,9 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
             'views': [],
             'selected_view': None,
             'Subject': (),
+            # XXX additions for backwards compatibility.
+            # 'docview_generator': None,
+            # 'docview_gensource': None,
         }
 
         results = catalog(

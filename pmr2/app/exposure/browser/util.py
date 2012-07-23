@@ -135,11 +135,13 @@ def moldExposure(exposure_context, request, exported):
                 ctxobj = fgen.ctxobj
 
             # generate docview
-            if fields['docview_generator']:
-                ctxobj.docview_gensource = fields['docview_gensource']
+            generator = fields.get('docview_generator', None)
+            if generator:
+                ctxobj.docview_gensource = fields.get(
+                    'docview_gensource', None)
                 viewgen = zope.component.getUtility(
                     IDocViewGen,
-                    name=fields['docview_generator'],
+                    name=generator,
                 )
                 viewgen(ctxobj)()
 
@@ -195,7 +197,9 @@ def moldExposure(exposure_context, request, exported):
 
             if fields['docview_gensource']:
                 # there is a source
-                container.docview_gensource = fields['docview_gensource']
+                # XXX I have unicode/str confusion
+                gensource = unicode(fields['docview_gensource'])
+                container.docview_gensource = gensource
                 viewgen = zope.component.queryUtility(
                     IDocViewGen,
                     name=fields['docview_generator']

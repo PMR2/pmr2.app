@@ -29,6 +29,7 @@ To demonstrate, we initialize the set of imports.
     >>> from pmr2.app.exposure.content import *
     >>> from pmr2.app.exposure.interfaces import *
 
+    >>> from pmr2.app.exposure.browser.browser import ExposurePort
     >>> from pmr2.app.exposure.browser import wizard
     >>> from pmr2.app.exposure.browser import workspace
     >>> pp = lambda x: pprint(x, indent=4, width=1)
@@ -179,9 +180,9 @@ modify the structure represented by the wizard.
     >>> len(form.groups)
     2
     >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
-    >>> ewiz.structure[-1][1]['docview_gensource'] == 'file1'
+    >>> ewiz.structure[-1][1]['docview_gensource'] == u'file1'
     True
-    >>> ewiz.structure[-1][1]['docview_generator'] == 'rest_to_html'
+    >>> ewiz.structure[-1][1]['docview_generator'] == u'rest_to_html'
     True
     >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
     >>> len(ewiz.structure)
@@ -210,8 +211,8 @@ the ordering specified in the file type must be maintained.
     >>> ewiz.structure[-1][1]['docview_generator'] == 'rest_to_html'
     True
     >>> ewiz.structure[0][1]['views'] == [
-    ...     (u'edited_note', [('note', u'Testing')]),
-    ...     (u'post_edited_note', [('chars', 2)]),
+    ...     (u'edited_note', {'note': u'Testing'}),
+    ...     (u'post_edited_note', {'chars': 2}),
     ...     (u'rot13', None),
     ... ]
     True
@@ -248,7 +249,7 @@ We now update the form.
 ::
 
     >>> request = TestRequest(form={
-    ...     'file1.widgets.filename': [u'file2'],
+    ...     'file1.widgets.filename': [u'file3'],
     ...     'file1.widgets.filetype': [u'Test Type'],
     ...     'file1.buttons.update': 1,
     ... })
@@ -257,7 +258,7 @@ We now update the form.
     >>> len(form.groups)
     3
     >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
-    >>> ewiz.structure[1][0] == 'file2'
+    >>> ewiz.structure[1][0] == u'file3'
     True
     >>> ewiz.structure[1][1]['views'] == [
     ...     (u'edited_note', None),
@@ -266,5 +267,55 @@ We now update the form.
     ... ]
     True
 
+Can fill this out using the test browser.
+::
+
+    >>> b.open(target)
+    >>> b.getControl(name='annotate1.widgets.filename:list').value = ['file3']
+    >>> b.getControl(
+    ...     name='annotate1.widgets.edited_note.note').value = 'Hi'
+    >>> b.getControl(
+    ...     name='annotate1.widgets.post_edited_note.chars').value = '1'
+    >>> b.getControl(name='annotate1.buttons.update').click()
+    >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
+    >>> ewiz.structure[1][1]['views'] == [
+    ...     (u'edited_note', {'note': u'Hi'}),
+    ...     (u'post_edited_note', {'chars': 1}),
+    ...     (u'rot13', None),
+    ... ]
+    True
+
 Given that structure, we should be able to generate the exposure with
 the build button.
+::
+
+    >>> request = TestRequest(form={
+    ...     'form.buttons.build': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+
+Now verify that the structure is equal to the one generated from the
+export form.  For now we munge the data a bit for backwards
+compatibility.
+::
+
+    >>> request = TestRequest()
+    >>> porter = ExposurePort(context, request)
+    >>> result = list(porter.export())
+    >>> answer = ewiz.structure
+
+    >>> del result[0][1]['docview_gensource']
+    >>> del result[0][1]['docview_generator']
+    >>> del result[1][1]['docview_gensource']
+    >>> del result[1][1]['docview_generator']
+
+    >>> del result[0][1]['views'][1][1]['text']
+    >>> del result[1][1]['views'][1][1]['text']
+
+    >>> result[0][1]['Subject'] = list(result[1][1]['Subject'])
+    >>> result[1][1]['Subject'] = list(result[1][1]['Subject'])
+
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
