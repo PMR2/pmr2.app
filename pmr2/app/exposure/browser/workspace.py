@@ -238,6 +238,9 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
             # shouldn't happen.
             return
 
+        if not (data['filetype'] and data['filename']):
+            return
+
         items = {
             'file_type': data['filetype'],
             'views': [],

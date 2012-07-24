@@ -107,6 +107,10 @@ def moldExposure(exposure_context, request, exported):
         return str(s)
 
     for path, fields in exported:
+        if path is None:
+            # due to wizard.
+            continue
+
         path = caststr(path)
         # We will be calling methods that modify internal states of that
         # form, so we will require fresh instances for every file.

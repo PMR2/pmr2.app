@@ -90,15 +90,21 @@ class BaseWizardGroup(form.Form, form.Group):
         Call update and update the structure we have.
         """
 
-        filename, structure = self.generateStructure()
+        result = self.generateStructure()
+        if not result:
+            return
+
+        filename, structure = result
+
         # as this is a direct reference to the wizard's structure, it
         # will be updated if the structure attribute is pinged.
-        self.structure.update(structure)
+        if structure:
+            self.structure.update(structure)
+            self.parentForm._updated = True
 
         if self.filename != filename:
             self.new_filename = filename
-
-        self.parentForm._updated = True
+            self.parentForm._updated = True
 
 
 def mixin_wizard(groupform, object_cls=DummyObject):

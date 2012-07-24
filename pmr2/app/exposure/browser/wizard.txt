@@ -302,6 +302,8 @@ compatibility.
 
     >>> request = TestRequest()
     >>> porter = ExposurePort(context, request)
+    >>> reference_result = list(porter.export())
+
     >>> result = list(porter.export())
     >>> answer = ewiz.structure
 
@@ -319,3 +321,51 @@ compatibility.
     >>> if not result == answer:
     ...     pp(answer)
     ...     pp(result)
+
+-------------------
+User error handling
+-------------------
+
+Due to the lack of any constraints on the forms for maximum flexibility
+for the users, sometimes subgroups may be empty or contain missing data.
+The following attempts to cover some of the cases.
+
+User leaving behind unfilled/empty add file groups should be ignored.
+::
+
+    >>> request = TestRequest(form={
+    ...     'form.buttons.add_file': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> ewiz.structure[2]
+    (None, {'file_type': None})
+    >>> len(ewiz.structure)
+    4
+    >>> request = TestRequest(form={
+    ...     'form.buttons.build': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+
+    >>> request = TestRequest()
+    >>> porter = ExposurePort(context, request)
+    >>> result = list(porter.export())
+    >>> result == reference_result
+    True
+
+Selecting just file should do nothing.
+::
+
+    >>> request = TestRequest(form={
+    ...     'file2.widgets.filename': [u'file1'],
+    ...     'file2.widgets.filetype': [],
+    ...     'file2.buttons.update': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
+    >>> len(ewiz.structure)
+    4
+    >>> ewiz.structure[2]
+    (None, {'file_type': None})
