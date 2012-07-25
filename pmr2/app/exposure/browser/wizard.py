@@ -28,6 +28,7 @@ from pmr2.app.exposure.browser.interfaces import IExposureFileGenForm
 from pmr2.app.exposure.browser.interfaces import IExposureWizardForm
 from pmr2.app.exposure.browser.browser import BaseExposureFileTypeAnnotatorForm
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
+from pmr2.app.exposure.browser.browser import ExposurePort
 from pmr2.app.exposure.browser.util import moldExposure
 
 from pmr2.app.exposure.browser.workspace import *
@@ -265,11 +266,6 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
             grp.prefix = grp.prefix + str(i)
             self.groups.append(grp)
 
-        # XXX need to expand this.
-        #self.fileGroup = ExposureFileChoiceTypeGroup(
-            #self.context, self.request, self)
-        #self.groups.append(self.fileGroup)
-
     def updateGroups(self):
         # XXX this is a hack around the current implementation. it might 
         # be better to keep the data in the groups and do the mass 
@@ -322,6 +318,12 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         """\
         Revert the states to what is in the structure.
         """
+
+        porter = ExposurePort(self.context, self.request)
+        structure = list(porter.export())
+        wh = zope.component.getAdapter(self.context, IExposureWizard)
+        wh.structure = structure
+        self._updated = True
 
     def render(self):
         next = self._next
@@ -386,14 +388,6 @@ class ExposureFileTypeWizardGroupExtender(extensible.FormExtender):
         # XXX name may need to reference the path to the file
         name = str(annotator.__name__)
         context = self.context
-
-        # since the adapter results in a factory that instantiates
-        # the annotation, this side effect must be avoided.
-        # XXX acquire the saved bits from the structure
-        #if has_note(context, name):
-        #    ignoreContext = False
-        #    context = zope.component.getAdapter(
-        #        context, annotator.for_interface, name=name)
 
         # make the group and assign data.
         g = BaseAnnotationGroup(context, self.request, self.form)

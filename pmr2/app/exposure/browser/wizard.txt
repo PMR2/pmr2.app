@@ -352,6 +352,24 @@ compatibility.
     ...     pp(answer)
     ...     pp(result)
 
+-----------------
+Reverting changes
+-----------------
+
+Users may decide to revert the wizard into the same state as the created
+objects.  This will let them achieve it.
+::
+
+    >>> request = TestRequest(form={
+    ...     'form.buttons.revert': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> result = list(porter.export())
+    >>> answer = ewiz.structure
+    >>> result == answer
+    True
+
 -------------------
 User error handling
 -------------------
