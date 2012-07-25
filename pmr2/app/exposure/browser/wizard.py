@@ -3,6 +3,7 @@ import json
 import zope.interface
 import zope.component
 from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.location import Location
 
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
@@ -40,12 +41,13 @@ def _changeWizard(exposure):
     wh.structure = structure
 
 
-class DummyObject(object):
+class StructureWrapper(Location):
     """\
-    Internal use dummy wrapper of sort.
+    Internal use structure wrapper for dicts.
     """
     
-    def __init__(self, structure=None):
+    def __init__(self, context=None, structure=None):
+        self.__parent__ = context
         self._structure = structure
         if structure:
             for k, v in structure.iteritems():
@@ -60,7 +62,6 @@ class BaseSubGroup(form.Form, form.Group):
     zope.interface.implements(ICurrentCommitIdProvider)
 
     ignoreContext = False
-    dummy = DummyObject
 
     def current_commit_id(self):
         return self.context.commit_id
@@ -71,7 +72,7 @@ class BaseSubGroup(form.Form, form.Group):
 
     def getContent(self):
         # assigned by constructor.
-        obj = self.dummy(self.getStructure())
+        obj = StructureWrapper(self, self.getStructure())
         if hasattr(self, 'field_iface') and self.field_iface:
             zope.interface.alsoProvides(obj, self.field_iface)
         else:
@@ -130,7 +131,7 @@ class BaseWizardGroup(BaseSubGroup):
             self.parentForm._updated = True
 
 
-def mixin_wizard(groupform, object_cls=DummyObject):
+def mixin_wizard(groupform):
     class WizardGroupMixed(BaseWizardGroup, groupform):
         def __repr__(self):
             return '<%s for <%s.%s> object at %x>' % (
@@ -157,7 +158,6 @@ class ExposureFileTypeAnnotatorWizardGroup(
     zope.interface.implements(z3c.form.interfaces.ISubForm)
     fields = z3c.form.field.Fields(IExposureFileGenForm)
     field_iface = IExposureFileGenForm
-    dummy = DummyObject
 
     # while this can be a property based on file name, this assumption
     # is subject to change.
