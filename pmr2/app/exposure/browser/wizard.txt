@@ -249,7 +249,7 @@ We now update the form.
 ::
 
     >>> request = TestRequest(form={
-    ...     'file1.widgets.filename': [u'file3'],
+    ...     'file1.widgets.filename': [u'file2'],
     ...     'file1.widgets.filetype': [u'Test Type'],
     ...     'file1.buttons.update': 1,
     ... })
@@ -258,7 +258,7 @@ We now update the form.
     >>> len(form.groups)
     3
     >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
-    >>> ewiz.structure[1][0] == u'file3'
+    >>> ewiz.structure[1][0] == u'file2'
     True
     >>> ewiz.structure[1][1]['views'] == [
     ...     (u'edited_note', None),
@@ -278,6 +278,8 @@ Can fill this out using the test browser.
     ...     name='annotate1.widgets.post_edited_note.chars').value = '1'
     >>> b.getControl(name='annotate1.buttons.update').click()
     >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
+    >>> ewiz.structure[1][0] == u'file3'
+    True
     >>> ewiz.structure[1][1]['views'] == [
     ...     (u'edited_note', {'note': u'Hi'}),
     ...     (u'post_edited_note', {'chars': 1}),

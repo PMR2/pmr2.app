@@ -184,12 +184,7 @@ class ExposureFileTypeAnnotatorWizardGroup(
         views = [(k, k in groups and dict(groups[k]) or None) 
             for k, v in obj.views]
 
-        # XXX this will mean the file name is not modifiable.
-        filename = self.filename 
-
-        # XXX at some point figure out how to do this when the headaches
-        # of dupes are dealt with.
-        # filename = data['filename']
+        filename = data['filename']
 
         # final result to update the parent structure with.
         structure = (filename, {
