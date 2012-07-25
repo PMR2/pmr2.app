@@ -55,27 +55,23 @@ class DummyObject(object):
         return self._structure
 
 
-class BaseWizardGroup(form.Form, form.Group):
-    """\
-    Subgroups for the wizard.
-
-    This is a mixin.
-    """
+class BaseSubGroup(form.Form, form.Group):
 
     zope.interface.implements(ICurrentCommitIdProvider)
 
     ignoreContext = False
-    structure = None
-    filename = None
-    new_filename = None
-    pos = None
+    dummy = DummyObject
 
     def current_commit_id(self):
         return self.context.commit_id
 
+    def getStructure(self):
+        # assigned by constructor.
+        return self.structure
+
     def getContent(self):
         # assigned by constructor.
-        obj = self.dummy(self.structure)
+        obj = self.dummy(self.getStructure())
         if hasattr(self, 'field_iface') and self.field_iface:
             zope.interface.alsoProvides(obj, self.field_iface)
         else:
@@ -83,6 +79,33 @@ class BaseWizardGroup(form.Form, form.Group):
             self.ignoreContext = True
             zope.interface.alsoProvides(obj, zope.interface.Interface)
         return obj
+
+
+class BaseAnnotationGroup(BaseSubGroup):
+    """\
+    Subgroups for the annotator
+
+    This is created in place.
+    """
+
+    def getStructure(self):
+        content = self.parentForm.getContent()
+        views = dict(content.views)
+        return views[self.__name__]
+
+
+class BaseWizardGroup(BaseSubGroup):
+    """\
+    Subgroups for the wizard.
+
+    This is a mixin with the workspace creation subgroups to add the
+    update button.
+    """
+
+    structure = None
+    filename = None
+    new_filename = None
+    pos = None
 
     @z3c.form.button.buttonAndHandler(_('Update'), name='update')
     def handleUpdate(self, action):
@@ -109,7 +132,6 @@ class BaseWizardGroup(form.Form, form.Group):
 
 def mixin_wizard(groupform, object_cls=DummyObject):
     class WizardGroupMixed(BaseWizardGroup, groupform):
-        dummy = object_cls
         def __repr__(self):
             return '<%s for <%s.%s> object at %x>' % (
                 self.__class__.__name__, 
@@ -369,7 +391,6 @@ class ExposureFileTypeWizardGroupExtender(extensible.FormExtender):
         # XXX name may need to reference the path to the file
         name = str(annotator.__name__)
         context = self.context
-        ignoreContext = True
 
         # since the adapter results in a factory that instantiates
         # the annotation, this side effect must be avoided.
@@ -380,20 +401,19 @@ class ExposureFileTypeWizardGroupExtender(extensible.FormExtender):
         #        context, annotator.for_interface, name=name)
 
         # make the group and assign data.
-        g = form.Group(context, self.request, self.form)
-        g.__name__ = annotator.title
+        g = BaseAnnotationGroup(context, self.request, self.form)
+        g.__name__ = annotator.__name__
         g.label = annotator.title
         g.fields = fields
         g.prefix = self.form.prefix
-        # XXX ignore it for now since we don't have the temporary one
-        g.ignoreContext = True # ignoreContext
+        g.field_iface = annotator.for_interface
 
         # finally append this group
         self.form.groups.append(g)
 
     def makeField(self, annotator):
-        # this method could potentially be refactored out into an 
-        # adapter.
+        # XXX this method could potentially be refactored out into an 
+        # adapter as this is copied from browser
         name = str(annotator.__name__)
         if IExposureFileEditAnnotator.providedBy(annotator) or \
                 IExposureFilePostEditAnnotator.providedBy(annotator):

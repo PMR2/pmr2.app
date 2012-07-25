@@ -285,6 +285,34 @@ Can fill this out using the test browser.
     ... ]
     True
 
+The subgroup within the wizard should be able to acquire the content 
+object with the above selected values set.
+::
+
+    >>> request = TestRequest()
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> form.groups[2].groups[0].getContent().note
+    u'Hi'
+    >>> form.groups[2].groups[1].getContent().chars
+    1
+
+Now when we render the wizard again, those fields should have been 
+selected.
+::
+
+    >>> b.open(target)
+    >>> b.getControl(name='annotate1.widgets.filename:list').value
+    ['file3']
+    >>> b.getControl(name='annotate1.widgets.edited_note.note').value
+    'Hi'
+    >>> b.getControl(name='annotate1.widgets.post_edited_note.chars').value
+    '1'
+
+----------------------------------
+Building the exposure using wizard
+----------------------------------
+
 Given that structure, we should be able to generate the exposure with
 the build button.
 ::
