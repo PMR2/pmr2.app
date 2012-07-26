@@ -6,6 +6,35 @@
   <include file="adapter.zcml"/>
   <include file="groups.zcml"/>
 
+  <!-- macros for workarounds -->
+
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.exposure.interfaces.IExposure"
+      layer="plone.app.z3cform.interfaces.IPloneFormLayer"
+      class="pmr2.app.browser.templates.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public"
+      />
+
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
+      layer="plone.app.z3cform.interfaces.IPloneFormLayer"
+      class="pmr2.app.browser.templates.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public"
+      />
+
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.exposure.interfaces.IExposureFileType"
+      layer="plone.app.z3cform.interfaces.IPloneFormLayer"
+      class="pmr2.app.browser.templates.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public"
+      />
+
   <!-- Exposure Container -->
 
   <!--

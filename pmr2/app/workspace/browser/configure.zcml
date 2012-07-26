@@ -8,6 +8,17 @@
 
   <include package="pmr2.app.security" />
 
+  <!-- Macros -->
+
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      layer="plone.app.z3cform.interfaces.IPloneFormLayer"
+      class="pmr2.app.browser.templates.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public"
+      />
+
   <!-- Workspace Container -->
 
   <browser:page
