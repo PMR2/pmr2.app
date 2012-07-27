@@ -64,6 +64,20 @@ class BaseSubGroup(form.Form, form.Group):
 
     ignoreContext = False
 
+    # None as in undefined, True is collapsed, False is expanded
+    collapseState = None
+
+    @property
+    def collapsible(self):
+        return not self.collapseState is None
+
+    @property
+    def collapsibleCss(self):
+        if not self.collapsible:
+            return ''
+        state = self.collapseState and ' collapsedOnLoad' or ''
+        return 'collapsible%s' % state
+
     def current_commit_id(self):
         return self.context.commit_id
 
@@ -108,6 +122,8 @@ class BaseWizardGroup(BaseSubGroup):
     filename = None
     new_filename = None
     pos = None
+
+    collapseState = False
 
     @z3c.form.button.buttonAndHandler(_('Update'), name='update')
     def handleUpdate(self, action):
