@@ -89,13 +89,7 @@ class ExposureDocTestCase(ExposureUnitTestCase):
         self.portal.test_type.views = [
             u'edited_note', u'post_edited_note', u'rot13']
         self.portal.test_type.tags = [u'please_ignore']
-
-        # XXX figure out a better way to force workflow states right
-        # without messing with permissions.
-        pw = getToolByName(self.portal.test_type, "portal_workflow")
-        self.setRoles(('Manager',))
-        pw.doActionFor(self.portal.test_type, "publish")
-        self.setRoles(('Member', 'Authenticated',))
+        self._publishContent(self.portal.test_type)
 
 
 class CompleteDocTestCase(ExposureDocTestCase):
