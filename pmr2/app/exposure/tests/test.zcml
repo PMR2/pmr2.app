@@ -3,4 +3,31 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="pmr2">
 
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.exposure.interfaces.IExposure"
+      layer="pmr2.testing.base.IPMR2TestRequest"
+      class=".templates.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public"
+      />
+
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
+      layer="pmr2.testing.base.IPMR2TestRequest"
+      class=".templates.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public"
+      />
+
+  <browser:page
+      name="ploneform-macros"
+      for="pmr2.app.exposure.interfaces.IExposureFileType"
+      layer="pmr2.testing.base.IPMR2TestRequest"
+      class=".templates.Macros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public"
+      />
+
 </configure> 
