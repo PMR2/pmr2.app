@@ -88,6 +88,10 @@ Adding a file should succeed.
     2
     >>> ewiz.structure[0]
     (None, {'file_type': None})
+    >>> ewiz.structure[1]
+    ('', {'commit_id': u'2', 'title': u'', 'curation': {}, 
+    'workspace': u'/plone/workspace/test', 'docview_gensource': None, 
+    'docview_generator': None, 'Subject': ()})
 
 Alternatively, we can use the create exposure form to create our initial
 exposure.

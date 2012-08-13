@@ -258,7 +258,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
                 'docview_generator': None,
                 'docview_gensource': None,
                 'title': u'',
-                'workspace': u'/'.join(self.context.workspace),
+                'workspace': self.context.workspace,
                 'Subject': (),
             })]
 
