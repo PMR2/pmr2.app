@@ -24,7 +24,7 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspaceContainer"
       name="raw_list"
-      class=".browser.WorkspaceContainerRepoListingView"
+      class=".browser.WorkspaceContainerRepoListing"
       permission="pmr2.app.security.ManagePMR2"
       />
 
@@ -32,7 +32,7 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspaceContainer"
       name="workspace_object_create"
-      class=".browser.WorkspaceAddFormView"
+      class=".browser.WorkspaceAddForm"
       permission="pmr2.app.security.ManagePMR2"
       />
 
@@ -40,7 +40,7 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspaceContainer"
       name="workspace_create"
-      class=".browser.WorkspaceStorageCreateFormView"
+      class=".browser.WorkspaceStorageCreateForm"
       permission="cmf.AddPortalContent"
       />
 
@@ -49,7 +49,7 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="workspace_view"
-      class=".browser.WorkspacePageView"
+      class=".browser.WorkspacePage"
       permission="zope2.View"
       />
 
@@ -70,7 +70,7 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="workspace_edit"
-      class=".browser.WorkspaceEditFormView"
+      class=".browser.WorkspaceEditForm"
       permission="cmf.ModifyPortalContent"
       />
 
@@ -84,14 +84,14 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="log"
-      class=".browser.WorkspaceLogView"
+      class=".browser.WorkspaceLog"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="shortlog"
-      class=".browser.WorkspaceShortlogView"
+      class=".browser.WorkspaceShortlog"
       permission="zope2.View"
       />
 
@@ -105,28 +105,28 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="file"
-      class=".browser.FilePageView"
+      class=".browser.FilePage"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="fileinfo"
-      class=".browser.FileInfoPageView"
+      class=".browser.FileInfoPage"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="rawfile"
-      class=".browser.WorkspaceRawfileView"
+      class=".browser.WorkspaceRawfile"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="xmlbase"
-      class=".browser.WorkspaceRawfileXmlBaseView"
+      class=".browser.WorkspaceRawfileXmlBase"
       permission="zope2.View"
       />
 
@@ -191,14 +191,14 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="safe_html"
-      class=".filerenderer.SafeHtmlRendererView"
+      class=".filerenderer.SafeHtmlRenderer"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="image"
-      class=".filerenderer.ImageRendererView"
+      class=".filerenderer.ImageRenderer"
       permission="zope2.View"
       />
 
@@ -223,7 +223,7 @@
   <browser:page
       for="pmr2.app.workspace.browser.adding.WorkspaceContainerAdding"
       name="addWorkspace"
-      class=".browser.WorkspaceStorageCreateFormView"
+      class=".browser.WorkspaceStorageCreateForm"
       permission="cmf.AddPortalContent"
       />
 

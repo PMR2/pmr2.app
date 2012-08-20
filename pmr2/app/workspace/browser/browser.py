@@ -47,7 +47,6 @@ from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace.content import *
 from pmr2.app.workspace.browser.util import *
 from pmr2.app.workspace.browser.interfaces import *
-from pmr2.app.workspace.browser.layout import BorderedWorkspaceProtocolWrapper
 
 
 # Workspace Container
@@ -61,12 +60,10 @@ class WorkspaceContainerAddForm(form.AddForm):
         'title',
     )
     clsobj = WorkspaceContainer
+    label = "Workspace Container Add Form"
 
     def add_data(self, ctxobj):
         ctxobj.title = self._data['title']
-
-WorkspaceContainerAddFormView = layout.wrap_form(
-    WorkspaceContainerAddForm, label="Workspace Container Add Form")
 
 
 class WorkspaceContainerEditForm(form.EditForm):
@@ -78,11 +75,12 @@ class WorkspaceContainerEditForm(form.EditForm):
         'title',
     )
 
-WorkspaceContainerEditFormView = layout.wrap_form(
-    WorkspaceContainerEditForm, label="Workspace Container Management")
+    label = "Workspace Container Management"
 
 
 class WorkspaceContainerRepoListing(page.SimplePage):
+
+    label = "Raw Workspace Listing"
 
     def content(self):
         t = table.WorkspaceStatusTable(self.context, self.request)
@@ -100,11 +98,6 @@ class WorkspaceContainerRepoListing(page.SimplePage):
         except WorkspaceDirNotExistsError:
             return u'<div class="error">Workspace path is missing. ' \
                     'Please notify administrator.</div>'
-
-
-WorkspaceContainerRepoListingView = layout.wrap_form(
-    WorkspaceContainerRepoListing, label="Raw Workspace Listing")
-
 
 # Workspace
 
@@ -273,6 +266,9 @@ class WorkspacePage(page.SimplePage):
     The main workspace page.
     """
 
+    # XXX this need to implement an interface that allow omittance of
+    # CMS chrome.
+
     zope.interface.implements(IWorkspacePage)
 
     # need interface for this page that handles storage protocol?
@@ -286,6 +282,8 @@ class WorkspacePage(page.SimplePage):
         via GET or POST, we redirect the requests firstly to the defined
         form adapters appropriated for this task.
         """
+
+        self.request['enable_border'] = True
 
         if self.request.method in ['POST']:
             view = zope.component.queryMultiAdapter(
@@ -333,12 +331,6 @@ class WorkspacePage(page.SimplePage):
         return super(WorkspacePage, self).render()
 
 
-WorkspacePageView = layout.wrap_form(
-    WorkspacePage,
-    __wrapper_class=BorderedWorkspaceProtocolWrapper,
-)
-
-
 class WorkspaceLog(WorkspaceTraversePage, page.NavPage):
 
     zope.interface.implements(IWorkspaceLogProvider)
@@ -349,8 +341,11 @@ class WorkspaceLog(WorkspaceTraversePage, page.NavPage):
     tbl = table.ChangelogTable
     maxchanges = 50  # default value.
     datefmt = None # default value.
+    label = 'Changelog Entries'
 
     def update(self):
+        self.request['enable_border'] = True
+
         self.request['shortlog'] = self.shortlog
         self.request['datefmt'] = self.datefmt
         self.request['maxchanges'] = self.maxchanges
@@ -370,23 +365,12 @@ class WorkspaceLog(WorkspaceTraversePage, page.NavPage):
     def navlist(self):
         return self._navlist
 
-WorkspaceLogView = layout.wrap_form(
-    WorkspaceLog, 
-    __wrapper_class=BorderedTraverseFormWrapper,
-    label='Changelog Entries'
-)
-
 
 class WorkspaceShortlog(WorkspaceLog):
 
     shortlog = True
     tbl = table.ShortlogTable
-
-WorkspaceShortlogView = layout.wrap_form(
-    WorkspaceShortlog,
-    __wrapper_class=BorderedTraverseFormWrapper,
-    label='Shortlog'
-)
+    label = 'Shortlog'
 
 
 #class WorkspacePageShortlog(WorkspaceShortlog):
@@ -426,14 +410,12 @@ class WorkspaceAddForm(form.AddForm):
     fields = z3c.form.field.Fields(interfaces.IObjectIdMixin) + \
              z3c.form.field.Fields(IWorkspace)
     clsobj = Workspace
+    label = "Workspace Object Creation Form"
 
     def add_data(self, ctxobj):
         ctxobj.title = self._data['title']
         ctxobj.description = self._data['description']
         ctxobj.storage = self._data['storage']
-
-WorkspaceAddFormView = layout.wrap_form(
-    WorkspaceAddForm, label="Workspace Object Creation Form")
 
 
 class WorkspaceStorageCreateForm(WorkspaceAddForm):
@@ -445,6 +427,7 @@ class WorkspaceStorageCreateForm(WorkspaceAddForm):
     # attribute to verify that the workspace id has not been taken yet.
     fields = z3c.form.field.Fields(IWorkspaceStorageCreate) + \
              z3c.form.field.Fields(IWorkspace)
+    label = "Create a New Workspace"
 
     def add_data(self, ctxobj):
         WorkspaceAddForm.add_data(self, ctxobj)
@@ -452,8 +435,6 @@ class WorkspaceStorageCreateForm(WorkspaceAddForm):
             IStorageUtility, name=ctxobj.storage)
         storage.create(ctxobj)
 
-WorkspaceStorageCreateFormView = layout.wrap_form(
-    WorkspaceStorageCreateForm, label="Create a New Workspace")
 
 
 class WorkspaceEditForm(form.EditForm):
@@ -462,9 +443,7 @@ class WorkspaceEditForm(form.EditForm):
     """
 
     fields = z3c.form.field.Fields(IWorkspace).omit('storage')
-
-WorkspaceEditFormView = layout.wrap_form(
-    WorkspaceEditForm, label="Workspace Edit Form")
+    label = "Workspace Edit Form"
 
 
 class WorkspaceSyncFormBase(form.PostForm):
@@ -678,8 +657,7 @@ class FilePage(BaseFilePage):
 
         # trigger subrepo dir if external is defined.
         if data['external']:
-            # form the url
-            # XXX this is based on the _subrepo format defined in
+            # form the url # XXX this is based on the _subrepo format defined in
             # pmr2.mercurial - refer to test there because they are
             # the only users for now until a generic version of this
             # is implemented in the test storage.
@@ -701,10 +679,7 @@ class FilePage(BaseFilePage):
         self.request['_data'] = data
         self.request['_storage'] = storage
 
-FilePageView = layout.wrap_form(
-    FilePage,
-    __wrapper_class=BorderedTraverseFormWrapper,
-)
+        self.request['enable_border'] = True
 
 
 class FileInfoPage(BaseFilePage):
@@ -727,13 +702,8 @@ class FileInfoPage(BaseFilePage):
     def __call__(self):
         return super(FileInfoPage, self).__call__()
 
-FileInfoPageView = layout.wrap_form(
-    FileInfoPage,
-    __wrapper_class=TraverseFormWrapper,
-)
 
-
-class WorkspaceRawfileView(FilePage):
+class WorkspaceRawfile(FilePage):
 
     def __call__(self):
         self.update()
@@ -762,7 +732,7 @@ class WorkspaceRawfileView(FilePage):
             raise NotFound(self.context, self.context.title_or_id())
 
 
-class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
+class WorkspaceRawfileXmlBase(WorkspaceRawfile):
 
     @property
     def xmlrooturi(self):
@@ -782,7 +752,7 @@ class WorkspaceRawfileXmlBaseView(WorkspaceRawfileView):
                     self.request.response.setHeader('Content-Type', v)
                     return
 
-        data = WorkspaceRawfileView.__call__(self)
+        data = WorkspaceRawfile.__call__(self)
         filepath = self.request['filepath']
         filename = filepath[-1]
         # have to acquire dirpath.

@@ -23,13 +23,6 @@ def test_suite():
         #    optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         #),
 
-        # Layout wrapper
-        ztc.ZopeDocFileSuite(
-            'browser/layout.txt', package='pmr2.app.workspace',
-            test_class=base.WorkspaceDocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
-
         # Forms and interactions.
         ztc.ZopeDocFileSuite(
             'browser/browser.txt', package='pmr2.app.workspace',

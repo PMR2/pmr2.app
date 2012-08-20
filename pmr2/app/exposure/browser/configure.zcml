@@ -44,14 +44,14 @@
   <browser:page
       for="pmr2.app.exposure.content.ExposureContainer"
       name="exposure_add_form"
-      class=".browser.ExposureAddFormView"
+      class=".browser.ExposureAddForm"
       permission="pmr2.app.security.ManagePMR2"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureContainer"
       name="exposure_bulk_regeneration"
-      class=".browser.ExposureFileBulkRegenerateFormView"
+      class=".browser.ExposureFileBulkRegenerateForm"
       permission="pmr2.app.security.ManagePMR2"
       />
 
@@ -60,7 +60,7 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="exposure_rollover"
-      class=".browser.WorkspaceExposureRolloverView"
+      class=".browser.WorkspaceExposureRollover"
       permission="cmf.ModifyPortalContent"
       />
 
@@ -83,42 +83,42 @@
   <browser:page
       for="pmr2.app.exposure.content.Exposure"
       name="exposure_info"
-      class=".browser.ExposureInfoView"
+      class=".browser.ExposureInfo"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.Exposure"
       name="exposure_edit"
-      class=".browser.ExposureEditFormView"
+      class=".browser.ExposureEditForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.Exposure"
       name="exposure_curation_edit"
-      class=".browser.ExposureEditCurationFormView"
+      class=".browser.ExposureEditCurationForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.Exposure"
       name="filegen"
-      class=".browser.ExposureFileGenFormView"
+      class=".browser.ExposureFileGenForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.Exposure"
       name="docviewgen"
-      class=".browser.ExposureDocViewGenFormView"
+      class=".browser.ExposureDocViewGenForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.Exposure"
       name="rollover"
-      class=".browser.ExposurePortCommitIdFormView"
+      class=".browser.ExposurePortCommitIdForm"
       permission="cmf.ModifyPortalContent"
       />
 
@@ -141,70 +141,70 @@
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="annotation"
-      class=".browser.ExposureFileAnnotatorFormView"
+      class=".browser.ExposureFileAnnotatorForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="filetype"
-      class=".browser.ExposureFileTypeChoiceFormView"
+      class=".browser.ExposureFileTypeChoiceForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="edit_annotations"
-      class=".browser.ExposureFileTypeAnnotatorFormView"
+      class=".browser.ExposureFileTypeAnnotatorForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="note_editor"
-      class=".browser.ExposureFileNoteEditFormView"
+      class=".browser.ExposureFileNoteEditForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="arrange_views"
-      class=".browser.ExposureFileNoteArrangeFormView"
+      class=".browser.ExposureFileNoteArrangeForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="docviewgen"
-      class=".browser.ExposureDocViewGenFormView"
+      class=".browser.ExposureDocViewGenForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="exposure_file_redirect"
-      class=".browser.ExposureFileRedirectView"
+      class=".browser.ExposureFileRedirect"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="exposure_file_info"
-      class=".browser.ExposureFileInfoView"
+      class=".browser.ExposureFileInfo"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="exposure_file_document_view"
-      class=".browser.ExposureFileDocumentView"
+      class=".browser.ExposureFileDocument"
       permission="zope2.View"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="select_view"
-      class=".browser.ExposureFileSelectViewFormView"
+      class=".browser.ExposureFileSelectViewForm"
       permission="cmf.ModifyPortalContent"
       />
 
@@ -213,14 +213,14 @@
   <browser:page
       for="pmr2.app.exposure.content.ExposureFileType"
       name="eftype_edit"
-      class=".browser.ExposureFileTypeEditFormView"
+      class=".browser.ExposureFileTypeEditForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFileType"
       name="eftype_view"
-      class=".browser.ExposureFileTypeDisplayFormView"
+      class=".browser.ExposureFileTypeDisplayForm"
       permission="cmf.ModifyPortalContent"
       />
 
@@ -229,14 +229,14 @@
   <browser:page
       for="pmr2.app.exposure.content.ExposureFolder"
       name="docviewgen"
-      class=".browser.ExposureDocViewGenFormView"
+      class=".browser.ExposureDocViewGenForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
       for="pmr2.app.exposure.content.ExposureFolder"
       name="exposure_info"
-      class=".browser.ExposureInfoView"
+      class=".browser.ExposureInfo"
       permission="zope2.View"
       />
 
@@ -250,14 +250,14 @@
   <browser:page
       for="Products.Five.browser.adding.ContentAdding"
       name="addExposureFileType"
-      class=".browser.ExposureFileTypeAddFormView"
+      class=".browser.ExposureFileTypeAddForm"
       permission="cmf.AddPortalContent"
       />
 
   <browser:page
       for="*"
       name="eftype_create"
-      class=".browser.ExposureFileTypeAddFormView"
+      class=".browser.ExposureFileTypeAddForm"
       permission="cmf.AddPortalContent"
       />
 

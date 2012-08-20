@@ -67,6 +67,7 @@ class ExposureAddForm(form.AddForm):
         'curation',
     )
     clsobj = Exposure
+    label = "Exposure Create Form"
 
     def create(self, data):
         generator = getGenerator(self)
@@ -81,9 +82,6 @@ class ExposureAddForm(form.AddForm):
         if helper:
             exposure, workspace, path = helper.source()
             ctxobj.setTitle(workspace.title)
-        
-ExposureAddFormView = layout.wrap_form(ExposureAddForm, 
-    label="Exposure Create Form")
 
 
 class ExposureEditForm(form.EditForm):
@@ -95,9 +93,7 @@ class ExposureEditForm(form.EditForm):
         'title',
         'curation',
     )
-
-ExposureEditFormView = layout.wrap_form(ExposureEditForm, 
-    label="Exposure Edit Form")
+    label = "Exposure Edit Form"
 
 
 class ExposureEditCurationForm(form.EditForm):
@@ -108,9 +104,7 @@ class ExposureEditCurationForm(form.EditForm):
     fields = z3c.form.field.Fields(IExposure).select(
         'curation',
     )
-
-ExposureEditCurationFormView = layout.wrap_form(ExposureEditCurationForm, 
-    label="Curation Editor")
+    label = "Curation Editor"
 
 
 class ExposureFileGenForm(form.AddForm):
@@ -119,11 +113,13 @@ class ExposureFileGenForm(form.AddForm):
     workspace).
     """
 
+    zope.interface.implements(ICurrentCommitIdProvider)
+
     # Multiple choice form will need this method, but generalized.
     # This will become subclass of that.
     fields = z3c.form.field.Fields(IExposureFileGenForm)
 
-    zope.interface.implements(ICurrentCommitIdProvider)
+    label = "Add a file to the exposure"
 
     def current_commit_id(self):
         return self.context.commit_id
@@ -214,8 +210,6 @@ class ExposureFileGenForm(form.AddForm):
         # give a default title based on filename
         ctxobj.setTitle(ctxobj.id)
 
-ExposureFileGenFormView = layout.wrap_form(ExposureFileGenForm, 
-    label="Add a file to the exposure")
 
 
 class ExposureFileAnnotatorForm(form.BaseAnnotationForm):
@@ -226,6 +220,7 @@ class ExposureFileAnnotatorForm(form.BaseAnnotationForm):
     # Multiple choice form will need this method, but generalized.
     # This will become subclass of that.
     fields = z3c.form.field.Fields(IExposureFileAnnotatorForm)
+    label = "Add an annotation to an Exposure File."
 
     @button.buttonAndHandler(_('Annotate'), name='apply')
     def handleAnnotate(self, action):
@@ -252,9 +247,6 @@ class ExposureFileAnnotatorForm(form.BaseAnnotationForm):
         return '%s/@@%s' % (self.context.absolute_url(), 
                             self._data['annotators'])
 
-ExposureFileAnnotatorFormView = layout.wrap_form(ExposureFileAnnotatorForm, 
-    label="Add an annotation to an Exposure File.")
-
 
 class ExposureFileTypeAddForm(form.AddForm):
     """\
@@ -264,6 +256,7 @@ class ExposureFileTypeAddForm(form.AddForm):
     fields = z3c.form.field.Fields(IObjectIdMixin) + \
              z3c.form.field.Fields(IExposureFileType)
     clsobj = ExposureFileType
+    label = "Exposure File Type creator"
 
     def add_data(self, ctxobj):
         ctxobj.title = self._data['title']
@@ -272,22 +265,16 @@ class ExposureFileTypeAddForm(form.AddForm):
         ctxobj.tags = self._data['tags']
         
 
-ExposureFileTypeAddFormView = layout.wrap_form(ExposureFileTypeAddForm, 
-    label="Exposure File Type creator")
-
-
 class ExposureFileTypeEditForm(form.EditForm):
     """\
     ExposureFileType editing form.
     """
 
     fields = z3c.form.field.Fields(IExposureFileType)
+    label = "Exposure File Type editor"
 
     def update(self):
         super(ExposureFileTypeEditForm, self).update()
-
-ExposureFileTypeEditFormView = layout.wrap_form(ExposureFileTypeEditForm, 
-    label="Exposure File Type editor")
 
 
 class ExposureFileTypeDisplayForm(form.DisplayForm):
@@ -296,9 +283,7 @@ class ExposureFileTypeDisplayForm(form.DisplayForm):
     """
 
     fields = z3c.form.field.Fields(IExposureFileType)
-
-ExposureFileTypeDisplayFormView = layout.wrap_form(ExposureFileTypeDisplayForm, 
-    label="Exposure File Type viewer")
+    label = "Exposure File Type viewer"
 
 
 class ExposureFileTypeChoiceForm(form.PostForm):
@@ -314,6 +299,7 @@ class ExposureFileTypeChoiceForm(form.PostForm):
     ignoreReadonly = True
     formErrorsMessage = _('There were some errors.')
     group_names = None
+    label = "Add an annotation to an Exposure File."
 
     def __init__(self, *a, **kw):
         super(ExposureFileTypeChoiceForm, self).__init__(*a, **kw)
@@ -362,10 +348,6 @@ class ExposureFileTypeChoiceForm(form.PostForm):
         # had no views defined, we prompt the form again without the
         # types enabled.
         self.fields.omit('eftypes')
-
-ExposureFileTypeChoiceFormView = layout.wrap_form(
-    ExposureFileTypeChoiceForm, 
-    label="Add an annotation to an Exposure File.")
 
 
 class BaseExposureFileTypeAnnotatorForm(
@@ -462,13 +444,11 @@ class BaseExposureFileTypeAnnotatorForm(
 
 class ExposureFileTypeAnnotatorForm(BaseExposureFileTypeAnnotatorForm):
 
+    label = "Add an annotation to an Exposure File."
+
     @button.buttonAndHandler(_('Annotate'), name='apply')
     def handleAnnotate(self, action):
         self.baseAnnotate(action)
-
-ExposureFileTypeAnnotatorFormView = layout.wrap_form(
-    ExposureFileTypeAnnotatorForm, 
-    label="Add an annotation to an Exposure File.")
 
 
 class ExposureFileTypeAnnotatorExtender(extensible.FormExtender):
@@ -549,6 +529,8 @@ class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
 
     zope.interface.implements(IExposureFileNoteEditForm)
 
+    label = "Edit an Exposure File Note."
+
     def getContent(self):
         return self.note
 
@@ -597,10 +579,6 @@ class ExposureFileNoteEditForm(form.EditForm, page.TraversePage):
         self.fields = z3c.form.field.Fields(inf)
         super(ExposureFileNoteEditForm, self).update()
 
-ExposureFileNoteEditFormView = layout.wrap_form(ExposureFileNoteEditForm, 
-    __wrapper_class=PlainTraverseLayoutWrapper,
-    label="Edit an Exposure File Note.")
-
 
 class ExposureFileNoteArrangeForm(form.EditForm):
     """\
@@ -609,6 +587,7 @@ class ExposureFileNoteArrangeForm(form.EditForm):
 
     #zope.interface.implements(IExposureFileNoteArrangeForm)
     fields = z3c.form.field.Fields(IExposureFile).select('views')
+    label = "Arrange Exposure File Notes."
 
     def update(self):
         """\
@@ -622,9 +601,6 @@ class ExposureFileNoteArrangeForm(form.EditForm):
         self.context.views = views
         return result
 
-ExposureFileNoteArrangeFormView = layout.wrap_form(ExposureFileNoteArrangeForm, 
-    label="Arrange Exposure File Notes.")
-
 
 class ExposureDocViewGenForm(form.BaseAnnotationForm):
     """\
@@ -637,6 +613,7 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
         IExposureDocViewGenForm)
 
     fields = z3c.form.field.Fields(IExposureDocViewGenForm)
+    label = "Generate Default View for Exposure."
 
     def current_commit_id(self):
         return self.context.commit_id
@@ -682,10 +659,6 @@ class ExposureDocViewGenForm(form.BaseAnnotationForm):
             # assumption
             uri += '/view'
         return uri
-
-ExposureDocViewGenFormView = layout.wrap_form(
-    ExposureDocViewGenForm, 
-    label="Generate Default View for Exposure.")
 
 
 class ExposureInfo(page.SimplePage):
@@ -734,9 +707,6 @@ class ExposureInfo(page.SimplePage):
         # default view.
         return self.request.response.redirect(efiles[0].getURL() + '/view')
 
-ExposureInfoView = layout.wrap_form(ExposureInfo,
-    __wrapper_class=PloneviewLayoutWrapper)
-
 
 class ExposureFileInfo(page.TraversePage):
     """\
@@ -746,9 +716,6 @@ class ExposureFileInfo(page.TraversePage):
     content = ViewPageTemplateFile('exposure_file_info.pt')
     subtitle = u'Exposure File Information'
 
-ExposureFileInfoView = layout.wrap_form(ExposureFileInfo,
-    __wrapper_class=PlainLayoutWrapper)
-
 
 class ExposureFileSelectViewForm(form.EditForm):
     """\
@@ -757,6 +724,7 @@ class ExposureFileSelectViewForm(form.EditForm):
 
     fields = z3c.form.field.Fields(IExposureFileSelectView).select(
         'selected_view')
+    label = "Select Default View"
 
     def getContent(self):
         # since we are not using the same interface as the exposure
@@ -786,11 +754,8 @@ class ExposureFileSelectViewForm(form.EditForm):
             zope.lifecycleevent.ObjectModifiedEvent(content, *descriptions))
         return changes
 
-ExposureFileSelectViewFormView = layout.wrap_form(ExposureFileSelectViewForm, 
-    label="Select Default View")
 
-
-class ExposureFileDocumentView(page.TraversePage):
+class ExposureFileDocument(page.TraversePage):
     """\
     ExposureFile is based on ATDocument, but we implemented a custom
     view selection, which this view handles.
@@ -813,7 +778,7 @@ class ExposureFileDocumentView(page.TraversePage):
         return self.context.document_view()
 
 
-class ExposureFileRedirectView(BrowserPage):
+class ExposureFileRedirect(BrowserPage):
     """\
     The view that redirects to the original file.  This should be the
     default view for all ExposureFiles as they should have been anchored
@@ -867,9 +832,6 @@ class RawTextNote(ExposureFileViewBase):
     @memoize
     def content(self):
         return self.note.text
-
-RawTextNoteView = layout.wrap_form(RawTextNote,
-    __wrapper_class=PlainLayoutWrapper)
 
 
 class RawContentNote(ExposureFileViewBase):
@@ -926,13 +888,9 @@ class GroupedNoteViewBase(ExposureFileViewBase):
             )
             # since the view registered is the wrapper, we call the 
             # inner part of the it rather than itself.
-            return view.form_instance()
+            return view()
         # XXX set an information note about invalid choice?
         return self.template()
-
-# base
-GroupedNoteViewBaseView = layout.wrap_form(
-    GroupedNoteViewBase, __wrapper_class=PlainLayoutWrapper)
 
 
 # utility
@@ -1037,6 +995,7 @@ class ExposurePortCommitIdForm(ExposurePort):
     fields = z3c.form.field.Fields(IExposure).select(
         'commit_id',
     )
+    label = "Exposure Port to new commit id"
 
     def find_exposure_container(self):
         context = aq_inner(self.context)
@@ -1076,9 +1035,6 @@ class ExposurePortCommitIdForm(ExposurePort):
             return ""
         return super(ExposurePortCommitIdForm, self).render()
 
-ExposurePortCommitIdFormView = layout.wrap_form(ExposurePortCommitIdForm, 
-    label="Exposure Port to new commit id")
-
 
 class ExposureFileRegenerateForm(ExposurePort):
     """\
@@ -1088,6 +1044,7 @@ class ExposureFileRegenerateForm(ExposurePort):
     # this just have commit id, create exposure.
 
     formErrorsMessage = _('There are errors with regeneration.')
+    label = "Exposure Regeneration"
     _finishedAdd = False
 
     def export(self):
@@ -1136,14 +1093,13 @@ class ExposureFileRegenerateForm(ExposurePort):
             return ""
         return super(ExposureFileRegenerateForm, self).render()
 
-ExposureFileRegenerateFormView = layout.wrap_form(ExposureFileRegenerateForm, 
-    label="Exposure Regeneration")
-
 
 class ExposureFileBulkRegenerateForm(form.PostForm):
     """\
     Exposure bulk regeneration form.
     """
+
+    label = "Exposure File Bulk Regeneration"
 
     @button.buttonAndHandler(_('Migrate'), name='apply')
     def handleMigrate(self, action):
@@ -1164,10 +1120,6 @@ class ExposureFileBulkRegenerateForm(form.PostForm):
             f = ExposureFileRegenerateForm(ctx, None)
             f.migrate()
 
-ExposureFileBulkRegenerateFormView = layout.wrap_form(
-    ExposureFileBulkRegenerateForm, 
-    label="Exposure File Bulk Regeneration")
-
 
 class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
 
@@ -1175,12 +1127,14 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
     zope.interface.implements(IExposureRolloverForm)
     _finishedAdd = False
     fields = z3c.form.field.Fields(IExposureRolloverForm)
+    label = 'Exposure Rollover'
 
     shortlog = True
     tbl = table.ExposureRolloverLogTable
     template = ViewPageTemplateFile('workspace_exposure_rollover.pt')
 
     def update(self):
+        self.request['enable_border'] = True
         ExposurePort.update(self)
         WorkspaceLog.update(self)
 
@@ -1247,11 +1201,3 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
             self.request.response.redirect(self.nextURL())
             return ""
         return super(WorkspaceExposureRollover, self).render()
-
-WorkspaceExposureRolloverView = layout.wrap_form(
-    WorkspaceExposureRollover,
-    __wrapper_class=BorderedTraverseFormWrapper,
-    label='Exposure Rollover'
-)
-
-

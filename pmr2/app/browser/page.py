@@ -6,29 +6,23 @@ from zope.publisher.browser import BrowserPage
 from zope.app.authentication.httpplugins import HTTPBasicAuthCredentialsPlugin
 
 from Products.CMFCore.utils import getToolByName
+
 from zope.app.pagetemplate.viewpagetemplatefile \
     import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
-
-from z3c.form.interfaces import IForm
-
-from plone.z3cform import layout
 
 from pmr2.app.browser.interfaces import IPublishTraverse
 
 
 class SimplePage(BrowserPage):
     """\
-    A simple view generator/page/template class.  This is meant to be
-    wrapped by the layout.wrap_form from plone.z3cform and its wrapper
-    class layout.FormWrapper.
+    A simple view generator/page/template class.
     """
-
-    # marker to allow this to use the z3c form wrap_form method
-    zope.interface.implements(IForm)
 
     # override if necessary
     # XXX use adapter to register this instead?
+    # XXX when adapter is defined, make this index, have adapter figure
+    # what index is
     template = ViewPageTemplateFile('page.pt')
 
     @property
@@ -50,12 +44,14 @@ class SimplePage(BrowserPage):
         return None
 
     def content(self):
+        # XXX in the redesign, it should call template directly
         raise NotImplementedError('need content')
 
     def update(self):
         pass
 
     def render(self):
+        # XXX call index instead.
         return self.template()
 
     def __call__(self, *a, **kw):

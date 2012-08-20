@@ -189,9 +189,6 @@ class SafeHtmlRenderer(BaseFileRenderer):
         pt.convert('safe_html', contents, stream)
         return stream.getData()
 
-SafeHtmlRendererView = layout.wrap_form(SafeHtmlRenderer, 
-    __wrapper_class=TraverseFormWrapper)
-
 
 class ImageRenderer(BaseFileRenderer):
     """\
@@ -203,6 +200,3 @@ class ImageRenderer(BaseFileRenderer):
     @property
     def contents(self):
         return self.fullpath
-
-ImageRendererView = layout.wrap_form(ImageRenderer, 
-    __wrapper_class=TraverseFormWrapper)

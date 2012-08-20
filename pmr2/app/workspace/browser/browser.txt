@@ -669,7 +669,7 @@ return just the contents.
 ::
 
     >>> subpath = ['1', 'file1']
-    >>> page = self.traverse(wkspc, browser.WorkspaceRawfileView, subpath)
+    >>> page = self.traverse(wkspc, browser.WorkspaceRawfile, subpath)
     >>> page.update()
     >>> page()
     'file1-rev1\nThis test has changed.\n'
@@ -684,7 +684,7 @@ Binary data will be returned as is.
 
     >>> subpath = ['0', 'null']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.WorkspaceRawfileView, subpath)
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfile, subpath)
     >>> page() == '\0'
     True
 
@@ -693,7 +693,7 @@ Invalid revision should raise a 404.
 
     >>> subpath = ['110', 'null']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.WorkspaceRawfileView, subpath)
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfile, subpath)
     >>> result = page()
     Traceback (most recent call last):
     ...
@@ -705,7 +705,7 @@ As well as invalid file entries.
 
     >>> subpath = ['0', 'nullnull']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.WorkspaceRawfileView, subpath)
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfile, subpath)
     >>> result = page()
     Traceback (most recent call last):
     ...
@@ -717,7 +717,7 @@ Or traversing down a file as if a directory.
 
     >>> subpath = ['0', 'null', 'null']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.WorkspaceRawfileView, subpath)
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfile, subpath)
     >>> result = page()
     Traceback (most recent call last):
     ...
@@ -730,7 +730,7 @@ throwing an error we redirect to the FileInfo view.
 
     >>> subpath = ['0']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.WorkspaceRawfileView, subpath)
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfile, subpath)
     >>> page()
     'http://nohost/plone/workspace/cake/file/0'
 
@@ -739,7 +739,7 @@ This should work for nested directories.
 
     >>> subpath = ['3', 'dir1', 'dir2']
     >>> page = self.traverse(
-    ...     self.portal.workspace.test, browser.WorkspaceRawfileView, subpath)
+    ...     self.portal.workspace.test, browser.WorkspaceRawfile, subpath)
     >>> page()
     'http://nohost/plone/workspace/test/file/3/dir1/dir2'
 
@@ -755,7 +755,7 @@ user's local machine.
 
     >>> subpath = ['0', 'test.xml']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.WorkspaceRawfileXmlBaseView,
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfileXmlBase,
     ...     subpath)
     >>> result = page()
     >>> 'xml:base="http://nohost/plone/workspace/cake/xmlbase/0/">' in result
@@ -766,7 +766,7 @@ Nested dir should also work.
 
     >>> subpath = ['0', 'dir1', 'dir2', 'file.xml']
     >>> page = self.traverse(
-    ...     self.portal.workspace.cake, browser.WorkspaceRawfileXmlBaseView,
+    ...     self.portal.workspace.cake, browser.WorkspaceRawfileXmlBase,
     ...     subpath)
     >>> result = page()
     >>> 'xml:base="http://nohost/plone/workspace/cake/xmlbase/0/dir1/dir2/">' \

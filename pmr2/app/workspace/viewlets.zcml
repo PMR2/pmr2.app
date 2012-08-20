@@ -12,7 +12,7 @@
   <browser:viewlet
       name="pmr2.workspace.contentactions"
       for="pmr2.app.workspace.interfaces.IWorkspace"
-      view="pmr2.app.workspace.browser.browser.FilePageView"
+      view="pmr2.app.workspace.browser.browser.FilePage"
       manager="plone.app.layout.viewlets.interfaces.IContentViews"
       class=".viewlets.WorkspaceActionsViewlet"
       permission="zope2.View"

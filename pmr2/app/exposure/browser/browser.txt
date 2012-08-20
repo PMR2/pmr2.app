@@ -496,7 +496,7 @@ workspace.
 ::
 
     >>> request = TestRequest()
-    >>> view = browser.ExposureFileRedirectView(context[file1], request)
+    >>> view = browser.ExposureFileRedirect(context[file1], request)
     >>> result = view()
     >>> request.response.getHeader('Location')
     'http://.../workspace/pmr2hgtest/@@rawfile/.../file1'
@@ -676,7 +676,6 @@ view and see that it will return a list by default
     >>> filectx = context[file1]
     >>> request = TestRequest()
     >>> view = zope.component.queryMultiAdapter((filectx, request), name='rdf')
-    >>> view = view.form_instance  # take what we defined.
     >>> print view()
     <h3>RDF views available</h3>
     <p>The following is a list of available choices</p>
@@ -842,7 +841,7 @@ workspace.
 ::
 
     >>> request = TestRequest()
-    >>> view = browser.ExposureFileRedirectView(efile2, request)
+    >>> view = browser.ExposureFileRedirect(efile2, request)
     >>> result = view()
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/module.cellml'
@@ -884,7 +883,7 @@ Again, redirection should remain in place.
 ::
 
     >>> request = TestRequest()
-    >>> view = browser.ExposureFileRedirectView(efile3, request)
+    >>> view = browser.ExposureFileRedirect(efile3, request)
     >>> result = view()
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/docs/index.html'
@@ -905,7 +904,7 @@ the redirection view.
     >>> testform.update()
     >>> efile4 = context[path4[0]][path4[1]][path4[2]]
     >>> request = TestRequest()
-    >>> view = browser.ExposureFileRedirectView(efile4, request)
+    >>> view = browser.ExposureFileRedirect(efile4, request)
     >>> result = view()
     >>> request.response.getHeader('Location')
     'http://.../workspace/rdfmodel/@@rawfile/.../component/docs/index.rst'
@@ -995,7 +994,7 @@ and the annotator to process it with.  We can pick any file.
     ...     })
     >>> view = zope.component.queryMultiAdapter((context, request), 
     ...                                         name='docviewgen')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> result
     ''
     >>> context.getText()
@@ -1017,7 +1016,7 @@ ExposureFiles can also reference a separate file for its documentation.
     ...     })
     >>> view = zope.component.queryMultiAdapter((efile2, request), 
     ...                                         name='docviewgen')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> result
     ''
     >>> efile2.getText()
@@ -1040,7 +1039,7 @@ Ditto for ExposureFolders.
     >>> edir1 = context[path4[0]]
     >>> view = zope.component.queryMultiAdapter((edir1, request), 
     ...                                         name='docviewgen')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> result
     ''
     >>> 'This is a readme file inside the component directory.' in \
@@ -1073,7 +1072,7 @@ is `example_model.cellml`.
     >>> request = TestRequest()
     >>> view = zope.component.queryMultiAdapter((filectx, request), 
     ...                                         name='select_view')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> [i in result for i in filectx.views]
     [True, True, True]
 
@@ -1089,7 +1088,7 @@ document_view to one provided by the notes.
     ...     })
     >>> view = zope.component.queryMultiAdapter((filectx, request), 
     ...                                         name='select_view')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> filectx.selected_view == u'edited_note'
     True
 
@@ -1099,7 +1098,7 @@ The view should render with the edited_note as selected.
     >>> request = TestRequest()
     >>> view = zope.component.queryMultiAdapter((filectx, request), 
     ...                                         name='select_view')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> u'selected="selected">edited_note</option>' in result
     True
 
@@ -1112,7 +1111,7 @@ should not break because the selection is no longer there.
     >>> request = TestRequest()
     >>> view = zope.component.queryMultiAdapter((filectx, request), 
     ...                                         name='select_view')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> u'edited_note' not in result
     True
     >>> filectx.views = views  # reset original value
@@ -1276,7 +1275,7 @@ supply an existing commit id.
     ... })
     >>> view = zope.component.queryMultiAdapter((context, request), 
     ...                                         name='rollover')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> nextURL = request.response.getHeader('Location')
     >>> print nextURL
     http://.../exposure/...
@@ -1312,7 +1311,7 @@ commit.
     ... })
     >>> view = zope.component.queryMultiAdapter((context, request), 
     ...                                         name='rollover')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> nextURL = request.response.getHeader('Location')
     >>> print nextURL
     http://.../exposure/...
@@ -1340,7 +1339,7 @@ with the radio boxes available to be selected.
     >>> view = zope.component.queryMultiAdapter((context, request), 
     ...                                          name='exposure_rollover')
     >>> view.update()
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> '006f11cd9211abd2a879df0f6c7f27b9844a8ff2' in result
     True
     >>> '<td><label><input type="radio" class="radio-widget" ' \
@@ -1362,7 +1361,7 @@ Then we can submit the form, and see that the data still match.
     ... })
     >>> view = zope.component.queryMultiAdapter((context, request), 
     ...                                         name='exposure_rollover')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> nextURL = request.response.getHeader('Location')
     >>> print nextURL
     http://.../exposure/...
@@ -1388,9 +1387,9 @@ need to be handled.
     ... })
     >>> view = zope.component.queryMultiAdapter((context, request), 
     ...                                         name='exposure_rollover')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> request.response.getHeader('Location')
-    >>> data, errors = view.form_instance.extractData()
+    >>> data, errors = view.extractData()
     >>> len(errors)
     1
 
@@ -1416,9 +1415,9 @@ path:
     ... })
     >>> view = zope.component.queryMultiAdapter((context, request), 
     ...                                         name='exposure_rollover')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> request.response.getHeader('Location')
-    >>> data, errors = view.form_instance.extractData()
+    >>> data, errors = view.extractData()
     >>> len(errors)
     1
     >>> ('<td><label><input type="radio" class="radio-widget" ' \
@@ -1437,7 +1436,7 @@ Or completely bogus values:
     ... })
     >>> view = zope.component.queryMultiAdapter((context, request), 
     ...                                         name='exposure_rollover')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> request.response.getHeader('Location')
     >>> 'There were some errors.' in result
     True
@@ -1459,7 +1458,7 @@ source is used.
     ... })
     >>> view = zope.component.queryMultiAdapter((context, request), 
     ...                                         name='exposure_rollover')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> nextURL = request.response.getHeader('Location')
     >>> print nextURL
     http://.../e/...
@@ -1782,7 +1781,7 @@ Finally, we test that these data will also work with the migration.
     ... })
     >>> view = zope.component.queryMultiAdapter((new_ex, request), 
     ...                                         name='rollover')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> nextURL = request.response.getHeader('Location')
     >>> print nextURL
     http://.../exposure/...
@@ -1808,7 +1807,7 @@ remove views.  It will remove any bad views.  First we render the form
     >>> request = TestRequest()
     >>> view = zope.component.queryMultiAdapter((ef, request), 
     ...                                         name='arrange_views')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> '>rdfturtle\nrdfxml\nedited_note</textarea>' in result
     True
 
@@ -1824,7 +1823,7 @@ Now for the actual request to change values
     ... })
     >>> view = zope.component.queryMultiAdapter((ef, request), 
     ...                                         name='arrange_views')
-    >>> result = view.form_instance()
+    >>> result = view()
     >>> ef.views
     [u'edited_note', u'rdfxml', u'rdfturtle']
 
