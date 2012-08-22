@@ -6,10 +6,18 @@
   <head></head>
   <body>
     <metal:define define-macro="pmr2_main">
+
+      <metal:slot define-slot="style_slot">
+      </metal:slot>
+
+      <metal:slot define-slot="javascript_head_slot">
+      </metal:slot>
+
       <metal:mainslot define-slot="main">
         <h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
         <div tal:content="structure view/content"/>
       </metal:mainslot>
+
     </metal:define>
   </body>
 </html>
