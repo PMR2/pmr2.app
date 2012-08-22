@@ -4,3 +4,22 @@ Page
 These were just simple rendering pages meant for wrapping by the layout
 classes to be replaced by more standard Plone way of rendering 
 templates.
+
+Let's subclass one.
+::
+
+    >>> from pmr2.testing.base import TestRequest
+    >>> from pmr2.app.browser.page import SimplePage
+    >>>
+    >>> class TestPage(SimplePage):
+    ...     def content(self):
+    ...         return 'Hello'
+
+Then render it:
+::
+
+    >>> context = object()
+    >>> request = TestRequest()
+    >>> page = TestPage(context, request)
+    >>> print page()
+    <div>Hello</div>

@@ -825,7 +825,7 @@ class RawTextNote(ExposureFileViewBase):
     template.
     """
 
-    template = ViewPageTemplateFile('code.pt')
+    index = ViewPageTemplateFile('code.pt')
     description = u'The following is a raw text representation of the file.'
     subtitle = u'Raw text view'
 

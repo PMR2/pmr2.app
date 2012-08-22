@@ -29,7 +29,7 @@
 
     <h4>Files</h4>
 
-    <div tal:content="structure context/@@file"/>
+    <div tal:content="structure context/@@file/call_template"/>
 
   </body>
 </html>

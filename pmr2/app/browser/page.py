@@ -3,6 +3,7 @@ from os.path import join
 import zope.interface
 from zope.component import getUtilitiesFor, getMultiAdapter
 from zope.publisher.browser import BrowserPage
+from zope.pagetemplate.interfaces import IPageTemplate
 from zope.app.authentication.httpplugins import HTTPBasicAuthCredentialsPlugin
 
 from Products.CMFCore.utils import getToolByName
@@ -14,7 +15,7 @@ ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 from pmr2.app.browser.interfaces import IPublishTraverse
 
 
-class SimplePage(BrowserPage):
+class BasePage(BrowserPage):
     """\
     A simple view generator/page/template class.
     """
@@ -23,7 +24,8 @@ class SimplePage(BrowserPage):
     # XXX use adapter to register this instead?
     # XXX when adapter is defined, make this index, have adapter figure
     # what index is
-    template = ViewPageTemplateFile('page.pt')
+
+    index = ViewPageTemplateFile('basepage.pt')
 
     @property
     def url_expr(self):
@@ -33,12 +35,16 @@ class SimplePage(BrowserPage):
 
     @property
     def portal_url(self):
-        portal = getToolByName(self.context, 'portal_url').getPortalObject()
-        return portal.absolute_url()
+        portal_url = getToolByName(self.context, 'portal_url', None)
+        if portal_url:
+            portal = portal_url.getPortalObject()
+            return portal.absolute_url()
 
     @property
     def label(self):
-        return self.context.title_or_id()
+        label = getToolByName(self.context, 'title_or_id', None)
+        if label:
+            return label()
 
     def subtitle(self):
         return None
@@ -51,12 +57,32 @@ class SimplePage(BrowserPage):
         pass
 
     def render(self):
-        # XXX call index instead.
-        return self.template()
+        # render content template
+        # XXX probably adapter base could work
+        return self.index()
 
     def __call__(self, *a, **kw):
         self.update()
         return self.render()
+
+
+class SimplePage(BasePage):
+    """\
+    A simple view that only requires a very simple template (without the
+    boiler plates).
+    """
+
+    template = None
+
+    def content(self):
+        # render content template
+        return self.template()
+
+    def render(self):
+        # XXX allow a way to disable the boilerplates unconditionally.
+        if self.index:
+            return super(SimplePage, self).render()
+        return self.template()
 
 
 class TraversePage(SimplePage):
@@ -92,8 +118,7 @@ class TraversePage(SimplePage):
 class NavPage(TraversePage):
 
     # override if necessary
-    # XXX use adapter to register this instead?
-    template = ViewPageTemplateFile('page_nav.pt')
+    index = ViewPageTemplateFile('page_nav.pt')
     navtemplate = ViewPageTemplateFile('default_nav.pt')
 
     topnav = True  # show nav above content

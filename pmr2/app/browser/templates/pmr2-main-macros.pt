@@ -1,0 +1,18 @@
+<tal:block
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="pmr2"
+
+  ><metal:define define-macro="pmr2_main"
+    ><tal:block metal:use-macro="context/main_template/macros/master">
+      <metal:block fill-slot="main">
+        <metal:mainslot define-slot="pmr2mainslot">
+          <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
+          <div tal:content="structure view/content"/>
+        </metal:mainslot>
+      </metal:block>
+    </tal:block>
+  </metal:define>
+
+</tal:block>

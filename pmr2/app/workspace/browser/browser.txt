@@ -180,7 +180,7 @@ See if the page renders with expected output.
     ...     self.portal.workspace.cake, request)
     >>> testpage.update()
     >>> result = testpage()
-    >>> 'Location: Delicious Cake @ 1 /' in testpage.label
+    >>> 'Location: Delicious Cake @ 1 /' in result
     True
     >>> '<th>Filename</th>' in result
     True
@@ -535,7 +535,7 @@ request_subpath.
     >>> testpage = browser.FilePage(wkspc, request)
     >>> testpage.update()
     >>> result = testpage()
-    >>> 'Location: Delicious Eggs @ 2 / dir1' in testpage.label
+    >>> 'Location: Delicious Eggs @ 2 / dir1' in result
     True
     >>> 'f1' in result
     True
@@ -552,7 +552,7 @@ Nested works too.
     >>> testpage = browser.FilePage(wkspc, request)
     >>> testpage.update()
     >>> result = testpage()
-    >>> 'Location: Delicious Eggs @ 3 / dir1 / dir2' in testpage.label
+    >>> 'Location: Delicious Eggs @ 3 / dir1 / dir2' in result
     True
     >>> 'f1' in result
     True

@@ -1,4 +1,14 @@
-<h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
-<div tal:condition="view/topnav" tal:content="structure view/navcontent"/>
-<div tal:content="structure view/content"/>
-<div tal:condition="view/botnav" tal:content="structure view/navcontent"/>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="plone"
+      metal:use-macro="context/@@pmr2-macros/pmr2_main">
+
+  <metal:block fill-slot="pmr2mainslot">
+    <h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
+    <div tal:condition="view/topnav" tal:content="structure view/navcontent"/>
+    <div tal:content="structure view/content"/>
+    <div tal:condition="view/botnav" tal:content="structure view/navcontent"/>
+  </metal:block>
+</html>

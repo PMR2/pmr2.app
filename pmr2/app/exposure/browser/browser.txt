@@ -406,7 +406,8 @@ return a fairly blank result and not trigger any redirection.
     >>> view = browser.ExposureInfo(context, request)
     >>> view.update()
     >>> print view.render()
-    <div></div>
+        <h3>...</h3>
+        <div></div>
     >>> request.response.getHeader('Location') is None
     True
 
@@ -920,6 +921,7 @@ view.
     >>> result = view.render()
     >>> request.response.getHeader('Location')
     >>> print result
+    <h3>docs</h3>
     <div></div>
 
 It is possible to define a custom note adapter with its own view and

@@ -60,9 +60,8 @@ class FileInfoProvider(ContentProviderBase):
         fileview = zope.component.getMultiAdapter(
             (self.context, self.request), name=view)
         try:
-            if IFormWrapper.providedBy(fileview):
-                fileview = fileview.form_instance
-            results = fileview()
+            # XXX current way to disable main_template
+            results = fileview.call_template()
         except:
             errors.append('failed to render file information')
 
@@ -99,11 +98,9 @@ class FileRendererProvider(ContentProviderBase):
                 fileview = zope.component.getMultiAdapter(
                     (self.context, self.request), name=view)
                 try:
-                    if IFormWrapper.providedBy(fileview):
-                        fileview = fileview.form_instance
-                    results = fileview()
+                    # XXX current way to disable main_template
+                    results = fileview.call_template()
                     break
-
                 except:
                     errors.append(
                         '"%s" selected "%s" but it failed to render.' %

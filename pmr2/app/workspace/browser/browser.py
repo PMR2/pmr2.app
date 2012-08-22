@@ -383,6 +383,7 @@ class WorkspaceLogRss(page.RssPage):
 
     shortlog = False
     maxchanges = 50  # default value.
+    index = None  # XXX temporary method to disable boilerplate
 
     def items(self):
         storage = zope.component.queryAdapter(self.context, IStorage)
@@ -626,15 +627,15 @@ class BaseFilePage(WorkspaceTraversePage):
     def update(self):
         pass
 
+    def call_template(self):
+        self.index = None
+        return self.__call__()
+
 
 class FilePage(BaseFilePage):
 
     template = ViewPageTemplateFile('workspace_file_page.pt')
-    title = ViewPageTemplateFile('workspace_file_label.pt')
-
-    @property
-    def label(self):
-        return self.title()
+    label = ViewPageTemplateFile('workspace_file_label.pt')
 
     def update(self):
         """\

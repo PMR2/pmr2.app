@@ -12,3 +12,19 @@ class Macros(templates.Macros):
     """
 
     index = ViewPageTemplateFile(path('macros.pt'))
+
+
+class PMR2PlainMacros(templates.Macros):
+    """\
+    Trying to make life easier for general testing
+    """
+
+    index = ViewPageTemplateFile(path('pmr2-plain-macros.pt'))
+
+
+class PMR2MainMacros(templates.Macros):
+    """\
+    The main macros, including templates.
+    """
+
+    index = ViewPageTemplateFile(path('pmr2-main-macros.pt'))
