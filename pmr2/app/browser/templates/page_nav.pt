@@ -5,7 +5,7 @@
       i18n:domain="plone"
       metal:use-macro="context/@@pmr2-macros/pmr2_main">
 
-  <metal:block fill-slot="pmr2mainslot">
+  <metal:block fill-slot="main">
     <h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
     <div tal:condition="view/topnav" tal:content="structure view/navcontent"/>
     <div tal:content="structure view/content"/>

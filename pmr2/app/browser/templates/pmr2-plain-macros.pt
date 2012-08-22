@@ -6,7 +6,7 @@
   <head></head>
   <body>
     <metal:define define-macro="pmr2_main">
-      <metal:mainslot define-slot="pmr2mainslot">
+      <metal:mainslot define-slot="main">
         <h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
         <div tal:content="structure view/content"/>
       </metal:mainslot>

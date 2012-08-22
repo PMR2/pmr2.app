@@ -7,7 +7,7 @@
   ><metal:define define-macro="pmr2_main"
     ><tal:block metal:use-macro="context/main_template/macros/master">
       <metal:block fill-slot="main">
-        <metal:mainslot define-slot="pmr2mainslot">
+        <metal:mainslot define-slot="main">
           <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
           <div tal:content="structure view/content"/>
         </metal:mainslot>
