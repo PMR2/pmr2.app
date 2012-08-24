@@ -10,7 +10,7 @@
   <tal:block metal:use-macro="context/@@ploneform-macros/titlelessform">
 
     <metal:main fill-slot="fields">
-        <div tal:replace="structure view/content">Custom Fields</div>
+        <div tal:replace="structure view/table/render">Custom Fields</div>
     </metal:main>
 
     <metal:main fill-slot="formbottom">

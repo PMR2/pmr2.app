@@ -9,7 +9,7 @@
     <h1 tal:condition="view/label" class="documentFirstHeading" 
         tal:content="view/label | nothing"/>
     <div id="content-core">
-      <div tal:content="structure view/content"/>
+      <div tal:content="structure view/template"/>
     </div>
   </metal:block>
 </html>

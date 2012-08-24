@@ -673,18 +673,15 @@ class ExposureInfo(page.SimplePage):
     instead.
     """
 
-    render = ViewPageTemplateFile('exposure_docview.pt')
-
-    def subtitle(self):
+    def title(self):
         return self.context.Description()
-
-    def content(self):
-        return self.context.getText()
 
     def render(self):
         # could check for source, but users can manually edit this page,
         # no need to take away this feature, yet.
-        if self.content():
+        text = self.context.getText()
+        if text:
+            self.template = text
             return super(ExposureInfo, self).render()
 
         catalog = getToolByName(self.context, 'portal_catalog')
@@ -698,6 +695,7 @@ class ExposureInfo(page.SimplePage):
             return super(ExposureInfo, self).render()
 
         if len(efiles) > 1:
+            # XXX
             # should figure out how to generate a list of available
             # items for user consumption.  For now, default.
             return super(ExposureInfo, self).render()

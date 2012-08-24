@@ -82,7 +82,7 @@ class WorkspaceContainerRepoListing(page.SimplePage):
 
     label = "Raw Workspace Listing"
 
-    def content(self):
+    def template(self):
         t = table.WorkspaceStatusTable(self.context, self.request)
         # XXX no idea why this isn't done automatically
         t.__name__ = self.__name__
@@ -357,7 +357,7 @@ class WorkspaceLog(WorkspaceTraversePage, page.NavPage):
         self._navlist = t.navlist
         self.table = t
 
-    def content(self):
+    def template(self):
         # putting datefmt into request as the value provider for the
         # table currently uses it to determine output format...
         return self.table.render()

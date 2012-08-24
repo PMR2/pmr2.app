@@ -26,6 +26,7 @@ class BasePage(BrowserPage):
     # what index is
 
     index = ViewPageTemplateFile('basepage.pt')
+    template = ''
 
     @property
     def url_expr(self):
@@ -46,13 +47,6 @@ class BasePage(BrowserPage):
         if label:
             return label()
 
-    def subtitle(self):
-        return None
-
-    def content(self):
-        # XXX in the redesign, it should call template directly
-        raise NotImplementedError('need content')
-
     def update(self):
         pass
 
@@ -72,14 +66,13 @@ class SimplePage(BasePage):
     boiler plates).
     """
 
-    template = None
-
-    def content(self):
-        # render content template
-        return self.template()
+    def subtitle(self):
+        return None
 
     def render(self):
-        # XXX allow a way to disable the boilerplates unconditionally.
+        # XXX not properly documented feature:
+        # Setting index to None will disable the rendering of the 
+        # site boilerplate defined in the index.
         if self.index:
             return super(SimplePage, self).render()
         return self.template()

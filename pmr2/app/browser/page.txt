@@ -12,8 +12,7 @@ Let's subclass one.
     >>> from pmr2.app.browser.page import SimplePage
     >>>
     >>> class TestPage(SimplePage):
-    ...     def content(self):
-    ...         return 'Hello'
+    ...     template = 'Hello'
 
 Then render it:
 ::

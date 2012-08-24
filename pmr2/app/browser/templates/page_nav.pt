@@ -10,7 +10,7 @@
         tal:content="view/label | nothing"/>
     <div id="content-core">
       <div tal:condition="view/topnav" tal:content="structure view/navcontent"/>
-      <div tal:content="structure view/content"/>
+      <div tal:content="structure view/template"/>
       <div tal:condition="view/botnav" tal:content="structure view/navcontent"/>
     </div>
   </metal:block>
