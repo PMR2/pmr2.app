@@ -7,6 +7,9 @@
 
 <metal:block fill-slot="main">
 
+  <h1 tal:condition="view/label" class="documentFirstHeading"
+      tal:content="view/label | nothing"/>
+
   <tal:block metal:use-macro="context/@@ploneform-macros/titlelessform">
 
     <metal:main fill-slot="fields">
