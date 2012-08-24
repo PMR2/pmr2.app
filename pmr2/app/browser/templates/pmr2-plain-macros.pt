@@ -14,7 +14,8 @@
       </metal:slot>
 
       <metal:mainslot define-slot="main">
-        <h3 tal:condition="view/subtitle" tal:content="view/subtitle"/>
+        <h1 tal:condition="view/label" class="documentFirstHeading" 
+            tal:content="view/label | nothing"/>
         <div tal:content="structure view/content"/>
       </metal:mainslot>
 

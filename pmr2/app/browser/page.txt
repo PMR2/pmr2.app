@@ -22,4 +22,6 @@ Then render it:
     >>> request = TestRequest()
     >>> page = TestPage(context, request)
     >>> print page()
-    <div>Hello</div>
+    <div id="content-core">
+      <div>Hello</div>
+    </div>
