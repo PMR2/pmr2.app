@@ -121,6 +121,7 @@ class BaseWizardGroup(BaseSubGroup):
     structure = None
     filename = None
     new_filename = None
+    deleted = False
     pos = None
 
     collapseState = False
@@ -146,6 +147,14 @@ class BaseWizardGroup(BaseSubGroup):
         if self.filename != filename:
             self.new_filename = filename
             self.parentForm._updated = True
+
+    @z3c.form.button.buttonAndHandler(_('Delete'), name='delete')
+    def handleDelete(self, action):
+        """\
+        Delete this group.
+        """
+
+        self.deleted = True
 
 
 def mixin_wizard(groupform):
@@ -293,6 +302,11 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         # XXX skip the first one, base on assumption that the view is
         # going to be first.
         for g in self.groups[1:]:
+            if g.deleted:
+                # Have to manipulate the current structure.
+                del wh.structure[g.pos]
+                continue
+
             if g.new_filename is None:
                 continue
 

@@ -211,7 +211,6 @@ class ExposureFileGenForm(form.AddForm):
         ctxobj.setTitle(ctxobj.id)
 
 
-
 class ExposureFileAnnotatorForm(form.BaseAnnotationForm):
     """\
     Form to add a note to an ExposureFile.

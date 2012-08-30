@@ -245,6 +245,28 @@ choice selection subgroup for the user to specify the file type.
     >>> len(ewiz.structure)
     3
 
+Push again and we get another.
+::
+
+    >>> request = TestRequest(form={
+    ...     'form.buttons.add_file': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> len(ewiz.structure)
+    4
+
+Maybe that was too much.  We can delete that last group we added.
+::
+
+    >>> request = TestRequest(form={
+    ...     'file2.buttons.delete': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> len(ewiz.structure)
+    3
+
 Rendering should show a new group for the user to select the file type.
 ::
 
@@ -371,8 +393,25 @@ Reverting changes
 -----------------
 
 Users may decide to revert the wizard into the same state as the created
-objects.  This will let them achieve it.
+objects.  This will let them achieve it.  First we can try to make some
+changes in the wizard by deleting some groups with the delete button.
 ::
+
+    >>> request = TestRequest(form={
+    ...     'annotate1.buttons.delete': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> request = TestRequest(form={
+    ...     'annotate0.buttons.delete': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> len(ewiz.structure)
+    1
+
+Now trigger the revert button.  The structure as seen in the exposure
+should be completely reverted.
 
     >>> request = TestRequest(form={
     ...     'form.buttons.revert': 1,
