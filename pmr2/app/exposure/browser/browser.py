@@ -823,25 +823,14 @@ class RawTextNote(ExposureFileViewBase):
     template.
     """
 
+    # XXX this does not appeared to be used in production anymore
+    # outside of the test case, if so, move this there.
+
     index = ViewPageTemplateFile('code.pt')
     description = u'The following is a raw text representation of the file.'
     subtitle = u'Raw text view'
 
     @memoize
-    def content(self):
-        return self.note.text
-
-
-class RawContentNote(ExposureFileViewBase):
-    """\
-    This is a raw content view, where the raw text is rendered as a
-    struture as per the default template.
-    """
-
-    template = ViewPageTemplateFile('raw_content.pt')
-    description = u'The following is a raw representation of the file.'
-    subtitle = u'Raw content view'
-
     def content(self):
         return self.note.text
 

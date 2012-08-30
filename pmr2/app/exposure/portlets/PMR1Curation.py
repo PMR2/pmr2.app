@@ -108,7 +108,7 @@ class Renderer(base.Renderer):
 
     @property
     def available(self):
-        return IExposureObject.providedBy(self.context)
+        return IExposure.providedBy(self.context)
 
     def render(self):
         return self._template()
