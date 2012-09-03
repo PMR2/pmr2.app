@@ -155,6 +155,7 @@ class BaseWizardGroup(BaseSubGroup):
         """
 
         self.deleted = True
+        self.parentForm._updated = True
 
 
 def mixin_wizard(groupform):
@@ -244,13 +245,9 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         extensible.ExtensibleForm.update(self)
         self.updateGroups()
 
-    def appendGroups(self):
-        self.groups = []
+    def appendViewGroup(self):
+        wh = zope.component.getAdapter(self.context, IExposureWizard)
 
-        wh = zope.component.getAdapter(self.context, 
-            IExposureWizard)
-
-        # XXX hack of sort to add the view group to the beginning.
         self.viewGroup = ExposureViewGenWizardGroup(
             self.context, self.request, self)
         self.viewGroup.structure = {}
@@ -259,7 +256,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
             # is a list and not empty.
             self.viewGroup.structure = wh.structure[-1][1]
         else:
-            # initiate with empty set.
+            # initiate the structure in wizard helper with empty set.
             wh.structure = [('', {
                 # XXX this structure is duping.
                 'commit_id': self.viewGroup.current_commit_id(),
@@ -270,10 +267,16 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
                 'workspace': self.context.workspace,
                 'Subject': (),
             })]
-
         self.groups.append(self.viewGroup)
 
+    def appendGroups(self):
+        self.groups = []
+
+
+        self.appendViewGroup()
         # handle the rest.
+
+        wh = zope.component.getAdapter(self.context, IExposureWizard)
         structures = wh.structure[:-1]
 
         for i, o in enumerate(structures):

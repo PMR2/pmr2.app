@@ -388,20 +388,33 @@ compatibility.
     ...     pp(answer)
     ...     pp(result)
 
------------------
-Reverting changes
------------------
+---------------------------
+Deleting, Reverting changes
+---------------------------
 
 Users may decide to revert the wizard into the same state as the created
 objects.  This will let them achieve it.  First we can try to make some
 changes in the wizard by deleting some groups with the delete button.
 ::
 
+    >>> print [s[0] for s in ewiz.structure]
+    ['file2', 'file3', '']
     >>> request = TestRequest(form={
-    ...     'annotate1.buttons.delete': 1,
+    ...     'annotate0.buttons.delete': 1,
     ... })
     >>> form = wizard.ExposureWizardForm(context, request)
     >>> form.update()
+
+Make sure that the intended group that we wanted to delete and not some
+other group was deleted.
+::
+
+    >>> print [s[0] for s in ewiz.structure]
+    ['file3', '']
+
+Now we delete that other group.
+::
+
     >>> request = TestRequest(form={
     ...     'annotate0.buttons.delete': 1,
     ... })
