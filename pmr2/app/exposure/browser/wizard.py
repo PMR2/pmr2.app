@@ -18,7 +18,6 @@ from Products.statusmessages.interfaces import IStatusMessage
 from pmr2.app.browser import form
 from pmr2.app.browser import page
 from pmr2.app.browser import widget
-from pmr2.app.browser.layout import *
 
 from pmr2.app.workspace.interfaces import ICurrentCommitIdProvider
 
@@ -45,6 +44,15 @@ def _changeWizard(exposure):
 class StructureWrapper(Location):
     """\
     Internal use structure wrapper for dicts.
+
+    Instead of using dict directly and let the DataManager for dict
+    manager the data acquisition, we are doing this long way because of
+    key/value pairs that are assigned to the dict that are not defined
+    within the interface of the annotator that will ultimately assign
+    the values defined within it to the actual annotation.  A better fix
+    would probably define our own custom DataManager for this entire
+    thing, but the effort involved will be much greater than writing
+    bridges between the predefined managers and forms.
     """
     
     def __init__(self, context=None, structure=None):
@@ -125,6 +133,8 @@ class BaseWizardGroup(BaseSubGroup):
     pos = None
 
     collapseState = False
+    showDeleteButton = True
+    showClearButton = True
 
     @z3c.form.button.buttonAndHandler(_('Update'), name='update')
     def handleUpdate(self, action):
@@ -148,18 +158,44 @@ class BaseWizardGroup(BaseSubGroup):
             self.new_filename = filename
             self.parentForm._updated = True
 
-    @z3c.form.button.buttonAndHandler(_('Delete'), name='delete')
+    def showClearButtonState(self):
+        return self.showClearButton
+
+    @z3c.form.button.buttonAndHandler(_('Clear Subgroup'), name='clear',
+            condition=showClearButtonState)
+    def handleClear(self, action):
+        """\
+        Clear this group.
+
+        This will clear the groups associated with the filetype and so
+        allowing the selection of a different one for a new set of 
+        groups.
+        """
+
+        self.structure.clear()
+        self.parentForm._updated = True
+
+    def showDeleteButtonState(self):
+        return self.showDeleteButton
+
+    @z3c.form.button.buttonAndHandler(_('Delete'), name='delete',
+            condition=showDeleteButtonState)
     def handleDelete(self, action):
         """\
         Delete this group.
         """
 
+        # XXX this only mark the structure as deleted as the actual
+        # list entry (with the filename) can't be directly manipulated
+        # here, as it is not the content.
         self.deleted = True
         self.parentForm._updated = True
 
 
-def mixin_wizard(groupform):
+def mixin_wizard(groupform, static=False):
     class WizardGroupMixed(BaseWizardGroup, groupform):
+        showDeleteButton = not static
+        showClearButton = not static
         def __repr__(self):
             return '<%s for <%s.%s> object at %x>' % (
                 self.__class__.__name__, 
@@ -173,7 +209,7 @@ def mixin_wizard(groupform):
 
 # The subforms that need this.
 
-ExposureViewGenWizardGroup = mixin_wizard(ExposureViewGenGroup)
+ExposureViewGenWizardGroup = mixin_wizard(ExposureViewGenGroup, static=True)
 ExposureFileChoiceTypeWizardGroup = mixin_wizard(ExposureFileChoiceTypeGroup)
 
 
@@ -281,7 +317,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
 
         for i, o in enumerate(structures):
             filename, structure = o
-            if filename is None:
+            if filename is None or not structure:
                 grp = ExposureFileChoiceTypeWizardGroup(
                     self.context, self.request, self)
             else:

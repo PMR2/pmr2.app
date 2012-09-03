@@ -388,9 +388,9 @@ compatibility.
     ...     pp(answer)
     ...     pp(result)
 
----------------------------
-Deleting, Reverting changes
----------------------------
+-------------------------------------
+Deleting, Clearing, Reverting changes
+-------------------------------------
 
 Users may decide to revert the wizard into the same state as the created
 objects.  This will let them achieve it.  First we can try to make some
@@ -412,16 +412,61 @@ other group was deleted.
     >>> print [s[0] for s in ewiz.structure]
     ['file3', '']
 
-Now we delete that other group.
+Sometimes the wrong file type may have been selected.  The clear button
+provides the function to reset the groups to allow the selection of a 
+different one.  Once that is triggered, the structure for that file will
+be reverted back to the default state.
 ::
 
     >>> request = TestRequest(form={
-    ...     'annotate0.buttons.delete': 1,
+    ...     'annotate0.buttons.clear': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> ewiz.structure[0]
+    ('file3', {})
+
+While the structure is now cleared, the form should be rendered to
+confirm that the user can select a new file type.
+
+    >>> request = TestRequest()
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> result = form()
+    >>> 'Test Type' in result
+    True
+    >>> 'file0.buttons.' in result
+    True
+
+Now we delete this cleared group, and see that our structure is now
+reduced to a single element - the default.  Note that the right groups
+::
+
+    >>> request = TestRequest(form={
+    ...     'file0.buttons.delete': 1,
     ... })
     >>> form = wizard.ExposureWizardForm(context, request)
     >>> form.update()
     >>> len(ewiz.structure)
     1
+
+Lastly, the delete and clear button should have been disabled on the
+main form.
+::
+
+    >>> request = TestRequest(form={
+    ...     'view.buttons.clear': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> request = TestRequest(form={
+    ...     'view.buttons.delete': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> ewiz.structure
+    [('', {'commit_id': u'1', 'title': u'', 'curation': {}, 
+    'workspace': u'/plone/workspace/test', 'docview_gensource': 'file1', 
+    'docview_generator': u'rest_to_html', 'Subject': ()})]
 
 Now trigger the revert button.  The structure as seen in the exposure
 should be completely reverted.
