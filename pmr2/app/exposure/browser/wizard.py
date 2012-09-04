@@ -192,7 +192,7 @@ class BaseWizardGroup(BaseSubGroup):
         self.parentForm._updated = True
 
 
-def mixin_wizard(groupform, static=False):
+def mixin_wizard(groupform, showClear=True, showDelete=True):
     """
     helper to quickly mix-in the buttons to be provided by the wizard
     group into the original standalone forms for editing exposure file
@@ -200,8 +200,6 @@ def mixin_wizard(groupform, static=False):
     """
 
     class WizardGroupMixed(BaseWizardGroup, groupform):
-        showDeleteButton = not static
-        showClearButton = not static
         def __repr__(self):
             return '<%s for <%s.%s> object at %x>' % (
                 self.__class__.__name__, 
@@ -212,11 +210,20 @@ def mixin_wizard(groupform, static=False):
 
     # Don't think this is necessary at this point.
     #assert IDocGenSubgroup.implementedBy(groupform)
+
+    # an index of what buttons to show? clear, delete
+    buttons = {
+        'ExposureViewGenGroup': (False, False),
+        'ExposureFileChoiceTypeWizardGroup': (False, True),
+    }
+    WizardGroupMixed.showClearButton, WizardGroupMixed.showDeleteButton = \
+        buttons.get(groupform.__name__, (showClear, showDelete))
+
     return WizardGroupMixed
 
 # The subforms that need this.
 
-ExposureViewGenWizardGroup = mixin_wizard(ExposureViewGenGroup, static=True)
+ExposureViewGenWizardGroup = mixin_wizard(ExposureViewGenGroup)
 ExposureFileChoiceTypeWizardGroup = mixin_wizard(ExposureFileChoiceTypeGroup)
 
 
