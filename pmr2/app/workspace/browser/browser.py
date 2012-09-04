@@ -682,6 +682,18 @@ class FilePage(BaseFilePage):
 
         self.request['enable_border'] = True
 
+    def render(self):
+        # We have to trigger the update methods of the providers before
+        # we render the main template (self.index).  A naive way to
+        # achieve this is to save the template result, and temporarily
+        # redirect the template call to the rendered result.
+        raw_template = self.template
+        template_result = self.template()
+        self.template = lambda: template_result
+        result = super(FilePage, self).render()
+        self.template = raw_template
+        return result
+
 
 class FileInfoPage(BaseFilePage):
     """\
