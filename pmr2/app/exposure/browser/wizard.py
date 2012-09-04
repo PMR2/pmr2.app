@@ -193,6 +193,12 @@ class BaseWizardGroup(BaseSubGroup):
 
 
 def mixin_wizard(groupform, static=False):
+    """
+    helper to quickly mix-in the buttons to be provided by the wizard
+    group into the original standalone forms for editing exposure file
+    annotation related attributes.
+    """
+
     class WizardGroupMixed(BaseWizardGroup, groupform):
         showDeleteButton = not static
         showClearButton = not static
@@ -204,6 +210,7 @@ def mixin_wizard(groupform, static=False):
                 id(self),
             )
 
+    # Don't think this is necessary at this point.
     #assert IDocGenSubgroup.implementedBy(groupform)
     return WizardGroupMixed
 
@@ -320,6 +327,15 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
             if filename is None or not structure:
                 grp = ExposureFileChoiceTypeWizardGroup(
                     self.context, self.request, self)
+                if filename is not None and not structure:
+                    # XXX this is the only safe way to preserve the
+                    # already selected filename without disrupting the
+                    # structure of the wizard.  Until this accidental
+                    # coupling between these groups are resolved this
+                    # assignment will be done here for now.
+                    wid = '%s%d.widgets.filename' % (grp.prefix, i)
+                    if self.request.get(wid, None) is None:
+                        self.request[wid] = filename
             else:
                 grp = ExposureFileTypeAnnotatorWizardGroup(
                     self.context, self.request, self)

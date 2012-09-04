@@ -428,6 +428,7 @@ be reverted back to the default state.
 
 While the structure is now cleared, the form should be rendered to
 confirm that the user can select a new file type.
+::
 
     >>> request = TestRequest()
     >>> form = wizard.ExposureWizardForm(context, request)
@@ -436,6 +437,35 @@ confirm that the user can select a new file type.
     True
     >>> 'file0.buttons.' in result
     True
+
+Also check that the original filename is still selected.  We'll use the
+testbrowser to do this quickly.
+::
+
+    >>> b = self.testbrowser
+    >>> target = context.absolute_url() + '/@@wizard'
+    >>> b.open(target)
+    >>> b.getControl(name='file0.widgets.filename:list').value
+    ['file3']
+
+Also test that this group can be properly reused.  We select a different
+filename and it should maintain this way.
+::
+
+    >>> b.getControl(name='file0.widgets.filename:list').value = ['file2']
+    >>> b.getControl(name='file0.widgets.filetype:list').value = ['Test Type']
+    >>> b.getControl(name='file0.buttons.update').click()
+    >>> ewiz.structure[0][0]
+    'file2'
+    >>> ewiz.structure[0][1]['file_type']
+    '/plone/test_type'
+
+Clear this again.
+::
+
+    >>> b.getControl(name='annotate0.buttons.clear').click()
+    >>> ewiz.structure[0]
+    ('file2', {})
 
 Now we delete this cleared group, and see that our structure is now
 reduced to a single element - the default.  Note that the right groups
