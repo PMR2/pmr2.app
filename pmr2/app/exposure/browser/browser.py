@@ -31,11 +31,8 @@ from zope.app.pagetemplate.viewpagetemplatefile \
     import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
-from pmr2.app.workspace.browser.browser import WorkspaceLog
 from pmr2.app.workspace.interfaces import IStorage, ICurrentCommitIdProvider
 from pmr2.app.workspace.exceptions import *
-
-from pmr2.app.exposure import table
 
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.browser.interfaces import *
@@ -1105,85 +1102,3 @@ class ExposureFileBulkRegenerateForm(form.PostForm):
             ctx = b.getObject()
             f = ExposureFileRegenerateForm(ctx, None)
             f.migrate()
-
-
-class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
-
-    # more suitable interface name needed?
-    zope.interface.implements(IExposureRolloverForm)
-    _finishedAdd = False
-    fields = z3c.form.field.Fields(IExposureRolloverForm)
-    label = 'Exposure Rollover'
-
-    shortlog = True
-    tbl = table.ExposureRolloverLogTable
-    template = ViewPageTemplateFile('workspace_exposure_rollover.pt')
-
-    def update(self):
-        self.request['enable_border'] = True
-        ExposurePort.update(self)
-        WorkspaceLog.update(self)
-
-    def export_source(self):
-        return self.source_exposure
-
-    # acquire default container
-    def getDefaultExposureContainer(self):
-        try:
-            exposure_container = restrictedGetExposureContainer()
-            self._gotExposureContainer = True
-        except:
-            raise ProcessingError(
-                u'Unauthorized to create new exposure at default location.')
-        return exposure_container
-
-    def acquireSource(self, exposure_path):
-        try:
-            source_exposure = self.context.restrictedTraverse(
-               exposure_path)
-        except Unauthorized:
-            raise ProcessingError(
-                u'Unauthorized to read exposure at selected location')
-        except (AttributeError, KeyError):
-            raise ProcessingError(
-                u'Cannot find exposure at selected location.')
-        return source_exposure
-
-    @z3c.form.button.buttonAndHandler(_('Migrate'), name='apply')
-    def handleMigrate(self, action):
-        data, errors = self.extractData()
-        if errors:
-            status = IStatusMessage(self.request)
-            status.addStatusMessage(
-                u'Please ensure both radio columns have been selected before '
-                 'trying again.',
-                'error')
-            return
-
-        try:
-            exposure_container = self.getDefaultExposureContainer()
-            self.source_exposure = self.acquireSource(data['exposure_path'])
-        except ProcessingError, e:
-            raise z3c.form.interfaces.ActionExecutionError(e)
-
-        eaf = ExposureAddForm(exposure_container, None)
-        data = {
-            'workspace': u'/'.join(self.context.getPhysicalPath()),
-            'curation': None,  # deprecated?
-            'commit_id': data['commit_id'],
-        }
-        eaf.createAndAdd(data)
-        exp_id = data['id']
-        target = exposure_container[exp_id]
-        self.mold(target)
-        self._finishedAdd = True
-        self.target = target
-
-    def nextURL(self):
-        return self.target.absolute_url()
-
-    def render(self):
-        if self._finishedAdd:
-            self.request.response.redirect(self.nextURL())
-            return ""
-        return super(WorkspaceExposureRollover, self).render()

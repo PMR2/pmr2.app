@@ -60,7 +60,7 @@
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="exposure_rollover"
-      class=".browser.WorkspaceExposureRollover"
+      class=".workspace.WorkspaceExposureRollover"
       permission="cmf.ModifyPortalContent"
       />
 
