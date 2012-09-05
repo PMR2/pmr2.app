@@ -1169,7 +1169,7 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
         eaf = ExposureAddForm(exposure_container, None)
         data = {
             'workspace': u'/'.join(self.context.getPhysicalPath()),
-            'curation': None,  # to be copied later
+            'curation': None,  # deprecated?
             'commit_id': data['commit_id'],
         }
         eaf.createAndAdd(data)

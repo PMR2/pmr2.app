@@ -128,7 +128,7 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
         """
 
         for g in self.groups:
-            structure = g.populateExposure(self.ctxobj)
+            structure = g.acquireStructure()
             wh = zope.component.getAdapter(self.ctxobj, 
                 IExposureWizard)
             if structure:
@@ -166,7 +166,7 @@ class CreateExposureGroupBase(form.Group, ParentCurrentCommitIdProvider):
     ignoreContext = True
     order = 0
 
-    def populateExposure(self, exposure):
+    def acquireStructure(self):
         """\
         """
 
@@ -298,7 +298,7 @@ class DocGenGroup(CreateExposureGroupBase):
 
         return super(DocGenGroup, self).update()
 
-    def populateExposure(self, exposure):
+    def acquireStructure(self):
         data, errors = self.extractData()
         if errors:
             # might need to notify the errors.
@@ -325,16 +325,33 @@ class ExposureImportExportGroup(CreateExposureGroupBase):
     label = "Exposure Import via URI"
     prefix = 'exportimport'
 
-    def populateExposure(self, exposure):
+    def _loadExported(self, uri):
+        u = urlopen(uri)
+        exported = json.load(u)
+        u.close()
+        return exported
+
+    def acquireStructure(self):
         data, errors = self.extractData()
         uri = data.get('export_uri', None)
+        if not uri:
+            return
 
-        if uri:
-            # XXX no exception handling here.
-            u = urlopen(uri)
-            exported = json.load(u)
-            u.close()
-            return exported
+        try:
+            result = self._loadExported(uri)
+        except Exception, e:
+            # can't pinpoint the right widget because the default error
+            # handling subscriber will try to find `export_uri` in the 
+            # parentForm and not this one.
+
+            # raise z3c.form.interfaces.WidgetActionExecutionError(
+            #     'export_uri', e)o
+            
+            # So we raise a normal one instead.
+            raise z3c.form.interfaces.ActionExecutionError(
+                ProcessingError(str(e)))
+
+        return result
 
 
 class CreateExposureFormExtender(extensible.FormExtender):

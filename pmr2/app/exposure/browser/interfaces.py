@@ -152,11 +152,11 @@ class ICreateExposureGroup(zope.interface.Interface):
     Interface for the groups for the above form.
     """
 
-    # XXX maybe rename to acquire structure?
-    def populateExposure(self, exposure):
+    def acquireStructure():
         """\
         CreateExposureForm will call this method on successful creation
-        of an exposure, which this group will populate it with data.
+        of an exposure, and will use this method to acquire the data
+        that will become the initial structure for the wizard.
         """
 
 
