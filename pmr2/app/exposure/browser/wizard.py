@@ -10,7 +10,6 @@ _ = MessageFactory("pmr2")
 
 import z3c.form
 
-from plone.z3cform import layout
 from plone.z3cform.fieldsets import group, extensible
 
 from Products.statusmessages.interfaces import IStatusMessage

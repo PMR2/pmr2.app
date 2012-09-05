@@ -9,7 +9,6 @@ from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
 import z3c.form
-from plone.z3cform import layout
 from plone.z3cform.fieldsets import group, extensible
 
 from Acquisition import aq_inner, aq_parent
@@ -31,7 +30,6 @@ from pmr2.app.exposure.content import *
 from pmr2.app.browser import form
 from pmr2.app.browser import page
 from pmr2.app.browser import widget
-from pmr2.app.browser.layout import *
 
 from pmr2.app.exposure import table
 from pmr2.app.exposure.interfaces import *

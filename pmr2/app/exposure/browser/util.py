@@ -4,7 +4,6 @@ from zope.app.component.hooks import getSite
 from zope.schema.interfaces import RequiredMissing
 
 import z3c.form.interfaces
-from plone.z3cform.interfaces import IFormWrapper
 
 from AccessControl import getSecurityManager, Unauthorized
 from Products.CMFCore import permissions
@@ -116,10 +115,6 @@ def moldExposure(exposure_context, request, exported):
         # form, so we will require fresh instances for every file.
         fgen = zope.component.getMultiAdapter(
             (exposure_context, request), name='filegen')
-        # XXX when forms are properly redefined to not use wrappers,
-        # remove this
-        if IFormWrapper.providedBy(fgen):
-            fgen = fgen.form_instance
 
         if 'views' in fields:
             # since we may use this in a regenerative context, check

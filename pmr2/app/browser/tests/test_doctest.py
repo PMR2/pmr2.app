@@ -14,23 +14,16 @@ import pmr2.app.browser
 def test_suite():
     return unittest.TestSuite([
 
-        # PMR2 Additional form tests
+        # Doctest for PMR2 pages
         ztc.ZopeDocFileSuite(
             'page.txt', package='pmr2.app.browser',
             test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
-        # PMR2 Additional form tests
+        # Doctest for PMR2 forms
         ztc.ZopeDocFileSuite(
             'form.txt', package='pmr2.app.browser',
-            test_class=base.DocTestCase,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
-
-        # Root form usage tests.
-        ztc.ZopeDocFileSuite(
-            'layout.txt', package='pmr2.app.browser',
             test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),

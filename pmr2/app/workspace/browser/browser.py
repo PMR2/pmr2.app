@@ -22,7 +22,6 @@ import z3c.form.form
 import z3c.form.value
 from z3c.form import button
 
-from plone.z3cform import layout
 from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName
@@ -37,9 +36,6 @@ from pmr2.app.interfaces.exceptions import *
 from pmr2.app.browser import interfaces
 from pmr2.app.browser import form
 from pmr2.app.browser import page
-
-from pmr2.app.browser.layout import BorderedTraverseFormWrapper
-from pmr2.app.browser.layout import TraverseFormWrapper
 
 from pmr2.app.workspace import table
 from pmr2.app.workspace.exceptions import *

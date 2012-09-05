@@ -7,7 +7,6 @@ from zope.app.container.interfaces import IContainer
 _ = MessageFactory('pmr2')
 
 import z3c.form
-from plone.z3cform import layout
 from plone.z3cform.fieldsets import group, extensible
 
 from pmr2.app.browser import form
@@ -19,6 +18,7 @@ from pmr2.app.settings.interfaces import IPMR2PluggableSettings
 class PMR2GlobalSettingsEditForm(extensible.ExtensibleForm, form.EditForm):
 
     fields = z3c.form.field.Fields(IPMR2GlobalSettings).omit('subsettings')
+    label = _(u'PMR2 Core Configuration')
 
     def __init__(self, *a, **kw):
         super(PMR2GlobalSettingsEditForm, self).__init__(*a, **kw)
@@ -68,10 +68,6 @@ class PMR2GlobalSettingsEditForm(extensible.ExtensibleForm, form.EditForm):
             results.append('Failed to created Exposure Container.')
 
         self.status = self.status + ' ' + ' '.join(results)
-
-
-PMR2GlobalSettingsEditFormView = layout.wrap_form(PMR2GlobalSettingsEditForm,
-    label = _(u'PMR2 Core Configuration'))
 
 
 class PMR2PluginSettingsExtender(extensible.FormExtender):

@@ -1,4 +1,3 @@
-from plone.z3cform import layout
 from pmr2.app.exposure.browser.browser import GroupedNoteViewBase
 from pmr2.app.exposure.browser.browser import ExposureFileViewBase
 

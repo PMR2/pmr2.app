@@ -14,12 +14,7 @@ from Products.statusmessages.interfaces import IStatusMessage
 from Products.PortalTransforms.data import datastream
 from Products.CMFCore.utils import getToolByName
 
-from plone.z3cform.interfaces import IFormWrapper
-from plone.z3cform import layout
-
 from pmr2.app.browser import page
-from pmr2.app.browser.layout import TraverseFormWrapper
-
 from pmr2.app.workspace.interfaces import IWorkspaceFileListProvider
 from pmr2.app.workspace import table
 from pmr2.app.workspace.browser.interfaces import *

@@ -18,7 +18,6 @@ _ = MessageFactory("pmr2")
 import z3c.form.field
 from z3c.form import button
 from plone.memoize.view import memoize
-from plone.z3cform import layout
 from plone.z3cform.fieldsets import group, extensible
 
 from Acquisition import aq_parent, aq_inner
@@ -47,7 +46,6 @@ from pmr2.app.exposure.content import *
 from pmr2.app.browser import form
 from pmr2.app.browser import page
 from pmr2.app.browser import widget
-from pmr2.app.browser.layout import *
 
 from pmr2.app.exposure.browser.util import *
 from pmr2.app.exposure.urlopen import urlopen

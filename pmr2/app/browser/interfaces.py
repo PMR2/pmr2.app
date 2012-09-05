@@ -2,7 +2,6 @@ import zope.schema
 import zope.interface
 import zope.publisher.interfaces
 from plone.theme.interfaces import IDefaultPloneLayer
-from plone.z3cform.interfaces import IFormWrapper
 
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
@@ -13,24 +12,6 @@ from pmr2.app.schema import ObjectId
 class IThemeSpecific(IDefaultPloneLayer):
     """\
     Marker interface that defines a Zope 3 browser layer.
-    """
-
-
-class IPlainLayoutWrapper(IFormWrapper):
-    """\
-    Interface for the plain layout wrapper.
-    """
-
-
-class IPloneviewLayoutWrapper(IFormWrapper):
-    """\
-    Interface for the Ploneview layout wrapper.
-    """
-
-
-class IMathMLLayoutWrapper(IFormWrapper):
-    """\
-    Interface for the MathML layout wrapper.
     """
 
 
