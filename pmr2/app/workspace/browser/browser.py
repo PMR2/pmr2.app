@@ -8,8 +8,6 @@ import zope.component
 import zope.event
 import zope.lifecycleevent
 import zope.publisher.browser
-from zope.i18nmessageid import MessageFactory
-_ = MessageFactory("pmr2")
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
@@ -41,6 +39,7 @@ from pmr2.app.workspace import table
 from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace.content import *
+from pmr2.app.workspace.i18n import MessageFactory as _
 from pmr2.app.workspace.browser.util import *
 from pmr2.app.workspace.browser.interfaces import *
 

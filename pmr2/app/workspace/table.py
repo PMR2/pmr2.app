@@ -12,12 +12,10 @@ import z3c.table.table
 from z3c.table.value import ValuesMixin
 from z3c.table.interfaces import ITable
 
-from zope.i18nmessageid import MessageFactory
-_ = MessageFactory("pmr2")
-
 from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import IWorkspaceListing
 from pmr2.app.workspace.interfaces import IStorage
+from pmr2.app.workspace.i18n import MessageFactory as _
 
 
 # Common
