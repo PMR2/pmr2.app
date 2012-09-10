@@ -1,0 +1,31 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
+    i18n_domain="z3c.form">
+
+  <class class=".select.StorageFileSelectWidget">
+    <require
+        permission="zope.Public"
+        interface=".interfaces.IStorageFileSelectWidget"
+        />
+  </class>
+
+  <adapter
+      factory=".select.StorageFileChoiceWidgetDispatcher"
+      />
+
+  <adapter
+      factory=".select.StorageFileSelectFieldWidget"
+      />
+
+  <!--
+  <adapter
+      factory=".select.CollectionSelectFieldWidget"
+      />
+
+  <adapter
+      factory=".select.CollectionChoiceSelectFieldWidget"
+      />
+  -->
+
+</configure>

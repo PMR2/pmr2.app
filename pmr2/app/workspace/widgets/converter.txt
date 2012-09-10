@@ -1,0 +1,36 @@
+Converter
+=========
+
+This is a basic set of tests.
+::
+
+    >>> from zope.schema.vocabulary import SimpleVocabulary
+    >>> from z3c.form import widget
+    >>> from pmr2.testing.base import TestRequest
+    >>> from pmr2.app.workspace.schema import StorageFileChoice
+    >>> from pmr2.app.workspace.widgets import converter
+    >>>
+    >>> files = StorageFileChoice(
+    ...     vocabulary = SimpleVocabulary([
+    ...         SimpleVocabulary.createTerm('file1', 'file1', u'file1'),
+    ...         SimpleVocabulary.createTerm('file2', 'file2', u'file2'),
+    ...     ]) )
+    >>> seqWidget = widget.SequenceWidget(TestRequest())
+    >>> seqWidget.field = files
+
+We now use the field and widget to instantiate the converter:
+::
+
+    >>> sdv = converter.StorageFileSequenceDataConverter(files, seqWidget)
+
+We can now convert a real value to a widget value as it were before.
+::
+
+    >>> sdv.toWidgetValue('file1')
+    ['file1']
+
+However non-existent files can also be converted.
+::
+
+    >>> sdv.toWidgetValue('file3')
+    ['file3']

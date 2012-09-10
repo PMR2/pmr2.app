@@ -1,0 +1,134 @@
+======================
+Extended Select Widget
+======================
+
+This module extends upon the default select widget provided by z3c.form.
+With the introduction of the rollover features, sometimes the file names
+available with a particular version will be renamed or removed in
+subsequent ones.  A modification is needed to preserve the original
+choice, informing the users of what it was and then prompt her to select
+the correct one if the new name cannot be automatically derived.
+
+The widget can be instantiated only using the request.
+::
+
+    >>> from pmr2.testing.base import TestRequest
+    >>> from z3c.form.interfaces import IFormLayer
+    >>> from pmr2.app.workspace.widgets import interfaces
+    >>> from pmr2.app.workspace.widgets.select import StorageFileSelectWidget
+    >>> request = TestRequest()
+    >>> widget = StorageFileSelectWidget(request)
+
+Before rendering the widget, set the name and id of the widget.
+::
+
+    >>> widget.id = 'widget-id'
+    >>> widget.name = 'widget.name'
+
+As this modification is not making any substantial changes to the
+underlying template, we make use of the default registration and go
+straight into rendering.
+::
+
+    >>> print widget.render()
+    <select id="widget-id" name="widget.name:list"
+            class="storagefileselect-widget" size="1">
+    </select>
+    <input name="widget.name-empty-marker" type="hidden"
+           value="1" />
+
+Let's provide some values for this widget, and set up the adapters for
+it.
+::
+
+    >>> import zope.schema.interfaces
+    >>> from zope.schema.vocabulary import SimpleVocabulary
+    >>> import z3c.form.term
+    >>> class SelectionTerms(z3c.form.term.Terms):
+    ...     def __init__(self, context, request, form, field, widget):
+    ...         self.terms = SimpleVocabulary.fromValues(['a', 'b', 'c'])
+    >>> zope.component.provideAdapter(SelectionTerms,
+    ...     (None, IFormLayer, None, None, interfaces.IStorageFileSelectWidget))
+
+Now let's try if we get widget values:
+::
+
+    >>> widget.update()
+    >>> print widget.render()
+    <select id="widget-id" name="widget.name:list"
+            class="storagefileselect-widget" size="1">
+    <option id="widget-id-novalue" value="--NOVALUE--">no value</option>
+    <option id="widget-id-0" value="a">a</option>
+    <option id="widget-id-1" value="b">b</option>
+    <option id="widget-id-2" value="c">c</option>
+    </select>
+    <input name="widget.name-empty-marker" type="hidden" value="1" />
+
+If we select item "b", then it should be selected:
+::
+
+    >>> widget.value = ['b']
+    >>> widget.update()
+    >>> print widget.render()
+    <select id="widget-id" name="widget.name:list"
+            class="storagefileselect-widget" size="1">
+    <option id="widget-id-novalue" value="--NOVALUE--">no value</option>
+    <option id="widget-id-0" value="a">a</option>
+    <option id="widget-id-1" value="b" selected="selected">b</option>
+    <option id="widget-id-2" value="c">c</option>
+    </select>
+    <input name="widget.name-empty-marker" type="hidden" value="1" />
+
+Let's now make sure that we can extract user entered data from a widget:
+::
+
+    >>> widget.request = TestRequest(form={'widget.name': ['c']})
+    >>> widget.update()
+    >>> widget.extract()
+    ['c']
+
+When "no value" is selected, then no verification against the terms is 
+done:
+::
+
+    >>> widget.request = TestRequest(form={'widget.name': ['--NOVALUE--']})
+    >>> widget.update()
+    >>> widget.extract(default=1)
+    ['--NOVALUE--']
+
+Bogus value provided by request should be ignored, while the one by
+the context be allowed.
+
+However, in practice, this is more difficult than it seems due to the
+integration of the entire framework.  For now we will permit bogus
+values since this widget should be used within a limited scope.
+::
+
+    >>> widget.request = TestRequest(form={'widget.name': ['x']})
+    >>> widget.update()
+    >>> widget.extract()
+    ['x']
+
+An extracted value by the data manager from the context could be a value
+not present in the vocabulary.  There are cases where the original
+choice should be presented to the user, accompanied by an error message
+of some sort.  Lastly, with the value being invalid, the value must not
+be a value that can be confused as a valid one.
+
+As the widget here doesn't implement IFieldWidget, we will have to
+assign the value manually.
+::
+
+    >>> widget.request = TestRequest()
+    >>> widget.value = ['x']
+    >>> widget.update()
+    >>> print widget.render()
+    <select id="widget-id" name="widget.name:list"
+            class="storagefileselect-widget" size="1">
+    <option id="widget-id-invalid" value="x" selected="selected">x</option>
+    <option id="widget-id-novalue" value="--NOVALUE--">no value</option>
+    <option id="widget-id-0" value="a">a</option>
+    <option id="widget-id-1" value="b">b</option>
+    <option id="widget-id-2" value="c">c</option>
+    </select>
+    <input name="widget.name-empty-marker" type="hidden" value="1" />

@@ -30,6 +30,20 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
+        # widget converter
+        ztc.ZopeDocFileSuite(
+            'widgets/converter.txt', package='pmr2.app.workspace',
+            test_class=base.WorkspaceDocTestCase,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
+        ),
+
+        # the custom select widget.
+        ztc.ZopeDocFileSuite(
+            'widgets/select.txt', package='pmr2.app.workspace',
+            test_class=base.WorkspaceDocTestCase,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
+        ),
+
         # Tables.
         ztc.ZopeDocFileSuite(
             'table.txt', package='pmr2.app.workspace',
