@@ -1,7 +1,8 @@
 import zope.interface
+from zope.schema.interfaces import IChoice
 
 
-class IStorageFileChoice(zope.interface.Interface):
+class IStorageFileChoice(IChoice):
     """\
     Interface for the choice field for a workspace storage file.
     """
