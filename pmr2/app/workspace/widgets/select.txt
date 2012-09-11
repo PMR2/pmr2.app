@@ -115,8 +115,9 @@ choice should be presented to the user, accompanied by an error message
 of some sort.  Lastly, with the value being invalid, the value must not
 be a value that can be confused as a valid one.
 
-As the widget here doesn't implement IFieldWidget, we will have to
-assign the value manually.
+As the widget here doesn't implement IFieldWidget, we will assign the
+value manually much like what the update process will do when a proper
+field is provided with its associated context.
 ::
 
     >>> widget.request = TestRequest()
@@ -125,7 +126,8 @@ assign the value manually.
     >>> print widget.render()
     <select id="widget-id" name="widget.name:list"
             class="storagefileselect-widget" size="1">
-    <option id="widget-id-invalid" value="x" selected="selected">x</option>
+    <option id="widget-id-invalid" value="x" 
+            selected="selected">x</option>
     <option id="widget-id-novalue" value="--NOVALUE--">no value</option>
     <option id="widget-id-0" value="a">a</option>
     <option id="widget-id-1" value="b">b</option>

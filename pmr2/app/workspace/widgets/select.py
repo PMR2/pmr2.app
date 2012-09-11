@@ -12,7 +12,7 @@ from pmr2.app.workspace.schema.interfaces import IStorageFileChoice
 from pmr2.app.workspace.i18n import MessageFactory as _
 from pmr2.app.workspace.widgets.interfaces import IStorageFileSelectWidget
 
-OUTDATED_VALUE = '--OUTDATED--'
+INVALID_VALUE = '--INVALID--'
 
 
 class StorageFileSelectWidget(select.SelectWidget):
@@ -56,7 +56,20 @@ class StorageFileSelectWidget(select.SelectWidget):
                 try:
                     self.terms.getTermByToken(token)
                 except LookupError:
-                    # return it anyway.
+                    # Ideally we only do this when this is equal to a
+                    # valid invalid value, which is an invalid value
+                    # that was already assigned to the context and not
+                    # one randomly submitted by the user through form
+                    # manipulation.  However the latter is generally
+                    # malicious and seeing that the error handling will
+                    # catch that value in the exact same way, we can let
+                    # this particular instance slide, but at the cost of
+                    # not displaying the correct wrong value (that is of
+                    # the context as now extract provides one).  To
+                    # fully rectify this will require rewriting the
+                    # entire update method, which is something that
+                    # should be avoided.  There may be alternative ways
+                    # to achieve this.
                     return value
         return value
 

@@ -1,7 +1,9 @@
 Converter
 =========
 
-This is a basic set of tests.
+This is a basic set of tests for a slightly customized SequenceConverter
+for usage with fields of StorageFileChoice.  To demonstrate the 
+converter, first instantiate the desired values.
 ::
 
     >>> from zope.schema.vocabulary import SimpleVocabulary
@@ -29,8 +31,26 @@ We can now convert a real value to a widget value as it were before.
     >>> sdv.toWidgetValue('file1')
     ['file1']
 
-However non-existent files can also be converted.
+Values that don't exist within the vocabulary will also be converted for
+display by the widget.
 ::
 
     >>> sdv.toWidgetValue('file3')
     ['file3']
+
+The reverse should work for values that are present in the vocabulary.
+::
+
+    >>> sdv.toFieldValue(['file1'])
+    'file1'
+
+However, instead of throwing a LookupError if the value is not present,
+wrap the exception around one that the update method of the widget will
+catch.
+::
+
+    >>> sdv.toFieldValue(['file3'])
+    Traceback (most recent call last):
+    ...
+    FormatterValidationError: (u'The selected path is invalid as it does 
+    not exist within this revision.', LookupError('file3',))
