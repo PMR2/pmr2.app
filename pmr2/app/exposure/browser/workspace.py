@@ -204,6 +204,8 @@ class ExposureViewGenGroup(DocGenSubgroup):
 
     def generateStructure(self):
         data, errors = self.extractData()
+        if errors:
+            return
 
         wks_path = None
         if IWorkspace.providedBy(self.context):
@@ -236,6 +238,8 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
 
     def generateStructure(self):
         data, errors = self.extractData()
+        if errors:
+            return
 
         catalog = getToolByName(self.context, 'portal_catalog')
         if not catalog:
@@ -338,6 +342,9 @@ class ExposureImportExportGroup(CreateExposureGroupBase):
 
     def acquireStructure(self):
         data, errors = self.extractData()
+        if errors:
+            return
+
         uri = data.get('export_uri', None)
         if not uri:
             return

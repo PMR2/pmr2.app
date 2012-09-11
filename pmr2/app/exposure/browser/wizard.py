@@ -252,6 +252,9 @@ class ExposureFileTypeAnnotatorWizardGroup(
 
     def generateStructure(self):
         data, errors = self.extractData()
+        if errors:
+            return
+
         obj = self.getContent()
 
         # grab original
