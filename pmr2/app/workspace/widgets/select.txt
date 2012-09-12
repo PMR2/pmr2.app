@@ -96,18 +96,23 @@ done:
     >>> widget.extract(default=1)
     ['--NOVALUE--']
 
-Bogus value provided by request should be ignored, while the one by
-the context be allowed.
+For cases where invalid value are rendered by the widget, it may be
+selectable.  For cases like these it should also return invalid.
+::
 
-However, in practice, this is more difficult than it seems due to the
-integration of the entire framework.  For now we will permit bogus
-values since this widget should be used within a limited scope.
+    >>> widget.request = TestRequest(form={'widget.name': ['--INVALID--']})
+    >>> widget.update()
+    >>> widget.extract(default=1)
+    '--INVALID--'
+
+Bogus value provided by request should likewise be treated as if they
+are invalid.
 ::
 
     >>> widget.request = TestRequest(form={'widget.name': ['x']})
     >>> widget.update()
     >>> widget.extract()
-    ['x']
+    '--INVALID--'
 
 An extracted value by the data manager from the context could be a value
 not present in the vocabulary.  There are cases where the original
@@ -126,7 +131,7 @@ field is provided with its associated context.
     >>> print widget.render()
     <select id="widget-id" name="widget.name:list"
             class="storagefileselect-widget" size="1">
-    <option id="widget-id-invalid" value="x" 
+    <option id="widget-id-invalid" value="--INVALID--" 
             selected="selected">x</option>
     <option id="widget-id-novalue" value="--NOVALUE--">no value</option>
     <option id="widget-id-0" value="a">a</option>
@@ -134,3 +139,6 @@ field is provided with its associated context.
     <option id="widget-id-2" value="c">c</option>
     </select>
     <input name="widget.name-empty-marker" type="hidden" value="1" />
+
+Actual usage involving the error handling with context with paths that
+break the constraints will have to be done elsewhere.

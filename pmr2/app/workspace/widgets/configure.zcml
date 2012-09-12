@@ -8,5 +8,4 @@
       factory=".converter.StorageFileSequenceDataConverter"
       />
 
-
 </configure>

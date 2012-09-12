@@ -2,6 +2,7 @@ import zope.component
 import zope.schema
 
 from z3c.form.converter import SequenceDataConverter, FormatterValidationError
+from z3c.form.interfaces import IErrorViewSnippet
 
 from pmr2.app.workspace.widgets.interfaces import IStorageFileSelectWidget
 from pmr2.app.workspace.i18n import MessageFactory as _
@@ -23,9 +24,25 @@ class StorageFileSequenceDataConverter(SequenceDataConverter):
         terms = widget.updateTerms()
         try:
             return [terms.getTerm(value).token]
-        except LookupError:
-            # Swallow lookup errors and we provide the original value
-            # XXX make this an error in the final rendering, somehow?
+        except LookupError, err:
+            # Swallow lookup errors and provide the value, even if the
+            # option was changed.  The widget this converter is for can
+            # handle additional missing values, but it still relies on
+            # the parent method, and it does not trap any exceptions.
+            # This means it is impossible for proper notifications to be
+            # propagated forward.
+            # 
+            # Second point: the value passed into here is derived from
+            # the context.  If this is converted into some token that
+            # represents an invalid value, the update method of the
+            # widget will then have to rely on a separate value field or
+            # method to again derive the original value.
+            # 
+            # In the interest of not duplicating the entire update
+            # method and keeping this simple, we just return the value
+            # as is, and have the user of this method try to convert
+            # this result back to the field value using the method below
+            # as the validation.
             return [value]
 
     def toFieldValue(self, value):
