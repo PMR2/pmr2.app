@@ -206,49 +206,6 @@ class EditForm(z3c.form.form.EditForm, PostForm):
     extractData = PostForm.extractData
 
 
-class BaseAnnotationForm(PostForm):
-    """\
-    Basic form to generate data and apply them to the object.
-    """
-
-    # XXX interface declaration needed
-    # XXX should be moved into pmr2.app.exposure
-
-    ignoreContext = True
-    ignoreReadonly = True
-    ignoreEvents = False
-
-    _finishedAdd = False
-    formErrorsMessage = _('There were some errors.')
-
-    extractData = PostForm.extractData
-
-    def nextURL(self):
-        raise NotImplementedError
-
-    def annotate(self):
-        raise NotImplementedError
-
-    def baseAnnotate(self, action):
-        # subclasses need to assign the button for this.
-        data, errors = self.extractData()
-        if errors:
-            self.status = self.formErrorsMessage
-            return
-        self._data = data
-        self.annotate()
-        if not self.ignoreEvents:
-            zope.event.notify(
-                zope.lifecycleevent.ObjectModifiedEvent(self.context))
-        self._finishedAdd = True
-
-    def render(self):
-        if self._finishedAdd:
-            self.request.response.redirect(self.nextURL())
-            return ""
-        return super(BaseAnnotationForm, self).render()
-
-
 class Group(group.Group):
     def updateWidgets(self):
         self.widgets = zope.component.getMultiAdapter(
