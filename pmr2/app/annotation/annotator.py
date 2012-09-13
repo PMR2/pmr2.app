@@ -181,14 +181,21 @@ class DocGenAnnotator(ExposureFileAnnotatorBase):
     edited_names = ('source', 'generator',)
 
     def generate(self):
+        # XXX Should probably define the constraints better to make this
+        # look less hackish.  Also tests?
+        if not self.data:
+            return {}
+
         d = dict(self.data)
-        # XXX Fix the implementation of this thing so I don't have to
-        # manually assign the file like this...
-        dvgu = zope.component.getUtility(IDocViewGen, name=d['generator'])
+        # XXX Fix the implementation of this to an adapter?
+        dvgu = zope.component.queryUtility(IDocViewGen, name=d['generator'])
+        if dvgu is None:
+            return self.data
+
         exp, workspace, p = zope.component.getAdapter(self.context, 
             IExposureSourceAdapter).source()
         storage = zope.component.queryAdapter(workspace, IStorage)
-        # XXX specifically this thing.
+        # XXX so we do all of this in one single step.
         docviewgen = dvgu(self.context, storage.file(d['source']))
         docviewgen()
 
