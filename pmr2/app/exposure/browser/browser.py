@@ -235,7 +235,12 @@ class BaseAnnotationForm(form.PostForm):
             self.status = self.formErrorsMessage
             return
         self._data = data
-        self.annotate()
+
+        try:
+            self.annotate()
+        except ProcessingError, e:
+            raise z3c.form.interfaces.ActionExecutionError(e)
+
         if not self.ignoreEvents:
             zope.event.notify(
                 zope.lifecycleevent.ObjectModifiedEvent(self.context))
@@ -434,7 +439,11 @@ class BaseExposureFileTypeAnnotatorForm(
         """
 
         groups = self.split_groups(self._data)
-        self._annotate(groups)
+        try:
+            self._annotate(groups)
+        except Exception, err:
+            # XXX trap all here.
+            raise ProcessingError(str(err))
 
     def _annotate(self, groups):
         # iterate through the views that had been selected for this

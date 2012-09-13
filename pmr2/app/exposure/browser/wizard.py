@@ -387,7 +387,12 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         """
 
         wh = zope.component.getAdapter(self.context, IExposureWizard)
-        moldExposure(self.context, self.request, wh.structure)
+
+        try:
+            moldExposure(self.context, self.request, wh.structure)
+        except ProcessingError, e:
+            raise z3c.form.interfaces.ActionExecutionError(e)
+
         self._updated = True
         self._next = ''
 

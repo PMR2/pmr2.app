@@ -10,7 +10,7 @@ from Products.CMFCore import permissions
 from Products.statusmessages.interfaces import IStatusMessage
 
 from pmr2.idgen.interfaces import IIdGenerator
-
+from pmr2.app.interfaces.exceptions import ProcessingError
 from pmr2.app.annotation.interfaces import IExposureFileEditableNote
 from pmr2.app.annotation.interfaces import IDocViewGen, IExposureFileAnnotator
 
@@ -180,6 +180,9 @@ def moldExposure(exposure_context, request, exported):
                         # make some way to adapt this to something
                         # that will handle the migration case.
                         raise
+                except Exception, err:
+                    # XXX trap all here.
+                    raise ProcessingError(str(err))
 
             # only ExposureFiles have this
             if IExposureFile.providedBy(ctxobj):
