@@ -86,6 +86,15 @@ def getGenerator(form):
             ExposureIdGeneratorMissingError())
     return idgen
 
+def extractError(form):
+    # recursively call extractData and return a list of all errors.
+    result = []
+    data, errors = form.extractData()
+    result.extend(errors)
+    for g in form.groups:
+        result.extend(extractError(g))
+    return result
+
 def moldExposure(exposure_context, request, exported):
     """\
     Mold an exposure structure at the exposure context, using the 

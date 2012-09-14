@@ -27,7 +27,7 @@ from pmr2.app.exposure.browser.interfaces import IExposureWizardForm
 from pmr2.app.exposure.browser.browser import BaseExposureFileTypeAnnotatorForm
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 from pmr2.app.exposure.browser.browser import ExposurePort
-from pmr2.app.exposure.browser.util import moldExposure
+from pmr2.app.exposure.browser.util import moldExposure, extractError
 
 from pmr2.app.exposure.browser.workspace import *
 
@@ -385,6 +385,14 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         """\
         Build the thing
         """
+
+        # validate all groups.
+        errors = extractError(self)
+        if errors:
+            self.status = _(u"Unable to build exposure due to input error; "
+                "please review the form and make the appropriate changes and "
+                "try again.")
+            return
 
         wh = zope.component.getAdapter(self.context, IExposureWizard)
 
