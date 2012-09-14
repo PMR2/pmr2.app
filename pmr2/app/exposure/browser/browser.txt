@@ -13,6 +13,7 @@ directories required should have been already set up by the script.
     >>> from pmr2.testing.base import TestRequest
     >>> from pmr2.app.exposure.browser import browser
     >>> from pmr2.app.exposure.browser import workspace
+    >>> from pmr2.app.exposure.browser import util
     >>> from pmr2.app.interfaces import *
     >>> from pmr2.app.workspace.content import *
     >>> from pmr2.app.workspace.interfaces import *
@@ -1357,7 +1358,8 @@ with the radio boxes available to be selected.
     ... 'name="form.widgets.exposure_path"' in result
     True
 
-Then we can submit the form, and see that the data still match.
+Then we can submit the form, and see that the data has been ported to
+the structure in the exposure wizard.
 ::
 
     >>> request = TestRequest(form={
@@ -1371,10 +1373,9 @@ Then we can submit the form, and see that the data still match.
     >>> nextURL = request.response.getHeader('Location')
     >>> print nextURL
     http://.../exposure/...
-    >>> next_id = nextURL.split('/')[-1]
-    >>> next_ex = self.portal.exposure[next_id]
-    >>> nextport = browser.ExposurePort(next_ex, None)
-    >>> result = list(nextport.export())
+    >>> next_ex = view.target
+    >>> wh = zope.component.getAdapter(next_ex, IExposureWizard)
+    >>> result = wh.structure
     >>> if not result == answer:
     ...     pp(answer)
     ...     pp(result)
@@ -1450,9 +1451,9 @@ Or completely bogus values:
 Exposure Rollover and changed default exposure subpath
 ------------------------------------------------------
 
-In the case of having a new destination container because the settings
-have changed, there should be no issue as the full exposure path to the
-source is used.
+In the case of having a new destination container due to changes in the
+settings, there should be no issue as the full exposure path to the
+source that is used.
 ::
 
     >>> self.portal['e'] = ExposureContainer('e')
@@ -1468,8 +1469,24 @@ source is used.
     >>> nextURL = request.response.getHeader('Location')
     >>> print nextURL
     http://.../e/...
-    >>> next_id = nextURL.split('/')[-1]
-    >>> next_ex = self.portal.e[next_id]
+    >>> next_ex = view.target
+    >>> wh = zope.component.getAdapter(next_ex, IExposureWizard)
+    >>> result = wh.structure
+    >>> if not result == answer:
+    ...     pp(answer)
+    ...     pp(result)
+
+As the exposure rollover now use the wizard as the intermediate step,
+the final data will not be created until user triggers it.  Test to see
+this step works by calling the associated methods that the wizard should
+have used.
+::
+
+    >>> util.moldExposure(next_ex, request, wh.structure)
+
+Then we try to extract that structure, and see this working.
+::
+
     >>> nextport = browser.ExposurePort(next_ex, None)
     >>> result = list(nextport.export())
     >>> if not result == answer:
@@ -1515,7 +1532,7 @@ dataset can be populated.
 ::
 
     >>> wkspc = self.portal.workspace['rdfmodel']
-    >>> export_uri = nextURL + '/rollover_export'
+    >>> export_uri = next_ex.absolute_url() + '/rollover_export'
     >>> request = TestRequest(form={
     ...     'exportimport.widgets.export_uri': export_uri,
     ...     'form.buttons.add': 1,

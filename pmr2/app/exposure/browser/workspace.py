@@ -451,12 +451,16 @@ class WorkspaceExposureRollover(ExposurePort, WorkspaceLog):
         eaf.createAndAdd(data)
         exp_id = data['id']
         target = exposure_container[exp_id]
-        self.mold(target)
+
+        exported = self.export()
+        wh = zope.component.getAdapter(target, IExposureWizard)
+        wh.structure = list(exported)
+
         self._finishedAdd = True
         self.target = target
 
     def nextURL(self):
-        return self.target.absolute_url()
+        return self.target.absolute_url() + '/@@wizard'
 
     def render(self):
         if self._finishedAdd:
