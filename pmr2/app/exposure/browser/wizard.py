@@ -390,8 +390,9 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         errors = extractError(self)
         if errors:
             self.status = _(u"Unable to build exposure due to input error; "
-                "please review the form and make the appropriate changes and "
-                "try again.")
+                "please review the form and make the appropriate changes, "
+                "update each subsection using the provided button, and try "
+                "again.")
             return
 
         wh = zope.component.getAdapter(self.context, IExposureWizard)

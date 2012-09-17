@@ -352,14 +352,20 @@ Building the exposure using wizard
 ----------------------------------
 
 Given that structure, we should be able to generate the exposure with
-the build button.
+the build button.  As a more extensive validation method is triggered
+with this button to catch all errors (mostly missing values), this will
+require all values to be presented in the request, which will be the
+case in the context of a browser, but not necessarily in the context of
+a manually constructed request object.
+
+If and when the validation routine is customized for this action/form to
+validate what is in the context as opposed to what is again submitted
+(those values actually would be ignored), using the testbrowser for this
+test will be absolutely required unless we want to replicate the entire
+request form variables.
 ::
 
-    >>> request = TestRequest(form={
-    ...     'form.buttons.build': 1,
-    ... })
-    >>> form = wizard.ExposureWizardForm(context, request)
-    >>> form.update()
+    >>> b.getControl(name='form.buttons.build').click()
 
 Now verify that the structure is equal to the one generated from the
 export form.  For now we munge the data a bit for backwards
