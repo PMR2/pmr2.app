@@ -506,6 +506,7 @@ main form.
 
 Now trigger the revert button.  The structure as seen in the exposure
 should be completely reverted.
+::
 
     >>> request = TestRequest(form={
     ...     'form.buttons.revert': 1,

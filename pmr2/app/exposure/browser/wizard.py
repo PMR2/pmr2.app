@@ -166,9 +166,9 @@ class BaseWizardGroup(BaseSubGroup):
         """\
         Clear this group.
 
-        This will clear the groups associated with the filetype and so
-        allowing the selection of a different one for a new set of 
-        groups.
+        This will reset this group, clearing all views and filetype
+        association, allowing the selection for a new filetype with a
+        different set of views.
         """
 
         self.structure.clear()
@@ -239,6 +239,8 @@ class ExposureFileTypeAnnotatorWizardGroup(
     # is subject to change.
     prefix = 'annotate'
 
+    showDeleteButton = True
+    showClearButton = True
     empty_groups = None
 
     def __init__(self, *a, **kw):

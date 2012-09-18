@@ -38,6 +38,16 @@ class RDFxmlAnnotator(RDFLibEFAnnotator):
     for_interface = IRawTextNote
 
 
+class Base64NoteAnnotator(ExposureFileAnnotatorBase):
+    zope.interface.implements(IExposureFileAnnotator)
+    title = u'Base64 Note'
+    description = u'This is an annotator that returns base64 of the file.'
+    for_interface = IRawTextNote
+
+    def generate(self):
+        return (('text', unicode(self.input.encode('base64'))),)
+
+
 class Rot13NoteAnnotator(ExposureFileAnnotatorBase):
     zope.interface.implements(IExposureFileAnnotator)
     title = u'Rot13 Note'
@@ -72,7 +82,8 @@ class PostEditedNoteAnnotator(ExposureFileAnnotatorBase):
 RDFTurtleAnnotatorFactory = named_factory(RDFTurtleAnnotator)
 RDFn3AnnotatorFactory = named_factory(RDFn3Annotator)
 RDFxmlAnnotatorFactory = named_factory(RDFxmlAnnotator)
-# the three current types of note annotator factories.
+# the four test annotation factories
+Base64NoteAnnotatorFactory = named_factory(Base64NoteAnnotator)
 Rot13NoteAnnotatorFactory = named_factory(Rot13NoteAnnotator)
 EditedNoteAnnotatorFactory = named_factory(EditedNoteAnnotator)
 PostEditedNoteAnnotatorFactory = named_factory(PostEditedNoteAnnotator)
@@ -81,7 +92,8 @@ PostEditedNoteAnnotatorFactory = named_factory(PostEditedNoteAnnotator)
 RDFTurtleNoteFactory = note_factory(RawTextNote, 'rdfturtle')
 RDFn3NoteFactory = note_factory(RawTextNote, 'rdfn3')
 RDFxmlNoteFactory = note_factory(RawTextNote, 'rdfxml')
-# the three current types of note content factories.
+# the four test note factories
+Base64NoteFactory = note_factory(RawTextNote, 'base64')
 Rot13NoteFactory = note_factory(RawTextNote, 'rot13')
 EditedNoteFactory = note_factory(EditedNote, 'edited_note')
 PostEditedNoteFactory = note_factory(PostEditedNote, 'post_edited_note')

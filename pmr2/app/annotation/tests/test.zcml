@@ -22,6 +22,12 @@
       />
 
   <utility
+      name="base64"
+      component=".adapter.Base64NoteAnnotatorFactory"
+      provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
+      />
+
+  <utility
       name="rot13"
       component=".adapter.Rot13NoteAnnotatorFactory"
       provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
@@ -58,6 +64,13 @@
       factory=".adapter.RDFxmlNoteFactory"
       provides="pmr2.app.annotation.interfaces.IRawTextNote"
       name="rdfxml"
+      />
+
+  <adapter
+      for="pmr2.app.exposure.interfaces.IExposureFile"
+      factory=".adapter.Base64NoteFactory"
+      provides="pmr2.app.annotation.interfaces.IRawTextNote"
+      name="base64"
       />
 
   <adapter
@@ -105,6 +118,13 @@
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="rdfxml"
+      class="pmr2.app.exposure.browser.browser.RawTextNote"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="base64"
       class="pmr2.app.exposure.browser.browser.RawTextNote"
       permission="zope2.View"
       />
