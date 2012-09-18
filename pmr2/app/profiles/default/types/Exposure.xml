@@ -50,30 +50,9 @@
   <permission value="Modify portal content"/>
  </action>
 
- <action title="Curation" action_id="curation" 
+ <action title="Wizard" action_id="wizard" 
     category="object" 
-    url_expr="string:${object_url}/@@curation" visible="True"
-    i18n:attributes="title">
-  <permission value="Modify portal content"/>
- </action>
-
- <action title="Builder" action_id="filegen" 
-    category="object" 
-    url_expr="string:${object_url}/@@filegen" visible="True"
-    i18n:attributes="title">
-  <permission value="Modify portal content"/>
- </action>
-
- <action title="Documentation" action_id="docviewgen" 
-    category="object" 
-    url_expr="string:${object_url}/@@docviewgen" visible="True"
-    i18n:attributes="title">
-  <permission value="Modify portal content"/>
- </action>
-
- <action title="Rollover" action_id="rollover" 
-    category="object" 
-    url_expr="string:${object_url}/@@rollover" visible="True"
+    url_expr="string:${object_url}/@@wizard" visible="True"
     i18n:attributes="title">
   <permission value="Modify portal content"/>
  </action>
