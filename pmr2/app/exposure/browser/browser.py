@@ -47,7 +47,9 @@ from pmr2.app.browser import form
 from pmr2.app.browser import page
 from pmr2.app.browser import widget
 
-from pmr2.app.exposure.browser.util import *
+from pmr2.app.exposure.browser.util import getExposureFileType, getGenerator
+from pmr2.app.exposure.browser.util import fieldvalues, moldExposure
+from pmr2.app.exposure.browser.util import viewinfo
 from pmr2.app.exposure.urlopen import urlopen
 
 
@@ -356,19 +358,13 @@ class ExposureFileTypeChoiceForm(form.PostForm):
             group_names = list(data['annotators'])
 
         if 'eftypes' in data and data['eftypes']:
-            catalog = getToolByName(self.context, 'portal_catalog')
-            if not catalog:
+            results = getExposureFileType(self, data['eftypes'])
+            if results is None:
                 # abort, since there really is no catalog, let the user
                 # know.
                 self.status = _('Catalog not found.')
                 return
-
-            results = catalog(
-                portal_type='ExposureFileType',
-                review_state='published',
-                path=data['eftypes'],
-            )
-            if results:
+            elif results:
                 # we have what we want.
                 group_names = results[0].pmr2_eftype_views
                 self.context.setSubject(results[0].pmr2_eftype_tags)

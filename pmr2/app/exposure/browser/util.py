@@ -7,6 +7,7 @@ import z3c.form.interfaces
 
 from AccessControl import getSecurityManager, Unauthorized
 from Products.CMFCore import permissions
+from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 
 from pmr2.idgen.interfaces import IIdGenerator
@@ -23,6 +24,7 @@ __all__ = [
     'fieldvalues',
     'viewinfo',
     'restrictedGetExposureContainer',
+    'getExposureFileType',
     'getGenerator',
     'moldExposure',
 ]
@@ -94,6 +96,18 @@ def extractError(form):
     for g in form.groups:
         result.extend(extractError(g))
     return result
+
+def getExposureFileType(form, eftype):
+    catalog = getToolByName(form.context, 'portal_catalog')
+    if not catalog:
+        return None
+
+    results = catalog(
+        portal_type='ExposureFileType',
+        review_state='published',
+        path=eftype,
+    )
+    return results
 
 def moldExposure(exposure_context, request, exported):
     """\
