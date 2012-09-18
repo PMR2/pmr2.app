@@ -28,6 +28,7 @@ from pmr2.app.exposure.browser.browser import BaseExposureFileTypeAnnotatorForm
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 from pmr2.app.exposure.browser.browser import ExposurePort
 from pmr2.app.exposure.browser.util import moldExposure, extractError
+from pmr2.app.exposure.browser.util import getExposureFileType
 
 from pmr2.app.exposure.browser.workspace import *
 
@@ -132,8 +133,9 @@ class BaseWizardGroup(BaseSubGroup):
     pos = None
 
     collapseState = False
-    showDeleteButton = True
-    showClearButton = True
+    showDeleteButton = None
+    showClearButton = None
+    showMigrateButton = None
 
     @z3c.form.button.buttonAndHandler(_('Update'), name='update')
     def handleUpdate(self, action):
@@ -156,6 +158,38 @@ class BaseWizardGroup(BaseSubGroup):
         if self.filename != filename:
             self.new_filename = filename
             self.parentForm._updated = True
+
+    def showMigrateButtonState(self):
+        return self.showMigrateButton
+
+    @z3c.form.button.buttonAndHandler(_('Migrate Subgroup'), name='migrate',
+            condition=showMigrateButtonState)
+    def handleMigrate(self, action):
+        """\
+        Migrate this group.
+
+        This will fetch the new set of views available with the filetype
+        associated with this group, bringing the views available to be 
+        up-to-date with what is choosen.
+
+        Should only be available when there is a need.
+        """
+
+        # XXX this really should be implemented as part of the file type
+        # section.   However due to the implementation of the decorator
+        # used to define this, new buttons are replaced completely if
+        # defined at a subclass.
+
+        result = []
+        eftypes = getExposureFileType(self, self.structure['file_type'])
+        current_views = eftypes[0].pmr2_eftype_views
+        previous_views = dict(self.structure['views'])
+
+        for v in current_views:
+            result.append((v, previous_views.get(v, None)))
+
+        self.structure['views'] = result
+        self.parentForm._updated = True
 
     def showClearButtonState(self):
         return self.showClearButton
@@ -241,11 +275,41 @@ class ExposureFileTypeAnnotatorWizardGroup(
 
     showDeleteButton = True
     showClearButton = True
+    showMigrateButton = False
     empty_groups = None
 
     def __init__(self, *a, **kw):
         super(ExposureFileTypeAnnotatorWizardGroup, self).__init__(*a, **kw)
         self.empty_groups = []
+
+    def update(self):
+        # As structure is assigned by the parent/manager, we can use it
+        # to determine the state of the migrate button and others.
+
+        result = getExposureFileType(self, self.structure['file_type'])
+        if result:
+            current_views = result[0].pmr2_eftype_views
+            previous_views = [v for v, n in self.structure['views']]
+            self.showMigrateButton = previous_views != current_views
+            if self.showMigrateButton:
+                self.status = _(
+                    u"This file has an updated file type definition.  Select "
+                    "`migrate subgroup` to make use of the new format."
+                )
+        else:
+            # somehow either the catalog is inaccessible or the exposure
+            # file type is gone.  Find out what happened.
+            if result is None:
+                # Catalog is inaccessible, probably configuration issue.
+                # Ignore this condition for now.
+                pass
+            if result is not None:
+                self.status = _(
+                    u"Could not find the original file type definition that "
+                    "defined this file."
+                )
+
+        return super(ExposureFileTypeAnnotatorWizardGroup, self).update()
 
     def getContent(self):
         obj = BaseWizardGroup.getContent(self)
@@ -325,7 +389,6 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
 
     def appendGroups(self):
         self.groups = []
-
 
         self.appendViewGroup()
         # handle the rest.

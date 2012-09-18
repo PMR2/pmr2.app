@@ -112,6 +112,21 @@
                                               tal:attributes="id string:fieldsetlegend-${repeat/group/index}"
                                               tal:content="form_name">Form name</legend>
 
+                                      <tal:status define="status group/status" condition="status">
+                                          <dl class="portalMessage error" tal:condition="group/widgets/errors">
+                                              <dt i18n:translate="">
+                                                  Error
+                                              </dt>
+                                              <dd tal:content="status" />
+                                          </dl>
+                                          <dl class="portalMessage info" tal:condition="not: group/widgets/errors">
+                                              <dt i18n:translate="">
+                                                  Info
+                                              </dt>
+                                              <dd tal:content="status" />
+                                          </dl>
+                                      </tal:status>
+
                                       <p i18n:translate=""
                                          tal:define="group_description group/description|nothing"
                                          tal:condition="group_description"
