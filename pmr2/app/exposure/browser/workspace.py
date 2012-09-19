@@ -231,7 +231,7 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
     Subgroup for the main exposure view generator.
     """
 
-    label = 'Add model file'
+    label = 'New Exposure File Entry'
     field_iface = IExposureFileChoiceTypeGroup
     fields = z3c.form.field.Fields(IExposureFileChoiceTypeGroup)
     prefix = 'file'

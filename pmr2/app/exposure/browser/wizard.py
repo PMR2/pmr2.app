@@ -278,6 +278,8 @@ class ExposureFileTypeAnnotatorWizardGroup(
     showMigrateButton = False
     empty_groups = None
 
+    label = _(u'Selected file type:')
+
     def __init__(self, *a, **kw):
         super(ExposureFileTypeAnnotatorWizardGroup, self).__init__(*a, **kw)
         self.empty_groups = []
@@ -289,6 +291,7 @@ class ExposureFileTypeAnnotatorWizardGroup(
         result = getExposureFileType(self, self.structure['file_type'])
         if result:
             current_views = result[0].pmr2_eftype_views
+            self.label = '%s %s' % (self.label, result[0].Title)
             previous_views = [v for v, n in self.structure['views']]
             self.showMigrateButton = previous_views != current_views
             if self.showMigrateButton:
@@ -299,6 +302,7 @@ class ExposureFileTypeAnnotatorWizardGroup(
         else:
             # somehow either the catalog is inaccessible or the exposure
             # file type is gone.  Find out what happened.
+            self.label = '%s %s' % (self.label, 'unknown')
             if result is None:
                 # Catalog is inaccessible, probably configuration issue.
                 # Ignore this condition for now.
