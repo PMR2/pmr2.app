@@ -817,6 +817,16 @@ class ExposureFileDocument(page.TraversePage):
         return self.context.document_view()
 
 
+class ExposureFileDocGenView(page.TraversePage):
+    """\
+    This is the default annotation view.
+    """
+
+    def __call__(self):
+        # Do nothing but return
+        return self.context.document_view()
+
+
 class ExposureFileRedirect(BrowserPage):
     """\
     The view that redirects to the original file.  This should be the
@@ -955,6 +965,9 @@ class ExposurePort(form.PostForm):
                 d['views'] = viewinfo(obj)
                 # retain the subject.
                 d['Subject'] = obj.Subject()
+                # deprecate the docgen fields off the object
+                d['docview_generator'] = None
+                d['docview_gensource'] = None
                 yield (p, d,)
             elif IExposureFolder.providedBy(obj):
                 # we are ignoring other folder types, let an adapter

@@ -988,6 +988,8 @@ As the annotator classes are separate from the data adapters, we can
 easily reuse them for the other types, such as the default view of the
 Exposures.  With this form we pick a file for the source of our text,
 and the annotator to process it with.  We can pick any file.
+
+This method however is superceded by the docgen annotation.
 ::
 
     >>> context
@@ -1192,8 +1194,8 @@ utility defined for this task.
     ...     }),
     ...     ('component/module.cellml', {
     ...         'file_type': None,
-    ...         'docview_gensource': u'component/docs/index.html',
-    ...         'docview_generator': u'safe_html',
+    ...         'docview_gensource': None,
+    ...         'docview_generator': None,
     ...         'views': [],
     ...         'selected_view': None,
     ...         'Subject': (),
@@ -1201,7 +1203,7 @@ utility defined for this task.
     ...     ('component/docs/index.html', {
     ...         'file_type': None,
     ...         'docview_gensource': None,
-    ...         'docview_generator': u'safe_html',
+    ...         'docview_generator': None,
     ...         'views': [],
     ...         'selected_view': None,
     ...         'Subject': (),
@@ -1209,7 +1211,7 @@ utility defined for this task.
     ...     ('component/docs/index.rst', {
     ...         'file_type': None,
     ...         'docview_gensource': None,
-    ...         'docview_generator': u'rest_to_html',
+    ...         'docview_generator': None,
     ...         'views': [],
     ...         'selected_view': None,
     ...         'Subject': (),

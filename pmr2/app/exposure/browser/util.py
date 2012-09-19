@@ -156,17 +156,6 @@ def moldExposure(exposure_context, request, exported):
                 # this informally declared object.
                 ctxobj = fgen.ctxobj
 
-            # generate docview
-            generator = fields.get('docview_generator', None)
-            if generator:
-                ctxobj.docview_gensource = fields.get(
-                    'docview_gensource', None)
-                viewgen = zope.component.getUtility(
-                    IDocViewGen,
-                    name=generator,
-                )
-                viewgen(ctxobj)()
-
             for view, view_fields in fields['views']:
                 # generate views
                 annotatorFactory = zope.component.getUtility(

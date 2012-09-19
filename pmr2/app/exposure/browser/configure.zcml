@@ -241,6 +241,18 @@
       />
 
   <!--
+    Some default annotation views.  Should be in pmr2.app.annotation or
+    whatever package it will be.
+  -->
+
+  <browser:page
+      for="pmr2.app.exposure.interfaces.IExposureFile"
+      name="docgen"
+      class=".browser.ExposureFileDocGenView"
+      permission="zope2.View"
+      />
+
+  <!--
     adapter for the adding view.
 
     something changed in Plone 4 and broke this, use the alternate view
