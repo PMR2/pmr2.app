@@ -401,7 +401,17 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         structures = wh.structure[:-1]
 
         for i, o in enumerate(structures):
-            filename, structure = o
+            # should probably notify error somewhere and/or correct.
+            if not o:
+                # Ignore missing.
+                continue
+
+            # until we formalize the structure with some type of schema
+            # junk data is going to be an issue.  At least not die.
+            values = list(o)
+            filename = values.pop(0)
+            structure = values.pop(0)
+
             if filename is None or not structure:
                 grp = ExposureFileChoiceTypeWizardGroup(
                     self.context, self.request, self)
