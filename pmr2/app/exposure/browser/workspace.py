@@ -241,15 +241,16 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
         if errors:
             return
 
-        catalog = getToolByName(self.context, 'portal_catalog')
-        if not catalog:
-            # XXX might be better to raise an exception here as this
-            # shouldn't happen.
+        if not (data['filename']):
             return
 
-        if not (data['filetype'] and data['filename']):
+        result = getExposureFileType(self, data['filetype'])
+        if result is None:
+            # XXX might be better to raise an exception here as catalog
+            # not found.
             return
 
+        # Default items
         items = {
             'file_type': data['filetype'],
             'views': [],
@@ -260,23 +261,16 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
             # 'docview_gensource': None,
         }
 
-        results = catalog(
-            portal_type='ExposureFileType',
-            review_state='published',
-            path=data['filetype'],
-        )
-        if results:
+        # we have what we want.
+        title, views, tags, selected_view = result
+
+        if views is not None:
             # update the structure with the indexed information of the
             # selected view.
-            eftype = results[0]
-            views = [(i, None) for i in eftype.pmr2_eftype_views]
+            views = [(i, None) for i in views]
             items['views'] = views
-            items['selected_view'] = eftype.pmr2_eftype_select_view
-            items['Subject'] = eftype.pmr2_eftype_tags
-        else:
-            # Could possibly manually acquire the object, but might be
-            # better if we raise an exception here.
-            pass
+            items['selected_view'] = selected_view
+            items['Subject'] = tags
 
         structure = (data['filename'], items)
         return structure

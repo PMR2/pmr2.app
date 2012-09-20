@@ -357,20 +357,19 @@ class ExposureFileTypeChoiceForm(form.PostForm):
         if 'annotators' in data and data['annotators']:
             group_names = list(data['annotators'])
 
-        if 'eftypes' in data and data['eftypes']:
-            results = getExposureFileType(self, data['eftypes'])
-            if results is None:
+        if group_names is None:
+            result = getExposureFileType(self, data['eftypes'])
+            if result is None:
                 # abort, since there really is no catalog, let the user
                 # know.
                 self.status = _('Catalog not found.')
                 return
-            elif results:
+            elif result:
                 # we have what we want.
-                group_names = results[0].pmr2_eftype_views
-                self.context.setSubject(results[0].pmr2_eftype_tags)
-                # XXX might consider setting following on the next form,
-                # which is when this particular view is generated.
-                self.context.selected_view = results[0].pmr2_eftype_select_view
+                title, views, tags, selected_view = result
+                group_names = views
+                self.context.setSubject(tags)
+                self.context.selected_view = selected_view
                 self.context.file_type = data['eftypes']
                 self.status = _('File type assigned. Please select views '
                                 'to add to this file.')

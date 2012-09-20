@@ -97,17 +97,37 @@ def extractError(form):
         result.extend(extractError(g))
     return result
 
-def getExposureFileType(form, eftype):
+def getExposureFileType(form, eftype_path):
+    if eftype_path is None:
+        # assume default.
+        return (
+            '<default>',
+            ['docgen'],
+            (),
+            None,
+        )
+
     catalog = getToolByName(form.context, 'portal_catalog')
     if not catalog:
+        # Essentially null return.
         return None
 
     results = catalog(
         portal_type='ExposureFileType',
         review_state='published',
-        path=eftype,
+        path=eftype_path,
     )
-    return results
+    if results:
+        # there should be only one result at a specific path.
+        return (
+            results[0].Title,
+            results[0].pmr2_eftype_views,
+            results[0].pmr2_eftype_tags,
+            results[0].pmr2_eftype_select_view,
+        )
+
+    # default answer.
+    return (None, None, None, None)
 
 def moldExposure(exposure_context, request, exported):
     """\

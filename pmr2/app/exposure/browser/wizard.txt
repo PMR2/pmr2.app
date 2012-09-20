@@ -78,6 +78,7 @@ place.
     ['docview_generator', 'docview_gensource']
 
 Adding a file should succeed.
+::
 
     >>> request = TestRequest(form={
     ...     'form.buttons.add_file': 1,
@@ -624,6 +625,10 @@ button will return to the original views.
     ... ]
     True
 
+------------------
+File type handling
+------------------
+
 There may be cases where the file type used by a file is not available
 at a particular instance for whatever reason - this can be caused by
 external imports between separate PMR2 instances.  This condition will
@@ -641,6 +646,33 @@ does not exist in this instance.
     False
     >>> ewiz.structure[0][1]['file_type'] = '/plone/test_type'
 
+There may be cases where the file type is unspecified.  The default
+docgen annotation should at least be provided.
+::
+
+    >>> request = TestRequest(form={
+    ...     'form.buttons.add_file': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> len(ewiz.structure)
+    4
+    >>> request = TestRequest(form={
+    ...     'file2.widgets.filename': [u'file1'],
+    ...     'file2.widgets.filetype': [],
+    ...     'file2.buttons.update': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
+    >>> ewiz.structure[2] == ('file1', {
+    ...     'file_type': None,
+    ...     'views': [('docgen', None)], 
+    ...     'selected_view': None, 
+    ...     'Subject': ()
+    ... })
+    True
+
 -------------------
 User error handling
 -------------------
@@ -657,10 +689,10 @@ User leaving behind unfilled/empty add file groups should be ignored.
     ... })
     >>> form = wizard.ExposureWizardForm(context, request)
     >>> form.update()
-    >>> ewiz.structure[2]
+    >>> ewiz.structure[3]
     (None, {'file_type': None})
     >>> len(ewiz.structure)
-    4
+    5
     >>> request = TestRequest(form={
     ...     'form.buttons.build': 1,
     ... })
@@ -672,22 +704,6 @@ User leaving behind unfilled/empty add file groups should be ignored.
     >>> result = list(porter.export())
     >>> result == reference_result
     True
-
-Selecting just file should do nothing.
-::
-
-    >>> request = TestRequest(form={
-    ...     'file2.widgets.filename': [u'file1'],
-    ...     'file2.widgets.filetype': [],
-    ...     'file2.buttons.update': 1,
-    ... })
-    >>> form = wizard.ExposureWizardForm(context, request)
-    >>> form.update()
-    >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
-    >>> len(ewiz.structure)
-    4
-    >>> ewiz.structure[2]
-    (None, {'file_type': None})
 
 ---------------------
 Malform data handling

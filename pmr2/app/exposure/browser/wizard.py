@@ -180,15 +180,18 @@ class BaseWizardGroup(BaseSubGroup):
         # used to define this, new buttons are replaced completely if
         # defined at a subclass.
 
-        result = []
-        eftypes = getExposureFileType(self, self.structure['file_type'])
-        current_views = eftypes[0].pmr2_eftype_views
+        result = getExposureFileType(self, self.structure['file_type'])
+        if result is None:
+            # XXX somehow error, see above comment about grouping...
+            return
+
+        title, views, tags, selected_view = result
         previous_views = dict(self.structure['views'])
+        new_views = []
+        for v in views:
+            new_views.append((v, previous_views.get(v, None)))
 
-        for v in current_views:
-            result.append((v, previous_views.get(v, None)))
-
-        self.structure['views'] = result
+        self.structure['views'] = new_views
         self.parentForm._updated = True
 
     def showClearButtonState(self):
@@ -290,28 +293,28 @@ class ExposureFileTypeAnnotatorWizardGroup(
 
         result = getExposureFileType(self, self.structure['file_type'])
         if result:
-            current_views = result[0].pmr2_eftype_views
-            self.label = '%s %s' % (self.label, result[0].Title)
-            previous_views = [v for v, n in self.structure['views']]
-            self.showMigrateButton = previous_views != current_views
-            if self.showMigrateButton:
-                self.status = _(
-                    u"This file has an updated file type definition.  Select "
-                    "`migrate subgroup` to make use of the new format."
-                )
-        else:
-            # somehow either the catalog is inaccessible or the exposure
-            # file type is gone.  Find out what happened.
-            self.label = '%s %s' % (self.label, 'unknown')
-            if result is None:
-                # Catalog is inaccessible, probably configuration issue.
-                # Ignore this condition for now.
-                pass
-            if result is not None:
+            title, views, tags, selected_view = result
+            if views is None:
+                self.label = '%s %s' % (self.label, 'not found')
                 self.status = _(
                     u"Could not find the original file type definition that "
                     "defined this file."
                 )
+            else:
+                self.label = '%s %s' % (self.label, title)
+                previous_views = [v for v, n in self.structure['views']]
+                self.showMigrateButton = previous_views != views
+                if self.showMigrateButton:
+                    self.status = _(
+                        u"This file has an updated file type definition. "
+                        "Select `migrate subgroup` to make use of the new "
+                        "format."
+                    )
+
+        else:
+            # Catalog got nuked?
+            self.label = '%s %s' % (self.label, 'unknown')
+            self.status = _(u"Catalog unavailable.")
 
         return super(ExposureFileTypeAnnotatorWizardGroup, self).update()
 
