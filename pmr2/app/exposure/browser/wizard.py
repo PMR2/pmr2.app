@@ -355,6 +355,8 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
 
     ignoreContext = True
     enable_form_tabbing = False
+    label = 'Exposure Wizard'
+    description = ViewPageTemplateFile('exposure_wizard_description.pt')
 
     _updated = False
     _next = None
@@ -362,6 +364,9 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
     def __init__(self, *a, **kw):
         super(ExposureWizardForm, self).__init__(*a, **kw)
         self.fields = z3c.form.field.Fields()
+
+    def export_uri(self):
+        return self.context.absolute_url() + '/@@wizard_exporter'
 
     def update(self):
         # No need to call form.PostForm.update because that path added

@@ -1,0 +1,4 @@
+Once the build button is activated, the exported structure of this exposure can be accessed at <a 
+    tal:attributes="href view/export_uri;"
+    tal:content="view/export_uri"
+  >this uri</a>.

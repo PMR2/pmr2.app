@@ -169,7 +169,9 @@ class IExposureExportImportGroup(zope.interface.Interface):
     export_uri = zope.schema.ASCIILine(
         title=u'Exposure Export URI',
         description=u'URI of an exported exposure structure, if importing '
-                     'from an external PMR2 instance.',
+                     'from an external PMR2 instance.  This URI can be found '
+                     'at the `wizard` tab of the exposure you wish to import '
+                     'from.',
         required=False,
     )
 
