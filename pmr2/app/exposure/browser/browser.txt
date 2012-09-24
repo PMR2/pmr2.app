@@ -1505,7 +1505,7 @@ provide the structure of a given exposure can be exported.
     >>> import json
     >>> request = TestRequest()
     >>> view = zope.component.queryMultiAdapter((next_ex, request), 
-    ...                                         name='rollover_export')
+    ...                                         name='wizard_exporter')
     >>> jsonstr = view()
     >>> 'eef1e9af39a79b2fc47ef978f8e61e853bad54e2' in jsonstr
     True
@@ -1534,7 +1534,7 @@ dataset can be populated.
 ::
 
     >>> wkspc = self.portal.workspace['rdfmodel']
-    >>> export_uri = next_ex.absolute_url() + '/rollover_export'
+    >>> export_uri = next_ex.absolute_url() + '/wizard_exporter'
     >>> request = TestRequest(form={
     ...     'exportimport.widgets.export_uri': export_uri,
     ...     'form.buttons.add': 1,
