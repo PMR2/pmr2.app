@@ -473,3 +473,29 @@ def pmr2_v0_4(context):
     reregister_pmr2_settings(site)
     remove_hg_pas_plugin(site)
     fix_exposure_workspace_path(site)
+
+
+# v0.6
+
+def migrate_docgen(context):
+    import traceback
+    from logging import getLogger
+    logger = getLogger('pmr2.app.migration')
+    from pmr2.app import _migration
+
+    catalog = getToolByName(context, 'portal_catalog')
+    brains = catalog(portal_type='ExposureFile')
+    for b in brains:
+        file = b.getObject()
+        try:
+            _migration.file_docgen_to_annotation(file)
+        except:
+            logger.error('Could not migrate docgen for %s' % b.getPath())
+            logger.warning(traceback.format_exc())
+
+    return
+
+def pmr2_v0_6(context):
+    from zope.app.component.hooks import getSite
+    site = getSite()
+    migrate_docgen(site)
