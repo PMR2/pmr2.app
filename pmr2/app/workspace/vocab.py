@@ -29,8 +29,28 @@ WorkspaceDirObjListVocabFactory = vocab_factory(WorkspaceDirObjListVocab)
 class ManifestListVocab(SimpleVocabulary):
 
     def __init__(self, context):
-        self.context = wks = context
+        self.context = context
+        wks = self.acquireWorkspace()
+        self.storage = zope.component.getAdapter(wks, IStorage)
 
+        commit_id = self.acquireCommitId()
+        if commit_id:
+            self.storage.checkout(commit_id)
+
+        values = self.storage.files()
+        values.sort()
+
+        terms = [SimpleTerm(i, i) for i in values]
+        super(ManifestListVocab, self).__init__(terms)
+
+    def acquireCommitId(self):
+        if ICurrentCommitIdProvider.providedBy(self.context):
+            return self.context.current_commit_id()
+        id_provider = zope.component.queryAdapter(
+            self.context, ICurrentCommitIdProvider)
+        return id_provider and id_provider.current_commit_id()
+
+    def acquireWorkspace(self):
         if not IWorkspace.providedBy(self.context):
             wks = None
             obj = aq_inner(self.context)
@@ -44,26 +64,12 @@ class ManifestListVocab(SimpleVocabulary):
                         # We actually have one.
                         wks = obj
             if not wks:
-                raise Exception("Unable to adapt to a workspace to acquire "
-                                "its manifest.")
-
-        self.storage = zope.component.getAdapter(wks, IStorage)
-
-        if ICurrentCommitIdProvider.providedBy(context):
-            commit_id = context.current_commit_id()
+                raise Exception("Unable to adapt to a workspace; will not be "
+                                "able to acquire file listing.")
         else:
-            # in the future we might attempt to adapt the context into
-            # something that will do the resolving.
-            commit_id = None
+            wks = self.context
 
-        if commit_id:
-            self.storage.checkout(commit_id)
-
-        values = self.storage.files()
-        values.sort()
-
-        terms = [SimpleTerm(i, i) for i in values]
-        super(ManifestListVocab, self).__init__(terms)
+        return wks
 
     def getTerm(self, value):
         if value is None:
