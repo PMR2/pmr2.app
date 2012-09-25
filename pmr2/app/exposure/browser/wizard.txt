@@ -376,6 +376,7 @@ compatibility.
     >>> request = TestRequest()
     >>> porter = ExposurePort(context, request)
     >>> reference_result = list(porter.export())
+    >>> error_testing_structure = list(porter.export())
 
     >>> result = list(porter.export())
     >>> answer = ewiz.structure
@@ -681,7 +682,15 @@ Due to the lack of any constraints on the forms for maximum flexibility
 for the users, sometimes subgroups may be empty or contain missing data.
 The following attempts to cover some of the cases.
 
-User leaving behind unfilled/empty add file groups should be ignored.
+First acquire a clean foundation to work on.
+::
+
+    >>> self._mkexposure(u'/plone/workspace/test', u'1', '3')
+    >>> context = self.portal.exposure['3']
+    >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
+    >>> ewiz.structure = error_testing_structure
+
+User leaving behind empty add file groups should be ignored.
 ::
 
     >>> request = TestRequest(form={
@@ -689,17 +698,17 @@ User leaving behind unfilled/empty add file groups should be ignored.
     ... })
     >>> form = wizard.ExposureWizardForm(context, request)
     >>> form.update()
-    >>> ewiz.structure[3]
+    >>> ewiz.structure[2]
     (None, {'file_type': None})
     >>> len(ewiz.structure)
-    5
-    >>> request = TestRequest(form={
-    ...     'form.buttons.build': 1,
-    ... })
-    >>> form = wizard.ExposureWizardForm(context, request)
-    >>> form.update()
+    4
 
-    >>> request = TestRequest()
+See if this still builds, and then exports into our structure
+::
+
+    >>> target = context.absolute_url() + '/@@wizard'
+    >>> b.open(target)
+    >>> b.getControl(name='form.buttons.build').click()
     >>> porter = ExposurePort(context, request)
     >>> result = list(porter.export())
     >>> result == reference_result

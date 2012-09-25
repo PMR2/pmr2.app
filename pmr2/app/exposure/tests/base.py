@@ -110,26 +110,25 @@ class CompleteDocTestCase(ExposureDocTestCase):
 
         super(CompleteDocTestCase, self).setUp()
 
+        self._mkexposure(u'/plone/workspace/test', u'2', '1')
+        self._mkexposure(u'/plone/workspace/eggs', u'1', '2')
+
+    def _mkexposure(self, workspace, commit_id, id_):
         from pmr2.app.settings.interfaces import IPMR2GlobalSettings
-        from pmr2.idgen.interfaces import IIdGenerator
         from pmr2.app.workspace.content import Workspace
         from pmr2.app.exposure.content import ExposureContainer, Exposure
+        from pmr2.idgen.interfaces import IIdGenerator
 
         settings = zope.component.queryUtility(IPMR2GlobalSettings)
         idgen = zope.component.queryUtility(IIdGenerator,
             name=settings.default_exposure_idgen)
-
-        def mkexposure(workspace, commit_id, id_):
-            if not id_:
-                id_ = idgen.next()
-            else:
-                # call it anyway.
-                idgen.next()
-            e = Exposure(id_)
-            e.workspace = workspace
-            e.commit_id = commit_id
-            self.portal.exposure[id_] = e
-            self.portal.exposure[id_].reindexObject()
-
-        mkexposure(u'/plone/workspace/test', u'2', '1')
-        mkexposure(u'/plone/workspace/eggs', u'1', '2')
+        if not id_:
+            id_ = idgen.next()
+        else:
+            # call it anyway.
+            idgen.next()
+        e = Exposure(id_)
+        e.workspace = workspace
+        e.commit_id = commit_id
+        self.portal.exposure[id_] = e
+        self.portal.exposure[id_].reindexObject()
