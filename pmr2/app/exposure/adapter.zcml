@@ -17,6 +17,12 @@
 
   <adapter
       for="pmr2.app.exposure.interfaces.IExposureObject"
+      factory=".adapter.ExposureObjectCommitIdProvider"
+      provides="pmr2.app.workspace.interfaces.ICurrentCommitIdProvider"
+      />
+
+  <adapter
+      for="pmr2.app.exposure.interfaces.IExposureObject"
       factory=".adapter.ExposureSourceAdapter"
       provides="pmr2.app.exposure.interfaces.IExposureSourceAdapter"
       />

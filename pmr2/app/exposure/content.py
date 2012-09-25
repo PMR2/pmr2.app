@@ -41,8 +41,6 @@ class Exposure(ATFolderDocument):
 
     interface.implements(IExposure, IExposureFolder, IExposureObject)
     security = ClassSecurityInfo()
-    # XXX the get_ methods are similar to IWorkspace.
-    # best to define a common interface.
 
     workspace = fieldproperty.FieldProperty(IExposure['workspace'])
     commit_id = fieldproperty.FieldProperty(IExposure['commit_id'])

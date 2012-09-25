@@ -4,6 +4,9 @@ import zope.interface
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
+# need to be here as we provide the file listing.
+from pmr2.app.workspace.schema import StorageFileChoice
+
 
 class IExposureFileAnnotator(zope.interface.Interface):
     """\
@@ -154,7 +157,7 @@ class IDocGenNote(zope.interface.Interface):
     documentation of exposure type objects.
     """
 
-    source = zope.schema.Choice(
+    source = StorageFileChoice(
         title=u'Documentation File',
         description=u'The file where the documentation resides in.  If this '
                      'object is already a file, leaving this field unselected '

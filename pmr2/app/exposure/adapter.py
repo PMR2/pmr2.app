@@ -8,7 +8,7 @@ from zope.app.component.hooks import getSite
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from pmr2.app.workspace.exceptions import PathNotFoundError
-from pmr2.app.workspace.interfaces import IStorage
+from pmr2.app.workspace.interfaces import IStorage, ICurrentCommitIdProvider
 
 from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
@@ -78,7 +78,12 @@ def exposureSources(context, _with_workspace=True):
                 name='ExposureToWorkspace',
             )
             return obj, workspace, '/'.join(paths)
-        paths.append(obj.getId())
+
+        # We want to ignore annotations, and only include objects with
+        # actual "physical" components within the source.
+        if IExposureFile.providedBy(obj) or IExposureFolder.providedBy(obj):
+            paths.append(obj.getId())
+
         obj = aq_parent(obj)
     paths.reverse()
     # XXX could benefit from a better exception type?
@@ -86,6 +91,26 @@ def exposureSources(context, _with_workspace=True):
 
 def ExposureObjectWorkspaceAdapter(context):
     return exposureSources(context)[1]
+
+
+class ExposureObjectCommitIdProvider(object):
+    """\
+    Just a much easier way to get a unified way of getting to the commit
+    id of an associated ExposureObject.
+    """
+
+    zope.interface.implements(ICurrentCommitIdProvider)
+
+    def __init__(self, context):
+        self.context = context
+
+    def current_commit_id(self):
+        obj = aq_inner(self.context)
+        while obj is not None:
+            if IExposure.providedBy(obj):
+                return obj.commit_id
+            obj = aq_parent(obj)
+        return None
 
 
 class ExposureSourceAdapter(object):

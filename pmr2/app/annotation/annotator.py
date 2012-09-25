@@ -195,6 +195,9 @@ class DocGenAnnotator(ExposureFileAnnotatorBase):
         exp, workspace, p = zope.component.getAdapter(self.context, 
             IExposureSourceAdapter).source()
         storage = zope.component.queryAdapter(workspace, IStorage)
+        # should really use the adapter for this to avoid mistakes of
+        # forgetting this.
+        storage.checkout(exp.commit_id)
         # XXX so we do all of this in one single step.
         docviewgen = dvgu(self.context, storage.file(d['source']))
         docviewgen()

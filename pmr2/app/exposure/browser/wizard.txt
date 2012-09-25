@@ -674,6 +674,61 @@ docgen annotation should at least be provided.
     ... })
     True
 
+------------------
+File name handling
+------------------
+
+There will be annotations that make references to file names, which must
+correctly reference from the current revision that the underlying 
+exposure is based on.  Begin fresh again by clearing, adding a test file
+and select the predefined type with the filename selection notes that
+are available.
+::
+
+    >>> ewiz.structure = []
+    >>> request = TestRequest(form={
+    ...     'form.buttons.add_file': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> request = TestRequest(form={
+    ...     'file0.widgets.filename': [u'file1'],
+    ...     'file0.widgets.filetype': [u'Docgen Type'],
+    ...     'file0.buttons.update': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+
+Now the assignment should work without errors.
+::
+
+    >>> request = TestRequest(form={
+    ...     'annotate0.widgets.filename': [u'file2'],
+    ...     'annotate0.widgets.docgen.source': [u'file2'],
+    ...     'annotate0.widgets.docgen.generator': [u'safe_html'],
+    ...     'annotate0.widgets.filename_note.filename': [u'file2'],
+    ...     'annotate0.buttons.update': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> ewiz.structure[0] == ('file2', {
+    ...     'file_type': '/plone/docgen_type',
+    ...     'views': [
+    ...         (u'docgen', {'source': 'file2', 'generator': u'safe_html'}),
+    ...         (u'filename_note', {'filename': 'file2'})
+    ...     ],
+    ...     'selected_view': None, 'Subject': []})
+    True
+
+See if this builds, and the filename correctly choosen from the commit
+this exposure represents.
+::
+
+    >>> b.open(target)
+    >>> b.getControl(name='form.buttons.build').click()
+    >>> zope.component.getAdapter(context.file2, name='filename_note').filename
+    'file2'
+
 -------------------
 User error handling
 -------------------
