@@ -84,12 +84,20 @@ class ExposureDocTestCase(ExposureUnitTestCase):
         from pmr2.app.exposure.content import ExposureFileType
 
         self.portal['exposure'] = ExposureContainer('exposure')
+
         self.portal['test_type'] = ExposureFileType('test_type')
         self.portal.test_type.title = u'Test Type'
         self.portal.test_type.views = [
             u'edited_note', u'post_edited_note', u'rot13']
         self.portal.test_type.tags = [u'please_ignore']
         self._publishContent(self.portal.test_type)
+
+        # Filename related testing.
+        self.portal['docgen_type'] = ExposureFileType('docgen_type')
+        self.portal.docgen_type.title = u'Docgen Type'
+        self.portal.docgen_type.views = [u'docgen', u'filename_note']
+        self.portal.docgen_type.tags = []
+        self._publishContent(self.portal.docgen_type)
 
 
 class CompleteDocTestCase(ExposureDocTestCase):

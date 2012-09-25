@@ -1858,30 +1858,8 @@ Document Generation (Annotation Version)
 ----------------------------------------
 
 As part of the effort to unify the interfaces, the document generator is
-moved into the annotation / exposure notes infrastructure.  Here we add
-the docgen into our type.
-::
-
-    >>> efile_new.setText(u'')  # Reset due to unclean data.
-    >>> request = TestRequest(
-    ...     form={
-    ...         'form.widgets.id': u'docgen_type',
-    ...         'form.widgets.title': u'Docgen Type',
-    ...         'form.widgets.views': u'docgen',
-    ...         'form.widgets.select_view': u'',
-    ...         'form.widgets.tags': u'',
-    ...         'form.buttons.add': 1,
-    ...     })
-    >>> testform = browser.ExposureFileTypeAddForm(self.portal, request)
-    >>> testform.update()
-    >>> self.portal.docgen_type.views
-    [u'docgen']
-    >>> self.setRoles(('Manager',))
-    >>> wft = getToolByName(self.portal, 'portal_workflow')
-    >>> wft.doActionFor(self.portal.docgen_type, 'publish')
-    >>> self.setRoles(('Member', 'Authenticated',))
-
-Now we use this modified type for a file.
+moved into the annotation / exposure notes infrastructure.  Let's make
+use of the predefined docgen type to test out the generation.
 ::
 
     >>> request = TestRequest(
@@ -1891,21 +1869,12 @@ Now we use this modified type for a file.
     ...     })
     >>> form = browser.ExposureFileTypeChoiceForm(efile_new, request)
     >>> result = form()
-    >>> efile_new.views
-    [u'docgen']
+    >>> u'docgen' in efile_new.views
+    True
     >>> efile_new.file_type
     '/plone/docgen_type'
 
-The fields should have been properly added.
-::
-
-    >>> request = TestRequest()
-    >>> form = browser.ExposureFileTypeAnnotatorForm(efile_new, request)
-    >>> form.update()
-    >>> [g.fields.keys() for g in form.groups]
-    [['docgen.source', 'docgen.generator']]
-
-Now we submit the form.
+Now we submit the form with the desired information.
 ::
 
     >>> request = TestRequest(

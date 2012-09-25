@@ -79,6 +79,14 @@ class PostEditedNoteAnnotator(ExposureFileAnnotatorBase):
             return (('text', unicode(self.input[0:self.note.chars])),)
 
 
+class FilenameNoteAnnotator(ExposureFileAnnotatorBase):
+    zope.interface.implements(IExposureFileAnnotator, 
+                              IExposureFileEditAnnotator)
+    title = u'Filename'
+    description = u'Simple note for filename selection testing.'
+    for_interface = IFilenameNote
+
+
 RDFTurtleAnnotatorFactory = named_factory(RDFTurtleAnnotator)
 RDFn3AnnotatorFactory = named_factory(RDFn3Annotator)
 RDFxmlAnnotatorFactory = named_factory(RDFxmlAnnotator)
@@ -87,6 +95,7 @@ Base64NoteAnnotatorFactory = named_factory(Base64NoteAnnotator)
 Rot13NoteAnnotatorFactory = named_factory(Rot13NoteAnnotator)
 EditedNoteAnnotatorFactory = named_factory(EditedNoteAnnotator)
 PostEditedNoteAnnotatorFactory = named_factory(PostEditedNoteAnnotator)
+FilenameNoteAnnotatorFactory = named_factory(FilenameNoteAnnotator)
 
 
 RDFTurtleNoteFactory = note_factory(RawTextNote, 'rdfturtle')
@@ -97,6 +106,7 @@ Base64NoteFactory = note_factory(RawTextNote, 'base64')
 Rot13NoteFactory = note_factory(RawTextNote, 'rot13')
 EditedNoteFactory = note_factory(EditedNote, 'edited_note')
 PostEditedNoteFactory = note_factory(PostEditedNote, 'post_edited_note')
+FilenameNoteFactory = note_factory(FilenameNote, 'filename_note')
 
 
 RDFGroupNoteFactory = note_factory(GroupedNote, 'rdf')

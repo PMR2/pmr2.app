@@ -22,3 +22,9 @@ class PostEditedNote(ExposureFileViewBase):
     def __call__(self):
         return 'Post Edited Note is: [%d:%s]' % (
             self.note.chars, self.note.text)
+
+
+class FilenameNote(ExposureFileViewBase):
+
+    def __call__(self):
+        return 'Filename is: [%s]' % (self.note.filename)

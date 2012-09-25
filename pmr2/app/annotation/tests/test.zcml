@@ -45,6 +45,12 @@
       provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
       />
 
+  <utility
+      name="filename_note"
+      component=".adapter.FilenameNoteAnnotatorFactory"
+      provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
+      />
+
   <adapter
       for="pmr2.app.exposure.interfaces.IExposureFile"
       factory=".adapter.RDFTurtleNoteFactory"
@@ -92,6 +98,13 @@
       factory=".adapter.PostEditedNoteFactory"
       provides=".content.IPostEditedNote"
       name="post_edited_note"
+      />
+
+  <adapter
+      for="pmr2.app.exposure.interfaces.IExposureFile"
+      factory=".adapter.FilenameNoteFactory"
+      provides=".content.IFilenameNote"
+      name="filename_note"
       />
 
   <browser:page
@@ -146,6 +159,13 @@
   <browser:page
       for="pmr2.app.exposure.content.ExposureFile"
       name="post_edited_note"
+      class=".browser.PostEditedNote"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.content.ExposureFile"
+      name="filename_note"
       class=".browser.PostEditedNote"
       permission="zope2.View"
       />
