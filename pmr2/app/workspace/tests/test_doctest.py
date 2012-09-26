@@ -1,16 +1,11 @@
+from os.path import join
 import unittest
+import doctest
 
-from zope.testing import doctestunit, doctest
 from zope.component import testing
 from Testing import ZopeTestCase as ztc
 
-from Products.PloneTestCase import PloneTestCase as ptc
-from Products.PloneTestCase.layer import PloneSite
-from Products.PloneTestCase.layer import onsetup
-
 from pmr2.testing.base import DocTestCase
-import pmr2.app.workspace
-
 from pmr2.app.workspace.tests import base
 
 def test_suite():
@@ -25,21 +20,21 @@ def test_suite():
 
         # Forms and interactions.
         ztc.ZopeDocFileSuite(
-            'browser/browser.txt', package='pmr2.app.workspace',
+            join('browser', 'browser.txt'), package='pmr2.app.workspace',
             test_class=base.WorkspaceDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
         # widget converter
         ztc.ZopeDocFileSuite(
-            'widgets/converter.txt', package='pmr2.app.workspace',
+            join('widgets', 'converter.txt'), package='pmr2.app.workspace',
             test_class=base.WorkspaceDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
         # the custom select widget.
         ztc.ZopeDocFileSuite(
-            'widgets/select.txt', package='pmr2.app.workspace',
+            join('widgets', 'select.txt'), package='pmr2.app.workspace',
             test_class=base.WorkspaceDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
@@ -52,7 +47,7 @@ def test_suite():
         ),
 
         # Subscriber
-        doctestunit.DocTestSuite(
+        doctest.DocTestSuite(
             module='pmr2.app.workspace.subscriber',
             setUp=testing.setUp, tearDown=testing.tearDown
         ),

@@ -1,20 +1,19 @@
 import unittest
+import doctest
 
-from zope.testing import doctestunit
 from zope.component import testing
-from Testing import ZopeTestCase as ztc
 
 def test_suite():
     return unittest.TestSuite([
 
         # test the fields.
-        doctestunit.DocTestSuite(
+        doctest.DocTestSuite(
             module='pmr2.app.schema.field',
             setUp=testing.setUp, tearDown=testing.tearDown
         ),
 
         # test the converters.
-        doctestunit.DocTestSuite(
+        doctest.DocTestSuite(
             module='pmr2.app.schema.converter',
             setUp=testing.setUp, tearDown=testing.tearDown
         ),

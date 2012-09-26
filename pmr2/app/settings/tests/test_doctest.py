@@ -1,6 +1,6 @@
 import unittest
+import doctest
 
-from zope.testing import doctest
 from Testing import ZopeTestCase as ztc
 
 from pmr2.testing import base

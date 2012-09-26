@@ -1,20 +1,15 @@
+from os.path import join
 import unittest
 import doctest
 
-from zope.testing import doctestunit
-from zope.component import testing
 from Testing import ZopeTestCase as ztc
 
-from Products.PloneTestCase import PloneTestCase as ptc
-from Products.PloneTestCase.layer import PloneSite
-from Products.PloneTestCase.layer import onsetup
-
 from pmr2.testing.base import DocTestCase
-import pmr2.app.workspace
 
 from pmr2.app.exposure.tests.base import ExposureDocTestCase
 from pmr2.app.exposure.tests.base import CompleteDocTestCase
 
+# XXX should NOT reverse depend on child dependencies.
 from pmr2.mercurial.tests.base import MercurialDocTestCase
 
 
@@ -30,7 +25,8 @@ def test_suite():
 
         # Forms and interactions.
         ztc.ZopeDocFileSuite(
-            'browser/browser.txt', package='pmr2.app.exposure',
+            join('browser', 'browser.txt'), package='pmr2.app.exposure',
+            # XXX remove this eventually.
             test_class=MercurialDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
@@ -44,7 +40,7 @@ def test_suite():
 
         # Exposure creation wizard
         ztc.ZopeDocFileSuite(
-            'browser/wizard.txt', package='pmr2.app.exposure',
+            join('browser', 'wizard.txt'), package='pmr2.app.exposure',
             test_class=CompleteDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
