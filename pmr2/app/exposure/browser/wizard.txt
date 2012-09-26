@@ -729,6 +729,80 @@ this exposure represents.
     >>> zope.component.getAdapter(context.file2, name='filename_note').filename
     'file2'
 
+-----------------
+Directory entries
+-----------------
+
+As the backend does not track directories, the actual directory entries
+(which references documentation to be generated) will need to be 
+dynmically created when a nested file is added without a corresponding
+directory entry.
+
+We instantiate an exposure with a workspace and commit_id that has
+directories in place, and add a file.
+::
+
+    >>> self._mkexposure(u'/plone/workspace/test', u'3', '4')
+    >>> context = self.portal.exposure['4']
+    >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
+    >>> request = TestRequest(form={
+    ...     'form.buttons.add_file': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+
+Now select a nested file.  While adding a nested file should spaw all
+directory entries, this overloads our current design at this stage.
+::
+
+    >>> request = TestRequest(form={
+    ...     'file0.widgets.filename': [u'dir1/nested/file'],
+    ...     'file0.widgets.filetype': [u'Docgen Type'],
+    ...     'file0.buttons.update': 1,
+    ...     'debug': 1,
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+
+We are however going to follow up with the rollover case, where these
+ExposureFolder entries are included.  They should not interfere with the
+rendering of the form.
+::
+
+    >>> ewiz.structure = [
+    ...     ('dir1/nested/file', {
+    ...         'file_type': '/plone/docgen_type',
+    ...         'views': [(u'docgen', None), (u'filename_note', None)],
+    ...         'selected_view': None, 'Subject': []
+    ...     }),
+    ...     ('dir1/nested', {
+    ...         'docview_gensource': None,
+    ...         'docview_generator': None,
+    ...         'Subject': ()
+    ...     }),
+    ...     ('dir1', {
+    ...         'docview_gensource': None,
+    ...         'docview_generator': None,
+    ...         'Subject': ()
+    ...     }),
+    ...     ('', {
+    ...         'commit_id': u'3',
+    ...         'title': u'',
+    ...         'curation': {},
+    ...         'workspace': u'/plone/workspace/test',
+    ...         'docview_gensource': None,
+    ...         'docview_generator': None,
+    ...         'Subject': ()
+    ...     }),
+    ... ]
+    >>> request = TestRequest(form={
+    ... })
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> form.update()
+    >>> len(form.groups)
+    4
+    >>> result = form.render()
+
 -------------------
 User error handling
 -------------------

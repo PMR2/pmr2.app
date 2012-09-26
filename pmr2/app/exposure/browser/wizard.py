@@ -372,6 +372,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         # No need to call form.PostForm.update because that path added
         # nothing.
         self.appendGroups()
+        # This will trigger the buttons.
         extensible.ExtensibleForm.update(self)
         self.updateGroups()
 
@@ -433,8 +434,17 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
                     if self.request.get(wid, None) is None:
                         self.request[wid] = filename
             else:
-                grp = ExposureFileTypeAnnotatorWizardGroup(
-                    self.context, self.request, self)
+                if 'file_type' not in structure:
+                    # Assume folder.  Instead of instantiating a group,
+                    # mark this to be added.
+                    # self.folder_structures[filename] = structure
+                    # Deal with the groups later.
+                    # XXX doing this now anyway.
+                    grp = ExposureViewGenWizardGroup(
+                        self.context, self.request, self)
+                else:
+                    grp = ExposureFileTypeAnnotatorWizardGroup(
+                        self.context, self.request, self)
 
             grp.pos = i
             grp.filename = filename

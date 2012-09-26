@@ -194,13 +194,20 @@ class DocGenSubgroup(form.Group, ParentCurrentCommitIdProvider):
 
 class ExposureViewGenGroup(DocGenSubgroup):
     """\
-    Subgroup for the main exposure view generator.
+    Subgroup for the view generator for Exposure and ExposureFolder.
     """
 
-    label = 'Exposure main view'
     field_iface = IExposureViewGenGroup
     fields = z3c.form.field.Fields(IExposureViewGenGroup)
     prefix = 'view'
+    filename = ''
+
+    @property
+    def label(self):
+        if not self.filename:
+            return 'Exposure main view'
+
+        return 'Folder: %s' % self.filename
 
     def generateStructure(self):
         data, errors = self.extractData()
@@ -213,15 +220,21 @@ class ExposureViewGenGroup(DocGenSubgroup):
         elif IExposure.providedBy(self.context):
             wks_path = self.context.workspace
 
-        structure = ('', {
-            'commit_id': self.current_commit_id(),
-            'curation': {},  # XXX no interface yet
+        struct = {
             'docview_generator': data['docview_generator'],
             'docview_gensource': data['docview_gensource'],
-            'title': u'',  # XXX copy context?
-            'workspace': wks_path,
             'Subject': (),  # XXX to be assigned by filetype?
-        })
+        }
+
+        if wks_path:
+            struct.update({
+                'commit_id': self.current_commit_id(),
+                'curation': {},  # XXX no interface yet, and deprecated.
+                'title': u'',  # XXX copy context?
+                'workspace': wks_path,
+            })
+
+        structure = (self.filename, struct)
 
         return structure
 
