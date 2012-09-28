@@ -54,7 +54,7 @@ class RawTextNote(ExposureFileNoteBase):
         return self.text
 
 
-class DocGenNote(ExposureFileNoteBase):
+class DocGenNote(ExposureFileEditableNoteBase):
     """\
     See IRawText interface.
     """
