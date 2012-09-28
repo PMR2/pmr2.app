@@ -19,6 +19,7 @@ def file_docgen_to_annotation(file):
     annotation.__class__.generator.__set__(annotation, file.docview_generator)
 
     if file.views:
-        file.views = [u'docgen'] + file.views
+        if u'docgen' not in file.views:
+            file.views = [u'docgen'] + file.views
     else:
         file.views = [u'docgen']
