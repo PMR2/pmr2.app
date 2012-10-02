@@ -55,6 +55,9 @@ class StructureWrapper(Location):
     bridges between the predefined managers and forms.
     """
     
+    # XXX perhaps modify this to include the filename attribute so to
+    # allow position id to be more easily uniquely generated.
+
     def __init__(self, context=None, structure=None):
         self.__parent__ = context
         self._structure = structure
@@ -446,6 +449,9 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
                     grp = ExposureFileTypeAnnotatorWizardGroup(
                         self.context, self.request, self)
 
+            # XXX should derive from the name of the file to remove
+            # ambiguity when an entry is removed or inserted between
+            # requests made by a particular form.
             grp.pos = i
             grp.filename = filename
             grp.structure = structure
