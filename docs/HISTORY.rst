@@ -175,7 +175,7 @@ Sixth major release of PMR2, most focus on user interfaces.
 
 Changes added in:
 
-- 0.3rc1
+*0.3rc1*
 
 * Streamlined exposure creation process.
 
