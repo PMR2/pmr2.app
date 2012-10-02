@@ -7,8 +7,8 @@ setup(
     name='pmr2.app',
     version=version,
     description='The PMR2 Application',
-    long_description=open('README.txt').read() + "\n" +
-                     open(os.path.join('docs', 'HISTORY.txt')).read(),
+    long_description=open('README.rst').read() + "\n" +
+                     open(os.path.join('docs', 'HISTORY.rst')).read(),
     # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         'Development Status :: 4 - Beta',
