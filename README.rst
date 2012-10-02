@@ -24,7 +24,7 @@ package cellml.pmr2_) and FieldML (fieldml.pmr2_).
 .. _cellml.pmr2: https://github.com/PMR2/cellml.pmr2/
 .. _fieldml.pmr2: https://github.com/PMR2/fieldml.pmr2/
 
-PMR2 is the software behind the Physiome Model Repository_, which
+PMR2 is the software behind the `Physiome Model Repository`_, which
 currently hosts over 1000 CellML models and a handful of FieldML models
 (and its precursor, exnode/exelem models).
 
@@ -75,9 +75,9 @@ correct installation procedure is tightly tied into buildout.
 Known issues and caveats
 ========================
 
-To report PMR2 related issues, please use the Physiome Tracker_.
+To report PMR2 related issues, please use the `Physiome Tracker`_.
 
-:: _Physiome Tracker: https://tracker.physiomeproject.org/
+.. _Physiome Tracker: https://tracker.physiomeproject.org/
 
 Other known minor caveats related to administration of PMR2:
 

@@ -7,10 +7,12 @@ Changelog
 Sixth major release of PMR2, most focus on user interfaces.
 
 * Fork/Pull from other workspaces
+
   - This feature allows the forking/pulling of workspaces within PMR2,
     and pulling data from external repositories of the same type.
 
 * Exposure wizard
+
   - This replaces the exposure builder/file type selection with a more
     streamlined interface.  This is constructed on top of the original
     framework.
@@ -18,6 +20,7 @@ Sixth major release of PMR2, most focus on user interfaces.
   - Migration to updated exposure types.
 
 * Exposure export/import, exposure rollover slight overhaul.
+
   - It is possible to export the exposure structure and import it into
     another workspace on the same or different PMR2 instance (provided
     that the same structure is supported).  This will lead into the
@@ -27,6 +30,7 @@ Sixth major release of PMR2, most focus on user interfaces.
     provides better error handling.
 
 * Curation moved to pmr2.annotation.curation
+
   - This library now provides better curation facilities, such as
     adminstration defined flags, with user-side selection widget to
     assign those defined values to a curation annotation on a file.
@@ -43,6 +47,7 @@ Sixth major release of PMR2, most focus on user interfaces.
 -----------------------------
 
 * Bug-fix release.
+
   - The exposure file listings for the exposure documentation and the
     file builder form should return the correct list of files.
 
@@ -50,6 +55,7 @@ Sixth major release of PMR2, most focus on user interfaces.
 ---------------------------
 
 * Deprecation and form cleanups
+
   - Corrected the iro (interface resolution order) for the layer such
     that the authenticator is always rendered.
   - Removed pmr2.app.contents as that was deprecated and marked for
@@ -62,12 +68,14 @@ Sixth major release of PMR2, most focus on user interfaces.
 ---------------------------
 
 * Major reorganization done to the code base.
+
   - The code is in the process of being split up and reorganized based
     on related features.  Most notable changes are the workspace and
     exposures being moved into its own module, with all supporting code
     elsewhere (such as subscribers and adapters) are moved into them.
 
 * Introduction of customized renders of files directly from workspace
+
   - Workspace file views now supports the rendering of other file types,
     with the rendering controlled by the mimetype of the file.  Adapters
     can be registered to introduce customized renders for file types.
@@ -79,6 +87,7 @@ Sixth major release of PMR2, most focus on user interfaces.
     that are now provided.
 
 * Generalized workspace storage backend
+
   - While the plan for PMR2 was to allow multiple backends to be
     supported, it had strong ties to pmr2.mercurial.  This has been
     corrected as workspace now supports different backends.
@@ -92,6 +101,7 @@ Sixth major release of PMR2, most focus on user interfaces.
 -----------------------------
 
 * CSRF fix backported from development branch.
+
   - https://tracker.physiomeproject.org/show_bug.cgi?id=2976
 
 0.3.6 - Released (2011-04-05)
@@ -99,12 +109,14 @@ Sixth major release of PMR2, most focus on user interfaces.
 
 * Removed the ability to render arbitrary HTML for supported browsers 
   in the workspace viewer.
+
   - https://tracker.physiomeproject.org/show_bug.cgi?id=2878
 
 0.3.5 - Released (2011-02-15)
 -----------------------------
 
 * Corrected dependency on deprecated packages.
+
   - https://tracker.physiomeproject.org/show_bug.cgi?id=2835
 
 0.3.4 - Released (2011-01-18)
@@ -113,8 +125,11 @@ Sixth major release of PMR2, most focus on user interfaces.
 * Backported changes made in master (trunk) that allow an exposure
   rollover to use a source exposure that does not reside in the default
   exposure container.
+
   - https://tracker.physiomeproject.org/show_bug.cgi?id=2806
+
 * Reapplied some patches that were meant to be patched.
+
   - Exposure custom traversal should be fixed for good, this time.
 
 0.3.3 - Released (2010-12-31)
@@ -122,16 +137,20 @@ Sixth major release of PMR2, most focus on user interfaces.
 
 * Fresh installation now works as intended on standard configurations as
   the bugs that prevented this were fixed.
+
   - Settings now provides a method set up the objects and directories
     on disk.
+
     - https://tracker.physiomeproject.org/show_bug.cgi?id=2622
 
   - Default installation now correctly allow Mercurial clients to prompt
     users for authentication.
+
     - https://tracker.physiomeproject.org/show_bug.cgi?id=2625
 
   - PMR2 no longer prevents a default Plone site from rendering if it is
     present but not installed using the portal add-on installer tool.
+
     - https://tracker.physiomeproject.org/show_bug.cgi?id=2626
 
 0.3.2 - Released (2010-07-01)
@@ -145,6 +164,7 @@ Sixth major release of PMR2, most focus on user interfaces.
 -----------------------------
 
 * Fixed bugs that manifested in a virtual host environment.
+
   - exposure creation (both normal and rollover).
   - listing of exposures in the workspace pages.
 
@@ -158,6 +178,7 @@ Changes added in:
 - 0.3rc1
 
 * Streamlined exposure creation process.
+
   - Added a exposure file type definition object, which allows 
     repository managers to define a profile for different files, such
     that users can use it to generate consistent view listings with
@@ -217,7 +238,7 @@ Changes added in:
 
 With the following changes:
 
-- 0.2rc1
+*0.2rc1*
 
 * Rewrote how Exposures are done.  The pages have been made deprecated
   and replaced with Exposure Files, which are wrappers around the files
@@ -233,7 +254,7 @@ With the following changes:
   (Pluggable Authentication System).
 * Various UI refinements.
 
-- 0.2rc2
+*0.2rc2*
 
 * Document view generation no longer generates empty title and 
   description if it's unknown.
@@ -241,19 +262,19 @@ With the following changes:
 * Files can also have a seprate source document like exposure root.
 * Fixed authentication issue for Mercurial v0.9.5
 
-- 0.2rc3
+*0.2rc3*
 
 * Shows the review state of an exposure to normal users by color coding
   them in the workspace changelog listing, and in the exposure views.
 
-- 0.2rc4
+*0.2rc4*
 
 * The pmr2 review state is now correctly reindexes all subobject of an
   exposure when its state changes.
 * Freshly created workspace will have its empty file list correctly
   rendered.
 
-- 0.2rc5
+*0.2rc5*
 
 * Allow the editing/rearrangement of views in ExposureFile
 * Documentation pages within an exposure can now reference files in
