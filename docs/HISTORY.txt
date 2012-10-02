@@ -1,6 +1,44 @@
 Changelog
 =========
 
+0.6 - Released (2012-09-02)
+---------------------------
+
+Sixth major release of PMR2, most focus on user interfaces.
+
+* Fork/Pull from other workspaces
+  - This feature allows the forking/pulling of workspaces within PMR2,
+    and pulling data from external repositories of the same type.
+
+* Exposure wizard
+  - This replaces the exposure builder/file type selection with a more
+    streamlined interface.  This is constructed on top of the original
+    framework.
+  - Somewhat better error handling, most notibly for renamed files.
+  - Migration to updated exposure types.
+
+* Exposure export/import, exposure rollover slight overhaul.
+  - It is possible to export the exposure structure and import it into
+    another workspace on the same or different PMR2 instance (provided
+    that the same structure is supported).  This will lead into the
+    wizard.
+  - Exposure rollover will display the structure of the exposure to be
+    created before it does.  However this leveraging of the wizard also
+    provides better error handling.
+
+* Curation moved to pmr2.annotation.curation
+  - This library now provides better curation facilities, such as
+    adminstration defined flags, with user-side selection widget to
+    assign those defined values to a curation annotation on a file.
+
+* Documentation generation is now tracked by an annotation.
+
+* Default exposure file type is provided, as it is now very difficult
+  for end users to assign views manually to an exposure file.
+
+* Other bug fixes
+  - File listing no longer returns list of files for the latest commit.
+
 0.5.1 - Released (2012-06-28)
 -----------------------------
 
