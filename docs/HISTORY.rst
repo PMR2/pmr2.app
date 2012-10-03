@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.6 - Released (2012-09-02)
+0.6 - Released (2012-10-03)
 ---------------------------
 
 Sixth major release of PMR2, most focus on user interfaces.
