@@ -4,7 +4,7 @@ Changelog
 0.6 - Released (2012-10-03)
 ---------------------------
 
-Sixth major release of PMR2, most focus on user interfaces.
+Sixth major release of PMR2 Core, with major focus on user interfaces.
 
 * Fork/Pull from other workspaces
 
@@ -16,8 +16,10 @@ Sixth major release of PMR2, most focus on user interfaces.
   - This replaces the exposure builder/file type selection with a more
     streamlined interface.  This is constructed on top of the original
     framework.
-  - Somewhat better error handling, most notibly for renamed files.
-  - Migration to updated exposure types.
+  - Migration to updated exposure file types.  This indicates to users
+    that the views specified have changed, and they are given a button
+    to activate at their leisure to convert their file over to enable
+    the usage of the new set of views defined for that file type.
 
 * Exposure export/import, exposure rollover slight overhaul.
 
@@ -25,14 +27,17 @@ Sixth major release of PMR2, most focus on user interfaces.
     another workspace on the same or different PMR2 instance (provided
     that the same structure is supported).  This will lead into the
     wizard.
-  - Exposure rollover will display the structure of the exposure to be
-    created before it does.  However this leveraging of the wizard also
-    provides better error handling.
+  - Exposure rollover will display the exposure structure using the
+    wizard instead of recreating the entire structure right away.  This
+    redirection allows better error handling.
+  - Error handling leveraged includes the notification of renamed or
+    missing files in the target commit for a given exposure, instead of
+    returning a server error message.
 
 * Curation moved to pmr2.annotation.curation
 
   - This library now provides better curation facilities, such as
-    adminstration defined flags, with user-side selection widget to
+    administration defined flags, with user-side selection widget to
     assign those defined values to a curation annotation on a file.
 
 * Documentation generation is now tracked by an annotation.
@@ -40,8 +45,20 @@ Sixth major release of PMR2, most focus on user interfaces.
 * Default exposure file type is provided, as it is now very difficult
   for end users to assign views manually to an exposure file.
 
-* Other bug fixes
-  - File listing no longer returns list of files for the latest commit.
+* Internal changes and other bug fixes.
+
+  - All page layout/wrapper from the plone.z3cform classes have been
+    removed as supporting this system has become quite a task when the
+    adapter based layout is possible.  If the correct browser class for
+    a view within PMR2 is correctly defined (which is by inheriting the
+    browser classes within PMR2), the only changes required will be the
+    removal of the wrappers and then update the zcml to point to the
+    original unwrapped class.
+  - The implementation for the vocabulary `pmr2.vocab.manifest` has
+    been corrected once more to return the listing of files of the
+    correct commit as specified by context (either through the object,
+    form or request).  This is achieved by using this vocab in the
+    conjunction with pmr2.app.workspace.schema.StorageFileChoice.
 
 0.5.1 - Released (2012-06-28)
 -----------------------------
