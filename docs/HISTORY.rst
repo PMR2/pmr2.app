@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.6.1 - Unreleased
+------------------
+
+* Trap all exceptions within the documentation generator for the top
+  level exposure object also.
+
 0.6 - Released (2012-10-03)
 ---------------------------
 
