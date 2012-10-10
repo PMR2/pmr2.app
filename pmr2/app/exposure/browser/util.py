@@ -240,7 +240,11 @@ def moldExposure(exposure_context, request, exported):
                 )
                 if viewgen:
                     # and the view generator is still available
-                    viewgen(container)()
+                    try:
+                        viewgen(container)()
+                    except Exception, err:
+                        # XXX trap all here.
+                        raise ProcessingError(str(err))
 
             if IExposure.providedBy(container):
                 # only copy curation over, until this becomes an
