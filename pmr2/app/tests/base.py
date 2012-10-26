@@ -4,6 +4,7 @@ from Zope2.App import zcml
 from Products.Five import fiveconfigure
 from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import onsetup, onteardown
+from pmr2.testing import base
 
 
 @onsetup
@@ -23,3 +24,9 @@ def teardown():
 setup()
 teardown()
 ptc.setupPloneSite(products=('pmr2.app',))
+
+
+class TestCase(base.TestCase):
+    """\
+    PMR2 functional test case.
+    """
