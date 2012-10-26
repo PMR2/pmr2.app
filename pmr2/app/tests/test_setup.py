@@ -1,12 +1,20 @@
 from unittest import TestSuite, makeSuite
-from pmr2.testing.base import TestCase
+
 from zope.app.component.hooks import getSite
+from zope.app.publication.zopepublication import BeforeTraverseEvent
+
+from plone.browserlayer.layer import mark_layer
+
+from Products.PloneTestCase import ptc
 from Products.CMFCore.utils import getToolByName
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 
-from pmr2.app.tests import base
+ptc.setupPloneSite(extension_profiles=('pmr2.app:default',))
 
-class TestProductInstall(TestCase):
+
+class TestProductInstall(ptc.PloneTestCase):
+    # Using the vanilla ptc test class for we are testing integration
+    # of our installation with core Plone parts.
 
     def afterSetUp(self):
         self.types = {
@@ -17,6 +25,10 @@ class TestProductInstall(TestCase):
             'Sandbox': None,
             'Exposure': 'pmr2_exposure_workflow',
         }
+
+        self.addProfile('pmr2.app:default')
+        event = BeforeTraverseEvent(self.portal, self.portal.REQUEST)
+        mark_layer(self.portal, event)
 
     def testTypesInstalled(self):
         for t in self.types.keys():
@@ -35,6 +47,12 @@ class TestProductInstall(TestCase):
         uf = getToolByName(site, 'acl_users')
         activated_pn = uf.plugins.listPluginIds(IChallengePlugin)
         self.assertEqual(activated_pn[0], 'pmr2authpas')
+
+    def testLayerApplied(self):
+        from pmr2.app.exposure.interfaces import IPMR2ExposureLayer
+        from pmr2.app.interfaces import IPMR2AppLayer
+        self.assertTrue(IPMR2ExposureLayer.providedBy(self.portal.REQUEST))
+        self.assertTrue(IPMR2AppLayer.providedBy(self.portal.REQUEST))
 
 
 def test_suite():
