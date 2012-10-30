@@ -378,7 +378,6 @@ class WorkspaceLogRss(page.RssPage):
 
     shortlog = False
     maxchanges = 50  # default value.
-    index = None  # XXX temporary method to disable boilerplate
 
     def items(self):
         storage = zope.component.queryAdapter(self.context, IStorage)

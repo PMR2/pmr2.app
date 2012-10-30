@@ -8,22 +8,19 @@ _ = MessageFactory("pmr2")
 
 from pmr2.app.schema import ObjectId
 
+try:
+    from pmr2.z3cform.interfaces import IPublishTraverse
+    zope.deprecation.deprecated('IPublishTraverse', 
+        'IPublishTraverse has been moved to pmr2.z3cform.interfaces.  '
+        'Please update the import location before pmr2.app-0.7')
+except ImportError:
+    pass
+
 
 class IThemeSpecific(IDefaultPloneLayer):
     """\
     Marker interface that defines a Zope 3 browser layer.
     """
-
-
-class IPublishTraverse(zope.publisher.interfaces.IPublishTraverse):
-    """\
-    Our specialized traversal class with specifics defined.
-    """
-
-    traverse_subpath = zope.schema.List(
-        title=u'Traverse Subpath',
-        description=u'A list of traversal subpaths that got captured.',
-    )
 
 
 class IPMR2Form(zope.interface.Interface):
