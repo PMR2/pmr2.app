@@ -27,13 +27,15 @@ from DateTime import DateTime
 from Acquisition import aq_parent, aq_inner
 from Products.statusmessages.interfaces import IStatusMessage
 
+from pmr2.z3cform import form
+from pmr2.z3cform import page
+
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from pmr2.app.interfaces.exceptions import *
 
-from pmr2.app.browser import interfaces
-from pmr2.app.browser import form
-from pmr2.app.browser import page
+from pmr2.app.browser.interfaces import IObjectIdMixin
+from pmr2.app.browser.page import NavPage, RssPage
 
 from pmr2.app.workspace import table
 from pmr2.app.workspace.exceptions import *
@@ -326,7 +328,7 @@ class WorkspacePage(page.SimplePage):
         return super(WorkspacePage, self).render()
 
 
-class WorkspaceLog(WorkspaceTraversePage, page.NavPage):
+class WorkspaceLog(WorkspaceTraversePage, NavPage):
 
     zope.interface.implements(IWorkspaceLogProvider)
 
@@ -374,7 +376,7 @@ class WorkspaceShortlog(WorkspaceLog):
 #    tbl = table.WorkspacePageShortlogTable
 #
 
-class WorkspaceLogRss(page.RssPage):
+class WorkspaceLogRss(RssPage):
 
     shortlog = False
     maxchanges = 50  # default value.
@@ -402,7 +404,7 @@ class WorkspaceAddForm(form.AddForm):
     Workspace add form.
     """
 
-    fields = z3c.form.field.Fields(interfaces.IObjectIdMixin) + \
+    fields = z3c.form.field.Fields(IObjectIdMixin) + \
              z3c.form.field.Fields(IWorkspace)
     clsobj = Workspace
     label = "Workspace Object Creation Form"
@@ -622,7 +624,7 @@ class BaseFilePage(WorkspaceTraversePage):
         pass
 
     def call_template(self):
-        self.index = None
+        self.omit_index = True
         return self.__call__()
 
 

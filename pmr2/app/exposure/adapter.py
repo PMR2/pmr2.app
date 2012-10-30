@@ -12,7 +12,6 @@ from pmr2.app.workspace.interfaces import IStorage, ICurrentCommitIdProvider
 
 from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
-from pmr2.app.browser.interfaces import IPublishTraverse
 
 
 def ExposureToWorkspaceAdapter(context):

@@ -16,6 +16,9 @@ from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 
+from pmr2.z3cform import form
+from pmr2.z3cform import page
+
 from pmr2.app.workspace.interfaces import IStorage, IWorkspace
 from pmr2.app.workspace.interfaces import ICurrentCommitIdProvider
 from pmr2.app.workspace.exceptions import *
@@ -23,13 +26,8 @@ from pmr2.app.workspace.browser.browser import WorkspaceLog
 
 from pmr2.app.interfaces import *
 from pmr2.app.interfaces.exceptions import *
-from pmr2.app.browser.interfaces import *
 from pmr2.app.annotation.interfaces import *
 from pmr2.app.exposure.content import *
-
-from pmr2.app.browser import form
-from pmr2.app.browser import page
-from pmr2.app.browser import widget
 
 from pmr2.app.exposure import table
 from pmr2.app.exposure.interfaces import *

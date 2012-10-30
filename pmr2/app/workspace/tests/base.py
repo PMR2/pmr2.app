@@ -18,7 +18,7 @@ from pmr2.testing import utils
 from pmr2.testing.base import DocTestCase
 from pmr2.testing.base import TestRequest
 
-from pmr2.app.browser.interfaces import IPublishTraverse
+from pmr2.z3cform.interfaces import IPublishTraverse
 
 @onsetup
 def setup():

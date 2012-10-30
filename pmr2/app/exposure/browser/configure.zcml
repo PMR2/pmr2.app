@@ -6,7 +6,7 @@
   <include file="adapter.zcml"/>
   <include file="groups.zcml"/>
 
-  <!-- macros for workarounds -->
+  <!-- macros specific to exposure type to allow recursive groups -->
 
   <browser:page
       name="ploneform-macros"

@@ -14,9 +14,8 @@ from plone.z3cform.fieldsets import group, extensible
 
 from Products.statusmessages.interfaces import IStatusMessage
 
-from pmr2.app.browser import form
-from pmr2.app.browser import page
-from pmr2.app.browser import widget
+from pmr2.z3cform import form
+from pmr2.z3cform import page
 
 from pmr2.app.workspace.interfaces import ICurrentCommitIdProvider
 

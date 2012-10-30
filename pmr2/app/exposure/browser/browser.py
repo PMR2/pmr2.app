@@ -30,6 +30,9 @@ from zope.app.pagetemplate.viewpagetemplatefile \
     import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
+from pmr2.z3cform import form
+from pmr2.z3cform import page
+
 from pmr2.app.workspace.interfaces import IStorage, ICurrentCommitIdProvider
 from pmr2.app.workspace.exceptions import *
 
@@ -38,14 +41,10 @@ from pmr2.app.exposure.browser.interfaces import *
 
 from pmr2.app.interfaces import *
 from pmr2.app.interfaces.exceptions import *
-from pmr2.app.browser.interfaces import *
 from pmr2.app.annotation.interfaces import *
 from pmr2.app.annotation.factory import has_note, del_note
+from pmr2.app.browser.interfaces import IObjectIdMixin
 from pmr2.app.exposure.content import *
-
-from pmr2.app.browser import form
-from pmr2.app.browser import page
-from pmr2.app.browser import widget
 
 from pmr2.app.exposure.browser.util import getExposureFileType, getGenerator
 from pmr2.app.exposure.browser.util import fieldvalues, moldExposure

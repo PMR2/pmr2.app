@@ -5,7 +5,6 @@ import zope.component
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from pmr2.app.interfaces.exceptions import *
-from pmr2.app.browser.interfaces import IPublishTraverse
 
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace.exceptions import *
