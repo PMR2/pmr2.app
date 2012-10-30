@@ -2,8 +2,7 @@ import os.path
 
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
 
-from pmr2.app.interfaces import IPMR2AppLayer
-from pmr2.app.browser import templates
+from plone.app.z3cform import templates
 
 path = lambda p: os.path.join(os.path.dirname(__file__), 'templates', p)
 

@@ -1,20 +1,4 @@
-import os.path
-
 import zope.deprecation
-from plone.z3cform.interfaces import IForm, IWrappedForm
-from plone.z3cform.templates import ZopeTwoFormTemplateFactory
-
-from pmr2.app.interfaces import IPMR2AppLayer
-import pmr2.app.browser
-
-path = lambda p: os.path.join(os.path.dirname(pmr2.app.browser.__file__), 
-                              'templates', p)
-
-wrapped_form_factory = ZopeTwoFormTemplateFactory(path('wrapped_form.pt'),
-    form=IWrappedForm, request=IPMR2AppLayer)
-
-form_factory = ZopeTwoFormTemplateFactory(path('form.pt'), 
-    form=IForm, request=IPMR2AppLayer)
 
 try:
     from pmr2.z3cform.form import Form

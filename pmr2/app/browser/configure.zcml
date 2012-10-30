@@ -5,9 +5,6 @@
 
   <include package="pmr2.app.security" />
 
-  <adapter factory=".form.form_factory" />
-  <adapter factory=".form.wrapped_form_factory" />
-
   <!-- macros adapters -->
 
   <browser:page
