@@ -176,6 +176,7 @@ def moldExposure(exposure_context, request, exported):
                 # this informally declared object.
                 ctxobj = fgen.ctxobj
 
+            views = []
             for view, view_fields in fields['views']:
                 # generate views
                 annotatorFactory = zope.component.getUtility(
@@ -191,6 +192,7 @@ def moldExposure(exposure_context, request, exported):
                     # present.  Refer to commit d5d308226767
                     annotator = annotatorFactory(ctxobj, request)
                     annotator(data)
+                    views.append(view)
                 except RequiredMissing:
                     # this does not cover cases where schema have
                     # changed, or the old scheme into the new scheme.
@@ -218,6 +220,12 @@ def moldExposure(exposure_context, request, exported):
 
             # only ExposureFiles have this
             if IExposureFile.providedBy(ctxobj):
+                # The annotator handles the appending of the view to the
+                # final list of views that are to be made visible, but
+                # it does not care about the order.  This corrects the
+                # order based on the order we append it here.
+                views = [view for view in views if view in ctxobj.views]
+                ctxobj.views = views
                 ctxobj.selected_view = fields['selected_view']
                 ctxobj.file_type = caststr(fields['file_type'])
                 ctxobj.setSubject(fields['Subject'])
