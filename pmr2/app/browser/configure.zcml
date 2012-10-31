@@ -5,26 +5,6 @@
 
   <include package="pmr2.app.security" />
 
-  <!-- macros adapters -->
-
-  <browser:page
-      name="pmr2-macros"
-      for="*"
-      layer="*"
-      class="pmr2.app.browser.templates.PMR2PlainMacros"
-      allowed_interface="zope.interface.common.mapping.IItemMapping"
-      permission="zope.Public"
-      />
-
-  <browser:page
-      name="pmr2-macros"
-      for="*"
-      layer="pmr2.app.interfaces.IPMR2AppLayer"
-      class="pmr2.app.browser.templates.PMR2MainMacros"
-      allowed_interface="zope.interface.common.mapping.IItemMapping"
-      permission="zope.Public"
-      />
-
   <!-- widget adapters -->
   
   <adapter
