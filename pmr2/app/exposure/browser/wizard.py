@@ -68,7 +68,7 @@ class StructureWrapper(Location):
         return self._structure
 
 
-class BaseSubGroup(form.Form, form.Group):
+class BaseSubGroup(form.PostForm, form.Group):
 
     zope.interface.implements(ICurrentCommitIdProvider)
 
