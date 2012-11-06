@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.6.2 - Unreleased
+------------------
+
+* Override the CMF add object for Exposures with a page directing users
+  to the intended method to create exposures.
+
 0.6.1 - Released (2012-10-17)
 -----------------------------
 
