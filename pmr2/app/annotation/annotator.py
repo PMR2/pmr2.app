@@ -69,6 +69,8 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
 
     def _annotate(self, data):
         note = self.note
+        # XXX is this try... except... necessary?  Would we need to
+        # catch WrongType instead?
         try:
             for a, v in data:
                 # XXX figure out how to gracefully handle schema errors
