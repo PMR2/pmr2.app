@@ -1,6 +1,6 @@
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
 
-from pmr2.z3cform import page
+from pmr2.app.browser import page
 
 from pmr2.app.exposure.browser.templates import path
 
