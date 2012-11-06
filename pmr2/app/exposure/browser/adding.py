@@ -10,4 +10,5 @@ class ExposureCreateInterceptPage(page.SimplePage):
     Direct users to the proper way to create exposures.
     """
 
+    label = u'Create Exposure'
     template = ViewPageTemplateFile(path('exposure_create.pt'))

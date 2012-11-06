@@ -21,7 +21,7 @@
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">exposure_info</property>
- <property name="add_view_expr">string:${folder_url}/@@exposure_create</property>
+ <property name="add_view_expr">string:${folder_url}/+/addExposure</property>
  <property name="view_methods">
   <element value="exposure_info"/>
   <element value="document_view"/>

@@ -280,13 +280,6 @@
       permission="cmf.AddPortalContent"
       />
 
-  <browser:page
-      for="*"
-      name="exposure_create"
-      class=".adding.ExposureCreateInterceptPage"
-      permission="cmf.AddPortalContent"
-      />
-
   <!-- extensible form adapters -->
 
   <adapter 
