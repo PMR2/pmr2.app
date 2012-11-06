@@ -269,14 +269,14 @@ portal objects, rendering this unworkable.
           <td>1970-01-01 00:00</td>
           <td>user &lt;user@example.com&gt;</td>
           <td>a log</td>
-          <td><a href="urn:example:/@@file/a12345/">[manifest]...</a></td>
+          <td><a href="urn:example:/@@file/a12345/">[files]...</a></td>
           ...
         </tr>
         <tr>
           <td>1970-01-02 00:00</td>
           <td>user &lt;user@example.com&gt;</td>
           <td>another log &gt;&lt;</td>
-          <td><a href="urn:example:/@@file/c0ffee/">[manifest]...</a></td>
+          <td><a href="urn:example:/@@file/c0ffee/">[files]...</a></td>
           ...
         </tr>
       </tbody>
