@@ -1,5 +1,8 @@
 <p>
 To create an exposure, please do so from the file listing of a changeset
-within the workspace you wish to create an exposure of.
+within the workspace you wish to create an exposure of.  The file 
+listing can be accessed by selecting 'files' item on the menu bar within 
+a workspace, or select 'history' and then select '[files]' for the
+specific changeset you wish to create an exposure of.
 </p>
 
