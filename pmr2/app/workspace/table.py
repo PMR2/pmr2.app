@@ -219,7 +219,7 @@ class ShortlogOptionColumn(ItemKeyColumn):
 
     def renderCell(self, item):
         result = [
-            u'<a href="%s/@@file/%s/">[manifest]</a>' % \
+            u'<a href="%s/@@file/%s/">[files]</a>' % \
                 (self.context.absolute_url(), self.getItem(item)),
         ]
         # should render changeset link for diffs and other types once a
