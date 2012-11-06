@@ -273,6 +273,20 @@
       permission="cmf.AddPortalContent"
       />
 
+  <browser:page
+      for="Products.Five.browser.adding.ContentAdding"
+      name="addExposure"
+      class=".adding.ExposureCreateInterceptPage"
+      permission="cmf.AddPortalContent"
+      />
+
+  <browser:page
+      for="*"
+      name="exposure_create"
+      class=".adding.ExposureCreateInterceptPage"
+      permission="cmf.AddPortalContent"
+      />
+
   <!-- extensible form adapters -->
 
   <adapter 
