@@ -1,11 +1,17 @@
 Changelog
 =========
 
-0.6.1 - Unreleased
+0.6.2 - Unreleased
 ------------------
 
-* Trap all exceptions within the documentation generator for the top
-  level exposure object also.
+* Override the CMF add object for Exposures with a page directing users
+  to the intended method to create exposures.
+
+0.6.1 - Released (2012-10-17)
+-----------------------------
+
+* Trap the error for the documentation generator on the root exposure
+  object.
 
 0.6 - Released (2012-10-03)
 ---------------------------
