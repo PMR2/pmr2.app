@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.6.3 - Released (2012-11-07)
+-----------------------------
+
+* Remove dependency on pmr2.z3cform as this will not be a dependency for
+  the current version of pmr2.app.
+* Test case updated to be compatible with z3c.table>=1.0.0
+
 0.6.2 - Released (2012-11-06)
 -----------------------------
 
