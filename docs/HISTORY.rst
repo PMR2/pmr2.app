@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.6.4 - Released (2012-11-07)
+-----------------------------
+
+* Replace a call to getToolByName with getattr as the target is an 
+  attribute.
+
 0.6.3 - Released (2012-11-07)
 -----------------------------
 
