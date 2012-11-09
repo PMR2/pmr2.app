@@ -327,6 +327,7 @@ class ExposureFileTypeDisplayForm(form.DisplayForm):
 
     fields = z3c.form.field.Fields(IExposureFileType)
     label = "Exposure File Type viewer"
+    id = ''
 
 
 class ExposureFileTypeChoiceForm(form.PostForm):
