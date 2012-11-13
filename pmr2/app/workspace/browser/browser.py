@@ -433,7 +433,6 @@ class WorkspaceStorageCreateForm(WorkspaceAddForm):
         storage.create(ctxobj)
 
 
-
 class WorkspaceEditForm(form.EditForm):
     """\
     Workspace edit form.
