@@ -260,7 +260,7 @@
   -->
 
   <browser:page
-      for="Products.Five.browser.adding.ContentAdding"
+      for="plone.app.content.browser.adding.CMFAdding"
       name="addExposureFileType"
       class=".browser.ExposureFileTypeAddForm"
       permission="cmf.AddPortalContent"
@@ -274,7 +274,7 @@
       />
 
   <browser:page
-      for="Products.Five.browser.adding.ContentAdding"
+      for="plone.app.content.browser.adding.CMFAdding"
       name="addExposure"
       class=".adding.ExposureCreateInterceptPage"
       permission="cmf.AddPortalContent"
