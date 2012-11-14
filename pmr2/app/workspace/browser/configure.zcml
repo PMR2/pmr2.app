@@ -36,7 +36,12 @@
       permission="pmr2.app.security.ManagePMR2"
       />
 
-  <!-- this creates the object and the storage, fails if storage exists -->
+  <!-- 
+    this creates the object and the storage, fails if storage exists 
+    
+    Deprecated.  All links to creation forms should reference the adding
+    view (i.e. `/+/addWorkspace`).
+  -->
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspaceContainer"
       name="workspace_create"
@@ -210,7 +215,11 @@
       />
 
   <!--
-    adapter for the adding view.
+    Define an adding view restricted to WorkspaceContainers, so that
+    the addWorkspace view, anchoring to this, will not be accessible
+    from the global adding view.  This restricts users from adding
+    Workspace objects all over the site (complicating management 
+    efforts).
   -->
 
   <browser:view
@@ -219,6 +228,10 @@
       class="pmr2.app.workspace.browser.adding.WorkspaceContainerAdding"
       permission="cmf.AddPortalContent"
       />
+
+  <!--
+    The addWorkspace view.
+  -->
 
   <browser:page
       for="pmr2.app.workspace.browser.adding.WorkspaceContainerAdding"
