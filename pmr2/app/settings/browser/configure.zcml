@@ -1,0 +1,25 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="pmr2">
+
+  <!-- Extensible form adapters for the form below. -->
+
+  <adapter 
+      factory=".form.PMR2PluginSettingsExtender"
+      name="pmr2.plugin.extender"
+      />
+
+  <!--
+    For the Plone Control Panel, to change PMR2 global settings.
+  -->
+
+  <browser:page
+      for="Products.CMFPlone.Portal.PloneSite"
+      name="pmr2-settings"
+      class=".form.PMR2GlobalSettingsEditForm"
+      permission="cmf.ManagePortal"
+      layer="pmr2.app.interfaces.IPMR2AppLayer"
+      />
+
+</configure>
