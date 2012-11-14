@@ -1,0 +1,30 @@
+PMR2 Dashboard
+==============
+
+Initialize and test that the environment works.
+::
+
+    >>> from zope.component import getUtility
+    >>> from pmr2.app.settings.interfaces import IPMR2GlobalSettings
+    >>> from pmr2.app.settings.browser import view
+    >>> from pmr2.testing.base import TestRequest
+    >>> 
+    >>> getUtility(IPMR2GlobalSettings)
+    <pmr2.app.settings.settings.PMR2GlobalSettingsAnnotation object ...>
+
+See that the dashboard page renders.
+::
+
+    >>> request = TestRequest()
+    >>> dashboard = view.DashboardView(self.portal, request)
+    >>> result = dashboard()
+
+See that the redirection is generated properly for the generic view.
+::
+
+    >>> request = TestRequest()
+    >>> testpage = view.WorkspaceDashboardPage(self.portal, request)
+    >>> testpage.getTarget()
+    'http://nohost/plone/w/test_user_1_/'
+
+

@@ -12,6 +12,7 @@ import zope.component
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory('pmr2')
 
+from AccessControl import Unauthorized
 from OFS.interfaces import ITraversable
 
 try:
@@ -162,7 +163,7 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
     def getCurrentUserWorkspaceContainer(self):
         pm = getToolByName(self.__parent__, 'portal_membership')
         if pm.isAnonymousUser():
-            return None
+            raise Unauthorized()
         user = pm.getAuthenticatedMember()
         return self.getWorkspaceContainer(user.id)
 

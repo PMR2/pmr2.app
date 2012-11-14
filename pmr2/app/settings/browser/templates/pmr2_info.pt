@@ -1,0 +1,20 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="pmr2.app">
+
+  <body>
+
+    <h3>Physiome Model Repository Dashboard</h3>
+
+    <ul>
+      <tal:loop tal:repeat="i view/actions">
+      <li>
+        <a tal:attributes="href i/href" tal:content="i/label">Option</a>
+      </li>
+      </tal:loop>
+    </ul>
+
+  </body>
+</html>

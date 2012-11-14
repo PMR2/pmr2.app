@@ -7,7 +7,8 @@ from zope.app.container.interfaces import IContainer
 _ = MessageFactory('pmr2')
 
 import z3c.form
-from plone.z3cform.fieldsets import group, extensible
+from plone.z3cform.fieldsets import extensible
+from plone.z3cform.fieldsets import group
 
 from pmr2.z3cform import form
 

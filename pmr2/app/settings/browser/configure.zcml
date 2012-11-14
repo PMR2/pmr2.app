@@ -22,4 +22,32 @@
       layer="pmr2.app.interfaces.IPMR2AppLayer"
       />
 
+  <!--
+    Views.
+  -->
+
+  <browser:view
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      name="pmr2-dashboard"
+      class=".view.DashboardView"
+      permission="zope2.View"
+      layer="pmr2.app.interfaces.IPMR2AppLayer"
+      />
+
+  <browser:page
+      for=".view.DashboardView"
+      name="workspace-home"
+      class=".view.WorkspaceHomePage"
+      permission="zope2.View"
+      layer="pmr2.app.interfaces.IPMR2AppLayer"
+      />
+
+  <browser:page
+      for=".view.DashboardView"
+      name="workspace-add"
+      class=".view.WorkspaceAddPage"
+      permission="zope2.View"
+      layer="pmr2.app.interfaces.IPMR2AppLayer"
+      />
+
 </configure>
