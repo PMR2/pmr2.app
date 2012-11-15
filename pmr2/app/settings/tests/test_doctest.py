@@ -12,7 +12,7 @@ def test_suite():
 
         # Content tests.
         ztc.ZopeDocFileSuite(
-            'settings.txt', package='pmr2.app.settings',
+            'settings.txt', package='pmr2.app.settings.browser',
             test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
