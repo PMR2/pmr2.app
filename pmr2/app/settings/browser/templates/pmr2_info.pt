@@ -11,7 +11,7 @@
     <ul>
       <tal:loop tal:repeat="i view/actions">
       <li>
-        <a tal:attributes="href i/href" tal:content="i/label">Option</a>
+        <a tal:attributes="href i/action" tal:content="i/label">Option</a>
       </li>
       </tal:loop>
     </ul>

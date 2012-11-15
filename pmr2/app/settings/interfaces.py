@@ -126,3 +126,13 @@ class IPMR2PluggableSettings(zope.interface.Interface):
     """
 
 
+class IDashboard(zope.interface.Interface):
+    """\
+    Dashboard for PMR2.
+    """
+
+
+class IDashboardOption(zope.interface.Interface):
+    """\
+    An option appended to the Dashboard.
+    """

@@ -1,31 +1,58 @@
 PMR2 Dashboard
 ==============
 
-Initialize and test that the environment works.
+Initialize a dummy layer.
 ::
 
-    >>> from zope.component import getUtility
-    >>> from pmr2.app.settings.interfaces import IPMR2GlobalSettings
-    >>> from pmr2.app.settings.browser import view
+    >>> import zope.interface
+    >>> import zope.component
+    >>> from pmr2.app.settings.interfaces import IDashboard, IDashboardOption
+    >>> from pmr2.app.settings.browser import dashboard
     >>> from pmr2.testing.base import TestRequest
-    >>> 
-    >>> getUtility(IPMR2GlobalSettings)
-    <pmr2.app.settings.settings.PMR2GlobalSettingsAnnotation object ...>
+    >>> class IDummyLayer(zope.interface.Interface):
+    ...     pass
+    ... 
+    >>> request = TestRequest()
+    >>> zope.interface.alsoProvides(request, IDummyLayer)
 
-See that the dashboard page renders.
+See that the dashboard page renders.  Note the lack of options.
 ::
 
-    >>> request = TestRequest()
-    >>> dashboard = view.DashboardView(self.portal, request)
-    >>> dashboard.__name__ = 'test-dashboard'
-    >>> result = dashboard()
+    >>> db = dashboard.Dashboard(self.portal, request)
+    >>> db.__name__ = 'dashboard'
+    >>> result = db()
+    >>> print result
+    <BLANKLINE>
+    ...
+    <h3>Physiome Model Repository Dashboard</h3>
+    <ul>
+    </ul>
+    ...
 
-See that the redirection is generated properly for the generic view.
+Register a dummy option.
 ::
 
-    >>> request = TestRequest()
-    >>> testpage = view.WorkspaceDashboardPage(self.portal, request)
-    >>> testpage.getTarget()
-    'http://nohost/plone/w/test_user_1_/'
+    >>> class DummyOption(dashboard.DashboardOption):
+    ...     title = 'Dummy option'
+    ...     def getTarget(self):
+    ...         return 'target/dummyoption'
+    ...
+    >>> sm = zope.component.getSiteManager()
+    >>> sm.registerAdapter(DummyOption, (IDashboard, IDummyLayer), 
+    ...     IDashboardOption, 'dummy_option')
+    ...
 
+See that the dashboard page renders with the newly registered option.
+::
 
+    >>> result = db()
+    >>> print result
+    <BLANKLINE>
+    ...
+    <h3>Physiome Model Repository Dashboard</h3>
+    <ul>
+      <li>
+        <a href=".../dashboard/dummy_option">Dummy option</a>
+      </li>
+    </ul>
+    ...
