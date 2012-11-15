@@ -10,16 +10,16 @@ from pmr2.app.workspace.tests.base import WorkspaceDocTestCase
 def test_suite():
     return unittest.TestSuite([
 
-        # Content tests.
+        # Settings configuration panel.
         ztc.ZopeDocFileSuite(
             'settings.txt', package='pmr2.app.settings.browser',
             test_class=base.DocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
-        # Content tests.
+        # Dashboard
         ztc.ZopeDocFileSuite(
-            'view.txt', package='pmr2.app.settings.browser',
+            'dashboard.txt', package='pmr2.app.settings.browser',
             test_class=WorkspaceDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
