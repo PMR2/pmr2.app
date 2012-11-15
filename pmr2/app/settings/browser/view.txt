@@ -17,6 +17,7 @@ See that the dashboard page renders.
 
     >>> request = TestRequest()
     >>> dashboard = view.DashboardView(self.portal, request)
+    >>> dashboard.__name__ = 'test-dashboard'
     >>> result = dashboard()
 
 See that the redirection is generated properly for the generic view.

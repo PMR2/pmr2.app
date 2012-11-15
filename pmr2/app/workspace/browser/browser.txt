@@ -260,6 +260,31 @@ Main page should render fine, too.
     ...     self.portal.workspace.cake, request)
     >>> wp_result = testpage()
 
+-----------------------------------
+Restrictions to Workspace Locations
+-----------------------------------
+
+On the integration side, the WorkspaceStorageCreateForm is made
+available under a subclassed adding view specifically for 
+IWorkspaceContainer, so that it will not be made available elsewhere
+which would then allow end users to add Workspace to anywhere.  To
+simplify this demonstration, the test browser instance will be used.
+
+If the addWorkspace view is attempted to be access from portal root, it
+will fail.
+::
+
+    >>> tb = self.testbrowser
+    >>> tb.open(self.portal.absolute_url() + '/+/addWorkspace')
+    Traceback (most recent call last):
+    ...
+    HTTPError: HTTP Error 404: Not Found
+
+At a WorkspaceContainer, the page should open with no issues.
+::
+
+    >>> tb = self.testbrowser
+    >>> tb.open(self.portal.absolute_url() + '/workspace/+/addWorkspace')
 
 -----------------
 Workspace Forking
@@ -271,20 +296,8 @@ the instance itself would save significant time, not to mention make it
 potentially easier to track the heritiage of any given model.
 
 As this feature makes use of the user workspace, and how the permissions
-for this view is managed manually, we will need the test browser class
-for this.
-
-Instantiate the environment and log in the default user.
-::
-
-    >>> from Testing.testbrowser import Browser
-    >>> from Products.PloneTestCase.setup import default_user, default_password
-    >>> tb = Browser()
-    >>> portal_url = self.portal.absolute_url()
-    >>> tb.open(portal_url + '/login')
-    >>> tb.getControl(name='__ac_name').value = default_user
-    >>> tb.getControl(name='__ac_password').value = default_password
-    >>> tb.getControl(name='submit').click()
+for this view is managed manually, the testbrowser will be used for this
+series of demonstrations.
 
 The user's workspace container should have been created:
 ::
@@ -368,7 +381,8 @@ After forking a workspace, a user may desire to sync with a source
 workspace or external one.  Log the browser user back in.
 ::
 
-    >>> tb.open(portal_url + '/login')
+    >>> from Products.PloneTestCase.setup import default_user, default_password
+    >>> tb.open(self.portal.absolute_url() + '/login')
     >>> tb.getControl(name='__ac_name').value = default_user
     >>> tb.getControl(name='__ac_password').value = default_password
     >>> tb.getControl(name='submit').click()

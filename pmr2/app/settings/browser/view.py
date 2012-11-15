@@ -21,6 +21,8 @@ class DashboardView(page.SimplePage):
         ]
 
 
+# XXX consider moving some of these to be under pmr2.app.workspace.
+
 class WorkspaceDashboardPage(page.SimplePage):
 
     template = ViewPageTemplateFile(path('no_default_container.pt'))
