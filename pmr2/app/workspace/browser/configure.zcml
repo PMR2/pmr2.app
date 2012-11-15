@@ -241,4 +241,24 @@
       permission="cmf.AddPortalContent"
       />
 
+  <!-- Dashboard options -->
+
+  <browser:view
+      for="pmr2.app.settings.interfaces.IDashboard"
+      name="workspace-home"
+      class=".dashboard.WorkspaceHome"
+      permission="zope2.View"
+      layer="pmr2.app.interfaces.IPMR2AppLayer"
+      provides="pmr2.app.settings.interfaces.IDashboardOption"
+      />
+
+  <browser:view
+      for="pmr2.app.settings.interfaces.IDashboard"
+      name="workspace-add"
+      class=".dashboard.WorkspaceAdd"
+      permission="zope2.View"
+      layer="pmr2.app.interfaces.IPMR2AppLayer"
+      provides="pmr2.app.settings.interfaces.IDashboardOption"
+      />
+
 </configure>

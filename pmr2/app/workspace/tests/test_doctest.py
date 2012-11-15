@@ -25,6 +25,13 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
+        # Dashboard.
+        ztc.ZopeDocFileSuite(
+            join('browser', 'dashboard.txt'), package='pmr2.app.workspace',
+            test_class=base.WorkspaceDocTestCase,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
+        ),
+
         # widget converter
         ztc.ZopeDocFileSuite(
             join('widgets', 'converter.txt'), package='pmr2.app.workspace',

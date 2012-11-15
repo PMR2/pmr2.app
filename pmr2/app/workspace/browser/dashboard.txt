@@ -1,0 +1,21 @@
+Workspace Options for Dashboard
+===============================
+
+Make use of the test browser class and see the Dashboard Options 
+introduced by workspaces.
+::
+
+    >>> tb = self.testbrowser
+    >>> tb.open(self.portal.absolute_url() + '/pmr2-dashboard')
+    >>> tb.getLink('List personal workspaces').url
+    'http://nohost/plone/pmr2-dashboard/workspace-home'
+    >>> tb.getLink('Create personal workspace').url
+    'http://nohost/plone/pmr2-dashboard/workspace-add'
+
+Trigger the link and the redirection to the actual content should 
+follow.
+::
+
+    >>> tb.getLink('Create personal workspace').click()
+    >>> tb.url
+    'http://nohost/plone/w/test_user_1_/+/addWorkspace'
