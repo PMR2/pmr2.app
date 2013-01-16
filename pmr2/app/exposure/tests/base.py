@@ -3,6 +3,9 @@ from os.path import join
 
 import zope.component
 from zope.component import testing
+from zope.app.publication.zopepublication import BeforeTraverseEvent
+from plone.browserlayer.layer import mark_layer
+
 from Testing import ZopeTestCase as ztc
 from Zope2.App import zcml
 from Products.CMFCore.utils import getToolByName
@@ -132,3 +135,8 @@ class CompleteDocTestCase(ExposureDocTestCase):
         e.commit_id = commit_id
         self.portal.exposure[id_] = e
         self.portal.exposure[id_].reindexObject()
+
+    def markLayer(self):
+        # Helper method to trigger the mark layer event.
+        event = BeforeTraverseEvent(self.portal, self.portal.REQUEST)
+        mark_layer(self.portal, event)
