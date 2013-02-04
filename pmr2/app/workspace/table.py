@@ -390,4 +390,4 @@ class FileManifestTable(z3c.table.table.Table):
 
     sortOn = None
     startBatchingAt = maxint
-    cssClasses = {'table': 'workspace-manifest'}
+    cssClasses = {'table': 'workspace-manifest listing'}

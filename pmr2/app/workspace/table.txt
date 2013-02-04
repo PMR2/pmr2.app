@@ -327,7 +327,7 @@ ValuesMixin and friends.  Please fix.
     >>> t = table.FileManifestTable(context, request)
     >>> t.update()
     >>> print t.render()
-    <table class="workspace-manifest">
+    <table class="workspace-manifest listing">
       <thead>
         <tr>
           <th>Filename</th>
