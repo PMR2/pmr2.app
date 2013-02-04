@@ -112,6 +112,7 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
             # is in self.for_interface.names()
             self._annotate(data)
             self._append_view()
+            # Nothing more to do as only generated data are dealt with.
             return
 
         # this must be editable notes.
@@ -120,6 +121,8 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
             self._annotate(data)
             # XXX there may be cases a view is undefined.  Migration will
             # have to take note of this.
+            # XXX if data is NOT present, the note entry will NOT be
+            # appended.
             self._append_view()
         else:
             # Q: Sould a warning be raised about that no data had been
@@ -128,8 +131,10 @@ class ExposureFileAnnotatorBase(NamedUtilBase):
             # process.  Could use a test case.
             pass
 
+        # Wrapup, handle 
+
         if IExposureFilePostEditAnnotator.providedBy(self):
-            # The subclass that implements generate must vadlidate any
+            # The subclass that implements generate must validate any
             # data which may (or not) be annotated above.
             data = self.generate()
             self._annotate(data)

@@ -733,6 +733,8 @@ this exposure represents.
     >>> b.getControl(name='form.buttons.build').click()
     >>> zope.component.getAdapter(context.file2, name='filename_note').filename
     'file2'
+    >>> sorted(context.file2.views)
+    [u'docgen', u'filename_note']
 
 -----------------
 Directory entries
@@ -807,6 +809,29 @@ rendering of the form.
     >>> len(form.groups)
     4
     >>> result = form.render()
+
+Now build this thing.  The file should be generated and the views be
+appended::
+
+    >>> target = context.absolute_url() + '/@@wizard'
+    >>> b.open(target)
+    >>> b.getControl(name='form.buttons.build').click()
+    >>> context.dir1.nested.file.views
+    []
+
+Or not, as the data was not populated, no views entry were generated.
+Retry again with these entered::
+
+    >>> ewiz.structure[0][1]['views'] = [
+    ...     (u'docgen', {'source': 'dir1/nested/file',
+    ...                            'generator': u'safe_html'}),
+    ...     (u'filename_note', {'filename': 'dir1/nested/file'})
+    ... ]
+    >>> target = context.absolute_url() + '/@@wizard'
+    >>> b.open(target)
+    >>> b.getControl(name='form.buttons.build').click()
+    >>> context.dir1.nested.file.views
+    [u'docgen', u'filename_note']
 
 -------------------
 User error handling
