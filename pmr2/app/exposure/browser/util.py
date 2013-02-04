@@ -148,7 +148,11 @@ def moldExposure(exposure_context, request, exported):
         # XXX forced casting for now
         return str(s)
 
-    for path, fields in exported:
+    for items in exported:
+        if len(items) != 2:
+            raise ProcessingError('Invalid entry')
+
+        path, fields = items
         if path is None:
             # due to wizard.
             continue
