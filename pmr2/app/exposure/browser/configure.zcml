@@ -24,14 +24,14 @@
   workspaces, thus it should be used with caution.
   -->
   <browser:page
-      for="pmr2.app.exposure.content.ExposureContainer"
+      for="pmr2.app.exposure.interfaces.IExposureContainer"
       name="exposure_add_form"
       class=".browser.ExposureAddForm"
       permission="pmr2.app.security.ManagePMR2"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureContainer"
+      for="pmr2.app.exposure.interfaces.IExposureContainer"
       name="exposure_bulk_regeneration"
       class=".browser.ExposureFileBulkRegenerateForm"
       permission="pmr2.app.security.ManagePMR2"
@@ -63,49 +63,49 @@
   <!-- Exposure -->
 
   <browser:page
-      for="pmr2.app.exposure.content.Exposure"
+      for="pmr2.app.exposure.interfaces.IExposure"
       name="exposure_info"
       class=".browser.ExposureInfo"
       permission="zope2.View"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.Exposure"
+      for="pmr2.app.exposure.interfaces.IExposure"
       name="exposure_edit"
       class=".browser.ExposureEditForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.Exposure"
+      for="pmr2.app.exposure.interfaces.IExposure"
       name="exposure_curation_edit"
       class=".browser.ExposureEditCurationForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.Exposure"
+      for="pmr2.app.exposure.interfaces.IExposure"
       name="filegen"
       class=".browser.ExposureFileGenForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.Exposure"
+      for="pmr2.app.exposure.interfaces.IExposure"
       name="docviewgen"
       class=".browser.ExposureDocViewGenForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.Exposure"
+      for="pmr2.app.exposure.interfaces.IExposure"
       name="rollover"
       class=".browser.ExposurePortCommitIdForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.Exposure"
+      for="pmr2.app.exposure.interfaces.IExposure"
       name="wizard_exporter"
       class=".browser.ExposurePortJsonExport"
       permission="zope2.View"
@@ -121,70 +121,70 @@
   <!-- Exposure File -->
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFile"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
       name="annotation"
       class=".browser.ExposureFileAnnotatorForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFile"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
       name="filetype"
       class=".browser.ExposureFileTypeChoiceForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFile"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
       name="edit_annotations"
       class=".browser.ExposureFileTypeAnnotatorForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFile"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
       name="note_editor"
       class=".browser.ExposureFileNoteEditForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFile"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
       name="arrange_views"
       class=".browser.ExposureFileNoteArrangeForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFile"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
       name="docviewgen"
       class=".browser.ExposureDocViewGenForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFile"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
       name="exposure_file_redirect"
       class=".browser.ExposureFileRedirect"
       permission="zope2.View"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFile"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
       name="exposure_file_info"
       class=".browser.ExposureFileInfo"
       permission="zope2.View"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFile"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
       name="exposure_file_document_view"
       class=".browser.ExposureFileDocument"
       permission="zope2.View"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFile"
+      for="pmr2.app.exposure.interfaces.IExposureFile"
       name="select_view"
       class=".browser.ExposureFileSelectViewForm"
       permission="cmf.ModifyPortalContent"
@@ -193,14 +193,14 @@
   <!-- Exposure File Type -->
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFileType"
+      for="pmr2.app.exposure.interfaces.IExposureFileType"
       name="eftype_edit"
       class=".browser.ExposureFileTypeEditForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFileType"
+      for="pmr2.app.exposure.interfaces.IExposureFileType"
       name="eftype_view"
       class=".browser.ExposureFileTypeDisplayForm"
       permission="cmf.ModifyPortalContent"
@@ -209,14 +209,14 @@
   <!-- Exposure Folder -->
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFolder"
+      for="pmr2.app.exposure.interfaces.IExposureFolder"
       name="docviewgen"
       class=".browser.ExposureDocViewGenForm"
       permission="cmf.ModifyPortalContent"
       />
 
   <browser:page
-      for="pmr2.app.exposure.content.ExposureFolder"
+      for="pmr2.app.exposure.interfaces.IExposureFolder"
       name="exposure_info"
       class=".browser.ExposureInfo"
       permission="zope2.View"
