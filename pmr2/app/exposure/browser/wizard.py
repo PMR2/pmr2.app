@@ -3,6 +3,7 @@ import json
 import zope.interface
 import zope.component
 from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.publisher.browser import BrowserPage
 from zope.location import Location
 
 from zope.i18nmessageid import MessageFactory
@@ -19,7 +20,7 @@ from pmr2.z3cform import page
 
 from pmr2.app.workspace.interfaces import ICurrentCommitIdProvider
 
-from pmr2.app.exposure.interfaces import IExposure
+from pmr2.app.exposure.interfaces import IExposure, IExposureSourceAdapter
 from pmr2.app.exposure.browser.interfaces import IExposureExportImportGroup
 from pmr2.app.exposure.browser.interfaces import IExposureFileGenForm
 from pmr2.app.exposure.browser.interfaces import IExposureWizardForm
@@ -628,3 +629,15 @@ class ExposureFileTypeWizardGroupExtender(extensible.FormExtender):
             fields = z3c.form.field.Fields(prefix=name)
         return fields
 
+
+class ExposureFileWizardRedirect(BrowserPage):
+    """
+    Redirect to the real wizard view from this ExposureFile.
+    """
+
+    def __call__(self):
+        helper = zope.component.queryAdapter(
+            self.context, IExposureSourceAdapter)
+        exposure, workspace, path = helper.source()
+        target_uri = '%s/wizard' % (exposure.absolute_url())
+        return self.request.response.redirect(target_uri)

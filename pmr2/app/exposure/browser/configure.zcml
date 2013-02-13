@@ -190,6 +190,13 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <browser:page
+      for="pmr2.app.exposure.interfaces.IExposureFile"
+      name="wizard"
+      class=".wizard.ExposureFileWizardRedirect"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <!-- Exposure File Type -->
 
   <browser:page
