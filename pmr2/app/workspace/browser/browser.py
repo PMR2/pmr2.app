@@ -406,10 +406,35 @@ class WorkspaceAddForm(form.AddForm):
     Workspace add form.
     """
 
-    fields = z3c.form.field.Fields(IObjectIdMixin) + \
-             z3c.form.field.Fields(IWorkspace)
     clsobj = Workspace
     label = "Workspace Object Creation Form"
+
+    @property
+    def fields(self):
+        settings = zope.component.getUtility(IPMR2GlobalSettings)
+        if settings.workspace_idgen:
+            return z3c.form.field.Fields(IWorkspace)
+
+        return (z3c.form.field.Fields(IObjectIdMixin) +
+            z3c.form.field.Fields(IWorkspace))
+
+    def create(self, data):
+        settings = zope.component.getUtility(IPMR2GlobalSettings)
+        if settings.workspace_idgen:
+            name = settings.workspace_idgen
+            idgen = zope.component.queryUtility(IIdGenerator, name=name)
+            if idgen is None:
+                raise z3c.form.interfaces.ActionExecutionError(
+                    ProcessingError(_('Cannot get id generator; please '
+                        'contact the repository administrator.')))
+
+            next_id = None
+            if next_id in self.context or next_id is None:
+                # generate next id
+                next_id = idgen.next()
+            data['id'] = next_id
+
+        return super(WorkspaceAddForm, self).create(data)
 
     def add_data(self, ctxobj):
         ctxobj.title = self._data['title']
@@ -422,11 +447,18 @@ class WorkspaceStorageCreateForm(WorkspaceAddForm):
     Workspace add form.  This also creates the storage object.
     """
 
-    # IWorkspaceStorageCreate has a validator attached to its id 
-    # attribute to verify that the workspace id has not been taken yet.
-    fields = z3c.form.field.Fields(IWorkspaceStorageCreate) + \
-             z3c.form.field.Fields(IWorkspace)
     label = "Create a New Workspace"
+
+    @property
+    def fields(self):
+        settings = zope.component.getUtility(IPMR2GlobalSettings)
+        if settings.workspace_idgen:
+            return z3c.form.field.Fields(IWorkspace)
+
+        # IWorkspaceStorageCreate has a validator attached to its id 
+        # attribute to verify that the workspace id has not been taken.
+        return (z3c.form.field.Fields(IWorkspaceStorageCreate) + 
+            z3c.form.field.Fields(IWorkspace))
 
     def add_data(self, ctxobj):
         WorkspaceAddForm.add_data(self, ctxobj)
@@ -502,8 +534,14 @@ class WorkspaceForkForm(form.PostForm):
     """
 
     label = u'Create personal fork of this workspace'
-    fields = z3c.form.field.Fields(IWorkspaceFork)
     ignoreContext = True
+
+    @property
+    def fields(self):
+        settings = zope.component.getUtility(IPMR2GlobalSettings)
+        if settings.workspace_idgen:
+            return z3c.form.field.Fields()
+        return z3c.form.field.Fields(IWorkspaceFork)
 
     def update(self):
         # manual role checking
@@ -547,7 +585,18 @@ class WorkspaceForkForm(form.PostForm):
     def cloneToUserWorkspace(self):
         settings = zope.component.getUtility(IPMR2GlobalSettings)
         target_root = settings.getCurrentUserWorkspaceContainer()
-        newid = self._data['id']
+
+        if settings.workspace_idgen:
+            name = settings.workspace_idgen
+            idgen = zope.component.queryUtility(IIdGenerator, name=name)
+            if idgen is None:
+                raise ProcessingError(_('Cannot get id generator; please '
+                        'contact the repository administrator.'))
+            newid = idgen.next()
+        else:
+            newid = self._data['id']
+
+        self._newid = newid
 
         if target_root is None:
             raise ProcessingError('User workspace container not found.')

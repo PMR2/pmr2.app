@@ -16,6 +16,14 @@ class IPMR2GlobalSettings(zope.interface.Interface):
                        'that make up the workspaces will be stored.'),
     )
 
+    workspace_idgen = zope.schema.Choice(
+        title=_(u'Workspace Id Generator'),
+        description=_(u'The id generator for workspaces.  If unselected id '
+                       'is user selectable'),
+        vocabulary='pmr2.idgen.vocab',
+        required=False,
+    )
+
     default_workspace_subpath = zope.schema.TextLine(
         title=_(u'Default Workspace Subpath'),
         description=_(u'The location of default workspace container.'),

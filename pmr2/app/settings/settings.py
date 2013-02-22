@@ -53,6 +53,8 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         IPMR2GlobalSettings['default_exposure_idgen'])
     create_user_workspace = zope.schema.fieldproperty.FieldProperty(
         IPMR2GlobalSettings['create_user_workspace'])
+    workspace_idgen = zope.schema.fieldproperty.FieldProperty(
+        IPMR2GlobalSettings['workspace_idgen'])
 
     def __init__(self):
         self.repo_root = _make_default_path()

@@ -403,6 +403,57 @@ The user workspace should now have the same file listing as test.
     >>> sud[clone.getPhysicalPath()] == sud['test']
     True
 
+-----------------------
+Generated Workspace IDs
+-----------------------
+
+There are use cases where the ids are generated codes instead of being
+user supplied.  This adds in a number of kinks that need to be
+addressed.
+
+First acquire the settings and change how the IDs are generated for
+worksapces
+::
+
+    >>> from pmr2.app.settings.interfaces import IPMR2GlobalSettings
+    >>> settings = zope.component.getUtility(IPMR2GlobalSettings)
+    >>> settings.workspace_idgen = 'rand128hex'
+
+Now try to create a workspace and supply an extraneous id.  Note the lack
+of collision with the previous added cake workspace.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.id': u'cake',
+    ...         'form.widgets.title': u'Delicious Cake',
+    ...         'form.widgets.description': u'A Delicious Cake',
+    ...         'form.widgets.storage': [u'dummy_storage'],
+    ...         'form.buttons.add': 1,
+    ...     })
+    ... 
+    >>> testform = browser.WorkspaceStorageCreateForm(
+    ...     self.portal.workspace, request)
+    >>> testform.update()
+    >>> last_id = testform._data['id']
+    >>> self.portal.workspace[last_id].title == u'Delicious Cake'
+    True
+    >>> self.portal.workspace[last_id].storage == u'dummy_storage'
+    True
+
+Forking must also be addressed.
+
+    >>> tb.open(cakeurl + '/fork')
+
+Try making a randomly named cake.
+::
+
+    >>> tb.getControl(name='form.buttons.fork').click()
+    >>> randomcake = tb.url
+    >>> print randomcake
+    http://nohost/plone/w/test_user_1_/...
+
+
 ---------------------
 Protocol Level Access
 ---------------------
