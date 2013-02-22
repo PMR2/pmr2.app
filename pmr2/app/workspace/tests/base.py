@@ -87,5 +87,3 @@ class WorkspaceDocTestCase(DocTestCase):
 
     def tearDown(self):
         DocTestCase.tearDown(self)
-
-

@@ -1,9 +1,8 @@
 Workspace Options for Dashboard
 ===============================
 
-Make use of the test browser class and see the Dashboard Options 
-introduced by workspaces.
-::
+Use the test browser to open the dashboard view.  The options specific
+to workspaces should have been made introduced::
 
     >>> tb = self.testbrowser
     >>> tb.open(self.portal.absolute_url() + '/pmr2-dashboard')
@@ -12,10 +11,34 @@ introduced by workspaces.
     >>> tb.getLink('Create personal workspace').url
     'http://nohost/plone/pmr2-dashboard/workspace-add'
 
-Trigger the link and the redirection to the actual content should 
-follow.
-::
+The dashboard actions depend on the settings defined.  If the user
+workspace is enabled, as it is set by default in the test harness,
+triggering the link will lead to the url within the user's workspace
+container::
 
     >>> tb.getLink('Create personal workspace').click()
     >>> tb.url
     'http://nohost/plone/w/test_user_1_/+/addWorkspace'
+
+However, if that setting is disabled, the global container will be used
+instead::
+
+    >>> import zope.component
+    >>> from pmr2.app.settings.interfaces import IPMR2GlobalSettings
+    >>> settings = zope.component.getUtility(IPMR2GlobalSettings)
+    >>> settings.create_user_workspace = False
+    >>> tb.open(self.portal.absolute_url() + '/pmr2-dashboard')
+    >>> tb.getLink('Create personal workspace').click()
+    Traceback (most recent call last):
+    ...
+    HTTPError: HTTP Error 404: Not Found
+
+Well then, if the container wasn't available a 404 error was raised as
+expected.  Now try this again with the workspace container in place.
+
+    >>> from pmr2.app.workspace.content import WorkspaceContainer
+    >>> self.portal['workspace'] = WorkspaceContainer()
+    >>> tb.open(self.portal.absolute_url() + '/pmr2-dashboard')
+    >>> tb.getLink('Create personal workspace').click()
+    >>> tb.url
+    'http://nohost/plone/workspace/+/addWorkspace'

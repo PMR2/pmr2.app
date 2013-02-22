@@ -30,6 +30,8 @@ from Products.statusmessages.interfaces import IStatusMessage
 from pmr2.z3cform import form
 from pmr2.z3cform import page
 
+from pmr2.idgen.interfaces import IIdGenerator
+
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from pmr2.app.interfaces.exceptions import *

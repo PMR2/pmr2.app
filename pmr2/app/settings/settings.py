@@ -161,6 +161,10 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
                                     createDir=True)
 
     def getCurrentUserWorkspaceContainer(self):
+        if not self.create_user_workspace:
+            # If we are not using this, the rest is meaningless.
+            return self.getWorkspaceContainer()
+
         pm = getToolByName(self.__parent__, 'portal_membership')
         if pm.isAnonymousUser():
             raise Unauthorized()

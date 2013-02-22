@@ -139,9 +139,13 @@ specific user's workspace container.
     True
 
 A method is also provided to quickly retrieve the current user's
-container.
+container,  but only if the option specifying that is enabled.
 ::
 
+    >>> result = pmr2_settings.getCurrentUserWorkspaceContainer()
+    >>> userwc == result
+    False
+    >>> pmr2_settings.create_user_workspace = True
     >>> result = pmr2_settings.getCurrentUserWorkspaceContainer()
     >>> result == userwc
     True

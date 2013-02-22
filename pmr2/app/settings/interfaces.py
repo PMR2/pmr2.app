@@ -30,6 +30,15 @@ class IPMR2GlobalSettings(zope.interface.Interface):
         required=False,
     )
 
+    create_user_workspace = zope.schema.Bool(
+        title=_(u'Enable User Workspace Container'),
+        description=_(u'Default location for workspaces will be the workspace '
+                       'container located within the user workspace subpath. '
+                       'That workspace container will be created the next '
+                       'time the user logs in if not already exists.'),
+        default=False,
+    )
+
     default_exposure_subpath = zope.schema.TextLine(
         title=_(u'Default Exposure Subpath'),
         description=_(u'The location of default exposure container.'),
@@ -42,15 +51,6 @@ class IPMR2GlobalSettings(zope.interface.Interface):
         description=_(u'The default id generator for exposures'),
         vocabulary='pmr2.idgen.vocab',
         required=True,
-    )
-
-    create_user_workspace = zope.schema.Bool(
-        title=_(u'Create User Workspaces'),
-        description=_(u'Create a user workspace folder within the default '
-                       'workspace specified above automatically upon user '
-                       'logging in, to let them add their own private '
-                       'workspaces.'),
-        default=False,
     )
 
     def dirOf(obj=None):
