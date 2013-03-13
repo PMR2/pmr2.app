@@ -161,19 +161,6 @@ class PortalTransformAnnotatorBase(
     """
 
 
-class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
-    """
-    An example annotator.
-    """
-
-    def generate(self):
-        from pmr2.rdf.graph import parseXML
-        graph = parseXML(self.input)
-        return (
-            ('text', unicode(graph.serialize(format=self.format))),
-        )
-
-
 class DocGenAnnotator(ExposureFileAnnotatorBase):
     """\
     Documentation generator annotator.

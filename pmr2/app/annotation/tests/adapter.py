@@ -3,12 +3,24 @@ from pmr2.app.factory import *
 from pmr2.app.interfaces import *
 from pmr2.app.annotation import note_factory
 from pmr2.app.annotation.interfaces import *
-from pmr2.app.annotation.annotator import RDFLibEFAnnotator
 from pmr2.app.annotation.annotator import ExposureFileAnnotatorBase
 from pmr2.app.annotation.note import RawTextNote
 from pmr2.app.annotation.note import GroupedNote
 
 from content import *
+
+
+class RDFLibEFAnnotator(ExposureFileAnnotatorBase):
+    """
+    An example annotator.
+    """
+
+    def generate(self):
+        from pmr2.rdf.graph import parseXML
+        graph = parseXML(self.input)
+        return (
+            ('text', unicode(graph.serialize(format=self.format))),
+        )
 
 
 class RDFTurtleAnnotator(RDFLibEFAnnotator):
