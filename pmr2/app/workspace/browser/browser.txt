@@ -9,15 +9,6 @@ the test environment.
     >>> from pmr2.app.workspace.browser import browser
     >>> from pmr2.testing.base import TestRequest
     >>> from pmr2.app.workspace.content import *
-    >>> self.portal['workspace'] = WorkspaceContainer()
-    >>> self.portal.workspace
-    <WorkspaceContainer at /plone/workspace>
-    >>> self.portal.workspace['test'] = Workspace('test')
-    >>> self.portal.workspace.test
-    <Workspace at /plone/workspace/test>
-    >>> self.portal.workspace.test.storage = u'dummy_storage'
-    >>> self.portal.workspace['test2'] = Workspace('test2')
-    >>> self.portal.workspace.test2.storage = u'dummy_storage'
     >>> request = TestRequest()
 
 We will test the Repository Listing form first.  As the workspace path

@@ -87,3 +87,17 @@ class WorkspaceDocTestCase(DocTestCase):
 
     def tearDown(self):
         DocTestCase.tearDown(self)
+
+
+class WorkspaceBrowserDocTestCase(WorkspaceDocTestCase):
+
+    def setUp(self):
+        super(WorkspaceBrowserDocTestCase, self).setUp()
+        from pmr2.app.workspace.content import Workspace, WorkspaceContainer
+        self.portal['workspace'] = WorkspaceContainer()
+
+        self.portal.workspace['test'] = Workspace('test')
+        self.portal.workspace.test.storage = u'dummy_storage'
+
+        self.portal.workspace['test2'] = Workspace('test2')
+        self.portal.workspace.test2.storage = u'dummy_storage'
