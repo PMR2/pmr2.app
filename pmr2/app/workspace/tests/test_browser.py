@@ -8,9 +8,11 @@ from pmr2.app.workspace.interfaces import *
 
 # Objects to test
 
-from pmr2.app.workspace.browser.browser import WorkspaceTraversePage
+from pmr2.app.workspace.browser import browser
 from pmr2.app.workspace.browser.util import set_xmlbase
 from pmr2.app.workspace.browser.util import obfuscate
+
+from pmr2.app.workspace.tests import base
 
 
 class TestWorkspaceTraversePage(TestCase):
@@ -27,20 +29,20 @@ class TestWorkspaceTraversePage(TestCase):
 
     def test_000_nothing(self):
         request = TestRequest()
-        page = WorkspaceTraversePage(None, request)
+        page = browser.WorkspaceTraversePage(None, request)
         self.assertEqual(request.get('rev', None), None)
         self.assertEqual(request.get('request_subpath', None), None)
 
     def test_001_revision_only(self):
         request = TestRequest()
-        page = WorkspaceTraversePage(None, request)
+        page = browser.WorkspaceTraversePage(None, request)
         page.publishTraverse(request, '123456')
         self.assertEqual(request.get('rev'), '123456')
         self.assertEqual(request.get('request_subpath'), [])
 
     def test_002_revision_and_path(self):
         request = TestRequest()
-        page = WorkspaceTraversePage(None, request)
+        page = browser.WorkspaceTraversePage(None, request)
         page.publishTraverse(request, '123456')
         page.publishTraverse(request, 'dir1')
         self.assertEqual(request.get('rev'), '123456')
@@ -48,7 +50,7 @@ class TestWorkspaceTraversePage(TestCase):
 
     def test_003_revision_and_path2(self):
         request = TestRequest()
-        page = WorkspaceTraversePage(None, request)
+        page = browser.WorkspaceTraversePage(None, request)
         page.publishTraverse(request, '123456')
         page.publishTraverse(request, 'dir1')
         page.publishTraverse(request, 'dir2')
@@ -87,9 +89,48 @@ class TestWorkspaceBrowserUtil(TestCase):
         output = obfuscate(input)
         self.assertNotEqual(input, output)
 
+
+class WorkspaceViewTestCase(base.WorkspaceBrowserDocTestCase):
+    """
+    Collection of miscellaneous tests.
+    """
+
+    def setUp(self):
+        super(WorkspaceViewTestCase, self).setUp()
+        self.makeExternalWorkspace()
+
+    def test_embedded_redirect(self):
+        request = TestRequest()
+        page = browser.FilePage(self.portal.workspace.external_root, request)
+        page.publishTraverse(request, '0')
+        page.publishTraverse(request, 'external_test')
+        self.assertEqual(page(), '')
+        self.assertEqual(request.response.getHeader('location'),
+            'http://nohost/plone/workspace/external_test/rawfile/0/')
+
+        self.testbrowser.open(self.portal.absolute_url() +
+            '/workspace/external_root/file/0/external_test')
+        self.assertEqual(self.testbrowser.url, 
+            'http://nohost/plone/workspace/external_test/file/0/')
+
+    def test_embedded_redirect_file(self):
+        request = TestRequest()
+        page = browser.FilePage(self.portal.workspace.external_root, request)
+        page.publishTraverse(request, '0')
+        page.publishTraverse(request, 'external_test/test.txt')
+        self.assertEqual(page(), '')
+        self.assertEqual(request.response.getHeader('location'),
+            'http://nohost/plone/workspace/external_test/rawfile/0/test.txt')
+
+        self.testbrowser.open(self.portal.absolute_url() +
+            '/workspace/external_root/rawfile/0/external_test/test.txt')
+        self.assertEqual(self.testbrowser.url, 
+            'http://nohost/plone/workspace/external_test/rawfile/0/test.txt')
+
 def test_suite():
     suite = TestSuite()
     suite.addTest(makeSuite(TestWorkspaceTraversePage))
     suite.addTest(makeSuite(TestWorkspaceBrowserUtil))
+    suite.addTest(makeSuite(WorkspaceViewTestCase))
     return suite
 

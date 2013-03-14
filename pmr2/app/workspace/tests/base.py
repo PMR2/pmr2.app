@@ -101,3 +101,10 @@ class WorkspaceBrowserDocTestCase(WorkspaceDocTestCase):
 
         self.portal.workspace['test2'] = Workspace('test2')
         self.portal.workspace.test2.storage = u'dummy_storage'
+
+    def makeExternalWorkspace(self):
+        from pmr2.app.workspace.content import Workspace
+        self.portal.workspace['external_root'] = Workspace('external_root')
+        self.portal.workspace.external_root.storage = u'dummy_storage'
+        self.portal.workspace['external_test'] = Workspace('external_test')
+        self.portal.workspace.external_test.storage = u'dummy_storage'

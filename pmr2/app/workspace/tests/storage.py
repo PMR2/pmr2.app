@@ -90,6 +90,23 @@ class DummyStorageUtility(StorageUtility):
             },
         ],
 
+        'external_root': [
+            {
+                'readme': 'external test root.\n',
+                'external_test': {
+                    '': '_subrepo',
+                    'rev': '0',
+                    'location': 'http://nohost/plone/workspace/external_test',
+                },
+            },
+        ],
+
+        'external_test': [
+            {
+                'test.txt': 'external test file.\n',
+            },
+        ],
+
     }
 
     title = 'Dummy Storage'
@@ -227,10 +244,23 @@ class DummyStorage(BaseStorage):
         try:
             return self._changeset()[path]
         except KeyError:
+            # check if the first element resolves into a "subrepo"
+            frags = path.split('/')
+            if len(frags) > 1:
+                result = self.file(frags[0])
+                if isinstance(result, dict):
+                    # only allow "subrepos"
+                    return result
             raise PathNotFoundError()
 
     def fileinfo(self, path):
-        text = self.file(path)
+        result = self.file(path)
+        if not isinstance(result, basestring):
+            # assume dict, format external result
+            keys = {'path': '/'.join(path.split('/')[1:])}
+            keys.update(result)
+            return self.format_external(path, keys)
+
         # this is done because contents may not be needed at all times
         contents = lambda: self.file(path)
         return self.format(**{
@@ -239,9 +269,22 @@ class DummyStorage(BaseStorage):
             'permissions': '-rw-r--r--',
             'node': self.rev,
             'date': self._datetime(),
-            'size': str(len(text)),
+            'size': str(len(result)),
             'path': path,
             'contents': contents,
+        })
+
+    def format_external(self, path, keys):
+        return self.format(**{
+            'permissions': 'lrwxrwxrwx',
+            'contenttype': None,  # XXX unnecessary for now
+            'node': self.rev,
+            'date': '',
+            'size': '',
+            'path': path,
+            'desc': '',
+            'contents': '',
+            'external': keys,
         })
 
     def listdir(self, path):
