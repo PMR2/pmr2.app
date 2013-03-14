@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.6.5 - Released (2013-03-14)
+-----------------------------
+
+* Bug fixes
+
+  - Relative links within embedded workspaces fail to redirect to
+    the target file as intended.
+  - Rendering of Exposure file type display view corrected to not die
+    with an error page.
+
 0.6.4 - Released (2012-11-07)
 -----------------------------
 
