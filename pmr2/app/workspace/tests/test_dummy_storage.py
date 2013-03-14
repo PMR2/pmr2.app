@@ -433,6 +433,33 @@ class TestDummyStorage(TestCase):
         storage.checkout()
         self.assert_('null' in storage.files())
 
+    def test_900_external(self):
+        # mostly a dummy at this stage.
+        utility = DummyStorageUtility()
+        external_root = DummyWorkspace('external_root')
+        external_test = DummyWorkspace('external_test')
+        storage_root = DummyStorage(external_root)
+        storage_test = DummyStorage(external_test)
+
+        result = storage_root.pathinfo('external_test')
+        self.assertEqual(result['external'], {
+            '': '_subrepo',
+            'path': '',
+            'rev': '0',
+            'location': 'http://nohost/plone/workspace/external_test',
+        })
+
+        result = storage_root.pathinfo('external_test/testfile.txt')
+        self.assertEqual(result['external'], {
+            '': '_subrepo',
+            'path': 'testfile.txt',
+            'rev': '0',
+            'location': 'http://nohost/plone/workspace/external_test',
+        })
+
+        # valid files don't get this perk.
+        self.assertRaises(PathNotFoundError, storage_root.file, 'readme/test')
+
 
 def test_suite():
     suite = TestSuite()

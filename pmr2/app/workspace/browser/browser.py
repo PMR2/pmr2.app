@@ -682,6 +682,7 @@ class FilePage(BaseFilePage):
 
     template = ViewPageTemplateFile('workspace_file_page.pt')
     label = ViewPageTemplateFile('workspace_file_label.pt')
+    redirected = False
 
     def update(self):
         """\
@@ -711,11 +712,13 @@ class FilePage(BaseFilePage):
             keys = data['external']
             keys['view'] = self.__name__ or 'rawfile'
             target = '%(location)s/%(view)s/%(rev)s/%(path)s' % keys
+            self.redirected = True
             try:
-                return self.request.response.redirect(target, trusted=True)
+                redir = self.request.response.redirect(target, trusted=True)
             except TypeError:
                 # XXX wsgi response doesn't have trusted?
-                return self.request.response.redirect(target)
+                redir = self.request.response.redirect(target)
+            return redir
 
         # update rev using the storage rev
         self.request['rev'] = storage.rev
@@ -739,6 +742,12 @@ class FilePage(BaseFilePage):
         result = super(FilePage, self).render()
         self.template = raw_template
         return result
+
+    def __call__(self):
+        self.update()
+        if self.redirected:
+            return u''
+        return self.render()
 
 
 class FileInfoPage(BaseFilePage):
@@ -764,8 +773,7 @@ class FileInfoPage(BaseFilePage):
 
 class WorkspaceRawfile(FilePage):
 
-    def __call__(self):
-        self.update()
+    def render(self):
         data = self.request['_data']
         if data:
             # not supporting resuming download
@@ -798,7 +806,7 @@ class WorkspaceRawfileXmlBase(WorkspaceRawfile):
         """the root uri."""
         return '/'.join(self._getpath(view='xmlbase'))
 
-    def __call__(self):
+    def render(self):
         # XXX should really hook into a mimetype registry and not hard
         # coded in here.
         def custom_content_type(s):
@@ -811,7 +819,7 @@ class WorkspaceRawfileXmlBase(WorkspaceRawfile):
                     self.request.response.setHeader('Content-Type', v)
                     return
 
-        data = WorkspaceRawfile.__call__(self)
+        data = WorkspaceRawfile.render(self)
         filepath = self.request['filepath']
         filename = filepath[-1]
         # have to acquire dirpath.
