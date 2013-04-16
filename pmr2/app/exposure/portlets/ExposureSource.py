@@ -46,9 +46,12 @@ class Renderer(base.Renderer):
             values = zope.component.getAdapter(
                 self.context, IExposureSourceAdapter).source()
             self.exposure, self.workspace, self.path = values
-            storage = zope.component.getAdapter(self.exposure, IStorage)
-            storage.checkout(self.exposure.commit_id)
-            self.shortrev = storage.shortrev
+            storage = zope.component.queryAdapter(self.exposure, IStorage)
+            if storage:
+                storage.checkout(self.exposure.commit_id)
+                self.shortrev = storage.shortrev
+            else:
+                self.shortrev = '<unknown>'
 
     @memoize
     def portal_url(self):
@@ -62,7 +65,7 @@ class Renderer(base.Renderer):
             self.workspace.absolute_url(), self.exposure.commit_id)
         result = {
             'workspace': {
-                'label': self.workspace.Title,
+                'label': self.workspace.title_or_id(),
                 'href': workspace_uri,
             },
             'manifest': {
