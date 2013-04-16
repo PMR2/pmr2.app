@@ -65,6 +65,20 @@ Render the wizard:
     >>> form = wizard.ExposureWizardForm(context, request)
     >>> result = form()
 
+Workspace is currently private so it should be marked::
+
+    >>> form._workspace_is_private
+    True
+
+In production usage, this can result in services not being able to
+access all the required data, so this need to be rectified::
+
+    >>> self._publishContent(self.portal.workspace.test)
+    >>> form = wizard.ExposureWizardForm(context, request)
+    >>> result = form()
+    >>> form._workspace_is_private
+    False
+
 It should have initialized the wizard's structure.
 ::
 

@@ -13,6 +13,7 @@ import z3c.form
 
 from plone.z3cform.fieldsets import group, extensible
 
+from AccessControl.interfaces import IRoleManager
 from Products.statusmessages.interfaces import IStatusMessage
 
 from pmr2.z3cform import form
@@ -363,6 +364,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
 
     _updated = False
     _next = None
+    _workspace_is_private = False
 
     def __init__(self, *a, **kw):
         super(ExposureWizardForm, self).__init__(*a, **kw)
@@ -371,7 +373,31 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
     def export_uri(self):
         return self.context.absolute_url() + '/@@wizard_exporter'
 
+    def checkWorkspacePermission(self):
+        helper = zope.component.queryAdapter(
+            self.context, IExposureSourceAdapter)
+        exposure, workspace, path = helper.source()
+
+        if not IRoleManager.providedBy(workspace):
+            # We don't know?
+            return False
+
+        for i in workspace.rolesOfPermission('View'):
+            if i['name'] == 'Anonymous':
+                return i['selected']
+
     def update(self):
+        # Check for workspace permissions
+        anon_read = self.checkWorkspacePermission()
+        if not anon_read:
+            self._workspace_is_private = True
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(
+                _('The workspace for this exposure is not public; errors may '
+                  'result if the build process invokes any external services '
+                  'that make use of data within there.')
+            )
+
         # No need to call form.PostForm.update because that path added
         # nothing.
         self.appendGroups()
