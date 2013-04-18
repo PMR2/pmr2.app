@@ -65,13 +65,21 @@ class ItemKeyRadioColumn(ItemKeyColumn, z3c.table.column.RadioColumn):
 class EscapedItemKeyColumn(ItemKeyColumn):
     """With CGI escape."""
 
+    fallback_encoding = 'latin1'
+
     def renderCell(self, item):
         result = self.getItem(item)
-        try:
-            result = unicode(result)
-        except UnicodeDecodeError:
-            # XXX magic default codec
-            result = unicode(result, 'latin1')
+        if not isinstance(result, basestring):
+            result = str(result)
+
+        if not isinstance(result, unicode):
+            # TODO maybe deal with UTF-16/32 eventually by checking for
+            # the presence of BOM.
+            try:
+                result = result.decode('utf8')
+            except UnicodeDecodeError:
+                result = result.decode(self.fallback_encoding)
+
         return cgi.escape(result)
 
 
