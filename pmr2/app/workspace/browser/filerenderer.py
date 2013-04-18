@@ -19,6 +19,7 @@ from pmr2.app.workspace import table
 from pmr2.app.workspace.browser.interfaces import *
 from pmr2.app.workspace.browser.browser import WorkspaceTraversePage
 from pmr2.app.workspace.browser.browser import FilePage
+from pmr2.app.workspace.browser.util import fix_workspace_html_anchors
 
 
 class DefaultRendererDictionary(object):
@@ -174,7 +175,9 @@ class SafeHtmlRenderer(BaseFileRenderer):
     @property
     def contents(self):
         data = self.request['_data']
-        contents = data['contents']()
+        rev = self.request['rev']
+        contents = fix_workspace_html_anchors(data['contents'](),
+            self.context.absolute_url(), rev)
         pt = getToolByName(self.context, 'portal_transforms')
         stream = datastream('input')
         pt.convert('safe_html', contents, stream)
