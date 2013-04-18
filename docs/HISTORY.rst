@@ -1,6 +1,29 @@
 Changelog
 =========
 
+0.7 - Unreleased
+----------------
+
+* Shared forms/views moved to separate module ``pmr2.z3cform``
+
+  - Also deprecating a bunch of stuff and removed old tests.
+  - Legacy unused cruft removed.
+
+* PMR2 Dashboard
+
+  - A way to group functions provided by PMR2 into one easy-to-access
+    view.  This is also used as a basis for the PMR2 web services.
+
+* Exposure Wizard is now the only way to create Exposures.  All other
+  views and methods are removed.
+
+* Bug fixes
+
+  - Exposure Source Portlet no longer results in an exception if its
+    workspace is not found.
+  - Warning message for a private workspace in the exposure wizard.
+  - Unicode properly rendered if possible in the workspace history.
+
 0.6.5 - Released (2013-03-14)
 -----------------------------
 
@@ -89,7 +112,7 @@ Sixth major release of PMR2 Core, with major focus on user interfaces.
     browser classes within PMR2), the only changes required will be the
     removal of the wrappers and then update the zcml to point to the
     original unwrapped class.
-  - The implementation for the vocabulary `pmr2.vocab.manifest` has
+  - The implementation for the vocabulary ``pmr2.vocab.manifest`` has
     been corrected once more to return the listing of files of the
     correct commit as specified by context (either through the object,
     form or request).  This is achieved by using this vocab in the
