@@ -35,7 +35,20 @@ class ItemKeyColumn(z3c.table.column.Column):
             return self.errorValue
 
     def renderCell(self, item):
-        return self.getItem(item)
+        result = self.getItem(item)
+
+        if not isinstance(result, basestring):
+            result = str(result)
+
+        if not isinstance(result, unicode):
+            # TODO maybe deal with UTF-16/32 eventually by checking for
+            # the presence of BOM.
+            try:
+                result = result.decode('utf8')
+            except UnicodeDecodeError:
+                result = result.decode(self.fallback_encoding)
+
+        return result
 
 
 class ItemKeyRadioColumn(ItemKeyColumn, z3c.table.column.RadioColumn):
@@ -68,18 +81,7 @@ class EscapedItemKeyColumn(ItemKeyColumn):
     fallback_encoding = 'latin1'
 
     def renderCell(self, item):
-        result = self.getItem(item)
-        if not isinstance(result, basestring):
-            result = str(result)
-
-        if not isinstance(result, unicode):
-            # TODO maybe deal with UTF-16/32 eventually by checking for
-            # the presence of BOM.
-            try:
-                result = result.decode('utf8')
-            except UnicodeDecodeError:
-                result = result.decode(self.fallback_encoding)
-
+        result = super(EscapedItemKeyColumn, self).renderCell(item)
         return cgi.escape(result)
 
 
