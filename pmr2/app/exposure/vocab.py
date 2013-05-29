@@ -3,7 +3,7 @@ import zope.component
 
 from zope.schema.interfaces import IVocabulary, IVocabularyFactory, ISource
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
-from zope.app.component.hooks import getSite
+from zope.component.hooks import getSite
 
 from Products.CMFCore.utils import getToolByName
 

@@ -1,7 +1,7 @@
 import zope.component
 import zope.interface
 from zope.schema import fieldproperty
-from zope.app.container.contained import Contained
+from zope.container.contained import Contained
 from zope.annotation.interfaces import IAnnotations
 from zope.annotation import factory
 from persistent import Persistent

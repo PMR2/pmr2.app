@@ -3,7 +3,7 @@ from os.path import join
 
 import zope.component
 from zope.component import testing
-from zope.app.publication.zopepublication import BeforeTraverseEvent
+from zope.traversing.interfaces import BeforeTraverseEvent
 from plone.browserlayer.layer import mark_layer
 
 from Testing import ZopeTestCase as ztc

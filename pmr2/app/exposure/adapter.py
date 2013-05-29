@@ -3,7 +3,7 @@ import zope.component
 from zope.schema import fieldproperty
 from Acquisition import aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
-from zope.app.component.hooks import getSite
+from zope.component.hooks import getSite
 
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 

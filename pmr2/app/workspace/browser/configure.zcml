@@ -4,7 +4,7 @@
     i18n_domain="pmr2.app">
 
   <!-- Enable "provider:" attribute -->
-  <include package="zope.app.pagetemplate" file="meta.zcml" />
+  <include package="zope.browserpage" file="meta.zcml" />
 
   <include package="pmr2.app.security" />
 

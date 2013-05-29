@@ -200,7 +200,7 @@ def exposure_rand_to_seq(context):
 
     import traceback
     from pmr2.idgen.interfaces import IIdGenerator
-    from zope.app.component.hooks import getSite
+    from zope.component.hooks import getSite
 
     try:
         from pmr2.app.exposure.browser import ExposureAddForm
@@ -467,7 +467,7 @@ def purge_unassigned_notes(context):
                 del annotations[k]
 
 def pmr2_v0_4(context):
-    from zope.app.component.hooks import getSite
+    from zope.component.hooks import getSite
     site = getSite()
     mercurial_storage(context)
     reregister_pmr2_settings(site)
@@ -496,6 +496,6 @@ def migrate_docgen(context):
     return
 
 def pmr2_v0_6(context):
-    from zope.app.component.hooks import getSite
+    from zope.component.hooks import getSite
     site = getSite()
     migrate_docgen(site)

@@ -5,12 +5,10 @@ import zope.deprecation
 from zope.component import getUtilitiesFor, getMultiAdapter
 from zope.publisher.browser import BrowserPage
 from zope.pagetemplate.interfaces import IPageTemplate
-from zope.app.authentication.httpplugins import HTTPBasicAuthCredentialsPlugin
 
 from Products.CMFCore.utils import getToolByName
 
-from zope.app.pagetemplate.viewpagetemplatefile \
-    import ViewPageTemplateFile as VPTF
+from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
 

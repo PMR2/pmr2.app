@@ -1,6 +1,6 @@
 import zope.interface
 import zope.component
-from zope.app.container.contained import Contained
+from zope.container.contained import Contained
 from zope.annotation.interfaces import IAnnotations
 from zope.schema import fieldproperty
 from persistent import Persistent

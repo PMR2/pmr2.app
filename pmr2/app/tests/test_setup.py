@@ -1,7 +1,7 @@
 from unittest import TestSuite, makeSuite
 
-from zope.app.component.hooks import getSite
-from zope.app.publication.zopepublication import BeforeTraverseEvent
+from zope.component.hooks import getSite
+from zope.traversing.interfaces import BeforeTraverseEvent
 
 from plone.browserlayer.layer import mark_layer
 

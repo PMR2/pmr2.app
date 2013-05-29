@@ -6,8 +6,7 @@ import zope.interface
 from zope.contentprovider.interfaces import IContentProvider
 from zope.contentprovider.provider import ContentProviderBase
 
-from zope.app.pagetemplate.viewpagetemplatefile \
-    import ViewPageTemplateFile as VPTF
+from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
 from Products.statusmessages.interfaces import IStatusMessage

@@ -1,9 +1,9 @@
 import zope.interface
 import zope.schema
 
-from zope.app.publisher.interfaces.browser import IBrowserMenu
-from zope.app.publisher.interfaces.browser import IBrowserSubMenuItem
-from zope.app.publisher.interfaces.browser import IMenuItemType
+from zope.browsermenu.interfaces import IBrowserMenu
+from zope.browsermenu.interfaces import IBrowserSubMenuItem
+from zope.browsermenu.interfaces import IMenuItemType
 
 
 class IStorage(zope.interface.Interface):

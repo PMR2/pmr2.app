@@ -3,7 +3,7 @@ import zope.component
 from zope.location import Location, locate
 from zope.i18nmessageid import MessageFactory
 from zope.publisher.interfaces.browser import IBrowserRequest
-from zope.app.container.interfaces import IContainer
+from zope.container.interfaces import IContainer
 _ = MessageFactory('pmr2')
 
 import z3c.form

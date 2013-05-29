@@ -12,7 +12,7 @@ from zope.publisher.interfaces import NotFound
 from zope.publisher.browser import BrowserPage
 from zope.i18nmessageid import MessageFactory
 from zope.publisher.interfaces.browser import IBrowserRequest
-from zope.app.container.interfaces import IContainer
+from zope.container.interfaces import IContainer
 _ = MessageFactory("pmr2")
 
 import z3c.form.field
@@ -26,8 +26,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.data import datastream
 from Products.statusmessages.interfaces import IStatusMessage
 
-from zope.app.pagetemplate.viewpagetemplatefile \
-    import ViewPageTemplateFile as VPTF
+from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
 from pmr2.z3cform import form

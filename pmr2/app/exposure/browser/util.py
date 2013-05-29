@@ -1,6 +1,6 @@
 import zope.interface
 import zope.component
-from zope.app.component.hooks import getSite
+from zope.component.hooks import getSite
 from zope.schema.interfaces import RequiredMissing
 
 import z3c.form.interfaces

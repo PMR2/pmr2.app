@@ -3,9 +3,9 @@ import urllib
 import zope.component
 import zope.interface
 
-from zope.app.publisher.interfaces.browser import IBrowserMenu
-from zope.app.publisher.browser.menu import BrowserSubMenuItem
-from zope.app.publisher.browser.menu import BrowserMenu
+from zope.browsermenu.interfaces import IBrowserMenu
+from zope.browsermenu.menu import BrowserSubMenuItem
+from zope.browsermenu.menu import BrowserMenu
 
 from plone.app.contentmenu.view import ContentMenuProvider
 from pmr2.app.workspace.interfaces import IStorage
