@@ -57,7 +57,7 @@ Now let's try if we get widget values:
     >>> print widget.render()
     <select id="widget-id" name="widget.name:list"
             class="storagefileselect-widget" size="1">
-    <option id="widget-id-novalue" value="--NOVALUE--">no value</option>
+    <option id="widget-id-novalue" value="--NOVALUE--">No value</option>
     <option id="widget-id-0" value="a">a</option>
     <option id="widget-id-1" value="b">b</option>
     <option id="widget-id-2" value="c">c</option>
@@ -72,7 +72,7 @@ If we select item "b", then it should be selected:
     >>> print widget.render()
     <select id="widget-id" name="widget.name:list"
             class="storagefileselect-widget" size="1">
-    <option id="widget-id-novalue" value="--NOVALUE--">no value</option>
+    <option id="widget-id-novalue" value="--NOVALUE--">No value</option>
     <option id="widget-id-0" value="a">a</option>
     <option id="widget-id-1" value="b" selected="selected">b</option>
     <option id="widget-id-2" value="c">c</option>
@@ -87,7 +87,7 @@ Let's now make sure that we can extract user entered data from a widget:
     >>> widget.extract()
     ['c']
 
-When "no value" is selected, then no verification against the terms is 
+When "No value" is selected, then no verification against the terms is 
 done:
 ::
 
@@ -133,7 +133,7 @@ field is provided with its associated context.
             class="storagefileselect-widget" size="1">
     <option id="widget-id-invalid" value="--INVALID--" 
             selected="selected">x</option>
-    <option id="widget-id-novalue" value="--NOVALUE--">no value</option>
+    <option id="widget-id-novalue" value="--NOVALUE--">No value</option>
     <option id="widget-id-0" value="a">a</option>
     <option id="widget-id-1" value="b">b</option>
     <option id="widget-id-2" value="c">c</option>
