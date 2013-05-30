@@ -23,12 +23,10 @@ class WorkspaceRSSViewlet(RSSViewlet):
     """
 
     def update(self):
-        super(RSSViewlet, self).update()
-        syntool = getToolByName(self.context, 'portal_syndication')
-
-        # we ignore the settings of the syndication tool, i.e. RSS link
-        # is shown always (note the @@rsslog view is always available).
-        self.allowed = True
+        super(WorkspaceRSSViewlet, self).update()
         context_state = zope.component.getMultiAdapter(
             (self.context, self.request), name=u'plone_context_state')
-        self.url = '%s/@@rsslog' % context_state.object_url()
+        self.rsslinks.append({
+            'title': 'Workspace RSS',
+            'url': '%s/@@rsslog' % context_state.object_url(),
+        })
