@@ -195,6 +195,7 @@ class ExposureViewGenGroup(DocGenSubgroup):
     Subgroup for the view generator for Exposure and ExposureFolder.
     """
 
+    zope.interface.implements(IExposureViewGenGroup)
     field_iface = IExposureViewGenGroup
     fields = z3c.form.field.Fields(IExposureViewGenGroup)
     prefix = 'view'
@@ -246,6 +247,7 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
     field_iface = IExposureFileChoiceTypeGroup
     fields = z3c.form.field.Fields(IExposureFileChoiceTypeGroup)
     prefix = 'file'
+    zope.interface.implements(IExposureFileChoiceTypeGroup)
 
     def generateStructure(self):
         data, errors = self.extractData()

@@ -42,7 +42,7 @@ class StorageFileSelectWidget(select.SelectWidget):
                 })
                 self.invalidSelection = True
 
-        items.extend(self.parent_items)
+        items.extend(self.parent_items())
         return items
 
     def update(self):

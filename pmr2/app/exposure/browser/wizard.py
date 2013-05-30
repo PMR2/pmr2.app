@@ -25,6 +25,7 @@ from pmr2.app.exposure.interfaces import IExposure, IExposureSourceAdapter
 from pmr2.app.exposure.browser.interfaces import IExposureExportImportGroup
 from pmr2.app.exposure.browser.interfaces import IExposureFileGenForm
 from pmr2.app.exposure.browser.interfaces import IExposureWizardForm
+from pmr2.app.exposure.browser.interfaces import IExposureViewGenGroup
 from pmr2.app.exposure.browser.browser import BaseExposureFileTypeAnnotatorForm
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 from pmr2.app.exposure.browser.browser import ExposurePort
@@ -272,7 +273,8 @@ class ExposureFileTypeAnnotatorWizardGroup(
         BaseExposureFileTypeAnnotatorForm,
         ):
     
-    zope.interface.implements(z3c.form.interfaces.ISubForm)
+    zope.interface.implements(z3c.form.interfaces.ISubForm,
+        IExposureFileGenForm, IExposureViewGenGroup)
     fields = z3c.form.field.Fields(IExposureFileGenForm)
     field_iface = IExposureFileGenForm
 
@@ -633,6 +635,7 @@ class ExposureFileTypeWizardGroupExtender(extensible.FormExtender):
         g.fields = fields
         g.prefix = self.form.prefix
         g.field_iface = annotator.for_interface
+        zope.interface.alsoProvides(g, annotator.for_interface)
 
         # finally append this group
         self.form.groups.append(g)
