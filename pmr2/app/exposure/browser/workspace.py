@@ -72,7 +72,7 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
     zope.interface.implements(ICreateExposureForm, ICurrentCommitIdProvider)
 
     label = u"Exposure Creation Wizard"
-    description = u"Please fill out the options of only one for the " \
+    description = u"Please fill out the options for only one of the " \
                    "following sets of fields below to begin the exposure " \
                    "creation process."
     _gotExposureContainer = False
