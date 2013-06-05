@@ -1,6 +1,7 @@
 import os.path
 
 import zope.component
+import zope.interface
 import z3c.form.validator
 
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
@@ -41,6 +42,7 @@ class StorageFileChoiceFieldValidator(z3c.form.validator.SimpleFieldValidator):
 
         context = self.context
         self.context = self.view
+        zope.interface.alsoProvides(self.view, self.field.interface)
         result = super(StorageFileChoiceFieldValidator, self).validate(value)
         self.context = context
         return result
