@@ -55,6 +55,8 @@ class ParentCurrentCommitIdProvider(object):
 
 class ExtensibleAddForm(form.AddForm, extensible.ExtensibleForm):
 
+    _createdAndAdded = None
+
     def __init__(self, *a, **kw):
         super(ExtensibleAddForm, self).__init__(*a, **kw)
         self.groups = []
@@ -63,6 +65,13 @@ class ExtensibleAddForm(form.AddForm, extensible.ExtensibleForm):
     def update(self):
         extensible.ExtensibleForm.update(self)
         form.AddForm.update(self)
+
+    def createAndAdd(self, data):
+        if self._createdAndAdded:
+            return self._createdAndAdded
+        obj = super(ExtensibleAddForm, self).createAndAdd(data)
+        self._createdAndAdded = obj
+        return obj
 
 
 class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
@@ -84,7 +93,7 @@ class CreateExposureForm(ExtensibleAddForm, page.TraversePage):
         return commit_id
 
     def createAndAdd(self, data):
-        obj = super(CreateExposureForm, self).createAndAdd(self)
+        obj = super(CreateExposureForm, self).createAndAdd(data)
         self.processGroups()
         return obj
 
