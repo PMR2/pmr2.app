@@ -36,7 +36,6 @@ setup(
         'setuptools',
         'Paste',
         'python-magic',
-        'collective.css3buttons',
         'z3c.table>=0.6.0',
         'plone.app.content',
         'plone.browserlayer',
