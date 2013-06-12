@@ -1,12 +1,12 @@
-<dl class="portlet portletNavigationTree" id="pmr_source">
+<dl class="portlet portletNavigationTree" id="pmr_download">
   <dt class="portletHeader">Downloads</dt>
   <dd>
-    <ul class="navTree">
+    <ul>
       <li tal:repeat="i view/file_access_uris"
-        ><a class="button block"
+        ><a class="btn"
           tal:attributes="href i/href"
-            ><span class="downarrow icon"></span
-              ><tal:text tal:replace="i/label"></tal:text
+            ><i class="icon-download-alt"></i>
+              <tal:text tal:replace="i/label"></tal:text
         ></a></li>
     </ul>
   </dd>

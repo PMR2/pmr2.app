@@ -26,21 +26,35 @@
 }
 
 #pmr1_curation span {
-  clear: both;
-  display: block;
   float: left;
+  display: block;
   line-height: 20px;
   width: 150px;
 }
 
 #pmr1_curation img {
   vertical-align: middle;
-  float: left;
 }
 
+#pmr1_curation dd,
+#pmr_download ul,
+#pmr1_curation ul {
+  padding: 0;
+  margin: 0;
+}
+
+#pmr1_curation ul li {
+  display: block;
+}
+ 
 #pmr1_download {
   float: right; 
   line-height: 20px;
+}
+ 
+#pmr_download ul li a {
+  display: block;
+  text-align: left;
 }
 
 .exposure-nav {
