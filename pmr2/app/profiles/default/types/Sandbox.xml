@@ -5,7 +5,6 @@
  <property name="title">PMR2 Sandbox</property>
  <property
     name="description">A container for sandboxes of PMR2.</property>
- <property name="content_icon">document_icon.gif</property>
  <property name="content_meta_type">Sandbox</property>
  <property name="product">pmr2.app</property>
  <property name="factory">addSandbox</property>

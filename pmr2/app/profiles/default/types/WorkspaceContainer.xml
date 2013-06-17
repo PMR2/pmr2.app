@@ -5,7 +5,6 @@
  <property name="title">PMR2 Workspace Container</property>
  <property
     name="description">A container for workspaces of PMR2.</property>
- <property name="content_icon">folder_icon.gif</property>
  <property name="content_meta_type">WorkspaceContainer</property>
  <property name="product">pmr2.app</property>
  <property name="factory">addWorkspaceContainer</property>

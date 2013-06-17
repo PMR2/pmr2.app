@@ -5,7 +5,6 @@
  <property name="title">PMR2 Exposure</property>
  <property
     name="description">An exposures of a model workspace.</property>
- <property name="content_icon">folder_icon.gif</property>
  <property name="content_meta_type">Exposure</property>
  <property name="product">pmr2.app</property>
  <property name="factory">addExposure</property>

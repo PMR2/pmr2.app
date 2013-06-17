@@ -5,7 +5,6 @@
  <property name="title">Exposure File Type</property>
  <property
     name="description">Defines a view generation profile for types of Exposure Files.</property>
- <property name="content_icon">document_icon.gif</property>
  <property name="content_meta_type">ExposureFileType</property>
  <property name="product">pmr2.app</property>
  <property name="factory">addExposureFileType</property>

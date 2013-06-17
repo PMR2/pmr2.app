@@ -5,7 +5,6 @@
  <property name="title">PMR2 Workspace</property>
  <property
     name="description">Object for encapsulating a model workspace. Links to an external revision control system.</property>
- <property name="content_icon">document_icon.gif</property>
  <property name="content_meta_type">Workspace</property>
  <property name="product">pmr2.app</property>
  <property name="factory">addWorkspace</property>
