@@ -1,0 +1,7 @@
+<p>
+  To add an exposure file or folder, please open the <a tal:attributes="
+      href string:${context/absolute_url}/../wizard;">wizard</a>, select the
+  'Add File' button at the bottom of the form, then select the desired
+  file to add from that list.
+</p>
+

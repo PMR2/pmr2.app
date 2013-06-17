@@ -14,6 +14,7 @@
  <property name="allowed_content_types" />
  <property name="allow_discussion">False</property>
  <property name="default_view">exposure_file_redirect</property>
+ <property name="add_view_expr">string:${folder_url}/+/addExposureFile</property>
  <property name="view_methods">
   <element value="exposure_file_redirect"/>
   <element value="exposure_file_document_view"/>

@@ -269,6 +269,27 @@
       permission="cmf.AddPortalContent"
       />
 
+  <browser:page
+      for="plone.app.content.browser.adding.CMFAdding"
+      name="addExposureFile"
+      class=".adding.ExposureFileCreateInterceptPage"
+      permission="cmf.AddPortalContent"
+      />
+
+  <browser:page
+      for="plone.app.content.browser.adding.CMFAdding"
+      name="addExposureFolder"
+      class=".adding.ExposureFolderCreateInterceptPage"
+      permission="cmf.AddPortalContent"
+      />
+
+  <browser:page
+      for="plone.app.content.browser.adding.CMFAdding"
+      name="addExposureContainer"
+      class=".adding.ExposureContainerCreateInterceptPage"
+      permission="cmf.AddPortalContent"
+      />
+
   <!-- extensible form adapters -->
 
   <adapter 
