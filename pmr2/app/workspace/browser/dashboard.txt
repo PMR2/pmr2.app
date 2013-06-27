@@ -6,9 +6,9 @@ to workspaces should have been made introduced::
 
     >>> tb = self.testbrowser
     >>> tb.open(self.portal.absolute_url() + '/pmr2-dashboard')
-    >>> tb.getLink('List personal workspaces').url
+    >>> tb.getLink(id='pmr2-dashboard-workspace-home').url
     'http://nohost/plone/pmr2-dashboard/workspace-home'
-    >>> tb.getLink('Create personal workspace').url
+    >>> tb.getLink(id='pmr2-dashboard-workspace-add').url
     'http://nohost/plone/pmr2-dashboard/workspace-add'
 
 The dashboard actions depend on the settings defined.  If the user
@@ -16,7 +16,7 @@ workspace is enabled, as it is set by default in the test harness,
 triggering the link will lead to the url within the user's workspace
 container::
 
-    >>> tb.getLink('Create personal workspace').click()
+    >>> tb.getLink(id='pmr2-dashboard-workspace-add').click()
     >>> tb.url
     'http://nohost/plone/w/test_user_1_/+/addWorkspace'
 
@@ -28,7 +28,7 @@ instead::
     >>> settings = zope.component.getUtility(IPMR2GlobalSettings)
     >>> settings.create_user_workspace = False
     >>> tb.open(self.portal.absolute_url() + '/pmr2-dashboard')
-    >>> tb.getLink('Create personal workspace').click()
+    >>> tb.getLink(id='pmr2-dashboard-workspace-add').click()
     Traceback (most recent call last):
     ...
     HTTPError: HTTP Error 404: Not Found
@@ -39,6 +39,6 @@ expected.  Now try this again with the workspace container in place.
     >>> from pmr2.app.workspace.content import WorkspaceContainer
     >>> self.portal['workspace'] = WorkspaceContainer()
     >>> tb.open(self.portal.absolute_url() + '/pmr2-dashboard')
-    >>> tb.getLink('Create personal workspace').click()
+    >>> tb.getLink(id='pmr2-dashboard-workspace-add').click()
     >>> tb.url
     'http://nohost/plone/workspace/+/addWorkspace'

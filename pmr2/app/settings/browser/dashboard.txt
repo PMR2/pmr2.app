@@ -52,7 +52,8 @@ See that the dashboard page renders with the newly registered option.
     <h3>Physiome Model Repository Dashboard</h3>
     <ul>
       <li>
-        <a href=".../dashboard/dummy_option">Dummy option</a>
+        <a href="http://nohost/plone/dashboard/dummy_option"
+          id="pmr2-dashboard-dummy_option">Dummy option</a>
       </li>
     </ul>
     ...

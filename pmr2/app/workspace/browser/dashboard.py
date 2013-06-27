@@ -39,10 +39,10 @@ class WorkspaceDashboardOption(DashboardOption):
 
 class WorkspaceHome(WorkspaceDashboardOption):
 
-    title = 'List personal workspaces'
+    title = 'Workspace home'
 
 
 class WorkspaceAdd(WorkspaceDashboardOption):
 
-    title = 'Create personal workspace'
+    title = 'Create workspace in workspace home'
     path = '+/addWorkspace'

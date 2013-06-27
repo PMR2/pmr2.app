@@ -19,9 +19,10 @@ class Dashboard(page.SimplePage):
 
         result = [{
                 'action': '/'.join([
-                    self.context.absolute_url(), self.__name__, name]),
+                    self.context.absolute_url(), self.__name__, id]),
                 'label': option.title,
-            } for name, option in options]
+                'id': 'pmr2-dashboard-' + id,
+            } for id, option in options]
         return result
 
 
