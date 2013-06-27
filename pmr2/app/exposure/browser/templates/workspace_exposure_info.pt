@@ -4,7 +4,7 @@
     <dt class="portletHeader">Exposure Information</dt>
 
     <dd>
-        <a class="button"
+        <a class="btn"
             tal:attributes="href latest/getURL;">Latest Exposure</a>
         If you are a new user to the repository, you may wish to view the
         exposure for this workspace.  An exposure will show the summarized
