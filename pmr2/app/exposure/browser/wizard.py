@@ -365,6 +365,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
     description = ViewPageTemplateFile('exposure_wizard_description.pt')
 
     _updated = False
+    _doomed = False
     _next = None
     _workspace_is_private = False
 
@@ -531,7 +532,14 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         try:
             moldExposure(self.context, self.request, wh.structure)
         except ProcessingError, e:
-            raise z3c.form.interfaces.ActionExecutionError(e)
+            # XXX almost certainly a bad idea but this fixes
+            # tracker item 3610.
+            import transaction
+            transaction.doom()
+            self._doomed = True
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(_(str(e)), 'error')
+            return
 
         self._updated = True
         self._next = ''
@@ -569,7 +577,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         if self._next is None:
             next = '/@@wizard'
 
-        if self._updated:
+        if self._updated or self._doomed:
             self.request.response.redirect(
                 self.context.absolute_url() + next)
             return ''
