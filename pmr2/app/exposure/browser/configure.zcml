@@ -224,6 +224,13 @@
 
   <browser:page
       for="pmr2.app.exposure.interfaces.IExposureFolder"
+      name="wizard"
+      class=".wizard.ExposureFileWizardRedirect"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      for="pmr2.app.exposure.interfaces.IExposureFolder"
       name="exposure_info"
       class=".browser.ExposureInfo"
       permission="zope2.View"

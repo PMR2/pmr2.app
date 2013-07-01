@@ -42,4 +42,10 @@
   <permission value="Modify portal content"/>
  </action>
 
+ <action title="Wizard" action_id="wizard" category="object" 
+    url_expr="string:${object_url}/wizard" visible="True" 
+    i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+
 </object>
