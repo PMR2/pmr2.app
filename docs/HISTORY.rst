@@ -17,12 +17,27 @@ Changelog
 * Exposure Wizard is now the only way to create Exposures.  All other
   views and methods are removed.
 
+* Other minor additions:
+
+  - Making use of twitter-bootstrap css classes.
+  - Workspace file browser links are made more explicit to remove a
+    source of view/download confusion caused by web browser's right-
+    click context menu.
+
 * Bug fixes
 
   - Exposure Source Portlet no longer results in an exception if its
     workspace is not found.
   - Warning message for a private workspace in the exposure wizard.
   - Unicode properly rendered if possible in the workspace history.
+  - Relative links in HTML rendering within the workspace file viewer
+    to any resources will be resolved correctly.  All relative linked
+    images and hyperlinks now function the same as if within the docview
+    in exposures.
+  - Creating an exposure will no longer result in a duplicate dummy.
+  - When buliding an exposure with the wizard, failures during the
+    process will be cleaned up to not result in a partially created
+    exposure.
 
 0.6.5 - Released (2013-03-14)
 -----------------------------
