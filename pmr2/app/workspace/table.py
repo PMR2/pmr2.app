@@ -338,6 +338,26 @@ class FilenameColumn(EscapedItemKeyColumn):
         if item['fullpath']:
             # XXX this is an override for embedded workspaces, better 
             # solution may be required.
+            return (u'<span class="contentype-%s">%s</span>' % (
+                item['contenttype'],
+                item['basename'],
+            ))
+
+        return (u'<span class="contenttype-%s">%s</span>' % (
+            item['contenttype'],
+            self.getItem(item),
+        ))
+
+
+class FilenameColumnLinked(EscapedItemKeyColumn):
+    weight = 11
+    header = _(u'Filename')
+    itemkey = 'basename'
+
+    def renderCell(self, item):
+        if item['fullpath']:
+            # XXX this is an override for embedded workspaces, better 
+            # solution may be required.
             return (u'<span class="contentype-%s">'
                 '<a href="%s">%s</a></span>' % (
                 item['contenttype'],
@@ -360,16 +380,35 @@ class FileOptionColumn(EscapedItemKeyColumn):
     weight = 50
     header = _(u'Options')
     itemkey = 'basename'
+    _browse = True
 
     def renderCell(self, item):
-        # also could render changeset link (for diffs)
+        result = []
+
+        if self._browse:
+            # XXX this is an override for embedded workspaces, better 
+            # solution may be required.
+            if item['fullpath']:
+                result.append(u'<a href="%s">[%s]</a>' % (
+                    item['fullpath'],
+                    _(u'browse'),
+                ))
+            else:
+                result.append(u'<a href="%s/%s/%s/%s">[%s]</a>' % (
+                    self.table.context.absolute_url(),
+                    item['baseview'],
+                    item['node'],
+                    item['file'],
+                    _(u'browse'),
+                ))
+
         if item['permissions'][0] == '-':
-            result = [u'<a href="%s/@@rawfile/%s/%s">[%s]</a>' % (
+            result.append(u'<a href="%s/@@rawfile/%s/%s">[%s]</a>' % (
                 self.table.context.absolute_url(),
                 item['node'],
                 item['file'],
                 _(u'download'),
-            )]
+            ))
 
             # XXX *.session.xml assumption
             # XXX make this query some sort of utility or adapter and
@@ -382,9 +421,7 @@ class FileOptionColumn(EscapedItemKeyColumn):
                     _(u'run'),
                 ))
 
-            return ' '.join(result)
-        else:
-            return u''
+        return ' '.join(result)
 
 
 
