@@ -100,7 +100,7 @@
            zope.publisher.interfaces.IPublisherRequest
            .table.IFileManifestTable"
       provides="z3c.table.interfaces.IColumn"
-      factory=".table.FilenameColumn"
+      factory=".table.FilenameColumnLinked"
       name="file_name"
       />
 

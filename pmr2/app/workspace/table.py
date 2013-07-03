@@ -335,15 +335,7 @@ class FilenameColumn(EscapedItemKeyColumn):
     itemkey = 'basename'
 
     def renderCell(self, item):
-        if item['fullpath']:
-            # XXX this is an override for embedded workspaces, better 
-            # solution may be required.
-            return (u'<span class="contentype-%s">%s</span>' % (
-                item['contenttype'],
-                item['basename'],
-            ))
-
-        return (u'<span class="contenttype-%s">%s</span>' % (
+        return (u'<span class="contentype-%s">%s</span>' % (
             item['contenttype'],
             self.getItem(item),
         ))
@@ -358,20 +350,32 @@ class FilenameColumnLinked(EscapedItemKeyColumn):
         if item['fullpath']:
             # XXX this is an override for embedded workspaces, better 
             # solution may be required.
-            return (u'<span class="contentype-%s">'
-                '<a href="%s">%s</a></span>' % (
-                item['contenttype'],
-                item['fullpath'],
-                item['basename'],
+            href = item['fullpath']
+        else:
+            href = '/'.join((
+                self.table.context.absolute_url(),
+                item['baseview'],
+                item['node'],
+                item['file'],
             ))
 
-        return (u'<span class="contenttype-%s">'
-                '<a href="%s/%s/%s/%s">%s</a></span>' % (
+        datasrc = ''
+        csscls = 'wsfmenu open'
+        if item['permissions'][0] == '-':
+            csscls = 'wsfmenu download'
+            datasrc = ' data-src="%s"' % '/'.join((
+                self.table.context.absolute_url(),
+                '@@download',
+                item['node'],
+                item['file'],
+            ))
+
+        return (u'<span class="%s contentype-%s">'
+                '<a href="%s"%s>%s</a></span>' % (
+            csscls,
             item['contenttype'],
-            self.table.context.absolute_url(),
-            item['baseview'],
-            item['node'],
-            item['file'],
+            href,
+            datasrc,
             self.getItem(item),
         ))
 
