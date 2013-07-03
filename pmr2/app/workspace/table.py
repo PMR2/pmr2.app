@@ -335,7 +335,7 @@ class FilenameColumn(EscapedItemKeyColumn):
     itemkey = 'basename'
 
     def renderCell(self, item):
-        return (u'<span class="contentype-%s">%s</span>' % (
+        return (u'<span class="itemtype-%s">%s</span>' % (
             item['contenttype'],
             self.getItem(item),
         ))
@@ -370,7 +370,7 @@ class FilenameColumnLinked(EscapedItemKeyColumn):
                 item['file'],
             ))
 
-        return (u'<span class="%s contentype-%s">'
+        return (u'<span class="%s itemtype-%s">'
                 '<a href="%s"%s>%s</a></span>' % (
             csscls,
             item['contenttype'],
