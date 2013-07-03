@@ -799,6 +799,18 @@ class WorkspaceRawfile(FilePage):
             raise NotFound(self.context, self.context.title_or_id())
 
 
+class WorkspaceDownloadFile(WorkspaceRawfile):
+
+    def render(self):
+        data = self.request['_data']
+        contents = super(WorkspaceDownloadFile, self).render()
+
+        self.request.response.setHeader('Content-Disposition',
+            'attachment; filename="%s"' % data['basename'])
+
+        return contents
+
+
 class WorkspaceRawfileXmlBase(WorkspaceRawfile):
 
     @property

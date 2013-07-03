@@ -131,6 +131,13 @@
 
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="download"
+      class=".browser.WorkspaceDownloadFile"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
       name="xmlbase"
       class=".browser.WorkspaceRawfileXmlBase"
       permission="zope2.View"
