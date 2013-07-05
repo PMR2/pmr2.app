@@ -5,7 +5,7 @@
 <dd tal:content="view/data/date"/>
 <dt>Desc:</dt>
 <dd tal:content="view/data/desc"/>
-<dt>Permanent Download URI:</dt>
+<dt>Permanent Source URI:</dt>
 <dd><a tal:attributes="
       href view/fullpath;
     "
@@ -13,3 +13,8 @@
   />
 </dd>
 </dl>
+<div class="btn-group">
+  <a class="btn" tal:attributes="href view/fullpath">Source</a>
+  <a class="btn" tal:attributes="href view/downloadpath">Download</a>
+</div>
+<p></p>

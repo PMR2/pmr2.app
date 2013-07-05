@@ -662,6 +662,11 @@ class BaseFilePage(WorkspaceTraversePage):
         return '/'.join(self._getpath(path=self.data['file']))
 
     @property
+    def downloadpath(self):
+        """permanent download uri."""
+        return '/'.join(self._getpath(view='download', path=self.data['file']))
+
+    @property
     def viewpath(self):
         """view uri."""
         return '/'.join(self._getpath(view='file',

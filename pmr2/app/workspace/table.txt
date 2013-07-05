@@ -350,8 +350,7 @@ ValuesMixin and friends.  Please fix.
               class="icon-None"></i> foo</a></span></td>
           <td>0</td>
           <td>1970-01-01 00:00</td>
-          <td><a href="urn:example:/file/c0ffee/foo">[browse]</a>
-            <a href="urn:example:/@@rawfile/c0ffee/foo">[download]</a></td>
+          <td><a href="urn:example:/file/c0ffee/foo">[browse]</a></td>
         </tr>
         <tr>
           <td><span class="..."><a href="urn:example:/file/c0ffee/bar"
@@ -359,8 +358,7 @@ ValuesMixin and friends.  Please fix.
               class="icon-None"></i> bar</a></span></td>
           <td>10</td>
           <td>2000-01-01 00:00</td>
-          <td><a href="urn:example:/file/c0ffee/bar">[browse]</a>
-            <a href="urn:example:/@@rawfile/c0ffee/bar">[download]</a></td>
+          <td><a href="urn:example:/file/c0ffee/bar">[browse]</a></td>
         </tr>
       </tbody>
     </table>

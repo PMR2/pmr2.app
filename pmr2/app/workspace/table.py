@@ -385,6 +385,7 @@ class FileOptionColumn(EscapedItemKeyColumn):
     header = _(u'Options')
     itemkey = 'basename'
     _browse = True
+    _download = False
 
     def renderCell(self, item):
         result = []
@@ -407,12 +408,13 @@ class FileOptionColumn(EscapedItemKeyColumn):
                 ))
 
         if item['permissions'][0] == '-':
-            result.append(u'<a href="%s/@@rawfile/%s/%s">[%s]</a>' % (
-                self.table.context.absolute_url(),
-                item['node'],
-                item['file'],
-                _(u'download'),
-            ))
+            if self._download:
+                result.append(u'<a href="%s/@@rawfile/%s/%s">[%s]</a>' % (
+                    self.table.context.absolute_url(),
+                    item['node'],
+                    item['file'],
+                    _(u'download'),
+                ))
 
             # XXX *.session.xml assumption
             # XXX make this query some sort of utility or adapter and
