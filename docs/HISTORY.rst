@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.7 - Unreleased
-----------------
+0.7 - Released (2013-07-08)
+---------------------------
 
 * Shared forms/views moved to separate module ``pmr2.z3cform``
 
@@ -34,7 +34,7 @@ Changelog
     to any resources will be resolved correctly.  All relative linked
     images and hyperlinks now function the same as if within the docview
     in exposures.
-  - Creating an exposure will no longer result in a duplicate dummy.
+  - Creating an exposure will no longer result in a duplicated object.
   - When buliding an exposure with the wizard, failures during the
     process will be cleaned up to not result in a partially created
     exposure.
