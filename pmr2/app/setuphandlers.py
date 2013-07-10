@@ -384,14 +384,14 @@ def filetype_bulk_update(context):
         return
 
     errors = []
-    counter = 0
     commit_interval = 100
     files = catalog(portal_type='ExposureFile')
-    for b in files:
+    t = len(files)
+    for c, b in enumerate(files, 1):
         file_sp = transaction.savepoint()
         file = b.getObject()
-        logger.info('Rebuilding notes for `%s`.' % 
-                    file.absolute_url_path())
+        logger.info('Rebuilding notes for `%s` (%d/%d).',
+                    file.absolute_url_path(), c, t)
         ftpath = file.file_type
         if not ftpath:
             continue
@@ -425,12 +425,10 @@ def filetype_bulk_update(context):
             logger.warning(traceback.format_exc())
             continue
 
-        #counter += 1
-        if counter > commit_interval:
-            transaction.commit()
+        if c % commit_interval == 0:
+            transaction.get().commit()
             logger.info('Committed transaction, interval %d reached' % 
                         commit_interval)
-            counter = 0
 
     if errors:
         logger.error('The following file(s) have failed to rebuild:\n%s' %
