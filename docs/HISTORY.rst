@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.7.1 - Unreleased
+------------------
+
+* Updated setup migration script that rebuilds all exposure file notes.
+
 0.7 - Released (2013-07-08)
 ---------------------------
 
