@@ -5,6 +5,8 @@ Changelog
 ------------------
 
 * Updated setup migration script that rebuilds all exposure file notes.
+* Workspace file context listing moved to own file, fixes issue where
+  only the workspace main page got this function.
 
 0.7 - Released (2013-07-08)
 ---------------------------
