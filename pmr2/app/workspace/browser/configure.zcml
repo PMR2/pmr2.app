@@ -268,4 +268,12 @@
       provides="pmr2.app.settings.interfaces.IDashboardOption"
       />
 
+  <!-- Workspace Resources -->
+
+  <browser:resourceDirectory
+      name="pmr2.workspace.scripts"
+      directory="scripts"
+      layer="pmr2.app.interfaces.IPMR2AppLayer"
+      />
+
 </configure>
