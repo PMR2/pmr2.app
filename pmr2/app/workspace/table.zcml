@@ -47,7 +47,7 @@
            zope.publisher.interfaces.IPublisherRequest
            .table.IChangelogTable"
       provides="z3c.table.interfaces.IColumn"
-      factory=".table.ChangesetAuthorColumn"
+      factory=".table.ChangesetAuthorEmailColumn"
       name="changeset_author"
       />
 

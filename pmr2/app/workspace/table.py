@@ -12,6 +12,8 @@ import z3c.table.table
 from z3c.table.value import ValuesMixin
 from z3c.table.interfaces import ITable
 
+from Products.CMFCore.utils import getToolByName
+
 from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import IWorkspaceListing
 from pmr2.app.workspace.interfaces import IStorage
@@ -198,6 +200,32 @@ class ChangesetAuthorColumn(EscapedItemKeyColumn):
     itemkey = 'author'
 
 
+class ChangesetAuthorEmailColumn(EscapedItemKeyColumn):
+    weight = 21
+    header = _(u'Author')
+    itemkey = 'author'
+
+    def renderCell(self, item):
+        name = super(ChangesetAuthorEmailColumn, self).renderCell(item)
+        email = item.get('email')
+        pm = getToolByName(self.context, 'portal_membership', None)
+        if not pm:
+            return name
+
+        # find the latest user.
+        user = sorted(pm.searchForMembers(name=name, email=email),
+            lambda x, y: x.getProperty('last_login_time', '') <
+                y.getProperty('last_login_time', ''))
+
+        if not user:
+            return name
+
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        href = portal.absolute_url() + '/author/' + user[0].getUserName()
+
+        return '<a href="%s">%s</a>' % (href, name)
+
+
 class ChangesetDescColumn(EscapedItemKeyColumn):
     weight = 30
     header = _(u'Log')
@@ -269,7 +297,7 @@ class ShortlogTable(z3c.table.table.Table):
 class ValuesForChangelogTable(ValuesMixin):
     """Values from a simple IContainer."""
 
-    filter_keys = ['author', 'date', 'node', 'rev', 'desc',]
+    filter_keys = ['author', 'email', 'date', 'node', 'rev', 'desc',]
 
     zope.component.adapts(zope.interface.Interface, IBrowserRequest,
         IChangelogTable)
