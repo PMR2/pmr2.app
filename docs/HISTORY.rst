@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.7.x - Unreleased
+------------------
+
+* In workspace log listing, link commit log email to the user identified
+  by the same email within the CMS.
+
 0.7.1 - Unreleased
 ------------------
 
