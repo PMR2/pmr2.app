@@ -120,6 +120,15 @@
 
   <!-- Exposure Menus -->
 
+  <browser:viewlet
+      name="plone.contentactions"
+      for="*"
+      view=".interfaces.IExposureWizardForm"
+      manager="plone.app.layout.viewlets.interfaces.IContentViews"
+      class="plone.app.layout.viewlets.common.ContentActionsViewlet"
+      permission="zope2.View"
+      />
+
   <adapter for="pmr2.app.exposure.interfaces.IExposure *"
            name="plone.contentmenu.actions"
            factory=".menu.NullSubMenuItem"
