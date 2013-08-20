@@ -7,6 +7,9 @@ Changelog
 * Updated setup migration script that rebuilds all exposure file notes.
 * Workspace file context listing moved to own file, fixes issue where
   only the workspace main page got this function.
+* Added the rendering of content menus to the exposure wizard view,
+  which will allow the control of workflow states from there.
+* Removed all extraneous content menus from exposures content types.
 
 0.7 - Released (2013-07-08)
 ---------------------------
