@@ -118,6 +118,28 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <!-- Exposure Menus -->
+
+  <adapter for="pmr2.app.exposure.interfaces.IExposure *"
+           name="plone.contentmenu.actions"
+           factory=".menu.NullSubMenuItem"
+           provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
+
+  <adapter for="pmr2.app.exposure.interfaces.IExposure *"
+           name="plone.contentmenu.display"
+           factory=".menu.NullSubMenuItem"
+           provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
+
+  <adapter for="pmr2.app.exposure.interfaces.IExposure *"
+           name="plone.contentmenu.factories"
+           factory=".menu.NullSubMenuItem"
+           provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
+
+  <adapter for="pmr2.app.exposure.interfaces.IExposure *"
+           name="plone.contentmenu.workflow"
+           factory="plone.app.contentmenu.menu.WorkflowSubMenuItem"
+           provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
+
   <!-- Exposure File -->
 
   <browser:page
