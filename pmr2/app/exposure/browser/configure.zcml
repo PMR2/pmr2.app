@@ -144,11 +144,6 @@
            factory=".menu.NullSubMenuItem"
            provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
 
-  <adapter for="pmr2.app.exposure.interfaces.IExposure *"
-           name="plone.contentmenu.workflow"
-           factory="plone.app.contentmenu.menu.WorkflowSubMenuItem"
-           provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
-
   <adapter for="pmr2.app.exposure.interfaces.IExposureFolder *"
            name="plone.contentmenu.actions"
            factory=".menu.NullSubMenuItem"
@@ -172,6 +167,21 @@
   <adapter for="pmr2.app.exposure.interfaces.IExposureFile *"
            name="plone.contentmenu.display"
            factory=".menu.NullSubMenuItem"
+           provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
+
+  <adapter for="pmr2.app.exposure.interfaces.IExposure *"
+           name="plone.contentmenu.workflow"
+           factory=".menu.ExposureWorkflowSubMenuItem"
+           provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
+
+  <adapter for="pmr2.app.exposure.interfaces.IExposureFolder *"
+           name="plone.contentmenu.workflow"
+           factory=".menu.ExposureWorkflowSubMenuItem"
+           provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
+
+  <adapter for="pmr2.app.exposure.interfaces.IExposureFile *"
+           name="plone.contentmenu.workflow"
+           factory=".menu.ExposureWorkflowSubMenuItem"
            provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
 
   <!-- Exposure File -->
