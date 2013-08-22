@@ -6,6 +6,11 @@ Changelog
 
 * In workspace log listing, link commit log email to the user identified
   by the same email within the CMS.
+* Root exposure object link for owners to an alternative view, so they
+  can manipulate the workflow state when required.  Avoid mucking too
+  much of the internal Zope/Plone permission mechanisms and other
+  difficult to override things.
+* Fixed the highlighting of the wizard tab.
 
 0.7.1 - Released (2013-08-20)
 -----------------------------
