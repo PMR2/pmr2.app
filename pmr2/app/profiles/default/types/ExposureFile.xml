@@ -40,6 +40,17 @@
   <permission value="Modify portal content"/>
  </action>
 
+ <!--
+   Using Manage properties because we only want to give this shortcut
+   to owners and not really anyone else, and assume default for this
+   isn't modified.
+ -->
+ <action title="Exposure Root" action_id="top" category="object" 
+    url_expr="string:${object_url}/root_folder_contents" visible="True" 
+    i18n:attributes="title">
+  <permission value="Manage properties"/>
+ </action>
+
  <action title="Set Default View" action_id="select_view" category="object" 
     url_expr="string:${object_url}/@@select_view" visible="True" 
     i18n:attributes="title">

@@ -248,6 +248,13 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <browser:page
+      for="pmr2.app.exposure.interfaces.IExposureFile"
+      name="root_folder_contents"
+      class=".wizard.ExposureFileRootFolderContentsRedirect"
+      permission="zope2.View"
+      />
+
   <!-- Exposure File Type -->
 
   <browser:page

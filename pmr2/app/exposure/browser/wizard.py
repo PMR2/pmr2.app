@@ -678,3 +678,16 @@ class ExposureFileWizardRedirect(BrowserPage):
         exposure, workspace, path = helper.source()
         target_uri = '%s/wizard' % (exposure.absolute_url())
         return self.request.response.redirect(target_uri)
+
+
+class ExposureFileRootFolderContentsRedirect(BrowserPage):
+    """
+    Redirect to the root exposure folder contents.
+    """
+
+    def __call__(self):
+        helper = zope.component.queryAdapter(
+            self.context, IExposureSourceAdapter)
+        exposure, workspace, path = helper.source()
+        target_uri = '%s/folder_contents' % (exposure.absolute_url())
+        return self.request.response.redirect(target_uri)
