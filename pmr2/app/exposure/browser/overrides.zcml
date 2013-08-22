@@ -3,10 +3,12 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="pmr2.app">
 
+  <!--
   <browser:menu 
       id="plone_contentmenu_workflow"
       title="The 'workflow' menu - allows the user to execute workflow transitions"
       class=".menu.ExposureWorkflowMenu"
       />
+  -->
 
 </configure>
