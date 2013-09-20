@@ -13,6 +13,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import *
+from pmr2.app.workspace.interfaces import IStorage
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
@@ -69,6 +70,17 @@ class Renderer(base.Renderer):
             self.workspace.absolute_url(), self.exposure.commit_id)
         result.append({
             'label': u'Complete Archive as .tgz', 'href': archive_uri})
+        storage = IStorage(self.exposure)
+        if storage.enableOmex:
+            try:
+                # check if we can acquire manifest.xml
+                manifest = storage.file('manifest.xml')
+                archive_uri = '%s/@@archive/%s/omex' % (
+                    self.workspace.absolute_url(), self.exposure.commit_id)
+                result.append({
+                    'label': u'COMBINE Archive', 'href': archive_uri})
+            except:
+                pass
         if IExposureFile.providedBy(self.context):
             result.append({
                 'label': u'Download This File',
