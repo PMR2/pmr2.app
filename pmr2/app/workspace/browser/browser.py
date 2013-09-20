@@ -256,7 +256,7 @@ class WorkspaceArchive(WorkspaceTraversePage):
         headers = [
             ('Content-Type', info['mimetype']),
             ('Content-Length', len(archivestr)),
-            ('Content-Disposition', 'attachment; filename=%s%s' % (
+            ('Content-Disposition', 'attachment; filename="%s%s"' % (
                 self.context.id, info['ext'])),
         ]
 
