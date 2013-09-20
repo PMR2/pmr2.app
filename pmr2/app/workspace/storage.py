@@ -86,7 +86,7 @@ class BaseStorage(object):
         archiveFormats = {}
         if self.enableOmex:
             archiveFormats['omex'] = (
-                'COMBINE Archive', '.omex', 'application/zip')
+                'COMBINE Archive', '.omex', 'application/vnd.combine.omex')
         return archiveFormats
 
     @property
