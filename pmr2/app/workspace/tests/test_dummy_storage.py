@@ -394,6 +394,12 @@ class TestDummyStorage(TestCase):
         formats = storage.archiveFormats
         self.assertEqual(formats, ['dummy'])
 
+    def test_700_archiveFormats(self):
+        storage = DummyStorage(self.workspace)
+        storage.enableOmex = True
+        formats = storage.archiveFormats
+        self.assertEqual(sorted(formats), ['dummy', 'omex'])
+
     def test_710_archiveInfo(self):
         storage = DummyStorage(self.workspace)
         info = storage.archiveInfo('dummy')
@@ -401,6 +407,18 @@ class TestDummyStorage(TestCase):
             'name': 'Dummy Archive',
             'ext': '.dummy',
             'mimetype': 'application/x-dummy',
+        })
+
+    def test_711_archiveInfoOmex(self):
+        storage = DummyStorage(self.workspace)
+        self.assertRaises(ValueError, storage.archiveInfo, 'omex')
+
+        storage.enableOmex = True
+        info = storage.archiveInfo('omex')
+        self.assertEqual(info, {
+            'name': 'COMBINE Archive',
+            'ext': '.omex',
+            'mimetype': 'application/zip',
         })
 
     def test_711_archiveInfoValueError(self):

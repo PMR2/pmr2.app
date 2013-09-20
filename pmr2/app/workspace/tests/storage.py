@@ -161,6 +161,8 @@ class DummyStorageUtility(StorageUtility):
 
 class DummyStorage(BaseStorage):
 
+    enableOmex = False
+
     _archiveFormats = {
         'dummy': ('Dummy Archive', '.dummy', 'application/x-dummy'),
     }

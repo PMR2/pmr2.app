@@ -6,6 +6,8 @@ from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import IStorage, IStorageUtility
 from pmr2.app.workspace.interfaces import IWorkspace
 
+from .omex import build_omex
+
 
 class BaseStorage(object):
     """\
@@ -13,6 +15,8 @@ class BaseStorage(object):
     """
 
     zope.interface.implements(IStorage)
+
+    enableOmex = True
 
     def __init__(self, context):
         # context will always be the immediate object that leads to the
@@ -80,6 +84,9 @@ class BaseStorage(object):
         # should return a list of builtins available, could be
         # automatically generated.
         archiveFormats = {}
+        if self.enableOmex:
+            archiveFormats['omex'] = (
+                'COMBINE Archive', '.omex', 'application/zip')
         return archiveFormats
 
     @property
@@ -117,6 +124,13 @@ class BaseStorage(object):
             # appropriate method with the correct name.
             raise NotImplementedError
         return archiver()
+
+    def archive_omex(self):
+        """
+        Return a COMBINE archive.
+        """
+
+        return build_omex(self)
 
     def basename(self, name):
         raise NotImplementedError
