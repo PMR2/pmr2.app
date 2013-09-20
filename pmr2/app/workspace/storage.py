@@ -76,8 +76,16 @@ class BaseStorage(object):
         return BaseStorage.__default_datefmt[self.datefmt]
 
     @property
+    def builtin_archive_formats(self):
+        # should return a list of builtins available, could be
+        # automatically generated.
+        archiveFormats = {}
+        return archiveFormats
+
+    @property
     def archiveFormats(self):
-        return sorted(self._archiveFormats.keys())
+        return sorted(self._archiveFormats.keys() +
+            self.builtin_archive_formats.keys())
 
     # Navigational list
 
@@ -93,7 +101,8 @@ class BaseStorage(object):
     # Default implementation for methods
 
     def archiveInfo(self, format):
-        info = self._archiveFormats.get(format, None)
+        info = self._archiveFormats.get(format,
+            self.builtin_archive_formats.get(format, None))
         if not info:
             raise ValueError('format `%s` not supported' % format)
         return dict(zip(self.__archiveFormatInfoKeys, info))
