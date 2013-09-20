@@ -239,10 +239,16 @@ class WorkspaceArchive(WorkspaceTraversePage):
         # this is going to hurt so bad if this was a huge archive...
         try:
             archivestr = storage.archive(type_)
+        except StorageArchiveError as e:
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(
+                u'`%s` not accessible for archiving.' % str(e))
+            self.request.response.redirect(self.context.absolute_url())
         except ValueError:
             status = IStatusMessage(self.request)
             status.addStatusMessage(
-                u'The archive format `%s` is unsupported.' % type_)
+                u'The archive format `%s` is unsupported for this changeset '
+                u'or workspace.' % type_)
             self.request.response.redirect(self.context.absolute_url())
             return
 

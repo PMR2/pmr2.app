@@ -14,6 +14,10 @@ class UnknownStorageTypeError(ValueError):
     """unknown storage type error"""
 
 
+class StorageArchiveError(ValueError):
+    """Repository archive error."""
+
+
 class PathInvalidError(ValueError):
     """path invalid"""
 

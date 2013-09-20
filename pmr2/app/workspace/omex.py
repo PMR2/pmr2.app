@@ -3,13 +3,15 @@ import zipfile
 
 from lxml import etree
 
+from pmr2.app.workspace.exceptions import StorageArchiveError
+from pmr2.app.workspace.exceptions import PathNotFoundError
+
 def build_omex(storage):
     try:
         raw_manifest = storage.file('manifest.xml')
-        locations = parse_manifest(raw_manifest)
     except PathNotFoundError:
-        # XXX should raise a incompatible type.
-        return None
+        raise ValueError
+    locations = parse_manifest(raw_manifest)
     return _process(storage.file, locations)
 
 def _process(getter, locations):
@@ -18,9 +20,8 @@ def _process(getter, locations):
     for path in locations:
         try:
             contents = getter(path)
-        except:
-            # XXX figure out how to propagate this to users.
-            continue
+        except (PathNotFoundError, KeyError):
+            raise StorageArchiveError(path)
         znfo = zipfile.ZipInfo(path)
         znfo.file_size = len(contents)
         znfo.compress_type = zipfile.ZIP_DEFLATED
