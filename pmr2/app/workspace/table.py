@@ -248,7 +248,7 @@ class ShortlogOptionColumn(ItemKeyColumn):
         formats = storage.archiveFormats
         # XXX configuration for disabling archive types isn't created;
         # magic here.
-        disabled = ['tar',]
+        disabled = ['tar', 'omex']
 
         return [u'<a href="%s/@@archive/%s/%s">[%s]</a>' % (
             self.context.absolute_url(), self.getItem(item), format, format,)
