@@ -182,6 +182,27 @@ class IStorageProtocol(zope.interface.Interface):
     """
 
 
+class IStorageArchiver(zope.interface.Interface):
+    """
+    A helper named utility for archiving the contents of a storage
+    instance.
+    """
+
+    label = zope.schema.TextLine(title=u'label')
+    suffix = zope.schema.ASCIILine(title=u'Filename Extension')
+    mimetype = zope.schema.ASCIILine(title=u'mimetype')
+
+    def enabledFor(storage):
+        """
+        Checks whether this storage is enabled with this archiver.
+        """
+
+    def archive(storage):
+        """
+        Archives the contents of the storage.
+        """
+
+
 # content
 
 class IWorkspaceContainer(zope.interface.Interface):
