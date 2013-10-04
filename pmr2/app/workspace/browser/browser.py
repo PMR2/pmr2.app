@@ -236,29 +236,49 @@ class WorkspaceArchive(WorkspaceTraversePage):
             raise NotFound(self.context, self.context.title_or_id())
         type_ = request_subpath[0]
 
-        # this is going to hurt so bad if this was a huge archive...
         try:
-            archivestr = storage.archive(type_)
+            try:
+                info = storage.archiveInfo(type_)
+                # this is going to hurt so bad if this was a huge archive...
+                archivestr = storage.archive(type_)
+                headers = [
+                    ('Content-Type', info['mimetype']),
+                    ('Content-Length', len(archivestr)),
+                    ('Content-Disposition', 'attachment; filename="%s%s"' % (
+                        self.context.id, info['ext'])),
+                ]
+            except ValueError:
+                # get the utility
+                au = zope.component.queryUtility(IStorageArchiver, type_)
+                errormsg = None
+
+                if au is None:
+                    errormsg = (u'The archive format `%s` is unsupported' %
+                        type_)
+
+                if not au.enabledFor(storage):
+                    errormsg = (u'The archive format `%s` is not supported '
+                        'for this changeset' % type_)
+
+                if errormsg:
+                    status = IStatusMessage(self.request)
+                    status.addStatusMessage(errormsg)
+                    self.request.response.redirect(self.context.absolute_url())
+                    return
+
+                archivestr = au.archive(storage)
+
+                headers = [
+                    ('Content-Type', au.mimetype),
+                    ('Content-Length', len(archivestr)),
+                    ('Content-Disposition', 'attachment; filename="%s%s"' % (
+                        self.context.id, au.suffix)),
+                ]
         except StorageArchiveError as e:
             status = IStatusMessage(self.request)
             status.addStatusMessage(
                 u'`%s` not accessible for archiving.' % str(e))
             self.request.response.redirect(self.context.absolute_url())
-        except ValueError:
-            status = IStatusMessage(self.request)
-            status.addStatusMessage(
-                u'The archive format `%s` is unsupported for this changeset '
-                u'or workspace.' % type_)
-            self.request.response.redirect(self.context.absolute_url())
-            return
-
-        info = storage.archiveInfo(type_)
-        headers = [
-            ('Content-Type', info['mimetype']),
-            ('Content-Length', len(archivestr)),
-            ('Content-Disposition', 'attachment; filename="%s%s"' % (
-                self.context.id, info['ext'])),
-        ]
 
         for header in headers:
             self.request.response.setHeader(*header)
