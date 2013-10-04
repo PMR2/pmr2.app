@@ -30,4 +30,6 @@
 
   <include file="profiles.zcml" />
 
+  <include package=".omex" />
+
 </configure>
