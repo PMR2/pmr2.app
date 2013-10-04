@@ -13,6 +13,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.app.interfaces import *
+from pmr2.app.workspace.interfaces import IStorage, IStorageArchiver
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
@@ -65,6 +66,8 @@ class Renderer(base.Renderer):
         # XXX should refer this to the more verbose download option
         # page when this is added to the workspace.
         result = []
+        # XXX a utility should be created to test whether this option is
+        # implemented for the storage at hand
         archive_uri = '%s/@@archive/%s/tgz' % (
             self.workspace.absolute_url(), self.exposure.commit_id)
         result.append({
@@ -74,6 +77,17 @@ class Renderer(base.Renderer):
                 'label': u'Download This File',
                 'href': self.view_url(),
             })
+
+        archivers = zope.component.getUtilitiesFor(IStorageArchiver)
+        storage = IStorage(self.exposure)
+        archive_uri = '%s/@@archive/%s/%s'
+        for name, a in archivers:
+            if a.enabledFor(storage):
+                result.append({'label': a.label, 'href': archive_uri % (
+                    self.workspace.absolute_url(),
+                    self.exposure.commit_id,
+                    name,
+                )})
         return result
 
     @property
