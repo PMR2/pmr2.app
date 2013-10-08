@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    tal:define="
+      ajax_load request/ajax_load | nothing;
+    ">
+  <body>
+    <dl class="portalMessage error">
+      <dt>Error</dt>
+      <dd>
+        Access failure: the raw repository data appears to be missing.
+        Please contact PMR administrator for assistance.
+      </dd>
+    </dl>
+
+    <div tal:replace="structure provider:pmr2.app.above_content_body_portlets"
+        tal:condition="not:ajax_load">
+    </div>
+
+    <h3>Workspace Summary</h3>
+    <dl>
+
+      <tal:if tal:condition="view/description">
+        <dt>Description</dt>
+        <dd tal:content="view/description"/>
+      </tal:if>
+
+      <dt>Owner</dt>
+      <dd><span tal:replace="structure view/owner"/></dd>
+
+      <dt>URI for <span tal:omit-tag="not:nothing" tal:content="context/storage" 
+        /> clone/pull/push</dt>
+      <dd>N/A</dd>
+
+    </dl>
+
+  </body>
+</html>

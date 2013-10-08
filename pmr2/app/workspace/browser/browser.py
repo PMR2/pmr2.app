@@ -298,6 +298,7 @@ class WorkspacePage(page.SimplePage):
 
     # need interface for this page that handles storage protocol?
     template = ViewPageTemplateFile('workspace.pt')
+    error_template = ViewPageTemplateFile('workspace_error.pt')
     protocolView = None
     shortlog_maxchange = 10
 
@@ -353,6 +354,12 @@ class WorkspacePage(page.SimplePage):
         if self.protocolView.enabled():
             return self.protocolView.render()
 
+        try:
+            storage = zope.component.getAdapter(self.context, IStorage)
+        except PathInvalidError:
+            # well it appears there were problems getting the adapter,
+            # so switch to error template.
+            self.template = self.error_template
         return super(WorkspacePage, self).render()
 
 
