@@ -60,7 +60,7 @@ All of PMR is fully extensible.
   - This extensibility is based on zope.component and related
     libraries.
 
-.. _pmr2.git: https://github.com/PMR/pmr2.git/
+.. _pmr2.git: https://github.com/PMR/pmr2-git/
 
 Please refer to the changelog for more details.
 
