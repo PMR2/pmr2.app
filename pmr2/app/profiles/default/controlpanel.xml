@@ -4,6 +4,7 @@
     action_id="pmr2-settings" appId="PMR2"
     category="Products"
     condition_expr=""
+    icon_expr="string:${portal_url}/++resource++pmr2.app.images/icon-iups-physiome.png"
     url_expr="string:${portal_url}/@@pmr2-settings"
     visible="True">
     <permission>Manage portal</permission>
