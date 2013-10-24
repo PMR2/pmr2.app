@@ -1,7 +1,8 @@
 Introduction
 ============
 
-This is the Physiome Model Repository (PMR) core library. 
+This is the Physiome Model Repository (PMR) core package and add-on for
+Plone to enable the functionality of the entire PMR software suite.
 
 PMR is a software system designed to provide management of models in a
 user friendly way using a content management system (CMS), which
