@@ -43,6 +43,15 @@
       />
 
   <plone:portlet
+      name="pmr2.portlets.exposure_collab"
+      interface=".collab.ICollaborationPortlet"
+      assignment=".collab.Assignment"
+      renderer=".collab.Renderer"
+      addview=".collab.AddForm"
+      editview=".collab.EditForm"
+      />
+
+  <plone:portlet
       name="pmr2.portlets.exposure_download"
       interface=".ExposureDownload.IExposureDownloadPortlet"
       assignment=".ExposureDownload.Assignment"

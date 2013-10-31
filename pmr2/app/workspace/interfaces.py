@@ -124,6 +124,18 @@ class IStorageUtility(zope.interface.Interface):
         default=u'Workspace',
     )
 
+    command = zope.schema.TextLine(
+        title=u'Command',
+        default=u'The name of the binary that is typically associated with '
+            'this storage backend.',
+    )
+
+    clone_verb = zope.schema.TextLine(
+        title=u'Clone Verb',
+        default=u'The command "verb" that the default binary use for making '
+            'a local checkout on user\'s machine.',
+    )
+
     def create(context):
         """\
         Create or instantiate the backend storage for context.

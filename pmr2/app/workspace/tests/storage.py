@@ -22,6 +22,10 @@ test_png = readfile(join(dirname(__file__), 'test.png'))
 
 class DummyStorageUtility(StorageUtility):
 
+    title = u'Dummy'
+    command = u'dummy'
+    clone_verb = u'clone'
+
     _dummy_storage_data = {
 
         'test': [

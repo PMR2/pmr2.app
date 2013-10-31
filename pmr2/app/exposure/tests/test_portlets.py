@@ -8,8 +8,10 @@ from Products.CMFCore.utils import getToolByName
 from zope.component import getUtility, getMultiAdapter
 
 from pmr2.app.exposure.portlets import PMR1Curation
+from pmr2.app.exposure.portlets import collab
 from pmr2.testing.base import TestCase
 
+from .base import CompleteDocTestCase
 from pmr2.app.exposure.content import Exposure
 
 
@@ -176,10 +178,40 @@ class TestPMR1CurationValues(TestCase):
         ])
 
 
+class TestCollabPortlet(CompleteDocTestCase):
+
+    def renderer(self, context=None, request=None, view=None, manager=None, assignment=None):
+        context = context or self.folder
+        request = request or self.folder.REQUEST
+        view = view or self.folder.restrictedTraverse('@@plone')
+        manager = manager or getUtility(IPortletManager,
+            name='plone.rightcolumn', context=self.portal)
+        assignment = assignment or collab.Assignment(
+            curator_uri='http://example.com')
+        renderer = getMultiAdapter(
+            (context, request, view, manager, assignment), IPortletRenderer)
+        # Pretend this is done...
+        renderer.exposure = self.portal.exposure['1']
+        return renderer
+
+    def test_render(self):
+        exposure = self.portal.exposure['1']
+        r = self.renderer(context=exposure,
+            assignment=collab.Assignment())
+        r = r.__of__(exposure)
+        r.update()
+        output = r.render()
+        self.assertTrue(
+            'To begin collaborating with the owner of this repo' in output)
+        self.assertTrue('dummy clone http://nohost/plone/workspace/test'
+            in output)
+
+
 def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()
     suite.addTest(makeSuite(TestPortlet))
     suite.addTest(makeSuite(TestRenderer))
     suite.addTest(makeSuite(TestPMR1CurationValues))
+    suite.addTest(makeSuite(TestCollabPortlet))
     return suite

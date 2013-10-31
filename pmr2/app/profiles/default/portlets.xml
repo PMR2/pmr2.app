@@ -53,6 +53,12 @@
  </portlet>
 
  <portlet 
+     addview="pmr2.portlets.exposure_collab"
+     title="Exposure Collaboration"
+     description="This portlet displays information on how to collaborate with the workspace protocol.">
+ </portlet>
+
+ <portlet 
      addview="pmr2.portlets.exposure_download"
      title="Exposure Download"
      description="A portlet that shows the download options available for the exposure object.">
