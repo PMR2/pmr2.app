@@ -147,3 +147,7 @@ a.button.block {
 .math > .mrow {
     display: block;
 }
+
+#pmr_collab .clone-command {
+    font-family: monospace;
+}

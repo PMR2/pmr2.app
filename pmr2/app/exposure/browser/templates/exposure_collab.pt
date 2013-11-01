@@ -1,11 +1,12 @@
 <dl class="portlet" id="pmr_collab">
   <dt class="portletHeader">Collaboration</dt>
   <dd>
-    To begin collaborating with the owner of this repo, please use a
+      To begin collaborating on this work, please use your
     <span tal:replace="view/repotype">git</span> client and issue this
     command:
-    <div class="clone-command" tal:content="view/clonecmd">
-      git clone https://example.com/repo
-    </div>
+    <input type="text" value="git clone https://example.com/repo"
+        class="clone-command" onclick="this.select()" readonly="readonly"
+        tal:attributes="value view/clonecmd"
+        />
   </dd>
 </dl>
