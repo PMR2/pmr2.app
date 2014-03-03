@@ -202,7 +202,7 @@ class TestCollabPortlet(CompleteDocTestCase):
         r.update()
         output = r.render()
         self.assertTrue(
-            'To begin collaborating with the owner of this repo' in output)
+            'To begin collaborating on this work, please use your' in output)
         self.assertTrue('dummy clone http://nohost/plone/workspace/test'
             in output)
 
