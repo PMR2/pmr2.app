@@ -199,6 +199,7 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
         # We are successful, check to see if modifications to the
         # underlying data was made and update the context if so.
         if self.request.method in ['POST']:
+            # XXX post push hooks?
             self.context.setModificationDate(DateTime())
             self.context.reindexObject()
         return results

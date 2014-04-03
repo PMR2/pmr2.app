@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.7.x - Unreleased
-------------------
+0.8 - Released (2014-04-03)
+---------------------------
 
 * In workspace log listing, link commit log email to the user identified
   by the same email within the CMS.
@@ -11,6 +11,7 @@ Changelog
   much of the internal Zope/Plone permission mechanisms and other
   difficult to override things.
 * Fixed the highlighting of the wizard tab.
+* Collaboration portlet.
 
 0.7.1 - Released (2013-08-20)
 -----------------------------
