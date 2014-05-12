@@ -21,9 +21,9 @@ class TestProductInstall(ptc.PloneTestCase):
             'WorkspaceContainer': None,
             'SandboxContainer': None,
             'ExposureContainer': None,
-            'Workspace': None,
             'Sandbox': None,
             'Exposure': 'pmr2_exposure_workflow',
+            'Workspace': 'pmr2_workspace_workflow',
         }
 
         self.addProfile('pmr2.app:default')

@@ -1,11 +1,15 @@
 <?xml version="1.0"?>
 <object name="portal_workflow">
   <object name="pmr2_exposure_workflow" meta_type="Workflow"/>
+  <object name="pmr2_workspace_workflow" meta_type="Workflow"/>
   <bindings>
     <type type_id="Exposure">
       <bound-workflow workflow_id="pmr2_exposure_workflow"/>
     </type>
     <type type_id="ExposureFile" />
     <type type_id="ExposureFolder" />
+    <type type_id="Workspace">
+      <bound-workflow workflow_id="pmr2_workspace_workflow"/>
+    </type>
   </bindings>
 </object>
