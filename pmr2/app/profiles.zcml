@@ -40,6 +40,15 @@
       />
 
   <genericsetup:upgradeStep
+      title="PMR2 - Upgrade Physiome Model Repository to v0.8.1"
+      description="This is used to upgrade Physiome Model Repository from pmr2.app v0.6 to v0.8.1"
+      source="0.6"
+      destination="0.8.1"
+      handler="pmr2.app.setuphandlers.pmr2_v0_8_1"
+      profile="pmr2.app:default"
+      />
+
+  <genericsetup:upgradeStep
       title="PMR2 - rebuild file type annotations"
       description="This is used to rebuild all exposure file type annotations in the case of changes in file types."
       handler="pmr2.app.setuphandlers.filetype_bulk_update"

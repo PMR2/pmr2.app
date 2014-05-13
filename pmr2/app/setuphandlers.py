@@ -497,3 +497,29 @@ def pmr2_v0_6(context):
     from zope.component.hooks import getSite
     site = getSite()
     migrate_docgen(site)
+
+def pmr2_v0_8_1(context):
+    from zope.component.hooks import getSite
+    site = getSite()
+    migrate_workspace_workflow(site)
+
+def migrate_workspace_workflow(site):
+    logger = getLogger('pmr2.app')
+    wft = getToolByName(site, 'portal_workflow')
+    catalog = getToolByName(site, 'portal_catalog')
+
+    action_map = {
+        'pending': 'submit',
+        'published': 'publish',
+    }
+
+    # get all workspaces
+    workspaces = catalog(portal_type='Workspace')
+
+    for workspace in workspaces:
+        obj = workspace.getObject()
+        action = action_map.get(workspace.review_state)
+        if action:
+            logger.debug('restoring %s to %s',
+                workspace.getPath(), workspace.review_state)
+            wft.doActionFor(obj, action)
