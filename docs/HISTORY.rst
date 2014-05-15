@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.9 - Unreleased
+----------------
+
+* Workspace specific workflow to better manage security requirements.
+* Also limited the visibility of exposures in the private state, to be
+  the same as the new workspace workflow.
+
 0.8 - Released (2014-04-03)
 ---------------------------
 

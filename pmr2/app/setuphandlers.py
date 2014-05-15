@@ -498,7 +498,7 @@ def pmr2_v0_6(context):
     site = getSite()
     migrate_docgen(site)
 
-def pmr2_v0_8_1(context):
+def pmr2_v0_9(context):
     from zope.component.hooks import getSite
     site = getSite()
     migrate_workspace_workflow(site)
