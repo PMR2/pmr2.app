@@ -190,6 +190,22 @@
   </guard>
  </transition>
 
+ <transition transition_id="hide" new_state="private"
+             title="Make private"
+             trigger="USER"
+             before_script="" after_script=""
+             i18n:attributes="title">
+  <description i18n:translate="">
+    Making an item private means that it will not be visible to anyone but the owner and the site administrator.
+  </description>
+  <action url="%(content_url)s/content_status_modify?workflow_action=hide"
+          category="workflow"
+          i18n:translate="">Make private</action>
+  <guard>
+   <guard-permission>Modify portal content</guard-permission>
+  </guard>
+ </transition>
+
  <transition transition_id="publish" new_state="published"
              title="Reviewer publishes content"
              trigger="USER"
