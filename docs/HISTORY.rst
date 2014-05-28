@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.9.1 - Unreleased
+------------------
+
+* Workspace specific workflow published state now allow editing by owner
+  so they can make exposures.
+* Restrict the amount of previewable data in standard document view for
+  performance reasons.
+
 0.9 - Released (2014-05-20)
 ---------------------------
 

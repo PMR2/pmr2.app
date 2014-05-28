@@ -154,12 +154,18 @@ class DefaultFileRenderer(BaseFileRenderer):
     Default file render.
     """
 
+    max_render_length = 250000
+
     @property
     def contents(self):
         data = self.request['_data']
         contents = data['contents']()
-        if '\0' in contents:
-            return '(%s)' % data['mimetype']()
+
+        if len(contents) > self.max_render_length:
+            return '(Preview not available; file too long)'
+        elif '\0' in contents:
+            return ('(Preview not available for content type: %s)'
+                % data['mimetype']())
         else:
             return contents
 
