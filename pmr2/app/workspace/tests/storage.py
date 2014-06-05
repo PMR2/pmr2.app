@@ -1,5 +1,9 @@
+import os
 from os.path import join
 from os.path import dirname
+from os.path import relpath
+from glob import glob
+
 from datetime import datetime
 from cPickle import dumps
 import zope.interface
@@ -161,6 +165,23 @@ class DummyStorageUtility(StorageUtility):
     def syncWorkspace(self, context, source):
         identifier = source.id
         return self.syncIdentifier(context, identifier)
+
+    def _loadDir(self, id_, root):
+        def readfile(fullpath):
+            with open(fullpath) as fd:
+                c = fd.read()
+            return c
+
+        result = [
+            {
+                relpath(join(r, f), p): readfile(join(r, f))
+                    for r, _, files in os.walk(p)
+                        for f in files
+            }
+            for p in sorted(glob(join(root, '*')))
+        ]
+
+        self._dummy_storage_data[id_] = result
 
 
 class DummyStorage(BaseStorage):

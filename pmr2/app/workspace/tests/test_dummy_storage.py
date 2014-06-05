@@ -1,6 +1,9 @@
 from unittest import TestCase, TestSuite, makeSuite
+from os.path import dirname, join
 
 import zope.component
+
+import pmr2.testing
 
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace.exceptions import *
@@ -459,6 +462,30 @@ class TestDummyStorage(TestCase):
 
         # valid files don't get this perk.
         self.assertRaises(PathNotFoundError, storage_root.file, 'readme/test')
+
+    def test_950_loader(self):
+        # Test loading from filesystem.
+        target = join(dirname(pmr2.testing.__file__), 'data', 'rdfmodel')
+        utility = DummyStorageUtility()
+        utility._loadDir('rdfmodel', target)
+
+        self.assertTrue('rdfmodel' in utility._dummy_storage_data)
+        self.assertEqual(len(utility._dummy_storage_data['rdfmodel']), 4)
+
+        self.assertEqual(len(utility._dummy_storage_data['rdfmodel'][0]), 2)
+        self.assertEqual(len(utility._dummy_storage_data['rdfmodel'][0].get(
+            'component/module.cellml')), 4197)
+
+        self.assertEqual(len(utility._dummy_storage_data['rdfmodel'][1]), 5)
+        self.assertEqual(len(utility._dummy_storage_data['rdfmodel'][1].get(
+            'example_model.cellml')), 4288)
+
+        self.assertEqual(utility._dummy_storage_data['rdfmodel'][2].get(
+            'component/README'),
+                'This is a readme file inside the component directory.\n')
+
+        self.assertEqual(len(utility._dummy_storage_data['rdfmodel'][3].get(
+            'component/module.cellml')), 4197)
 
 
 def test_suite():
