@@ -13,48 +13,41 @@ from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import IntegrationTesting
 from plone.testing import z2
 
+from pmr2.app.tests.layer import PMR2_FIXTURE
+
 import pmr2.testing
 from pmr2.testing import utils
 
 
 class ExposureLayer(PloneSandboxLayer):
 
-    defaultBases = (PLONE_FIXTURE,)
+    defaultBases = (PMR2_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
-        import pmr2.app
+        """
+        Load the testing zcml
+        """
+
         import pmr2.app.annotation.tests
         import pmr2.app.workspace.tests
         import pmr2.app.exposure.tests
-
-        self.loadZCML(package=pmr2.app)
         self.loadZCML('test.zcml', package=pmr2.app.annotation.tests)
         self.loadZCML('test.zcml', package=pmr2.app.workspace.tests)
         self.loadZCML('test.zcml', package=pmr2.app.exposure.tests)
-
-        z2.installProduct(app, 'pmr2.app')
-
-        self.tmpdir = tempfile.mkdtemp()
 
     def setUpPloneSite(self, portal):
         """
         Sets up the Plone Site for integration tests using Exposures.
         """
 
-        # install pmr2.app
-        self.applyProfile(portal, 'pmr2.app:default')
-
-        # point the physical root for repo_root to the tmpdir.
-        self.pmr2 = zope.component.getUtility(IPMR2GlobalSettings)
-        self.pmr2.repo_root = self.tmpdir
+        settings = zope.component.getUtility(IPMR2GlobalSettings)
 
         # user workspace
         _createObjectByType('Folder', portal, id='w')
-        self.pmr2.user_workspace_subpath = u'w'
-        self.pmr2.create_user_workspace = True
+        settings.user_workspace_subpath = u'w'
+        settings.create_user_workspace = True
 
-        self.pmr2.default_exposure_idgen = 'rand128hex'
-        self.pmr2.repo_root = self.tmpdir
+        settings.default_exposure_idgen = 'rand128hex'
 
         from pmr2.app.workspace.content import WorkspaceContainer, Workspace
 
@@ -66,14 +59,16 @@ class ExposureLayer(PloneSandboxLayer):
 
         mkdummywks('test')
         mkdummywks('cake')
+        mkdummywks('external_root')
+        mkdummywks('external_test')
 
         # unassigned
         portal.workspace['blank'] = Workspace('blank')
 
         # legacy test case.
         portal.workspace['eggs'] = Workspace('eggs')
-        utils.mkreporoot(self.pmr2.createDir(portal))
-        utils.mkrepo(self.pmr2.dirOf(portal.workspace.eggs))
+        utils.mkreporoot(settings.createDir(portal))
+        utils.mkrepo(settings.dirOf(portal.workspace.eggs))
 
         from pmr2.app.exposure.content import ExposureContainer
         from pmr2.app.exposure.content import ExposureFileType
@@ -121,10 +116,6 @@ class ExposureLayer(PloneSandboxLayer):
         e.commit_id = commit_id
         exposure_root[id_] = e
         exposure_root[id_].reindexObject()
-
-    def tearDownZope(self, app):
-        z2.uninstallProduct(app, 'pmr2.app')
-        shutil.rmtree(self.tmpdir, ignore_errors=True)
 
 
 EXPOSURE_FIXTURE = ExposureLayer()
