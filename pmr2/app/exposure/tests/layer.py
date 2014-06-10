@@ -13,12 +13,12 @@ from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import IntegrationTesting
 from plone.testing import z2
 
-from pmr2.app.tests.layer import PMR2_FIXTURE
+from pmr2.app.workspace.tests.layer import WORKSPACE_FIXTURE
 
 
 class ExposureLayer(PloneSandboxLayer):
 
-    defaultBases = (PMR2_FIXTURE,)
+    defaultBases = (WORKSPACE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
         """
@@ -26,10 +26,8 @@ class ExposureLayer(PloneSandboxLayer):
         """
 
         import pmr2.app.annotation.tests
-        import pmr2.app.workspace.tests
         import pmr2.app.exposure.tests
         self.loadZCML('test.zcml', package=pmr2.app.annotation.tests)
-        self.loadZCML('test.zcml', package=pmr2.app.workspace.tests)
         self.loadZCML('test.zcml', package=pmr2.app.exposure.tests)
 
     def setUpPloneSite(self, portal):
@@ -37,35 +35,11 @@ class ExposureLayer(PloneSandboxLayer):
         Sets up the Plone Site for integration tests using Exposures.
         """
 
-        settings = zope.component.getUtility(IPMR2GlobalSettings)
-
-        # user workspace
-        _createObjectByType('Folder', portal, id='w')
-        settings.user_workspace_subpath = u'w'
-        settings.create_user_workspace = True
-
-        settings.default_exposure_idgen = 'rand128hex'
-
-        from pmr2.app.workspace.content import WorkspaceContainer, Workspace
-        portal['workspace'] = WorkspaceContainer()
-
-        def mkdummywks(name):
-            w = Workspace(name)
-            w.storage = 'dummy_storage'
-            portal.workspace[name] = w
-
-        mkdummywks('test')
-        mkdummywks('cake')
-        mkdummywks('external_root')
-        mkdummywks('external_test')
-
-        # unassigned
-        portal.workspace['blank'] = Workspace('blank')
-
-        portal.workspace['eggs'] = Workspace('eggs')
-
         from pmr2.app.exposure.content import ExposureContainer
         from pmr2.app.exposure.content import ExposureFileType
+
+        settings = zope.component.getUtility(IPMR2GlobalSettings)
+        settings.default_exposure_idgen = 'rand128hex'
 
         portal['exposure'] = ExposureContainer('exposure')
 
@@ -93,7 +67,6 @@ class ExposureLayer(PloneSandboxLayer):
             u'/plone/workspace/eggs', u'1', '2')
 
     def _mkexposure(self, exposure_root, workspace, commit_id, id_):
-        from pmr2.app.workspace.content import Workspace
         from pmr2.app.exposure.content import ExposureContainer, Exposure
         from pmr2.idgen.interfaces import IIdGenerator
 
