@@ -15,9 +15,6 @@ from plone.testing import z2
 
 from pmr2.app.tests.layer import PMR2_FIXTURE
 
-import pmr2.testing
-from pmr2.testing import utils
-
 
 class ExposureLayer(PloneSandboxLayer):
 
@@ -50,8 +47,8 @@ class ExposureLayer(PloneSandboxLayer):
         settings.default_exposure_idgen = 'rand128hex'
 
         from pmr2.app.workspace.content import WorkspaceContainer, Workspace
-
         portal['workspace'] = WorkspaceContainer()
+
         def mkdummywks(name):
             w = Workspace(name)
             w.storage = 'dummy_storage'
@@ -65,10 +62,7 @@ class ExposureLayer(PloneSandboxLayer):
         # unassigned
         portal.workspace['blank'] = Workspace('blank')
 
-        # legacy test case.
         portal.workspace['eggs'] = Workspace('eggs')
-        utils.mkreporoot(settings.createDir(portal))
-        utils.mkrepo(settings.dirOf(portal.workspace.eggs))
 
         from pmr2.app.exposure.content import ExposureContainer
         from pmr2.app.exposure.content import ExposureFileType
