@@ -75,4 +75,4 @@ WORKSPACE_FIXTURE = WorkspaceLayer()
 
 WORKSPACE_INTEGRATION_LAYER = IntegrationTesting(
     bases=(WORKSPACE_FIXTURE,),
-    name="pmr2.app:workspace_base_integration")
+    name="pmr2.app:workspace_integration")
