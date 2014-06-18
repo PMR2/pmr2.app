@@ -1,11 +1,21 @@
 Changelog
 =========
 
-0.9.1 - Unreleased
+0.9.x - Unreleased
 ------------------
+
+* Provide an experimental test layer on top of ``plone.app.testing`` for
+  tests that require that type of functionality.
+
+0.9.1 - Released (2014-06-18)
+-----------------------------
 
 * Workspace specific workflow published state now allow editing by owner
   so they can make exposures.
+* Both workspace and exposure workflows have the permission relaxed
+  again to permit the @@sharing tab to work.  Contributor is still
+  disabled because that was determined to be culprit (even though nobody
+  was given that role) for the permission leakage.
 * Restrict the amount of previewable data in standard document view for
   performance reasons.
 
