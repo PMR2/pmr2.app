@@ -7,6 +7,8 @@ from zope.component.hooks import getSite
 
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
+from pmr2.app.interfaces.exceptions import WorkspaceObjNotFoundError
+
 from pmr2.app.workspace.exceptions import PathNotFoundError
 from pmr2.app.workspace.interfaces import IStorage, ICurrentCommitIdProvider
 
