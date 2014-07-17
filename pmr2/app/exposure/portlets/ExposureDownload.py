@@ -17,6 +17,8 @@ from pmr2.app.workspace.interfaces import IStorage, IStorageArchiver
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
+from pmr2.app.exposure.portlets.base import BaseRenderer
+
 
 class IExposureDownloadPortlet(IPortletDataProvider):
     """\
@@ -36,16 +38,8 @@ class Assignment(base.Assignment):
         return _(u"Exposure Download")
 
 
-class Renderer(base.Renderer):
+class Renderer(BaseRenderer):
     _template = ViewPageTemplateFile('exposure_download.pt')
-
-    def __init__(self, *args):
-        base.Renderer.__init__(self, *args)
-        self.title = u'Curation'
-        if self.available:
-            values = zope.component.getAdapter(
-                self.context, IExposureSourceAdapter).source()
-            self.exposure, self.workspace, self.path = values
 
     @memoize
     def portal_url(self):
@@ -89,13 +83,6 @@ class Renderer(base.Renderer):
                     name,
                 )})
         return result
-
-    @property
-    def available(self):
-        return IExposureObject.providedBy(self.context)
-
-    def render(self):
-        return self._template()
 
 
 class AddForm(base.AddForm):

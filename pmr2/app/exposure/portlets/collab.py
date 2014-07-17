@@ -17,6 +17,8 @@ from pmr2.app.exposure.interfaces import IExposureSourceAdapter
 from pmr2.app.workspace.interfaces import IStorageUtility
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
+from pmr2.app.exposure.portlets.base import BaseRenderer
+
 
 class ICollaborationPortlet(IPortletDataProvider):
     """\
@@ -35,20 +37,14 @@ class Assignment(base.Assignment):
         return _(u"Exposure Collaboration Info")
 
 
-class Renderer(base.Renderer):
+class Renderer(BaseRenderer):
     _template = ViewPageTemplateFile('exposure_collab.pt')
 
-    def __init__(self, *args):
-        base.Renderer.__init__(self, *args)
-        self.title = u'Collaboration'
-        if self.available:
-            values = zope.component.getAdapter(
-                self.context, IExposureSourceAdapter).source()
-            self.exposure, self.workspace, self.path = values
-            utility = zope.component.queryUtility(IStorageUtility,
-                name=self.workspace.storage)
-            self.command = getattr(utility, 'command', self.workspace.storage)
-            self.clone_verb = getattr(utility, 'clone_verb', 'clone')
+    def exposure_source_init(self):
+        utility = zope.component.queryUtility(IStorageUtility,
+            name=self.workspace.storage)
+        self.command = getattr(utility, 'command', self.workspace.storage)
+        self.clone_verb = getattr(utility, 'clone_verb', 'clone')
 
     @memoize
     def portal_url(self):
@@ -69,13 +65,6 @@ class Renderer(base.Renderer):
             self.workspace.absolute_url(),
         )
         return result
-
-    @property
-    def available(self):
-        return IExposureObject.providedBy(self.context)
-
-    def render(self):
-        return self._template()
 
 
 class AddForm(base.AddForm):

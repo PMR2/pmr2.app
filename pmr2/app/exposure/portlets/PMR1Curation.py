@@ -16,6 +16,7 @@ from Products.CMFCore.utils import getToolByName
 from pmr2.app.interfaces import *
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
+from pmr2.app.exposure.portlets.base import BaseRenderer
 
 
 class IPMR1CurationPortlet(IPortletDataProvider):
@@ -57,22 +58,12 @@ class Assignment(base.Assignment):
         return _(u"Model Curation")
 
 
-class Renderer(base.Renderer):
+class Renderer(BaseRenderer):
     _template = ViewPageTemplateFile('pmr1_curation.pt')
 
     exposure = None
     workspace = None
     path = None
-
-    def __init__(self, *args):
-        base.Renderer.__init__(self, *args)
-        self.title = u'Curation'
-
-    def update(self):
-        if self.available:
-            values = zope.component.getAdapter(
-                self.context, IExposureSourceAdapter).source()
-            self.exposure, self.workspace, self.path = values
 
     @memoize
     def portal_url(self):
@@ -105,13 +96,6 @@ class Renderer(base.Renderer):
                     'stars': stars,
                 })
         return result
-
-    @property
-    def available(self):
-        return IExposure.providedBy(self.context)
-
-    def render(self):
-        return self._template()
 
 
 class AddForm(base.AddForm):
