@@ -5,9 +5,8 @@
         <span class="portletTopLeft"></span>
        <a href="#" 
            class="title"
-           tal:condition="view/title"
            tal:attributes="href string:${context/absolute_url}/view"
-           tal:content="view/title">ExposureFileNotes</a>
+           tal:content="view/title">Views Available</a>
         <span class="portletTopRight"></span>
     </dt>
 

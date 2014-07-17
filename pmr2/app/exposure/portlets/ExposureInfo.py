@@ -17,6 +17,8 @@ from pmr2.app.exposure.interfaces import *
 from pmr2.app.workspace.interfaces import IStorage
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
+from pmr2.app.exposure.portlets.base import BaseRenderer
+
 
 class IExposureInfoPortlet(IPortletDataProvider):
     """\
@@ -36,19 +38,13 @@ class Assignment(base.Assignment):
         return _(u"Exposure Info")
 
 
-class Renderer(base.Renderer):
+class Renderer(BaseRenderer):
     _template = ViewPageTemplateFile('exposure_info.pt')
 
-    def __init__(self, *args):
-        base.Renderer.__init__(self, *args)
-        self.title = 'Exposure Info'
-        if self.available:
-            values = zope.component.getAdapter(
-                self.context, IExposureSourceAdapter).source()
-            self.exposure, self.workspace, self.path  = values
-            storage = zope.component.getAdapter(self.exposure, IStorage)
-            storage.checkout(self.exposure.commit_id)
-            self.shortrev = storage.shortrev
+    def exposure_source_init(self):
+        storage = zope.component.getAdapter(self.exposure, IStorage)
+        storage.checkout(self.exposure.commit_id)
+        self.shortrev = storage.shortrev
 
     @property
     def links(self):
@@ -121,13 +117,6 @@ class Renderer(base.Renderer):
             result.append({
                 'label': u'This File', 'href': file_uri})
         return result
-
-    @property
-    def available(self):
-        return IExposureObject.providedBy(self.context)
-
-    def render(self):
-        return self._template()
 
 
 class AddForm(base.AddForm):

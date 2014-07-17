@@ -17,6 +17,8 @@ from pmr2.app.exposure.interfaces import *
 from pmr2.app.workspace.interfaces import IStorage
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
+from pmr2.app.exposure.portlets.base import BaseRenderer
+
 
 class IExposureSourcePortlet(IPortletDataProvider):
     """\
@@ -36,22 +38,16 @@ class Assignment(base.Assignment):
         return _(u"Exposure Source")
 
 
-class Renderer(base.Renderer):
+class Renderer(BaseRenderer):
     _template = ViewPageTemplateFile('exposure_source.pt')
 
-    def __init__(self, *args):
-        base.Renderer.__init__(self, *args)
-        self.title = u'Curation'
-        if self.available:
-            values = zope.component.getAdapter(
-                self.context, IExposureSourceAdapter).source()
-            self.exposure, self.workspace, self.path = values
-            storage = zope.component.queryAdapter(self.exposure, IStorage)
-            if storage:
-                storage.checkout(self.exposure.commit_id)
-                self.shortrev = storage.shortrev
-            else:
-                self.shortrev = '<unknown>'
+    def exposure_source_init(self):
+        storage = zope.component.queryAdapter(self.exposure, IStorage)
+        if storage:
+            storage.checkout(self.exposure.commit_id)
+            self.shortrev = storage.shortrev
+        else:
+            self.shortrev = '<unknown>'
 
     @memoize
     def portal_url(self):
@@ -75,18 +71,11 @@ class Renderer(base.Renderer):
         }
         return result
 
-    @property
-    def available(self):
-        return IExposureObject.providedBy(self.context)
-
     @memoize
     def expired(self):
         wf = getToolByName(self.exposure, 'portal_workflow')
         state = wf.getInfoFor(self.exposure, 'review_state', '')
         return state == 'expired'
-
-    def render(self):
-        return self._template()
 
 
 class AddForm(base.AddForm):
