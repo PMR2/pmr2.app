@@ -6,6 +6,8 @@ Changelog
 
 * Provide an experimental test layer on top of ``plone.app.testing`` for
   tests that require that type of functionality.
+* Some cleaning up of the exposure portlets, including better exception
+  handling for the cases of missing workspaces.
 
 0.9.1 - Released (2014-06-18)
 -----------------------------
