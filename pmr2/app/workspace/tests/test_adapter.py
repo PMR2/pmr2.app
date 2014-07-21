@@ -4,6 +4,7 @@ import zope.component
 
 from pmr2.app.workspace.interfaces import *
 
+from pmr2.app.workspace.tests.storage import LegacyDummyStorageUtility
 from pmr2.app.workspace.tests.storage import DummyStorageUtility
 from pmr2.app.workspace.tests.storage import DummyStorage
 from pmr2.app.workspace.tests.storage import DummyWorkspace
@@ -11,6 +12,9 @@ from pmr2.app.workspace.tests.storage import DummyWorkspace
 # Objects to test
 
 from pmr2.app.workspace.adapter import WorkspaceStorageAdapter
+from pmr2.app.workspace.adapter import StorageProtocolAdapter
+
+from pmr2.testing.base import TestRequest
 
 
 class TestWorkspaceStorageAdapter(TestCase):
@@ -50,8 +54,79 @@ class TestWorkspaceStorageAdapter(TestCase):
         self.assert_(isinstance(result, DummyStorage))
 
 
+class StorageProtocolAdapaterTestCase(TestCase):
+    """
+    Test that the code generates the correct events based on current and
+    legacy return values.
+    """
+
+    def setUp(self):
+        self.workspace = DummyWorkspace('test')
+        self.workspace.storage = 'dummy_storage'
+
+        # register utilities
+        zope.component.getSiteManager().registerUtility(
+            DummyStorageUtility(), IStorageUtility, name='dummy_storage')
+        zope.component.getSiteManager().registerUtility(
+            LegacyDummyStorageUtility(), IStorageUtility,
+            name='legacy_dummy_storage')
+
+    def tearDown(self):
+        zope.component.testing.tearDown()
+
+    def test_storage_protocol_default(self):
+        # standard GET request
+        request = TestRequest(form={'cmd': 'revcount'})
+        # storage adapter should now return.
+        pa = StorageProtocolAdapter(self.workspace, request)
+        result = pa()
+        self.assertEqual(result.result, '4')
+        self.assertEqual(result.event, None)
+
+    def test_storage_protocol_legacy(self):
+        self.workspace.storage = 'legacy_dummy_storage'
+        # defaults to POST
+        request = TestRequest(form={'cmd': 'revcount'})
+        # request.method = 'POST'
+
+        # storage adapter should now return.
+        pa = StorageProtocolAdapter(self.workspace, request)
+        result = pa()
+        self.assertEqual(result.result, '4')
+        self.assertEqual(result.event, 'push')
+
+    def test_storage_protocol_legacy_get(self):
+        self.workspace.storage = 'legacy_dummy_storage'
+        # force request to GET
+        request = TestRequest(form={'cmd': 'revcount'})
+        request.method = 'GET'
+        # storage adapter should now return.
+        pa = StorageProtocolAdapter(self.workspace, request)
+        result = pa()
+        self.assertEqual(result.result, '4')
+        self.assertEqual(result.event, None)
+
+    def test_storage_protocol_push(self):
+        request = TestRequest(form={'cmd': 'update'})
+        # storage adapter should now return.
+        pa = StorageProtocolAdapter(self.workspace, request)
+        result = pa()
+        self.assertEqual(result.result, 'Updated')
+        self.assertEqual(result.event, 'push')
+
+    def test_storage_protocol_push_legacy(self):
+        self.workspace.storage = 'legacy_dummy_storage'
+        request = TestRequest(form={'cmd': 'update'})
+        # storage adapter should now return.
+        pa = StorageProtocolAdapter(self.workspace, request)
+        result = pa()
+        self.assertEqual(result.result, 'Updated')
+        self.assertEqual(result.event, 'push')
+
+
 def test_suite():
     suite = TestSuite()
     suite.addTest(makeSuite(TestWorkspaceStorageAdapter))
+    suite.addTest(makeSuite(StorageProtocolAdapaterTestCase))
     return suite
 

@@ -13,6 +13,7 @@ from pmr2.app.workspace.exceptions import *
 
 from pmr2.app.workspace.storage import StorageUtility
 from pmr2.app.workspace.storage import BaseStorage
+from pmr2.app.workspace.storage import ProtocolResult
 
 
 def readfile(fn):
@@ -141,13 +142,13 @@ class DummyStorageUtility(StorageUtility):
         storage = self.acquireFrom(context)
         cmd = request.form.get('cmd', '')
         if cmd == 'revcount':
-            return len(storage._data())
+            return ProtocolResult(str(len(storage._data())), None)
         elif cmd == 'update':
             # doesn't do anything, but check that the request is indeed
             # a push
             if request.method == 'GET':
                 raise Exception('bad request method')
-            return 'Updated'
+            return ProtocolResult('Updated', 'push')
         raise UnsupportedCommandError('%s unsupported' % cmd)
 
     def syncIdentifier(self, context, identifier):
@@ -182,6 +183,16 @@ class DummyStorageUtility(StorageUtility):
         ]
 
         self._dummy_storage_data[id_] = result
+
+
+
+class LegacyDummyStorageUtility(DummyStorageUtility):
+    """
+    Emulate the legacy protocol "naked" result.
+    """
+
+    def protocol(self, context, request):
+        return DummyStorageUtility.protocol(self, context, request).result
 
 
 class DummyStorage(BaseStorage):

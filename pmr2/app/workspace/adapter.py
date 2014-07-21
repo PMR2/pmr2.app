@@ -6,6 +6,8 @@ from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from pmr2.app.interfaces.exceptions import *
 
+from pmr2.app.workspace.storage import ProtocolResult
+
 from pmr2.app.workspace.interfaces import IStorageProtocol
 from pmr2.app.workspace.interfaces import IStorageUtility
 from pmr2.app.workspace.interfaces import IWorkspace
@@ -46,7 +48,16 @@ class StorageProtocolAdapter(object):
 
     def __call__(self):
         if self.enabled:
-            return self.storage_util.protocol(self.context, self.request)
+            result = self.storage_util.protocol(self.context, self.request)
+            if not isinstance(result, ProtocolResult):
+                # legacy implementation that only process raw client results
+                event = None
+                if self.request.method in ['POST']:
+                    # Assume all POST requests are pushes.
+                    event = 'push'
+                result = ProtocolResult(result, event)
+            return result
+
         # This isn't a protocol request according to isprotocol.  While
         # it is still possible to directly call the protocol but that's
         # unchecked.

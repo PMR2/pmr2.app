@@ -196,13 +196,14 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
         except ProtocolError:
             raise BadRequest('unsupported command')
 
-        # We are successful, check to see if modifications to the
-        # underlying data was made and update the context if so.
-        if self.request.method in ['POST']:
+        # We are successful, manually fire off an event until that
+        # system is fully in place.
+        if results.event == 'push':
             # XXX post push hooks?
             self.context.setModificationDate(DateTime())
             self.context.reindexObject()
-        return results
+
+        return results.result
 
     def __call__(self, *a, **kw):
         self.update()

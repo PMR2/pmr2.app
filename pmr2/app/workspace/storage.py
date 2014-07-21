@@ -1,3 +1,4 @@
+from collections import namedtuple
 import mimetypes
 from magic import Magic
 import zope.interface
@@ -5,6 +6,9 @@ import zope.interface
 from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import IStorage, IStorageUtility
 from pmr2.app.workspace.interfaces import IWorkspace
+
+
+ProtocolResult = namedtuple('ProtocolResult', ('result', 'event'))
 
 
 class BaseStorage(object):
