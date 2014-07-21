@@ -93,7 +93,7 @@ class StorageProtocolAdapaterTestCase(TestCase):
         pa = StorageProtocolAdapter(self.workspace, request)
         result = pa()
         self.assertEqual(result.result, '4')
-        self.assertEqual(result.event, 'push')
+        self.assertEqual(result.event.workspace, self.workspace)
 
     def test_storage_protocol_legacy_get(self):
         self.workspace.storage = 'legacy_dummy_storage'
@@ -112,7 +112,7 @@ class StorageProtocolAdapaterTestCase(TestCase):
         pa = StorageProtocolAdapter(self.workspace, request)
         result = pa()
         self.assertEqual(result.result, 'Updated')
-        self.assertEqual(result.event, 'push')
+        self.assertEqual(result.event.workspace, self.workspace)
 
     def test_storage_protocol_push_legacy(self):
         self.workspace.storage = 'legacy_dummy_storage'
@@ -121,7 +121,7 @@ class StorageProtocolAdapaterTestCase(TestCase):
         pa = StorageProtocolAdapter(self.workspace, request)
         result = pa()
         self.assertEqual(result.result, 'Updated')
-        self.assertEqual(result.event, 'push')
+        self.assertEqual(result.event.workspace, self.workspace)
 
 
 def test_suite():

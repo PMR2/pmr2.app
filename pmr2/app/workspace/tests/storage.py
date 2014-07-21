@@ -11,6 +11,7 @@ import zope.interface
 from pmr2.app.workspace.interfaces import IWorkspace
 from pmr2.app.workspace.exceptions import *
 
+from pmr2.app.workspace.event import Push
 from pmr2.app.workspace.storage import StorageUtility
 from pmr2.app.workspace.storage import BaseStorage
 from pmr2.app.workspace.storage import ProtocolResult
@@ -148,7 +149,7 @@ class DummyStorageUtility(StorageUtility):
             # a push
             if request.method == 'GET':
                 raise Exception('bad request method')
-            return ProtocolResult('Updated', 'push')
+            return ProtocolResult('Updated', Push(context))
         raise UnsupportedCommandError('%s unsupported' % cmd)
 
     def syncIdentifier(self, context, identifier):

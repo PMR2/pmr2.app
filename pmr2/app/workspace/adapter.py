@@ -7,6 +7,7 @@ from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 from pmr2.app.interfaces.exceptions import *
 
 from pmr2.app.workspace.storage import ProtocolResult
+from pmr2.app.workspace.event import Push
 
 from pmr2.app.workspace.interfaces import IStorageProtocol
 from pmr2.app.workspace.interfaces import IStorageUtility
@@ -54,7 +55,8 @@ class StorageProtocolAdapter(object):
                 event = None
                 if self.request.method in ['POST']:
                     # Assume all POST requests are pushes.
-                    event = 'push'
+                    if IWorkspace.providedBy(self.context):
+                        event = Push(self.context)
                 result = ProtocolResult(result, event)
             return result
 

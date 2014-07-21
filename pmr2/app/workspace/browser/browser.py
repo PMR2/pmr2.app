@@ -198,7 +198,7 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
 
         # We are successful, manually fire off an event until that
         # system is fully in place.
-        if results.event == 'push':
+        if IWorkspaceStorageIncomingEvent.providedBy(results.event):
             # XXX post push hooks?
             self.context.setModificationDate(DateTime())
             self.context.reindexObject()

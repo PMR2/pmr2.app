@@ -1,5 +1,6 @@
 import zope.interface
 import zope.schema
+from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 
 from zope.browsermenu.interfaces import IBrowserMenu
 from zope.browsermenu.interfaces import IBrowserSubMenuItem
@@ -213,6 +214,23 @@ class IStorageArchiver(zope.interface.Interface):
         """
         Archives the contents of the storage.
         """
+
+
+# events
+
+class IWorkspaceModifiedEvent(IObjectModifiedEvent):
+    """
+    An generic workspace modification event.
+    """
+
+    workspace = zope.interface.Attribute('The workspace that was modified.')
+
+
+class IWorkspaceStorageIncomingEvent(IWorkspaceModifiedEvent):
+    """
+    An event fired whenever the underlying storage has incoming data,
+    i.e. a client push.
+    """
 
 
 # content
