@@ -1,6 +1,9 @@
 from unittest import TestCase, TestSuite, makeSuite
 import zope.interface
 import zope.component
+from zope.publisher.interfaces import BadRequest
+
+from DateTime import DateTime
 
 from pmr2.testing.base import TestRequest
 
@@ -127,10 +130,53 @@ class WorkspaceViewTestCase(base.WorkspaceBrowserDocTestCase):
         self.assertEqual(self.testbrowser.url, 
             'http://nohost/plone/workspace/external_test/rawfile/0/test.txt')
 
+
+class WorkspaceProtocolTestCase(base.WorkspaceBrowserDocTestCase):
+    """
+    Protocol interaction tests.
+    """
+
+    def test_protocol_unsupported(self):
+        request = TestRequest()
+        # need the associated metaclasses for the permission...
+        # view = browser.WorkspaceProtocol(self.portal.workspace.test, request)
+
+        protocol_read = zope.component.getMultiAdapter(
+            (self.portal.workspace.test, request), name='protocol_read')
+        self.assertRaises(BadRequest, protocol_read)
+
+        protocol_write = zope.component.getMultiAdapter(
+            (self.portal.workspace.test, request), name='protocol_write')
+        self.assertRaises(BadRequest, protocol_write)
+
+    def test_protocol_read(self):
+        request = TestRequest(form={'cmd': 'revcount'})
+        request.method = 'GET'
+        protocol_read = zope.component.getMultiAdapter(
+            (self.portal.workspace.test, request), name='protocol_read')
+        result = protocol_read()
+        self.assertEqual(result, '4')
+
+    def test_protocol_write(self):
+        dummydt = DateTime(2000, 1, 1)
+        self.portal.workspace.test.setModificationDate(dummydt)
+
+        request = TestRequest(form={'cmd': 'update'})
+        protocol_write = zope.component.getMultiAdapter(
+            (self.portal.workspace.test, request), name='protocol_write')
+        result = protocol_write()
+        self.assertEqual(result, 'Updated')
+
+        # ensure that this is modified.
+        self.assertNotEqual(dummydt,
+            self.portal.workspace.test.ModificationDate())
+
+
 def test_suite():
     suite = TestSuite()
     suite.addTest(makeSuite(TestWorkspaceTraversePage))
     suite.addTest(makeSuite(TestWorkspaceBrowserUtil))
     suite.addTest(makeSuite(WorkspaceViewTestCase))
+    suite.addTest(makeSuite(WorkspaceProtocolTestCase))
     return suite
 
