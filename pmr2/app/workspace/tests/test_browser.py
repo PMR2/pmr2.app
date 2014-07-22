@@ -160,6 +160,7 @@ class WorkspaceProtocolTestCase(base.WorkspaceBrowserDocTestCase):
     def test_protocol_write(self):
         dummydt = DateTime(2000, 1, 1)
         self.portal.workspace.test.setModificationDate(dummydt)
+        self.assertEqual(dummydt, self.portal.workspace.test.modified())
 
         request = TestRequest(form={'cmd': 'update'})
         protocol_write = zope.component.getMultiAdapter(
@@ -168,8 +169,7 @@ class WorkspaceProtocolTestCase(base.WorkspaceBrowserDocTestCase):
         self.assertEqual(result, 'Updated')
 
         # ensure that this is modified.
-        self.assertNotEqual(dummydt,
-            self.portal.workspace.test.ModificationDate())
+        self.assertNotEqual(dummydt, self.portal.workspace.test.modified())
 
 
 def test_suite():
