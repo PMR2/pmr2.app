@@ -8,7 +8,7 @@ class WorkspaceEvent(object):
     """
 
     def __init__(self, workspace):
-        self.workspace = workspace
+        self.object = self.workspace = workspace
 
 
 @implementer(IWorkspaceStorageIncomingEvent)

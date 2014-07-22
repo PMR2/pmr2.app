@@ -1,6 +1,7 @@
 import os.path
 import zope.interface
 import zope.component
+import zope.event
 
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
@@ -48,22 +49,30 @@ class StorageProtocolAdapter(object):
         self.enabled = self.storage_util.isprotocol(self.request)
 
     def __call__(self):
-        if self.enabled:
-            result = self.storage_util.protocol(self.context, self.request)
-            if not isinstance(result, ProtocolResult):
-                # legacy implementation that only process raw client results
-                event = None
-                if self.request.method in ['POST']:
-                    # Assume all POST requests are pushes.
-                    if IWorkspace.providedBy(self.context):
-                        event = Push(self.context)
-                result = ProtocolResult(result, event)
-            return result
+        if not self.enabled:
+            # This isn't a protocol request according to isprotocol.  While
+            # it is still possible to directly call the protocol but that's
+            # unchecked.
+            raise NotProtocolRequestError()
 
-        # This isn't a protocol request according to isprotocol.  While
-        # it is still possible to directly call the protocol but that's
-        # unchecked.
-        raise NotProtocolRequestError()
+        raw_result = self.storage_util.protocol(self.context, self.request)
+        if isinstance(raw_result, ProtocolResult):
+            event = raw_result.event
+            result = raw_result.result
+        else:
+            # legacy implementation that only returns raw client results
+            # and not the event to fire.
+            event = None
+            result = raw_result
+            if self.request.method in ['POST']:
+                # Assume all POST requests are pushes.
+                if IWorkspace.providedBy(self.context):
+                    event = Push(self.context)
+            
+        if event:
+            zope.event.notify(event)
+
+        return result
 
 
 class WorkspaceListing(object):

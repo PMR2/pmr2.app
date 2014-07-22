@@ -1,4 +1,7 @@
 import zope.component
+
+from DateTime import DateTime
+
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 def create_user_workspace(user, event):
@@ -43,3 +46,7 @@ def create_user_workspace(user, event):
     settings = zope.component.queryUtility(IPMR2GlobalSettings)
     name = user.getName()
     settings.createUserWorkspaceContainer(name)
+
+def set_pushed_workspace_datetime(workspace, event):
+    workspace.setModificationDate(DateTime())
+    workspace.reindexObject()

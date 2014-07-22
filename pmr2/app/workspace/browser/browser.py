@@ -196,14 +196,7 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
         except ProtocolError:
             raise BadRequest('unsupported command')
 
-        # We are successful, manually fire off an event until that
-        # system is fully in place.
-        if IWorkspaceStorageIncomingEvent.providedBy(results.event):
-            # XXX post push hooks?
-            self.context.setModificationDate(DateTime())
-            self.context.reindexObject()
-
-        return results.result
+        return results
 
     def __call__(self, *a, **kw):
         self.update()

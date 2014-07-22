@@ -15,4 +15,10 @@
       handler=".subscriber.create_user_workspace"
       />
 
+  <subscriber
+      for="pmr2.app.workspace.interfaces.IWorkspace
+           pmr2.app.workspace.interfaces.IWorkspaceModifiedEvent"
+      handler=".subscriber.set_pushed_workspace_datetime"
+      />
+
 </configure>
