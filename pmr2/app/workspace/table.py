@@ -4,6 +4,7 @@ import cgi
 import zope.component
 import zope.interface
 from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.publisher.interfaces import NotFound
 
 from z3c.form.interfaces import IForm
 
@@ -330,7 +331,7 @@ class ValuesForChangelogTable(ValuesMixin):
             self.table.navlist = storage.lastnav
             return logs
         except RevisionNotFoundError:
-            raise HTTPNotFound(self.context.title_or_id())
+            raise NotFound(self.context, self.context.title_or_id())
 
 
 # Workspace manifest table.
