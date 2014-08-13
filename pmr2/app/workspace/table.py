@@ -15,6 +15,12 @@ from z3c.table.interfaces import ITable
 
 from Products.CMFCore.utils import getToolByName
 
+try:
+    from pmr2.users.interfaces import IEmailManager
+    _EMAIL_MANAGER = True
+except ImportError:
+    _EMAIL_MANAGER = False
+
 from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import IWorkspaceListing
 from pmr2.app.workspace.interfaces import IStorage
@@ -207,22 +213,30 @@ class ChangesetAuthorEmailColumn(EscapedItemKeyColumn):
     itemkey = 'author'
 
     def renderCell(self, item):
+        author = None
         name = super(ChangesetAuthorEmailColumn, self).renderCell(item)
         email = item.get('email')
-        pm = getToolByName(self.context, 'portal_membership', None)
-        if not pm:
-            return name
-
-        # find the latest user.
-        user = sorted(pm.searchForMembers(name=name, email=email),
-            lambda x, y: x.getProperty('last_login_time', '') <
-                y.getProperty('last_login_time', ''))
-
-        if not user:
-            return name
-
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
-        href = portal.absolute_url() + '/author/' + user[0].getUserName()
+        pm = getToolByName(self.context, 'portal_membership', None)
+
+        if pm:
+            # find the latest user.
+            user = sorted(pm.searchForMembers(name=name, email=email),
+                lambda x, y: x.getProperty('last_login_time', '') <
+                    y.getProperty('last_login_time', ''))
+            if user:
+                author = user[0].getUserName()
+
+        if not author and _EMAIL_MANAGER:
+            # last ditch effort
+            eman = zope.component.queryAdapter(portal, IEmailManager)
+            if eman:
+                author = eman.get_login_for(email)
+
+        if not author:
+            return name
+
+        href = portal.absolute_url() + '/author/' + author
 
         return '<a href="%s">%s</a>' % (href, name)
 
