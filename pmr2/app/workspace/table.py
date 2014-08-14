@@ -214,12 +214,16 @@ class ChangesetAuthorEmailColumn(EscapedItemKeyColumn):
 
     def renderCell(self, item):
         author = None
+        portal = None
         name = super(ChangesetAuthorEmailColumn, self).renderCell(item)
         email = item.get('email')
-        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        portal_url = getToolByName(self.context, 'portal_url', None)
         pm = getToolByName(self.context, 'portal_membership', None)
 
-        if pm:
+        if portal_url:
+            portal = portal_url.getPortalObject()
+
+        if pm and portal:
             # find the latest user.
             user = sorted(pm.searchForMembers(name=name, email=email),
                 lambda x, y: x.getProperty('last_login_time', '') <
@@ -227,7 +231,7 @@ class ChangesetAuthorEmailColumn(EscapedItemKeyColumn):
             if user:
                 author = user[0].getUserName()
 
-        if not author and _EMAIL_MANAGER:
+        if portal and not author and _EMAIL_MANAGER:
             # last ditch effort
             eman = zope.component.queryAdapter(portal, IEmailManager)
             if eman:
