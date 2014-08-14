@@ -1,13 +1,17 @@
 Changelog
 =========
 
-0.9.x - Unreleased
-------------------
+0.10 - Released (2014-08-14)
+----------------------------
 
 * Provide an experimental test layer on top of ``plone.app.testing`` for
   tests that require that type of functionality.
 * Some cleaning up of the exposure portlets, including better exception
   handling for the cases of missing workspaces.
+* Protocol handling improvements - events for protocol level changes for
+  Workspaces finally implemented.  This allows subscribers to be written
+  for post-push events, such as indexing of metadata.
+* Some other minor UI cleanup.
 
 0.9.1 - Released (2014-06-18)
 -----------------------------
