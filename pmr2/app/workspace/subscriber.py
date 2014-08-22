@@ -49,4 +49,6 @@ def create_user_workspace(user, event):
 
 def set_pushed_workspace_datetime(workspace, event):
     workspace.setModificationDate(DateTime())
+
+def catalog_content(workspace, event):
     workspace.reindexObject()
