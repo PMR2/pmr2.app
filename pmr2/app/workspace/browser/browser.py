@@ -646,6 +646,8 @@ class WorkspaceForkForm(form.PostForm):
         utility.create(ctxobj)
         utility.syncWorkspace(ctxobj, self.context)
 
+        ctxobj.reindexObject()
+
         return ctxobj
 
 
