@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.10.x - Unreleased
+-------------------
+
+* Provide a way for normal users to access the wizard export link by
+  creating an alternative wizard view when the exposure at hand is no
+  longer private to them.
+* Workspaces now properly reindexed when its details are updated, and
+  also, forked workspaces also get the same treatment so that the copied
+  title correctly shows up when listed.
+
 0.10 - Released (2014-08-14)
 ----------------------------
 
