@@ -118,6 +118,13 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <browser:page
+      for="pmr2.app.exposure.interfaces.IExposure"
+      name="wizard_landing"
+      class=".wizard.ExposureFileWizardRedirect"
+      permission="zope2.View"
+      />
+
   <!-- Exposure Menus -->
 
   <browser:viewlet
@@ -245,7 +252,7 @@
       for="pmr2.app.exposure.interfaces.IExposureFile"
       name="wizard"
       class=".wizard.ExposureFileWizardRedirect"
-      permission="cmf.ModifyPortalContent"
+      permission="zope2.View"
       />
 
   <browser:page
@@ -284,7 +291,7 @@
       for="pmr2.app.exposure.interfaces.IExposureFolder"
       name="wizard"
       class=".wizard.ExposureFileWizardRedirect"
-      permission="cmf.ModifyPortalContent"
+      permission="zope2.View"
       />
 
   <browser:page

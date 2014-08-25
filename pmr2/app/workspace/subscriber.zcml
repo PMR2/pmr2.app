@@ -21,4 +21,10 @@
       handler=".subscriber.set_pushed_workspace_datetime"
       />
 
+  <subscriber
+      for="pmr2.app.workspace.interfaces.IWorkspace
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler=".subscriber.catalog_content"
+      />
+
 </configure>

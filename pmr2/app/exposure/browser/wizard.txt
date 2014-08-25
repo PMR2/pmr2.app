@@ -847,6 +847,32 @@ Retry again with these entered::
     >>> context.dir1.nested.file.views
     [u'docgen', u'filename_note']
 
+-----------------
+Wizard action tab
+-----------------
+
+When the exposure is submitted for publication, users with normal
+permissions should no longer have access to the wizard if it has been
+submitted for publication.  So let's try that::
+
+    >>> b.open(context.absolute_url() + '/folder_contents')
+    >>> '"contentview-wizard_landing"' in b.contents
+    False
+    >>> b.getLink('Wizard').url
+    'http://nohost/plone/exposure/4/@@wizard'
+    >>> b.getLink(id='workflow-transition-submit').click()
+    >>> b.open(context.absolute_url() + '/folder_contents')
+    >>> '"contentview-wizard"' in b.contents
+    False
+    >>> b.getLink('Wizard').url
+    'http://nohost/plone/exposure/4/@@wizard_landing'
+    >>> b.getLink(id='workflow-transition-retract').click()
+
+Note that the wizard tab now goes to the wizard landing after the
+exposure was submitted for publication, and neither of those tabs appear
+at the same time.  This is to allow users to have a consistent way to
+visit that view to acquire the export link.
+
 -------------------
 User error handling
 -------------------

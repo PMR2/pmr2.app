@@ -58,4 +58,12 @@
   <permission value="Modify portal content"/>
  </action>
 
+ <action title="Wizard" action_id="wizard_landing"
+    condition_expr="not:python:object.restrictedTraverse('wizard', False)"
+    category="object" 
+    url_expr="string:${object_url}/@@wizard_landing" visible="True"
+    i18n:attributes="title">
+  <permission value="View"/>
+ </action>
+
 </object>
