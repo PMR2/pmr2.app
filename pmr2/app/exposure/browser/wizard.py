@@ -667,17 +667,28 @@ class ExposureFileTypeWizardGroupExtender(extensible.FormExtender):
         return fields
 
 
-class ExposureFileWizardRedirect(BrowserPage):
+class ExposureFileWizardRedirect(page.SimplePage):
     """
     Redirect to the real wizard view from this ExposureFile.
     """
 
-    def __call__(self):
+    template = ViewPageTemplateFile('exposure_wizard_restricted.pt')
+    label = u'Exposure Wizard'
+
+    def render(self):
         helper = zope.component.queryAdapter(
             self.context, IExposureSourceAdapter)
         exposure, workspace, path = helper.source()
-        target_uri = '%s/wizard' % (exposure.absolute_url())
-        return self.request.response.redirect(target_uri)
+        view = self.context.restrictedTraverse(
+            exposure.getPhysicalPath() + ('wizard',), None)
+        if view:
+            # user has permission
+            target_uri = '%s/wizard' % (exposure.absolute_url())
+            return self.request.response.redirect(target_uri)
+
+        self.export_uri = exposure.absolute_url() + '/@@wizard_exporter'
+        
+        return super(ExposureFileWizardRedirect, self).render()
 
 
 class ExposureFileRootFolderContentsRedirect(BrowserPage):

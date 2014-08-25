@@ -53,9 +53,9 @@
 
  <action title="Wizard" action_id="wizard" 
     category="object" 
-    url_expr="string:${object_url}/@@wizard" visible="True"
+    url_expr="string:${object_url}/@@wizard_landing" visible="True"
     i18n:attributes="title">
-  <permission value="Modify portal content"/>
+  <permission value="View"/>
  </action>
 
 </object>

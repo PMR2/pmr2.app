@@ -1,0 +1,11 @@
+<p>
+Access to the Exposure Wizard is restricted once the exposure has been
+submitted for publication.
+</p>
+
+<p>
+The exported structure of this exposure is: <a 
+    tal:attributes="href view/export_uri;"
+    tal:content="view/export_uri"
+  >this uri</a>.
+</p>
