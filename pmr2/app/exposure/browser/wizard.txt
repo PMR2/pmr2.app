@@ -866,6 +866,10 @@ submitted for publication.  So let's try that::
     False
     >>> b.getLink('Wizard').url
     'http://nohost/plone/exposure/4/@@wizard_landing'
+    >>> b.getLink('Wizard').click()
+    >>> 'restricted once the exposure has been' in b.contents
+    True
+    >>> b.open(context.absolute_url() + '/folder_contents')
     >>> b.getLink(id='workflow-transition-retract').click()
 
 Note that the wizard tab now goes to the wizard landing after the
