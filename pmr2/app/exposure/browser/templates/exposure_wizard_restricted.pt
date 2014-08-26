@@ -1,6 +1,10 @@
-<p>
+<p tal:condition="view/has_ownership">
 Access to the Exposure Wizard is restricted once the exposure has been
 submitted for publication.
+</p>
+
+<p tal:condition="not:view/has_ownership">
+Access to the Exposure Wizard is restricted as you are not the owner.
 </p>
 
 <p>

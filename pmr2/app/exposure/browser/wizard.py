@@ -675,6 +675,11 @@ class ExposureFileWizardRedirect(page.SimplePage):
     template = ViewPageTemplateFile('exposure_wizard_restricted.pt')
     label = u'Exposure Wizard'
 
+    def has_ownership(self):
+        pm = getToolByName(self.context, 'portal_membership')
+        return (pm.getAuthenticatedMember().getId() ==
+            self.context.getOwner().getId())
+
     def render(self):
         helper = zope.component.queryAdapter(
             self.context, IExposureSourceAdapter)
