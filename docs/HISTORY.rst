@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.10.x - Unreleased
--------------------
+0.10.1 - Released (2014-09-02)
+------------------------------
 
 * Provide a way for normal users to access the wizard export link by
   creating an alternative wizard view when the exposure at hand is no
