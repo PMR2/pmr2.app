@@ -9,7 +9,7 @@
       />
 
   <subscriber
-      for="pmr2.app.workspace.interfaces.IExposure
+      for="pmr2.app.exposure.interfaces.IExposure
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler=".subscriber.workflow_email"
       />
