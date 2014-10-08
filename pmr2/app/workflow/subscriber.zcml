@@ -1,0 +1,17 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2.app.workflow">
+
+  <subscriber
+      for="pmr2.app.workspace.interfaces.IWorkspace
+           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+      handler=".subscriber.workflow_email"
+      />
+
+  <subscriber
+      for="pmr2.app.workspace.interfaces.IExposure
+           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+      handler=".subscriber.workflow_email"
+      />
+
+</configure>

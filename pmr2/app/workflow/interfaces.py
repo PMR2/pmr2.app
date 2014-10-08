@@ -15,3 +15,11 @@ class ISettings(zope.interface.Interface):
         title=u'Send email on workflow state change.',
         required=False,
     )
+
+    wf_change_states = zope.schema.List(
+        title=u'Workflow states to notify',
+        description=u'Workflow states that require an email to be sent, '
+                     'one per line.',
+        required=False,
+        value_type=zope.schema.TextLine(),
+    )

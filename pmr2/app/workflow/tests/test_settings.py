@@ -3,16 +3,22 @@ import warnings
 
 import zope.component
 
-from zExceptions import Unauthorized
-from Products.PloneTestCase.setup import portal_owner, default_password
+from Acquisition import aq_base
+from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase import ptc
-from Products.Five.testbrowser import Browser
+from Products.MailHost.interfaces import IMailHost
+from Products.CMFPlone.tests.utils import MockMailHost
 from plone.registry.interfaces import IRegistry
 
+from plone.app.testing import TEST_USER_ID, setRoles
+
 from pmr2.testing.base import TestRequest
+from pmr2.app.workspace.tests.layer import WORKSPACE_INTEGRATION_LAYER
 
 from pmr2.app.workflow.interfaces import ISettings
 from pmr2.app.workflow.browser import SettingsEditForm
+from pmr2.app.workflow.subscriber import workflow_email
+
 
 
 class SettingsTestCase(ptc.FunctionalTestCase):
@@ -53,8 +59,71 @@ class SettingsTestCase(ptc.FunctionalTestCase):
         self.assertIn('tester@example.com', result)
 
 
+class MailTestCase(unittest.TestCase):
+    """
+    Test to see that emails are sent.
+    """
+
+    layer = WORKSPACE_INTEGRATION_LAYER
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+
+        self.registry = zope.component.getUtility(IRegistry)
+        self.settings = self.registry.forInterface(ISettings,
+            prefix='pmr2.app.workflow.settings')
+        self.settings.wf_change_recipient = u'tester@example.com'
+        self.settings.wf_send_email = True
+
+        self.portal._original_MailHost = self.portal.MailHost
+        self.portal.MailHost = mailhost = MockMailHost('MailHost')
+        sm = zope.component.getSiteManager(context=self.portal)
+        sm.unregisterUtility(provided=IMailHost)
+        sm.registerUtility(mailhost, provided=IMailHost)
+        # We need to fake a valid mail setup
+        self.portal.email_from_address = 'admin@example.com'
+        self.mailhost = self.portal.MailHost
+
+    def tearDown(self):
+        self.portal.MailHost = self.portal._original_MailHost
+        sm = zope.component.getSiteManager(context=self.portal)
+        sm.unregisterUtility(provided=IMailHost)
+        sm.registerUtility(aq_base(self.portal._original_MailHost),
+                           provided=IMailHost)
+
+    def test_workflow_email_success(self):
+        self.settings.wf_change_states = [u'pending']
+        pw = getToolByName(self.portal, "portal_workflow")
+        pw.doActionFor(self.portal.workspace.test, "submit")
+        msg = str(self.mailhost.messages[0])
+        self.assertTrue('Subject: Workspace `test` is now pending' in msg)
+        self.assertTrue('To: tester@example.com' in msg)
+        self.assertTrue('From: admin@example.com' in msg)
+        self.assertTrue('Visit http://nohost/plone/workspace/test to manage.'
+            in msg)
+
+    def test_workflow_email_skipped_wf_state(self):
+        self.settings.wf_change_states = [u'pending']
+        pw = getToolByName(self.portal, "portal_workflow")
+        pw.doActionFor(self.portal.workspace.test, "publish")
+        self.assertEqual(len(self.mailhost.messages), 0)
+
+    def test_workflow_email_not_in_state(self):
+        pw = getToolByName(self.portal, "portal_workflow")
+        pw.doActionFor(self.portal.workspace.test, "submit")
+        self.assertEqual(len(self.mailhost.messages), 0)
+
+    def test_workflow_email_disabled(self):
+        self.settings.wf_send_email = False
+        pw = getToolByName(self.portal, "portal_workflow")
+        pw.doActionFor(self.portal.workspace.test, "submit")
+        self.assertEqual(len(self.mailhost.messages), 0)
+
+
 def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()
     suite.addTest(makeSuite(SettingsTestCase))
+    suite.addTest(makeSuite(MailTestCase))
     return suite
