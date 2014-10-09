@@ -100,8 +100,34 @@ class MailTestCase(unittest.TestCase):
         self.assertTrue('Subject: Workspace `test` is now pending' in msg)
         self.assertTrue('To: tester@example.com' in msg)
         self.assertTrue('From: admin@example.com' in msg)
-        self.assertTrue('Visit http://nohost/plone/workspace/test to manage.'
+        self.assertTrue('Visit http://nohost/plone/workspace/test' in msg)
+
+    def test_workflow_email_custom_format_success(self):
+        self.settings.wf_change_states = [u'published']
+        self.settings.subject_template = u'Item: ({not_exist})'
+        self.settings.message_template = (u'{obj.id} is now '
+            '{event.transition.new_state_id} at site <{portal_url}>.')
+
+        pw = getToolByName(self.portal, "portal_workflow")
+        pw.doActionFor(self.portal.workspace.cake, "publish")
+        msg = str(self.mailhost.messages[0])
+        self.assertTrue('Subject: Item: ()' in msg)
+        self.assertTrue('To: tester@example.com' in msg)
+        self.assertTrue('From: admin@example.com' in msg)
+        self.assertTrue('cake is now published at site <http://nohost/plone>.'
             in msg)
+
+    def test_workflow_email_custom_format_malformed(self):
+        self.settings.wf_change_states = [u'published']
+        self.settings.subject_template = u'Item: not_exist}'
+        self.settings.message_template = \
+            u'{obj.not_attribute} is now {event.transition.new_state_id}'
+        pw = getToolByName(self.portal, "portal_workflow")
+        pw.doActionFor(self.portal.workspace.cake, "publish")
+        msg = str(self.mailhost.messages[0])
+        # None of the message templates will be processed here.
+        self.assertTrue(self.settings.subject_template in msg)
+        self.assertTrue(self.settings.message_template in msg)
 
     def test_workflow_email_skipped_wf_state(self):
         self.settings.wf_change_states = [u'pending']
