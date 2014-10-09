@@ -128,6 +128,7 @@
     Visible to everyone, but not approved by the reviewers.
   </description>
   <exit-transition transition_id="hide"/>
+  <exit-transition transition_id="submit"/>
   <exit-transition transition_id="publish"/>
   <permission-map name="Access contents information"
                   acquired="False">
