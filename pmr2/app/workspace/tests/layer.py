@@ -71,6 +71,16 @@ class WorkspaceLayer(PloneSandboxLayer):
         mkdummywks('external_root')
         mkdummywks('external_test')
 
+    def tearDownPloneSite(self, portal):
+        # Needed here because this layer is used as one of the parents
+        # bases and zope testrunner does not deal with this case cleanly
+        # at all because it assumes all layers operate in isolation from
+        # each other.
+        del portal.workspace['test']
+        del portal.workspace['cake']
+        del portal.workspace['external_root']
+        del portal.workspace['external_test']
+
 WORKSPACE_FIXTURE = WorkspaceLayer()
 
 WORKSPACE_INTEGRATION_LAYER = IntegrationTesting(
