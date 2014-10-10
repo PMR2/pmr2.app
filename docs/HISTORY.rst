@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.10.x - Unreleased
+-------------------
+
+* Submit for publication transition provided for public draft for the
+  workspace workflow
+* Provide cleanup for the workspace test layer due to the how the test
+  runner doesn't always tear down the layers properly.
+
 0.10.1 - Released (2014-09-02)
 ------------------------------
 
