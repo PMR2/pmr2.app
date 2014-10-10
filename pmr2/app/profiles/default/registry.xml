@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<registry>
-  <records
-      interface="pmr2.app.workflow.interfaces.ISettings"
-      prefix="pmr2.app.workflow.settings"
-    />
-</registry>

@@ -24,7 +24,6 @@
   <include package=".browser" />
   <include package=".viewlets" />
   <include package=".annotation" />
-  <include package=".workflow" />
 
   <include package="pmr2.app.settings" />
   <include package="pmr2.app.schema" />
