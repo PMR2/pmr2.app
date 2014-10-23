@@ -60,8 +60,14 @@
 
  <portlet 
      addview="pmr2.portlets.exposure_download"
+     title="Exposure Download (legacy)"
+     description="A portlet that shows the download options available for the exposure object, legacy version.">
+ </portlet>
+
+ <portlet 
+     addview="pmr2.portlets.exposure_download_tool"
      title="Exposure Download"
-     description="A portlet that shows the download options available for the exposure object.">
+     description="A portlet that shows the download options available for the exposure object, using the tools available and registered.">
  </portlet>
 
  <portlet 

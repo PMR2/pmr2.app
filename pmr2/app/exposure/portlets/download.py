@@ -21,8 +21,8 @@ from pmr2.app.exposure.portlets.base import BaseRenderer
 
 
 class IExposureDownloadPortlet(IPortletDataProvider):
-    """\
-    Exposure Information portlet.
+    """
+    Exposure download portlet.
     """
 
 
@@ -35,7 +35,7 @@ class Assignment(base.Assignment):
     @property
     def title(self):
         # XXX I am open to suggestions on a better title
-        return _(u"Exposure Download (legacy)")
+        return _(u"Exposure Download")
 
 
 class Renderer(BaseRenderer):
@@ -46,48 +46,20 @@ class Renderer(BaseRenderer):
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         return portal.absolute_url()
 
-    def view_url(self, view='rawfile'):
-        return '%s/@@%s/%s/%s' % (
-            self.workspace.absolute_url(),
-            view,
-            self.exposure.commit_id,
-            self.path
-        )
-
-    # labels may change, so commenting this out for now
-    #@memoize
     def file_access_uris(self):
-        # XXX should refer this to the more verbose download option
-        # page when this is added to the workspace.
-        result = []
-        # XXX a utility should be created to test whether this option is
-        # implemented for the storage at hand
-        archive_uri = '%s/@@archive/%s/tgz' % (
-            self.workspace.absolute_url(), self.exposure.commit_id)
-        result.append({
-            'label': u'Complete Archive as .tgz', 'href': archive_uri})
-        if IExposureFile.providedBy(self.context):
-            result.append({
-                'label': u'Download This File',
-                'href': self.view_url(),
-            })
-
-        archivers = zope.component.getUtilitiesFor(IStorageArchiver)
-        storage = IStorage(self.exposure)
-        archive_uri = '%s/@@archive/%s/%s'
-        for name, a in archivers:
-            if a.enabledFor(storage):
-                result.append({'label': a.label, 'href': archive_uri % (
-                    self.workspace.absolute_url(),
-                    self.exposure.commit_id,
-                    name,
-                )})
-        return result
+        tools = zope.component.getUtilitiesFor(IExposureDownloadTool)
+        results = []
+        for name, tool in tools:
+            link = tool.get_download_link(self.context)
+            if not link:
+                continue
+            results.append({'label': tool.label, 'href': link})
+        return results
 
 
 class AddForm(base.AddForm):
     form_fields = form.Fields(IExposureDownloadPortlet)
-    label = _(u"Add Exposure Download Portlet (legacy)")
+    label = _(u"Add Exposure Download Portlet")
     description = _(u"This portlet displays curation information about an Exposure, but using PMR1 style.")
 
     def create(self, data):
@@ -96,6 +68,6 @@ class AddForm(base.AddForm):
 
 class EditForm(base.EditForm):
     form_fields = form.Fields(IExposureDownloadPortlet)
-    label = _(u"Edit Exposure Download Portlet (legacy)")
+    label = _(u"Edit Exposure Download Portlet")
     description = _(u"This portlet displays curation information about an Exposure, but using PMR1 style.")
 

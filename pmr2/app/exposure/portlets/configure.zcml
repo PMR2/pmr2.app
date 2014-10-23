@@ -61,6 +61,15 @@
       />
 
   <plone:portlet
+      name="pmr2.portlets.exposure_download_tool"
+      interface=".download.IExposureDownloadPortlet"
+      assignment=".download.Assignment"
+      renderer=".download.Renderer"
+      addview=".download.AddForm"
+      editview=".download.EditForm"
+      />
+
+  <plone:portlet
       name="pmr2.portlets.workspace_exposure_info"
       interface=".WorkspaceExposureInfo.IWorkspaceExposureInfoPortlet"
       assignment=".WorkspaceExposureInfo.Assignment"
