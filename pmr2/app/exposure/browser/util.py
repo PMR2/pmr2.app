@@ -129,6 +129,50 @@ def getExposureFileType(form, eftype_path):
     # default answer.
     return (None, None, None, None)
 
+def _mold_views(ctxobj, request, fields):
+    views = []
+    for view, view_fields in fields['views']:
+        # generate views
+        annotatorFactory = zope.component.getUtility(
+            IExposureFileAnnotator,
+            name=view,
+        )
+        # pass in the view_fields regardless whether it is
+        # editable or not because editable notes will have
+        # data ignored.
+        data = view_fields and view_fields.items() or None
+        try:
+            # Annotator factory can expect request to be
+            # present.  Refer to commit d5d308226767
+            annotator = annotatorFactory(ctxobj, request)
+            annotator(data)
+            views.append(view)
+        except RequiredMissing:
+            # this does not cover cases where schema have
+            # changed, or the old scheme into the new scheme.
+            note = zope.component.queryAdapter(
+                ctxobj,
+                name=view
+            )
+            if note:
+                # This editable note is missing some data,
+                # probably because it never existed, bad
+                # export data, updated schema or other
+                # errors.  We ignore it for now, and purge
+                # the stillborn note from the new object.
+                del_note(ctxobj, view)
+            else:
+                # However, the automatic generated ones we
+                # will continue to raise errors.  Maybe in
+                # the future we group these together, or
+                # make some way to adapt this to something
+                # that will handle the migration case.
+                raise
+        except Exception, err:
+            # XXX trap all here.
+            raise ProcessingError(str(err))
+    return views
+
 def moldExposure(exposure_context, request, exported):
     """\
     Mold an exposure structure at the exposure context, using the 
@@ -180,47 +224,7 @@ def moldExposure(exposure_context, request, exported):
                 # this informally declared object.
                 ctxobj = fgen.ctxobj
 
-            views = []
-            for view, view_fields in fields['views']:
-                # generate views
-                annotatorFactory = zope.component.getUtility(
-                    IExposureFileAnnotator,
-                    name=view,
-                )
-                # pass in the view_fields regardless whether it is
-                # editable or not because editable notes will have
-                # data ignored.
-                data = view_fields and view_fields.items() or None
-                try:
-                    # Annotator factory can expect request to be
-                    # present.  Refer to commit d5d308226767
-                    annotator = annotatorFactory(ctxobj, request)
-                    annotator(data)
-                    views.append(view)
-                except RequiredMissing:
-                    # this does not cover cases where schema have
-                    # changed, or the old scheme into the new scheme.
-                    note = zope.component.queryAdapter(
-                        ctxobj,
-                        name=view
-                    )
-                    if note:
-                        # This editable note is missing some data,
-                        # probably because it never existed, bad
-                        # export data, updated schema or other
-                        # errors.  We ignore it for now, and purge
-                        # the stillborn note from the new object.
-                        del_note(ctxobj, view)
-                    else:
-                        # However, the automatic generated ones we
-                        # will continue to raise errors.  Maybe in
-                        # the future we group these together, or
-                        # make some way to adapt this to something
-                        # that will handle the migration case.
-                        raise
-                except Exception, err:
-                    # XXX trap all here.
-                    raise ProcessingError(str(err))
+            views = _mold_views(ctxobj, request, fields)
 
             # only ExposureFiles have this
             if IExposureFile.providedBy(ctxobj):
