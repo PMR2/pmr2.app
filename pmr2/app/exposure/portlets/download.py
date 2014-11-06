@@ -49,7 +49,7 @@ class Renderer(BaseRenderer):
     def file_access_uris(self):
         tools = zope.component.getUtilitiesFor(IExposureDownloadTool)
         results = []
-        for name, tool in tools:
+        for name, tool in sorted(tools):
             link = tool.get_download_link(self.context)
             if not link:
                 continue
