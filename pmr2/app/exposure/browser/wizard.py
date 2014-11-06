@@ -1,4 +1,5 @@
 import json
+import logging
 
 import zope.interface
 import zope.component
@@ -33,6 +34,8 @@ from pmr2.app.exposure.browser.util import moldExposure, extractError
 from pmr2.app.exposure.browser.util import getExposureFileType
 
 from pmr2.app.exposure.browser.workspace import *
+
+logger = logging.getLogger(__name__)
 
 
 def _changeWizard(exposure):

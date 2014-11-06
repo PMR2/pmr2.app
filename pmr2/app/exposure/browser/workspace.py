@@ -276,6 +276,7 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
         items = {
             'file_type': data['filetype'],
             'views': [],
+            'hidden_views': [],
             'selected_view': None,
             'Subject': (),
             # XXX additions for backwards compatibility.
@@ -291,6 +292,7 @@ class ExposureFileChoiceTypeGroup(DocGenSubgroup):
             # selected view.
             views = [(i, None) for i in views]
             items['views'] = views
+            items['hidden_views'] = []
             items['selected_view'] = selected_view
             items['Subject'] = tags
 

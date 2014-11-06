@@ -149,6 +149,13 @@ class IExposureFile(zope.interface.Interface):
         required=False,
     )
 
+    hidden_views = TextLineList(
+        title=u'Hidden Views',
+        description=u'List of views to be hidden from the listing.',
+        required=False,
+        default=[],
+    )
+
     selected_view = zope.schema.TextLine(
         title=u'Selected View',
         description=u'Use this view as default instead of the generated ' \

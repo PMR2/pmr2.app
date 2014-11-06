@@ -961,6 +961,7 @@ class ExposurePort(form.PostForm):
                     d[n] = getattr(obj, n)
                 # query each views manually.
                 d['views'] = viewinfo(obj)
+                d['hidden_views'] = obj.hidden_views
                 # retain the subject.
                 d['Subject'] = obj.Subject()
                 # deprecate the docgen fields off the object

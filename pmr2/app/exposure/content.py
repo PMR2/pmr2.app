@@ -70,6 +70,7 @@ class ExposureFile(ATDocument):
     file_type = fieldproperty.FieldProperty(IExposureFile['file_type'])
     docview_gensource = fieldproperty.FieldProperty(IExposureFile['docview_gensource'])
     docview_generator = fieldproperty.FieldProperty(IExposureFile['docview_generator'])
+    hidden_views = fieldproperty.FieldProperty(IExposureFile['hidden_views'])
     selected_view = fieldproperty.FieldProperty(IExposureFile['selected_view'])
     security = ClassSecurityInfo()
 

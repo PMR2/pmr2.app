@@ -687,6 +687,7 @@ docgen annotation should at least be provided.
     >>> ewiz = zope.component.getAdapter(context, IExposureWizard)
     >>> ewiz.structure[2] == ('file1', {
     ...     'file_type': None,
+    ...     'hidden_views': [],
     ...     'views': [('docgen', None)], 
     ...     'selected_view': None, 
     ...     'Subject': ()
@@ -732,6 +733,7 @@ Now the assignment should work without errors.
     >>> form.update()
     >>> ewiz.structure[0] == ('file2', {
     ...     'file_type': '/plone/docgen_type',
+    ...     'hidden_views': [],
     ...     'views': [
     ...         (u'docgen', {'source': 'file2', 'generator': u'safe_html'}),
     ...         (u'filename_note', {'filename': 'file2'})
@@ -793,6 +795,7 @@ rendering of the form.
     >>> ewiz.structure = [
     ...     ('dir1/nested/file', {
     ...         'file_type': '/plone/docgen_type',
+    ...         'hidden_views': [],
     ...         'views': [(u'docgen', None), (u'filename_note', None)],
     ...         'selected_view': None, 'Subject': []
     ...     }),
@@ -930,6 +933,7 @@ If an entry is None, it should safely ignored.
 
     >>> ewiz.structure = [
     ...     ('file2', {
+    ...         'hidden_views': [],
     ...         'views': [
     ...             (u'edited_note', {'note': u'Testing'}),
     ...             (u'post_edited_note', {'text': u'fi', 'chars': 2}),
@@ -964,6 +968,7 @@ normal.
 
     >>> ewiz.structure = [
     ...     ('file2', {
+    ...         'hidden_views': [],
     ...         'views': [
     ...             (u'edited_note', {'note': u'Testing'}),
     ...             (u'post_edited_note', {'text': u'fi', 'chars': 2}),

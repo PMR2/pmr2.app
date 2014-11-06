@@ -141,6 +141,7 @@ If the file entry is includled, a file entry should be generated.
     ...         'file_type': '/plone/test_type',
     ...         'Subject': [u'please_ignore'],
     ...         'selected_view': None,
+    ...         'hidden_views': [],
     ...         'views': [
     ...             (u'edited_note', None),
     ...             (u'post_edited_note', None),
@@ -1169,6 +1170,7 @@ utility defined for this task.
     ...         'file_type': None,
     ...         'docview_gensource': None,
     ...         'docview_generator': None,
+    ...         'hidden_views': [],
     ...         'views': [
     ...             (u'rdfturtle', None),
     ...             (u'rdfxml', None),
@@ -1183,6 +1185,7 @@ utility defined for this task.
     ...         'file_type': None,
     ...         'docview_gensource': None,
     ...         'docview_generator': None,
+    ...         'hidden_views': [],
     ...         'views': [
     ...             (u'post_edited_note', {
     ...                 'chars': 15,
@@ -1196,6 +1199,7 @@ utility defined for this task.
     ...         'file_type': None,
     ...         'docview_gensource': None,
     ...         'docview_generator': None,
+    ...         'hidden_views': [],
     ...         'views': [],
     ...         'selected_view': None,
     ...         'Subject': (),
@@ -1204,6 +1208,7 @@ utility defined for this task.
     ...         'file_type': None,
     ...         'docview_gensource': None,
     ...         'docview_generator': None,
+    ...         'hidden_views': [],
     ...         'views': [],
     ...         'selected_view': None,
     ...         'Subject': (),
@@ -1212,6 +1217,7 @@ utility defined for this task.
     ...         'file_type': None,
     ...         'docview_gensource': None,
     ...         'docview_generator': None,
+    ...         'hidden_views': [],
     ...         'views': [],
     ...         'selected_view': None,
     ...         'Subject': (),

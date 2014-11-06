@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger(__name__)
 import zope.interface
 import zope.component
 from zope.component.hooks import getSite
@@ -131,6 +133,7 @@ def getExposureFileType(form, eftype_path):
 
 def _mold_views(ctxobj, request, fields):
     views = []
+    hidden_views = []
     for view, view_fields in fields['views']:
         # generate views
         annotatorFactory = zope.component.getUtility(
@@ -147,6 +150,10 @@ def _mold_views(ctxobj, request, fields):
             annotator = annotatorFactory(ctxobj, request)
             annotator(data)
             views.append(view)
+            renderer = zope.component.queryMultiAdapter(
+                (ctxobj, request), name=view)
+            if not renderer:
+                hidden_views.append(view)
         except RequiredMissing:
             # this does not cover cases where schema have
             # changed, or the old scheme into the new scheme.
@@ -171,7 +178,8 @@ def _mold_views(ctxobj, request, fields):
         except Exception, err:
             # XXX trap all here.
             raise ProcessingError(str(err))
-    return views
+
+    return views, hidden_views
 
 def moldExposure(exposure_context, request, exported):
     """\
@@ -224,7 +232,7 @@ def moldExposure(exposure_context, request, exported):
                 # this informally declared object.
                 ctxobj = fgen.ctxobj
 
-            views = _mold_views(ctxobj, request, fields)
+            views, hidden_views = _mold_views(ctxobj, request, fields)
 
             # only ExposureFiles have this
             if IExposureFile.providedBy(ctxobj):
@@ -236,6 +244,7 @@ def moldExposure(exposure_context, request, exported):
                 ctxobj.views = views
                 ctxobj.selected_view = fields['selected_view']
                 ctxobj.file_type = caststr(fields['file_type'])
+                ctxobj.hidden_views = hidden_views
                 ctxobj.setSubject(fields['Subject'])
 
             ctxobj.reindexObject()
