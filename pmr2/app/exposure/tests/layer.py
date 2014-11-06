@@ -8,8 +8,12 @@ from Products.CMFPlone.utils import getToolByName
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from zope.configuration import xmlconfig
+from plone.app.testing import setRoles
+from plone.app.testing import login
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import IntegrationTesting
 from plone.testing import z2
 
@@ -65,6 +69,18 @@ class ExposureLayer(PloneSandboxLayer):
             u'/plone/workspace/test', u'2', '1')
         self._mkexposure(portal['exposure'],
             u'/plone/workspace/eggs', u'1', '2')
+
+    def tearDownPloneSite(self, portal):
+        # [explitive redacted] how layers don't actually clean up themselves
+        # even though they were designed to - I blame zope testrunner and
+        # I have no idea how to merge the fixes I did when they have moved it
+        # out of the way.  A giant flustercuck that shouldn't really be here.
+        # I hope Plone 5 makes it easier for me to submit the fix for.
+        login(portal, TEST_USER_NAME)
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+        del portal['exposure']
+        del portal['test_type']
+        del portal['docgen_type']
 
     def _mkexposure(self, exposure_root, workspace, commit_id, id_):
         from pmr2.app.exposure.content import ExposureContainer, Exposure
