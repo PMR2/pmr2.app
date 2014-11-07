@@ -44,10 +44,15 @@ class Renderer(base.Renderer):
             zope.schema.interfaces.IVocabulary,
             name='pmr2.vocab.ExposureFileAnnotators'
         )
-        result = [{
-            'href': '%s/@@%s' % (self.context.absolute_url(), view),
-            'title': vocab.getTerm(view).title,
-        } for view in self.context.views if has_note(self.context, view)]
+        result = [
+            {
+                'href': '%s/@@%s' % (self.context.absolute_url(), view),
+                'title': vocab.getTerm(view).title,
+            }
+            for view in self.context.views if 
+                has_note(self.context, view) and
+                not view in self.context.hidden_views
+        ]
         return result
 
     def render(self):

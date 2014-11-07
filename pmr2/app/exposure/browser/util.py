@@ -132,6 +132,8 @@ def getExposureFileType(form, eftype_path):
     return (None, None, None, None)
 
 def _mold_views(ctxobj, request, fields):
+    # currently supplied hidden_views are IGNORED.
+
     views = []
     hidden_views = []
     for view, view_fields in fields['views']:
