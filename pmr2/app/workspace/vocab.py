@@ -31,6 +31,11 @@ class ManifestListVocab(SimpleVocabulary):
     def __init__(self, context):
         self.context = context
         wks = self.acquireWorkspace()
+        if not wks:
+            # just treat it as empty, because this is a vocabulary and
+            # is not expected to fail.
+            super(ManifestListVocab, self).__init__([])
+            return
         self.storage = zope.component.getAdapter(wks, IStorage)
 
         commit_id = self.acquireCommitId()
@@ -64,8 +69,7 @@ class ManifestListVocab(SimpleVocabulary):
                         # We actually have one.
                         wks = obj
             if not wks:
-                raise Exception("Unable to adapt to a workspace; will not be "
-                                "able to acquire file listing.")
+                return None
         else:
             wks = self.context
 

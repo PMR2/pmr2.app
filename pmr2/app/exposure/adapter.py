@@ -86,12 +86,11 @@ def exposureSources(context, _with_workspace=True):
             paths.append(obj.getId())
 
         obj = aq_parent(obj)
-    paths.reverse()
-    # XXX could benefit from a better exception type?
-    raise Exception('cannot acquire Exposure object with `%s`' % paths)
 
 def ExposureObjectWorkspaceAdapter(context):
-    return exposureSources(context)[1]
+    results = exposureSources(context)
+    if results:
+        return exposureSources(context)[1]
 
 
 class ExposureObjectCommitIdProvider(object):
