@@ -6,6 +6,7 @@
   <include package=".browser" />
 
   <include file="adapter.zcml" />
+  <include file="utility.zcml" />
 
   <!-- subscriber has priority -->
   <include file="subscriber.zcml" />

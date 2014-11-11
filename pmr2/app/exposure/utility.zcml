@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2.app">
+
+  <utility
+      provides="pmr2.app.exposure.interfaces.IExposureDownloadTool"
+      factory=".download.FileDownloadTool"
+      name="a_file_download"
+      />
+
+
+  <utility
+      provides="pmr2.app.exposure.interfaces.IExposureDownloadTool"
+      factory=".download.TgzDownloadTool"
+      name="a_tgz_download"
+      />
+
+</configure>
