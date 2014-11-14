@@ -60,7 +60,7 @@ class Renderer(BaseRenderer):
 class AddForm(base.AddForm):
     form_fields = form.Fields(IExposureDownloadPortlet)
     label = _(u"Add Exposure Download Portlet")
-    description = _(u"This portlet displays curation information about an Exposure, but using PMR1 style.")
+    description = _(u"This portlet displays download options available for the exposure object being viewe, based on the modules installed onto this instance of PMR2.")
 
     def create(self, data):
         return Assignment()
@@ -69,5 +69,5 @@ class AddForm(base.AddForm):
 class EditForm(base.EditForm):
     form_fields = form.Fields(IExposureDownloadPortlet)
     label = _(u"Edit Exposure Download Portlet")
-    description = _(u"This portlet displays curation information about an Exposure, but using PMR1 style.")
+    description = _(u"This portlet displays download options available for the exposure object being viewed, based on the modules installed onto this instance of PMR2.")
 
