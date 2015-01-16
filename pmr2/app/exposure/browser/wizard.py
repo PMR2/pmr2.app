@@ -11,6 +11,7 @@ from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("pmr2")
 
 import z3c.form
+from z3c.form.interfaces import ActionExecutionError
 
 from plone.z3cform.fieldsets import group, extensible
 
@@ -542,7 +543,8 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
             self._doomed = True
             status = IStatusMessage(self.request)
             status.addStatusMessage(_(str(e)), 'error')
-            return
+            # maybe the subscriber to this can do the rollback?
+            raise ActionExecutionError(e)
 
         self._updated = True
         self._next = ''
