@@ -1,13 +1,24 @@
 Changelog
 =========
 
-0.10.x - Unreleased
--------------------
+0.11.0 - Released (2015-03-19)
+------------------------------
 
 * Submit for publication transition provided for public draft for the
   workspace workflow
 * Provide cleanup for the workspace test layer due to the how the test
   runner doesn't always tear down the layers properly.
+* COMBINE Archive support completely moved to ``pmr2.omex``.
+* Download portlets reworked to be more generalized; a download link
+  generation utility is created which extensions can register their
+  specific links against.
+* Corrected certain adapters/vocabularies that raised exceptions where
+  they shouldn't be on certain kinds of failures.
+* Raise ``ActionExecutionError`` on wizard build failure to trigger the
+  correct events (and not the incorrect success one).
+* Added ``hidden_views`` to ``ExposureFile`` to track hidden views.
+* Completely purged the requirements on ``pmr2.mercurial`` even for
+  testing.
 
 0.10.1 - Released (2014-09-02)
 ------------------------------
