@@ -58,7 +58,7 @@ a workspace via this traverse enabled form.
     >>> wkspc = self.portal.workspace.pmr2hgtest
     >>> request = TestRequest(form={'form.buttons.add': 1,})
     >>> form = workspace.CreateExposureForm(wkspc, request)
-    >>> commit_id = self.pmr2hgtest_revs[-1]
+    >>> commit_id = u'7'
     >>> form.traverse_subpath = [commit_id]
     >>> result = form()
     >>> next = request.response.getHeader('Location')
@@ -384,7 +384,7 @@ built in setup (uses pmr2.mercurial.tests) and create the exposure using
 a workspace with actual data.
 ::
 
-    >>> rev = unicode(self.pmr2hgtest_revs[1])
+    >>> rev = u'1'
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.workspace': u'/plone/workspace/pmr2hgtest',
@@ -510,13 +510,12 @@ Now we do the same with our set of data, with more content.
 ::
 
     >>> rawrevs = [
-    ...     'b94d1701154be42acf63ee6b4bd4a99d09ba043c',
-    ...     '2647d4389da6345c26d168bbb831f6512322d4f9',
-    ...     '006f11cd9211abd2a879df0f6c7f27b9844a8ff2',
-    ...     'eef1e9af39a79b2fc47ef978f8e61e853bad54e2',
+    ...     '0',
+    ...     '1',
+    ...     '2',
+    ...     '3',
     ... ]
-    >>> rawrev = rawrevs[2]
-    >>> rev = unicode(rawrev)
+    >>> rev = u'2'
     >>> request = TestRequest(
     ...     form={
     ...         'form.widgets.workspace': u'/plone/workspace/rdfmodel',
@@ -1233,7 +1232,7 @@ utility defined for this task.
     ...         'Subject': (),
     ...     }),
     ...     ('', {
-    ...         'commit_id': u'006f11cd9211abd2a879df0f6c7f27b9844a8ff2',
+    ...         'commit_id': u'2',
     ...         'curation': {'key': ['value1', 'value2']},
     ...         'docview_generator': u'safe_html',
     ...         'docview_gensource': u'component/docs/index.html',
@@ -1355,12 +1354,12 @@ with the radio boxes available to be selected.
     ...                                          name='exposure_rollover')
     >>> view.update()
     >>> result = view()
-    >>> '006f11cd9211abd2a879df0f6c7f27b9844a8ff2' in result
+    >>> '2' in result
     True
     >>> '<td><label><input type="radio" class="radio-widget" ' \
     ... 'name="form.widgets.commit_id" ' \
-    ... 'value="eef1e9af39a79b2fc47ef978f8e61e853bad54e2"  /> ' \
-    ... 'eef1e9af39a7</label></td>' in result
+    ... 'value="3"  /> ' \
+    ... '3</label></td>' in result
     True
     >>> '<input type="radio" class="radio-widget" ' \
     ... 'name="form.widgets.exposure_path"' in result
@@ -1415,7 +1414,7 @@ with the commit_id remain selected.
 
     >>> '<td><label><input type="radio" class="radio-widget" ' \
     ... 'name="form.widgets.commit_id" ' \
-    ... 'value="eef1e9af39a79b2fc47ef978f8e61e853bad54e2" ' \
+    ... 'value="3" ' \
     ... 'checked="checked" />' in result
     True
 
@@ -1513,7 +1512,7 @@ provide the structure of a given exposure can be exported.
     >>> view = zope.component.queryMultiAdapter((next_ex, request), 
     ...                                         name='wizard_exporter')
     >>> jsonstr = view()
-    >>> 'eef1e9af39a79b2fc47ef978f8e61e853bad54e2' in jsonstr
+    >>> '3' in jsonstr
     True
 
 For compatibility with testing, we override the default pmr2 exposure

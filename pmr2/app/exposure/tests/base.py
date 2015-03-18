@@ -15,6 +15,9 @@ from Products.PloneTestCase.layer import PloneSite
 from Products.PloneTestCase.layer import onsetup
 from Products.PloneTestCase.layer import onteardown
 
+from pmr2.app.workspace.interfaces import IStorageUtility
+from pmr2.app.workspace.content import Workspace
+
 import pmr2.testing
 from pmr2.testing import utils
 from pmr2.app.workspace.tests.base import WorkspaceDocTestCase
@@ -39,6 +42,11 @@ setup()
 teardown()
 ptc.setupPloneSite(products=('pmr2.app',))
 
+def mkdummywks(portal, name):
+    w = Workspace(name)
+    w.storage = 'dummy_storage'
+    portal.workspace[name] = w
+
 
 class ExposureUnitTestCase(WorkspaceDocTestCase):
     # XXX should really inherit from WorspaceUnitTest case, but that
@@ -57,13 +65,9 @@ class ExposureUnitTestCase(WorkspaceDocTestCase):
         from pmr2.app.workspace.content import WorkspaceContainer, Workspace
 
         self.portal['workspace'] = WorkspaceContainer()
-        def mkdummywks(name):
-            w = Workspace(name)
-            w.storage = 'dummy_storage'
-            self.portal.workspace[name] = w
 
-        mkdummywks('test')
-        mkdummywks('cake')
+        mkdummywks(self.portal, 'test')
+        mkdummywks(self.portal, 'cake')
 
         # unassigned
         self.portal.workspace['blank'] = Workspace('blank')
@@ -101,6 +105,21 @@ class ExposureDocTestCase(ExposureUnitTestCase):
         self.portal.docgen_type.views = [u'docgen', u'filename_note']
         self.portal.docgen_type.tags = []
         self._publishContent(self.portal.docgen_type)
+
+
+class ExposureExtendedDocTestCase(ExposureDocTestCase):
+    """
+    Uses the data that was originally done for pmr2.mercurial without
+    using that.
+    """
+
+    def setUp(self):
+        super(ExposureExtendedDocTestCase, self).setUp()
+        targets = ('pmr2hgtest', 'rdfmodel',)
+        su = zope.component.getUtility(IStorageUtility, name='dummy_storage')
+        for t in targets:
+            su._loadDir(t, join(dirname(__file__), 'data', t))
+            mkdummywks(self.portal, t)
 
 
 class CompleteDocTestCase(ExposureDocTestCase):

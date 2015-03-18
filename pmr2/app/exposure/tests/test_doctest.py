@@ -7,10 +7,8 @@ from Testing import ZopeTestCase as ztc
 from pmr2.testing.base import DocTestCase
 
 from pmr2.app.exposure.tests.base import ExposureDocTestCase
+from pmr2.app.exposure.tests.base import ExposureExtendedDocTestCase
 from pmr2.app.exposure.tests.base import CompleteDocTestCase
-
-# XXX should NOT reverse depend on child dependencies.
-from pmr2.mercurial.tests.base import MercurialDocTestCase
 
 
 def test_suite():
@@ -26,8 +24,7 @@ def test_suite():
         # Forms and interactions.
         ztc.ZopeDocFileSuite(
             join('browser', 'browser.txt'), package='pmr2.app.exposure',
-            # XXX remove this eventually.
-            test_class=MercurialDocTestCase,
+            test_class=ExposureExtendedDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 

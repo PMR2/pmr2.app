@@ -39,7 +39,6 @@ setup(
         'z3c.table>=0.6.0',
         'plone.app.content',
         'plone.browserlayer',
-        'pmr2.mercurial',
         'pmr2.z3cform',
         'pmr2.idgen',
         'lxml>=2.1.0',
