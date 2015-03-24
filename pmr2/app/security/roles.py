@@ -12,7 +12,7 @@ import pmr2.app.security
 # XXX required_permission is borrowed from plone.app.workflow for now.
 class WorkspacePusherRole(object):
     implements(ISharingPageRole)
-    title = _(u'title_can_push', default=u'Can hg push')
+    title = _(u'title_can_push', default=u'Can push')
     #required_permission = 'Mercurial Push'
     required_permission = DelegateContributorRole
 

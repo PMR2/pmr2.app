@@ -3,6 +3,7 @@
   <permissions>
     <permission name="Mercurial Push" acquire="True">
       <role name="Owner"/>
+      <role name="WorkspacePusher"/>
     </permission>
   </permissions>
 </rolemap>
