@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <rolemap>
   <permissions>
-    <permission name="Mercurial Push" acquire="True">
+    <permission name="pmr2.app: Workspace Push" acquire="True">
       <role name="Owner"/>
+      <role name="WorkspacePusher"/>
     </permission>
   </permissions>
 </rolemap>

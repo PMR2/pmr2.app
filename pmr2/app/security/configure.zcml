@@ -17,6 +17,11 @@
       title="Mercurial Push"
       />
 
+  <permission
+      id="pmr2.app.security.Push"
+      title="pmr2.app: Workspace Push"
+      />
+
   <utility
       name="WorkspacePusher"
       factory=".roles.WorkspacePusherRole"
