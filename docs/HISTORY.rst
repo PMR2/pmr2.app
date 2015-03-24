@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.11.1 - Released (2015-03-24)
+------------------------------
+
+* Correction to the rolemap.xml definition for the push permission to
+  include the one granted through the sharing tab.
+
 0.11.0 - Released (2015-03-19)
 ------------------------------
 
