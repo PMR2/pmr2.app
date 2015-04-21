@@ -70,7 +70,7 @@
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="protocol_write"
       class=".browser.WorkspaceProtocol"
-      permission="pmr2.app.security.HgPush"
+      permission="pmr2.app.security.Push"
       />
 
   <browser:page

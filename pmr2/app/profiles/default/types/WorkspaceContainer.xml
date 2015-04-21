@@ -32,7 +32,7 @@
  <action title="View" action_id="view" category="object" condition_expr=""
     url_expr="string:${folder_url}/" visible="True" i18n:attributes="title">
   <permission value="View"/>
-  <permission value="Mercurial Push"/>
+  <permission value="pmr2.app: Workspace Push"/>
  </action>
 
  <action title="Edit" action_id="edit" category="object" condition_expr="not:object/@@plone_lock_info/is_locked_for_current_user|python:True"
