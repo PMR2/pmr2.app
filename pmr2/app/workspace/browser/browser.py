@@ -162,9 +162,8 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
         user_roles = user.getRolesInContext(self.context)
         # user either requires a role granted via @@sharing or has the
         # permission set manually under management.
-        # FIXME remove Mercurial reference
         return u'WorkspacePusher' in user_roles or \
-            user.has_permission('Mercurial Push', self.context)
+            user.has_permission('pmr2.app: Workspace Push', self.context)
 
         # I really wish this isn't such a horrible mess and without such
         # non-agnostic names.
