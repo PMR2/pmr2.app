@@ -102,6 +102,17 @@ class WorkspaceViewTestCase(base.WorkspaceBrowserDocTestCase):
         super(WorkspaceViewTestCase, self).setUp()
         self.makeExternalWorkspace()
 
+    def test_standard_render(self):
+        request = TestRequest()
+        page = browser.FilePage(self.portal.workspace.test, request)
+        page.publishTraverse(request, '0')
+        page.publishTraverse(request, 'file1')
+        result = page()
+        self.assertIn('href="http://nohost/plone/workspace/test/download/0/'
+            'file1" title="Download this file">Download</a>', result)
+        self.assertIn('href="http://nohost/plone/workspace/test/rawfile/0/'
+            'file1" title="View this file">Source</a>', result)
+
     def test_embedded_redirect(self):
         request = TestRequest()
         page = browser.FilePage(self.portal.workspace.external_root, request)

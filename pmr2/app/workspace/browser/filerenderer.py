@@ -1,6 +1,8 @@
 # XXX this will be moved into its own module when I can figure out how
 # to make this generic to all data objects.
 
+import logging
+
 from os.path import join
 import zope.interface
 from zope.contentprovider.interfaces import IContentProvider
@@ -19,6 +21,8 @@ from pmr2.app.workspace.browser.interfaces import *
 from pmr2.app.workspace.browser.browser import WorkspaceTraversePage
 from pmr2.app.workspace.browser.browser import FilePage
 from pmr2.app.workspace.browser.util import fix_workspace_html_anchors
+
+logger = logging.getLogger(__name__)
 
 
 class DefaultRendererDictionary(object):
@@ -57,6 +61,7 @@ class FileInfoProvider(ContentProviderBase):
             # XXX current way to disable main_template
             results = fileview.call_template()
         except:
+            logger.exception('failed to render file information')
             errors.append('failed to render file information')
 
         if errors:

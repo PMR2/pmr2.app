@@ -182,6 +182,22 @@
       />
 
   <!--
+    file info actions
+  -->
+
+  <utility
+      provides=".interfaces.IFileAction"
+      factory=".fileaction.SourceFileAction"
+      name="100source"
+      />
+
+  <utility
+      provides=".interfaces.IFileAction"
+      factory=".fileaction.DownloadFileAction"
+      name="200download"
+      />
+
+  <!--
     file renderer finder
   -->
 

@@ -63,6 +63,28 @@ class IFileRenderer(zope.interface.Interface):
     )
 
 
+class IFileAction(zope.interface.Interface):
+    """
+    Provides a file action.
+    """
+
+    title = zope.schema.Text(
+        title=u'Title',
+        description=u'The title for this file action',
+    )
+
+    description = zope.schema.Text(
+        title=u'Description',
+        description=u'The description for this file action.',
+        required=False,
+    )
+
+    def href(view):
+        """
+        Return the intended href value for this action.
+        """
+
+
 class IDirectoryRenderer(zope.interface.Interface):
     """\
     This is a marker interface for directory listing renderer.
