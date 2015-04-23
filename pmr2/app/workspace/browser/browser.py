@@ -803,12 +803,13 @@ class FileInfoPage(BaseFilePage):
 
     def get_file_actions(self):
         utilities = zope.component.getUtilitiesFor(IFileAction)
-        for k, v in sorted(utilities):
-            yield {
+        results = [{
+                'id': 'fileaction.' + key,
                 'href': v.href(self),
                 'title': v.title,
                 'description': v.description,
-            }
+            } for key, v in utilities]
+        return sorted(results, key=lambda x: x['title'])
 
     def __call__(self):
         return super(FileInfoPage, self).__call__()

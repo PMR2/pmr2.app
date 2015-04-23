@@ -15,6 +15,7 @@
 </dl>
 <div class="btn-group block">
   <a class="btn block" tal:repeat="action view/get_file_actions" tal:content="action/title" tal:attributes="
+      id action/id;
       href action/href;
       title action/description;">
   </a>

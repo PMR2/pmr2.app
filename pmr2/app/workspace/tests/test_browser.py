@@ -109,9 +109,11 @@ class WorkspaceViewTestCase(base.WorkspaceBrowserDocTestCase):
         page.publishTraverse(request, 'file1')
         result = page()
         self.assertIn('href="http://nohost/plone/workspace/test/download/0/'
-            'file1" title="Download this file">Download</a>', result)
+            'file1" id="fileaction.download" title="Download this file">'
+            'Download</a>', result)
         self.assertIn('href="http://nohost/plone/workspace/test/rawfile/0/'
-            'file1" title="View this file">Source</a>', result)
+            'file1" id="fileaction.source" title="View this file">'
+            'Source</a>', result)
 
     def test_embedded_redirect(self):
         request = TestRequest()
