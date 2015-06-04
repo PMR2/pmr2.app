@@ -275,7 +275,7 @@
       for="pmr2.app.exposure.interfaces.IExposureFileType"
       name="eftype_view"
       class=".browser.ExposureFileTypeDisplayForm"
-      permission="cmf.ModifyPortalContent"
+      permission="zope2.View"
       />
 
   <!-- Exposure Folder -->
