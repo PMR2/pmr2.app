@@ -20,7 +20,10 @@ class BaseRenderer(base.Renderer):
 
     def __init__(self, *a, **kw):
         base.Renderer.__init__(self, *a, **kw)
-        if self.available:
+
+        # base availability solely on whether context is IExposureObject
+        # subclasses can deal with further constraints by exp
+        if BaseRenderer._available(self):
             # If these were called/initialized in the update method,
             # it seems like they will somehow be implicitly wrapped by
             # Acquisition and that causes unwanted effects, like
@@ -41,6 +44,9 @@ class BaseRenderer(base.Renderer):
 
     @property
     def available(self):
+        return self._available()
+
+    def _available(self):
         return IExposureObject.providedBy(self.context)
 
     def render(self):

@@ -306,3 +306,17 @@ class IExposureDownloadTool(zope.interface.Interface):
         Generates the download through the context (exposure_object) and
         request.
         """
+
+
+class IExposureFileTool(zope.interface.Interface):
+    """
+    Interface for tools that can be used with instances of Exposure
+    Files.
+    """
+
+    label = zope.schema.TextLine(title=u'label')
+
+    def get_tool_link(exposurefile_object):
+        """
+        Return the link to activate this tool for this file.
+        """

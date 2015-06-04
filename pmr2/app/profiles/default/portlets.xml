@@ -71,6 +71,12 @@
  </portlet>
 
  <portlet 
+     addview="pmr2.portlets.exposure_file_tool"
+     title="Exposure File Tool"
+     description="This portlet displays available tools for the exposure files being viewed, based on the modules installed onto this instance of PMR2.">
+ </portlet>
+
+ <portlet
      addview="pmr2.portlets.workspace_exposure_info"
      title="Workspace Exposure Info"
      description="This portlet searches the catalog for the latest exposure for this workspace.">
