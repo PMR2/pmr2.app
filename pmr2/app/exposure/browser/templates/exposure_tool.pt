@@ -1,8 +1,8 @@
 <dl class="portlet portletNavigationTree" id="pmr_exposurefiletool">
   <dt class="portletHeader">Tools</dt>
-  <dd>
-    <ul>
-      <li tal:repeat="i view/file_access_uris"
+  <dd class="portletItem">
+    <ul class="navTree">
+      <li class="navTreeItem" tal:repeat="i view/file_access_uris"
         ><a tal:attributes="href i/href"
             ><tal:text tal:replace="i/label"></tal:text
         ></a></li>
