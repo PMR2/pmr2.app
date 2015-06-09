@@ -311,12 +311,16 @@ class IExposureDownloadTool(zope.interface.Interface):
 class IExposureFileTool(zope.interface.Interface):
     """
     Interface for tools that can be used with instances of Exposure
-    Files.
+    Files.  However, generally this is queried at the `IExposureObject`
+    level as there may be cases where the tool implementation work
+    directly on the top level object(s) for a given exposure.
     """
 
     label = zope.schema.TextLine(title=u'label')
 
-    def get_tool_link(exposurefile_object):
+    def get_tool_link(exposure_object):
         """
-        Return the link to activate this tool for this file.
+        Return the link to activate this tool for this file.  If the
+        tool does not support this particular object it must return
+        nothing.
         """
