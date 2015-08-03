@@ -1,3 +1,4 @@
+import logging
 import tempfile
 import shutil
 
@@ -14,6 +15,8 @@ from plone.app.testing import IntegrationTesting
 from plone.testing import z2
 
 from pmr2.app.tests.layer import PMR2_FIXTURE
+
+logger = logging.getLogger(__name__)
 
 
 class WorkspaceBaseLayer(PloneSandboxLayer):
@@ -36,12 +39,15 @@ class WorkspaceBaseLayer(PloneSandboxLayer):
         settings = zope.component.getUtility(IPMR2GlobalSettings)
 
         # user workspace
-        _createObjectByType('Folder', portal, id='w')
-        settings.user_workspace_subpath = u'w'
-        settings.create_user_workspace = True
+        try:
+            _createObjectByType('Folder', portal, id='w')
+            settings.user_workspace_subpath = u'w'
+            settings.create_user_workspace = True
 
-        from pmr2.app.workspace.content import WorkspaceContainer
-        portal['workspace'] = WorkspaceContainer()
+            from pmr2.app.workspace.content import WorkspaceContainer
+            portal['workspace'] = WorkspaceContainer()
+        except:
+            logger.warning('Zope test layers did NOT clean up properly')
 
 WORKSPACE_BASE_FIXTURE = WorkspaceBaseLayer()
 
