@@ -90,5 +90,5 @@ class WorkspaceLayer(PloneSandboxLayer):
 WORKSPACE_FIXTURE = WorkspaceLayer()
 
 WORKSPACE_INTEGRATION_LAYER = IntegrationTesting(
-    bases=(WORKSPACE_FIXTURE,),
+    bases=(WORKSPACE_FIXTURE, z2.FUNCTIONAL_TESTING),
     name="pmr2.app:workspace_integration")
