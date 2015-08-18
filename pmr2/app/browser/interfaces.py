@@ -8,14 +8,6 @@ _ = MessageFactory("pmr2")
 
 from pmr2.app.schema import ObjectId
 
-try:
-    from pmr2.z3cform.interfaces import IPublishTraverse
-    zope.deprecation.deprecated('IPublishTraverse', 
-        'IPublishTraverse has been moved to pmr2.z3cform.interfaces.  '
-        'Please update the import location before pmr2.app-0.7')
-except ImportError:
-    pass
-
 
 class IThemeSpecific(IDefaultPloneLayer):
     """\

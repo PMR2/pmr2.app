@@ -1,7 +1,6 @@
 from os.path import join
 
 import zope.interface
-import zope.deprecation
 from zope.component import getUtilitiesFor, getMultiAdapter
 from zope.publisher.browser import BrowserPage
 from zope.pagetemplate.interfaces import IPageTemplate
@@ -11,22 +10,8 @@ from Products.CMFCore.utils import getToolByName
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile as VPTF
 ViewPageTemplateFile = lambda p: VPTF(join('templates', p))
 
-
-try:
-    from pmr2.z3cform.page import SimplePage
-    zope.deprecation.deprecated('SimplePage', 
-        'SimplePage has been moved to pmr2.z3cform.form.  '
-        'Please update the import location before pmr2.app-0.7')
-except ImportError:
-    pass
-
-try:
-    from pmr2.z3cform.page import TraversePage
-    zope.deprecation.deprecated('TraversePage', 
-        'TraversePage has been moved to pmr2.z3cform.form.  '
-        'Please update the import location before pmr2.app-0.7')
-except ImportError:
-    pass
+from pmr2.z3cform.page import SimplePage
+from pmr2.z3cform.page import TraversePage
 
 
 class NavPage(TraversePage):

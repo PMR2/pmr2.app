@@ -1,4 +1,3 @@
-import zope.deprecation
 import zope.schema
 import zope.interface
 
@@ -8,11 +7,6 @@ _ = MessageFactory("pmr2")
 from plone.app.z3cform.interfaces import IPloneFormLayer
 from pmr2.app.schema import ObjectId
 from pmr2.app.interfaces.exceptions import *
-
-from pmr2.app.settings.interfaces import IPMR2GlobalSettings
-
-zope.deprecation.deprecated('IPMR2GlobalSettings',
-    'Please run migration script for pmr2.app-0.4 before 0.5 is installed.')
 
 __all__ = [
     'IPMR2AppLayer',
