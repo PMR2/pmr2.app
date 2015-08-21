@@ -179,6 +179,9 @@ def _mold_views(ctxobj, request, fields):
                 raise
         except Exception, err:
             # XXX trap all here.
+            qi = getToolByName(ctxobj, 'portal_quickinstaller')
+            if qi.isDevelopmentMode():
+                logger.exception('Error molding exposure')
             raise ProcessingError(str(err))
 
     return views, hidden_views
@@ -271,6 +274,9 @@ def moldExposure(exposure_context, request, exported):
                         viewgen(container)()
                     except Exception, err:
                         # XXX trap all here.
+                        qi = getToolByName(ctxobj, 'portal_quickinstaller')
+                        if qi.isDevelopmentMode():
+                            logger.exception('Error molding exposure')
                         raise ProcessingError(str(err))
 
             if IExposure.providedBy(container):

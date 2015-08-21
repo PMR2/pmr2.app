@@ -17,6 +17,7 @@ from plone.z3cform.fieldsets import group, extensible
 
 from AccessControl.interfaces import IRoleManager
 from Products.statusmessages.interfaces import IStatusMessage
+from Products.CMFCore.utils import getToolByName
 
 from pmr2.z3cform import form
 from pmr2.z3cform import page
