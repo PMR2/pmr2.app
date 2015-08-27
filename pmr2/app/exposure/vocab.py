@@ -152,7 +152,7 @@ class DocViewGenVocab(SimpleVocabulary):
 DocViewGenVocabFactory = vocab_factory(DocViewGenVocab)
 
 
-class EFTypeVocab(SimpleVocabulary):
+class EFTypeBaseVocab(SimpleVocabulary):
 
     def __init__(self, context):
         self.context = context
@@ -168,15 +168,23 @@ class EFTypeVocab(SimpleVocabulary):
                 portal_type='ExposureFileType',
                 review_state='published',
             )
-            terms = [SimpleTerm(i.getPath(), i.Title) for i in results]
-        super(EFTypeVocab, self).__init__(terms)
+            terms = [self._makeTerm(brain) for brain in results]
+        super(EFTypeBaseVocab, self).__init__(terms)
+
+    def _makeTerm(self, brain):
+        """
+        Subclasses that actually provide the implementation need to
+        override this.
+        """
+
+        raise NotImplementedError
 
     def getTerm(self, value):
         if self.pt is None:
             # no portal tool, see __init__
             return SimpleTerm(value)
         else:
-            return super(EFTypeVocab, self).getTerm(value)
+            return super(EFTypeBaseVocab, self).getTerm(value)
 
     def __contains__(self, terms):
         if self.pt is None:
@@ -186,7 +194,29 @@ class EFTypeVocab(SimpleVocabulary):
             # this assumption as the fallback.
             return True
         else:
-            return super(EFTypeVocab, self).__contains__(terms)
+            return super(EFTypeBaseVocab, self).__contains__(terms)
+
+
+class EFTypeVocab(EFTypeBaseVocab):
+    """
+    Standard (legacy?) exposure file type vocab.
+    """
+
+    def _makeTerm(self, brain):
+        return SimpleTerm(brain.getPath(), brain.Title, brain.Title)
 
 EFTypeVocabFactory = vocab_factory(EFTypeVocab)
+
+
+class EFTypeExportVocab(SimpleVocabulary):
+    """
+    The version for export purposes that will provide the tokens as URLs
+    for web-service based access.  Future internal wizard usage may need
+    to make use of this.
+    """
+
+    def _makeTerm(self, brain):
+        return SimpleTerm(brain.getPath(), brain.getURL(), brain.Title)
+
+EFTypeExportVocabFactory = vocab_factory(EFTypeExportVocab)
 
