@@ -14,6 +14,12 @@
       name="pmr2.vocab.eftype"
       />
 
+  <utility
+      provides="zope.schema.interfaces.IVocabularyFactory"
+      component="pmr2.app.exposure.vocab.EFTypeExportVocabFactory"
+      name="pmr2.vocab.eftype_uri"
+      />
+
   <!-- need factory method to make class because schemas depend on this -->
   <utility
       provides="zope.schema.interfaces.IVocabularyFactory"

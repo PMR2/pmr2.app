@@ -208,7 +208,7 @@ class EFTypeVocab(EFTypeBaseVocab):
 EFTypeVocabFactory = vocab_factory(EFTypeVocab)
 
 
-class EFTypeExportVocab(SimpleVocabulary):
+class EFTypeExportVocab(EFTypeBaseVocab):
     """
     The version for export purposes that will provide the tokens as URLs
     for web-service based access.  Future internal wizard usage may need
