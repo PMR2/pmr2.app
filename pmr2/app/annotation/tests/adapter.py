@@ -1,4 +1,5 @@
 from zope.interface import alsoProvides
+from zope.component import getAdapter
 from pmr2.app.factory import *
 from pmr2.app.interfaces import *
 from pmr2.app.annotation import note_factory
@@ -97,6 +98,15 @@ class FilenameNoteAnnotator(ExposureFileAnnotatorBase):
     title = u'Filename'
     description = u'Simple note for filename selection testing.'
     for_interface = IFilenameNote
+
+
+class FilenameNoteUrl(object):
+
+    def __init__(self, context):
+        self.context = context
+
+    def __call__(self, view):
+        return getAdapter(self.context, name=view).filename
 
 
 RDFTurtleAnnotatorFactory = named_factory(RDFTurtleAnnotator)

@@ -11,7 +11,9 @@ from Acquisition import aq_inner, aq_parent
 from Products.CMFPlone import PloneMessageFactory as _
 
 from pmr2.app.exposure.interfaces import IExposureFile
+from pmr2.app.annotation.interfaces import IExposureNoteTarget
 from pmr2.app.annotation.factory import has_note
+from pmr2.app.annotation.factory import default_note_url
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
 
@@ -44,9 +46,12 @@ class Renderer(base.Renderer):
             zope.schema.interfaces.IVocabulary,
             name='pmr2.vocab.ExposureFileAnnotators'
         )
+
         result = [
             {
-                'href': '%s/@@%s' % (self.context.absolute_url(), view),
+                'href': zope.component.queryAdapter(
+                    self.context, IExposureNoteTarget, name=view,
+                    default=default_note_url(self.context))(view),
                 'title': vocab.getTerm(view).title,
             }
             for view in self.context.views if 

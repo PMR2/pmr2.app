@@ -60,3 +60,8 @@ def rebuild_note(context):
             del annotations[key]
     
     # recreate data
+
+def default_note_url(context):
+    def default_url(view):
+        return '%s/@@%s' % (context.absolute_url(), view)
+    return default_url

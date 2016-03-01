@@ -187,3 +187,10 @@ class IExposureDocViewGenSourceAdapter(zope.interface.Interface):
     Specific for DocViewGen, which has one exception case for IExposure
     types.
     """
+
+
+class IExposureNoteTarget(zope.interface.Interface):
+    """
+    For the case where a special link is provided for an exposure note
+    view target.
+    """

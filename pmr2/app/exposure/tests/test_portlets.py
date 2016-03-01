@@ -5,14 +5,16 @@ from plone.portlets.interfaces import IPortletAssignment
 from plone.portlets.interfaces import IPortletDataProvider
 from plone.portlets.interfaces import IPortletRenderer
 from Products.CMFCore.utils import getToolByName
-from zope.component import getUtility, getMultiAdapter
+from zope.component import getUtility, getMultiAdapter, getAdapter
 
+from pmr2.app.exposure.portlets import ExposureFileNotes
 from pmr2.app.exposure.portlets import PMR1Curation
 from pmr2.app.exposure.portlets import collab
 from pmr2.testing.base import TestCase
 
 from .base import CompleteDocTestCase
 from pmr2.app.exposure.content import Exposure
+from pmr2.app.exposure.content import ExposureFile
 
 
 # XXX add tests for all other portlets for pmr2.app.exposure.
@@ -207,6 +209,68 @@ class TestCollabPortlet(CompleteDocTestCase):
             in output)
 
 
+class TestExposureFileNotesPortlet(CompleteDocTestCase):
+
+    def renderer(self, context=None, request=None, view=None, manager=None, assignment=None):
+        context = context or self.folder
+        request = request or self.folder.REQUEST
+        view = view or self.folder.restrictedTraverse('@@plone')
+        manager = manager or getUtility(IPortletManager,
+            name='plone.rightcolumn', context=self.portal)
+        assignment = assignment or ExposureFileNotes.Assignment()
+        renderer = getMultiAdapter(
+            (context, request, view, manager, assignment), IPortletRenderer)
+        # Pretend this is done...
+        renderer.exposure = self.portal.exposure['1']['README']
+        return renderer
+
+    def test_render_basic(self):
+        exposure = self.portal.exposure['1']
+        exposurefile = ExposureFile('README')
+        exposure['README'] = exposurefile
+        r = self.renderer(context=exposure['README'],
+            assignment=ExposureFileNotes.Assignment())
+        r = r.__of__(exposure)
+        r.update()
+        output = r.render()
+        self.assertTrue('Views Available' in output)
+
+    def test_render_standard_note(self):
+        exposure = self.portal.exposure['1']
+        exposurefile = ExposureFile('README')
+        exposurefile.views = ['rdfxml', 'rdfn3']
+        for v in exposurefile.views:
+            # implicitly create the note
+            getAdapter(exposurefile, name=v)
+        exposure['README'] = exposurefile
+        r = self.renderer(context=exposure['README'],
+            assignment=ExposureFileNotes.Assignment())
+        r = r.__of__(exposure)
+        r.update()
+        output = r.render()
+        self.assertTrue(
+            'http://nohost/plone/exposure/1/README/@@rdfxml' in output)
+        self.assertTrue(
+            'http://nohost/plone/exposure/1/README/@@rdfn3' in output)
+
+    def test_render_custom_links(self):
+        exposure = self.portal.exposure['1']
+        exposurefile = ExposureFile('README')
+        exposurefile.views = ['filename_note']
+        exposure['README'] = exposurefile
+        note = getAdapter(exposure['README'], name='filename_note')
+        note.filename = 'dir1/f1'
+        r = self.renderer(context=exposure['README'],
+            assignment=ExposureFileNotes.Assignment())
+        r = r.__of__(exposure)
+        r.update()
+        output = r.render()
+        self.assertFalse(
+            'http://nohost/plone/exposure/1/README/@@filename_note' in output)
+        self.assertTrue(
+            '<a href="dir1/f1"></a></li>' in output)
+
+
 def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()
@@ -214,4 +278,5 @@ def test_suite():
     suite.addTest(makeSuite(TestRenderer))
     suite.addTest(makeSuite(TestPMR1CurationValues))
     suite.addTest(makeSuite(TestCollabPortlet))
+    suite.addTest(makeSuite(TestExposureFileNotesPortlet))
     return suite

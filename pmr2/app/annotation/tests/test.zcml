@@ -51,6 +51,17 @@
       provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
       />
 
+  <!--
+    This has to be registered first because legacy dumbness from early
+    misunderstanding of ZCA.
+  -->
+  <adapter
+      for="pmr2.app.exposure.interfaces.IExposureFile"
+      factory=".adapter.FilenameNoteUrl"
+      provides="pmr2.app.annotation.interfaces.IExposureNoteTarget"
+      name="filename_note"
+      />
+
   <adapter
       for="pmr2.app.exposure.interfaces.IExposureFile"
       factory=".adapter.RDFTurtleNoteFactory"
