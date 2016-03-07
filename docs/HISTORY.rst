@@ -1,6 +1,22 @@
 Changelog
 =========
 
+0.12.0 - Released (2016-03-08)
+------------------------------
+
+* Deprecated imports and notices finally removed
+* Removed all references to Hg and Mercurial in internal tokens.
+* Registerable file actions for the workspace file view.
+* A tool framework for exposures.  This is similar to an exposure note
+  view but it does not have any underlying note data.  Useful to build
+  and anchor generic tools common to all exposures that users can select
+  for usage via the portlet to an exposure.
+* ExposureFileType export vocabulary.
+* Added ability to register custom Exposure Note View URLs, which will
+  be presented by the Views Available portlet.
+* In development mode, show the stack trace for exceptions while molding
+  exposures in development mode.
+
 0.11.0 - Released (2015-03-19)
 ------------------------------
 
