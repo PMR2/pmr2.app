@@ -739,7 +739,8 @@ class FilePage(BaseFilePage):
 
         # trigger subrepo dir if external is defined.
         if data['external']:
-            # form the url # XXX this is based on the _subrepo format defined in
+            # form the url
+            # XXX this is based on the _subrepo format defined in
             # pmr2.mercurial - refer to test there because they are
             # the only users for now until a generic version of this
             # is implemented in the test storage.
