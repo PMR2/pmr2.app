@@ -17,6 +17,18 @@ Changelog
 * In development mode, show the stack trace for exceptions while molding
   exposures in development mode.
 
+0.11.2 - Released (2016-06-20)
+------------------------------
+
+* Set the WWW-Authenticate header sent by the server to ``Basic`` as
+  some clients do not treat that header in a case-insentive manner.
+
+0.11.1 - Released (2015-03-24)
+------------------------------
+
+* Correction to the rolemap.xml definition for the push permission to
+  include the one granted through the sharing tab.
+
 0.11.0 - Released (2015-03-19)
 ------------------------------
 
