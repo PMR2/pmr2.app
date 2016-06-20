@@ -62,7 +62,7 @@ class ProtocolAuthPlugin(BasePlugin):
         realm = response.realm
         if realm:
             response.addHeader('WWW-Authenticate',
-                               'basic realm="%s"' % realm)
+                               'Basic realm="%s"' % realm)
         m = '<strong>You are not authorized to access this resource.</strong>'
         if response.debug_mode:
             if response._auth:
