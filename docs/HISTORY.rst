@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.11.2 - Released (2016-06-20)
+------------------------------
+
+* Set the WWW-Authenticate header sent by the server to ``Basic`` as
+  some clients do not treat that header in a case-insentive manner.
+
 0.11.1 - Released (2015-03-24)
 ------------------------------
 
