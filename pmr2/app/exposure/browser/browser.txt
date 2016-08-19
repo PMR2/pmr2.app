@@ -960,8 +960,8 @@ For the HTML file
     ...     })
     >>> view = browser.ExposureDocViewGenForm(filectx, request)
     >>> result = view()
-    >>> filectx.Title()
-    'Simple HTML'
+    >>> print(filectx.Title())
+    Simple HTML
     >>> filectx.getText()
     '\n<p>Lorem ipsum dolar sit amet</p>\n'
     >>> filectx.docview_generator
@@ -1006,6 +1006,8 @@ This method however is superceded by the docgen annotation.
     >>> result = view()
     >>> result
     ''
+    >>> print(context.Title())
+    Simple HTML
     >>> context.getText()
     '\n<p>Lorem ipsum dolar sit amet</p>\n'
     >>> context.docview_generator
@@ -1896,3 +1898,38 @@ Data should be assigned properly.
 
     >>> efile_new.getText()
     '\n<p>Lorem ipsum dolar sit amet</p>\n'
+
+---------------
+Unicode support
+---------------
+
+Naturally, unicode should be supported, and be passed correctly through
+the system.
+::
+
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.workspace': u'/plone/workspace/rdfmodel',
+    ...         'form.widgets.commit_id': u'3',
+    ...         'form.buttons.add': 1,
+    ...     })
+    >>> testform = browser.ExposureAddForm(
+    ...     self.portal.exposure, request)
+    >>> testform.update()
+    >>> exp_id = testform._data['id']
+    >>> new_context = self.portal.exposure[exp_id]
+    >>> source_file = u'component/docs/utf8.html'
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.docview_gensource': [source_file],
+    ...         'form.widgets.docview_generator': [u'safe_html'],
+    ...         'form.buttons.apply': 1,
+    ...     })
+    >>> view = zope.component.queryMultiAdapter((new_context, request),
+    ...                                         name='docviewgen')
+    >>> result = view()
+    >>> result
+    ''
+    >>> print(new_context.Title())
+    Bonjour, comment ça va?
+    >>> new_context.reindexObject()
