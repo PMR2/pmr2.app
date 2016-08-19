@@ -249,9 +249,9 @@ class TestExposureFileNotesPortlet(CompleteDocTestCase):
         r.update()
         output = r.render()
         self.assertTrue(
-            'http://nohost/plone/exposure/1/README/@@rdfxml' in output)
+            'http://nohost/plone/exposure/1/README/rdfxml' in output)
         self.assertTrue(
-            'http://nohost/plone/exposure/1/README/@@rdfn3' in output)
+            'http://nohost/plone/exposure/1/README/rdfn3' in output)
 
     def test_render_custom_links(self):
         exposure = self.portal.exposure['1']
@@ -266,7 +266,7 @@ class TestExposureFileNotesPortlet(CompleteDocTestCase):
         r.update()
         output = r.render()
         self.assertFalse(
-            'http://nohost/plone/exposure/1/README/@@filename_note' in output)
+            'http://nohost/plone/exposure/1/README/filename_note' in output)
         self.assertTrue(
             '<a href="dir1/f1"></a></li>' in output)
 
