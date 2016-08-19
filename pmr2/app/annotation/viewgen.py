@@ -82,11 +82,11 @@ class HTMLDocViewGen(PortalTransformDocViewGenBase):
 
     def generateTitle(self):
         try:
-            tree = HTMLTreeBuilder.parse(StringIO(self.input))
-            return tree.findtext("head/title")
-        except:
-            pass
-        return self.context.Title()
+            tree = HTMLTreeBuilder.parse(StringIO(self.input), encoding='utf8')
+            result = tree.findtext("head/title")
+        except Exception:
+            result = None
+        return result or self.context.Title()
 
 HTMLDocViewGenFactory = named_factory(HTMLDocViewGen)
 
