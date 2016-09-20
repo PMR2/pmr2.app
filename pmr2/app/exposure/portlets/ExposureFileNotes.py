@@ -53,6 +53,7 @@ class Renderer(base.Renderer):
                     self.context, IExposureNoteTarget, name=view,
                     default=default_note_url(self.context))(view),
                 'title': vocab.getTerm(view).title,
+                'class': 'exposurefilenote ' + view,
             }
             for view in self.context.views if 
                 has_note(self.context, view) and
