@@ -12,7 +12,8 @@
 
     <dd class="exposure-nav portletItem lastItem">
         <ul class="navTree navTreeLevel0">
-            <li class="navTreeItem" tal:repeat="i view/links"
+            <li tal:repeat="i view/links"
+                tal:attributes="class string:navTreeItem ${i/class}"
               ><a 
                 tal:attributes="href i/href"
                 tal:content="i/title"
