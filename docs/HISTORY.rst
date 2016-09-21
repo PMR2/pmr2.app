@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.12.2 - Released (2016-09-21)
+------------------------------
+
+* Correct unicode support for titles in conjunction with other packages.
+* Add in class for easier identification of the view items in portlet.
+
 0.12.1 - Released (2016-06-20)
 ------------------------------
 
