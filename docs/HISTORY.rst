@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.12.3 - Released (2017-01-09)
+------------------------------
+
+* Make the wizard play nicer with plone.protect, so that direct access
+  to the wizard won't necessarily redirect users.
+
 0.12.2 - Released (2016-09-21)
 ------------------------------
 
