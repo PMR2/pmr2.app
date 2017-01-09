@@ -13,6 +13,13 @@ _ = MessageFactory("pmr2")
 import z3c.form
 from z3c.form.interfaces import ActionExecutionError
 
+try:
+    from plone.protect.utils import safeWrite
+except ImportError:
+    # noop
+    def safeWrite(obj, request=None):
+        pass
+
 from plone.z3cform.fieldsets import group, extensible
 
 from AccessControl.interfaces import IRoleManager
@@ -499,6 +506,7 @@ class ExposureWizardForm(form.PostForm, extensible.ExtensibleForm):
         # associated with the update button in the mixin class above.
 
         wh = zope.component.getAdapter(self.context, IExposureWizard)
+        safeWrite(wh, self.request)
 
         # XXX skip the first one, base on assumption that the view is
         # going to be first.

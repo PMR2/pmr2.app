@@ -858,21 +858,25 @@ When the exposure is submitted for publication, users with normal
 permissions should no longer have access to the wizard if it has been
 submitted for publication.  So let's try that::
 
-    >>> b.open(context.absolute_url() + '/folder_contents')
+    >>> b.getLink('Exposure Root').click()
     >>> '"contentview-wizard_landing"' in b.contents
     False
-    >>> b.getLink('Wizard').url
-    'http://nohost/plone/exposure/4/@@wizard'
+    >>> b.getLink('Wizard').url.startswith('http://nohost/plone/exposure/4/')
+    True
+    >>> 'wizard' in b.getLink('Wizard').url
+    True
+    >>> 'wizard_landing' in b.getLink('Wizard').url
+    False
     >>> b.getLink(id='workflow-transition-submit').click()
-    >>> b.open(context.absolute_url() + '/folder_contents')
+    >>> b.getLink('Exposure Root').click()
     >>> '"contentview-wizard"' in b.contents
     False
-    >>> b.getLink('Wizard').url
-    'http://nohost/plone/exposure/4/@@wizard_landing'
+    >>> 'wizard_landing' in b.getLink('Wizard').url
+    True
     >>> b.getLink('Wizard').click()
     >>> 'restricted once the exposure has been' in b.contents
     True
-    >>> b.open(context.absolute_url() + '/folder_contents')
+    >>> b.getLink('Contents').click()
     >>> b.getLink(id='workflow-transition-retract').click()
 
 Note that the wizard tab now goes to the wizard landing after the
