@@ -584,11 +584,13 @@ class WorkspaceForkForm(form.PostForm):
             # don't want to deal with anonymous non GETs
             raise Unauthorized()
 
+        super(WorkspaceForkForm, self).update()
+
         # set the id to the current value.
         if 'form.widgets.id' not in self.request:
             self.request['form.widgets.id'] = self.context.id
-
-        return super(WorkspaceForkForm, self).update()
+            if 'id' in self.widgets:
+                self.widgets['id'].value = self.context.id
 
     @button.buttonAndHandler(u'Fork', name='fork')
     def forkWorkspace(self, action):
