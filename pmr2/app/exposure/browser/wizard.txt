@@ -168,8 +168,8 @@ instance.
 ::
 
     >>> b = self.testbrowser
-    >>> target = context.absolute_url() + '/@@wizard'
-    >>> b.open(target)
+    >>> b.open(context.absolute_url())
+    >>> b.getLink('Wizard').click()
 
 Find that the update button for that subgroup is in place.
 ::
@@ -290,8 +290,8 @@ Maybe that was too much.  We can delete that last group we added.
 Rendering should show a new group for the user to select the file type.
 ::
 
-    >>> target = context.absolute_url() + '/@@wizard'
-    >>> b.open(target)
+    >>> b.open(context.absolute_url())
+    >>> b.getLink('Wizard').click()
     >>> b.getControl(name='file1.widgets.filename:list').value
     ['--NOVALUE--']
     >>> b.getControl(name='file1.widgets.filename:list').displayOptions
@@ -326,7 +326,8 @@ We now update the form.
 Can fill this out using the test browser.
 ::
 
-    >>> b.open(target)
+    >>> b.open(context.absolute_url())
+    >>> b.getLink('Wizard').click()
     >>> b.getControl(name='annotate1.widgets.filename:list').value = ['file3']
     >>> b.getControl(
     ...     name='annotate1.widgets.edited_note.note').value = 'Hi'
@@ -359,7 +360,8 @@ Now when we render the wizard again, those fields should have been
 selected.
 ::
 
-    >>> b.open(target)
+    >>> b.open(context.absolute_url())
+    >>> b.getLink('Wizard').click()
     >>> b.getControl(name='annotate1.widgets.filename:list').value
     ['file3']
     >>> b.getControl(name='annotate1.widgets.edited_note.note').value
@@ -470,8 +472,8 @@ testbrowser to do this quickly.
 ::
 
     >>> b = self.testbrowser
-    >>> target = context.absolute_url() + '/@@wizard'
-    >>> b.open(target)
+    >>> b.open(context.absolute_url())
+    >>> b.getLink('Wizard').click()
     >>> b.getControl(name='file0.widgets.filename:list').value
     ['file3']
 
@@ -745,7 +747,8 @@ See if this builds, and the filename correctly choosen from the commit
 this exposure represents.
 ::
 
-    >>> b.open(target)
+    >>> b.open(context.absolute_url())
+    >>> b.getLink('Wizard').click()
     >>> b.getControl(name='form.buttons.build').click()
     >>> zope.component.getAdapter(context.file2, name='filename_note').filename
     'file2'
@@ -830,8 +833,8 @@ rendering of the form.
 Now build this thing.  The file should be generated and the views be
 appended::
 
-    >>> target = context.absolute_url() + '/@@wizard'
-    >>> b.open(target)
+    >>> b.open(context.absolute_url())
+    >>> b.getLink('Wizard').click()
     >>> b.getControl(name='form.buttons.build').click()
     >>> context.dir1.nested.file.views
     []
@@ -844,8 +847,8 @@ Retry again with these entered::
     ...                            'generator': u'safe_html'}),
     ...     (u'filename_note', {'filename': 'dir1/nested/file'})
     ... ]
-    >>> target = context.absolute_url() + '/@@wizard'
-    >>> b.open(target)
+    >>> b.open(context.absolute_url())
+    >>> b.getLink('Wizard').click()
     >>> b.getControl(name='form.buttons.build').click()
     >>> context.dir1.nested.file.views
     [u'docgen', u'filename_note']
@@ -916,8 +919,8 @@ User leaving behind empty add file groups should be ignored.
 See if this still builds, and then exports into our structure
 ::
 
-    >>> target = context.absolute_url() + '/@@wizard'
-    >>> b.open(target)
+    >>> b.open(context.absolute_url())
+    >>> b.getLink('Wizard').click()
     >>> b.getControl(name='form.buttons.build').click()
     >>> porter = ExposurePort(context, request)
     >>> result = list(porter.export())
