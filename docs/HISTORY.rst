@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.12.4 - Released (2017-01-13)
+------------------------------
+
+* Update the tests so that the CSRF protections are less likely to be
+  triggered due to polluted test environments.
+* Persist the automatically filled data safely.
+
 0.12.3 - Released (2017-01-09)
 ------------------------------
 
