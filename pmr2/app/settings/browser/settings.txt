@@ -169,6 +169,40 @@ execption happens.
     ...
     TypeError: the content ... is not a workspace container
 
+--------------
+Object Removal
+--------------
+
+When an object is removed, the underlying directory should also be
+removed.  To assist with recovery and/or rollback, instead of outright
+deleting from the filesystem, the path is moved elsewhere.  The settings
+object provide such helpers::
+
+    >>> from os.path import isdir
+    >>> userwc = pmr2_settings.getCurrentUserWorkspaceContainer()
+    >>> pmr2_settings.dirCreatedFor(userwc) is not None
+    True
+    >>> moved = pmr2_settings.orphanDir(userwc)
+    >>> isdir(moved)
+    True
+    >>> pmr2_settings.dirCreatedFor(userwc) is not None
+    False
+    >>> pmr2_settings.orphanDir(userwc)  # should not error if not exist
+
+Naturally, an object within the portal must be provided for this, as we
+do not want to manipulate the root directory::
+
+    >>> pmr2_settings.orphanDir(None)
+    Traceback (most recent call last):
+    ...
+    TypeError: obj must be traversable
+    >>> pmr2_settings.dirCreatedFor() == self.tmpdir
+    True
+
+A default implementation for the event handler is provided, however the
+objects that provides the creation must trigger the removal by actually
+registering that for the specific interface/object type.
+
 -----------
 Subsettings
 -----------

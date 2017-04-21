@@ -27,4 +27,11 @@
       handler=".subscriber.catalog_content"
       />
 
+  <!-- manage workspace created directories -->
+  <subscriber
+      for="pmr2.app.workspace.interfaces.IWorkspace
+           zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+      handler="pmr2.app.settings.subscriber.object_delete_cleanup_dir"
+      />
+
 </configure>

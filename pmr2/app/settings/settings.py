@@ -1,5 +1,9 @@
+from time import time
 from os import getenv, makedirs
+from os import rename
 from os.path import join, exists, isdir
+from os.path import dirname
+from os.path import basename
 
 from persistent import Persistent
 from zope.annotation import factory, IAttributeAnnotatable
@@ -63,7 +67,7 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
         path = (self.repo_root,)
         if obj is not None:
             if not ITraversable.providedBy(obj):
-                raise TypeError('input is not traversable')
+                raise TypeError('obj is not traversable')
             # XXX this does not take into account partial trees!
             path = path + obj.getPhysicalPath()[1:]
         return join(*path)
@@ -84,6 +88,26 @@ class PMR2GlobalSettingsAnnotation(Persistent, Contained):
             # is not trapped
             makedirs(path)
         return path
+
+    def orphanDir(self, obj):
+        """
+        Orphan a directory (removal)
+
+        Mark it with __orphan{timestamp}_{id} and return it.
+        """
+
+        if not ITraversable.providedBy(obj):
+            raise TypeError('obj must be traversable')
+
+        path = self.dirCreatedFor(obj)
+        if path is None:
+            # Do nothing.
+            return
+
+        target = join(dirname(path), (
+            '__orphan%f_%s' % (time(), basename(path))))
+        rename(path, target)
+        return target
 
     def _createContainer(self, container, name, root=None, createDir=False):
         # We need a context that can be traversed using absolute paths,

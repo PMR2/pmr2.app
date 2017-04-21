@@ -251,6 +251,42 @@ Main page should render fine, too.
     ...     self.portal.workspace.cake, request)
     >>> wp_result = testpage()
 
+---------
+Lifecycle
+---------
+
+As the raw data associated with Workspaces are stored on the filesystem,
+removing it from object store will also need to trigger the removal of
+that.  The implementation is done using the subscriber that calls the
+default builtin orphan method provided by the PMR2 settings object.
+
+First create a new workspace.
+
+    >>> from os.path import isdir
+    >>> request = TestRequest(
+    ...     form={
+    ...         'form.widgets.id': u'purge',
+    ...         'form.widgets.title': u'To be purged',
+    ...         'form.widgets.description': u'It will be gone',
+    ...         'form.widgets.storage': [u'dummy_storage'],
+    ...         'form.buttons.add': 1,
+    ...     })
+    ...
+    >>> browser.WorkspaceStorageCreateForm(
+    ...     self.portal.workspace, request).update()
+
+Since the default dummy storage does not create a dir, do it manually.
+
+    >>> path = self.pmr2.createDir(self.portal.workspace.purge)
+    >>> isdir(path)
+    True
+
+Now remove the object, the underlying directory should be removed.
+
+    >>> self.portal.workspace.manage_delObjects(['purge'])
+    >>> isdir(path)
+    False
+
 -----------------------------------
 Restrictions to Workspace Locations
 -----------------------------------
