@@ -14,6 +14,7 @@
  <permission>Modify portal content</permission>
  <permission>View</permission>
  <permission>Delete objects</permission>
+ <permission>Copy or Move</permission>
 
  <state state_id="pending" title="Pending review" i18n:attributes="title">
   <description i18n:translate="">
@@ -57,6 +58,8 @@
   <permission-map name="Delete objects" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
+  <permission-map name="Copy or Move" acquired="False">
+  </permission-map>
 
  </state>
  <state state_id="private" title="Private" i18n:attributes="title">
@@ -98,6 +101,8 @@
    <permission-role>Owner</permission-role>
    <permission-role>Editor</permission-role>
   </permission-map>
+  <permission-map name="Copy or Move" acquired="False">
+  </permission-map>
  </state>
 
  <state state_id="published" title="Published" i18n:attributes="title">
@@ -131,6 +136,8 @@
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>Manager</permission-role>
+  </permission-map>
+  <permission-map name="Copy or Move" acquired="False">
   </permission-map>
  </state>
 
@@ -166,6 +173,8 @@
   <permission-map name="Delete objects" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
+  <permission-map name="Copy or Move" acquired="False">
+  </permission-map>
  </state>
 
  <state state_id="expired" title="Expired" i18n:attributes="title">
@@ -198,6 +207,8 @@
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>Manager</permission-role>
+  </permission-map>
+  <permission-map name="Copy or Move" acquired="False">
   </permission-map>
  </state>
 
