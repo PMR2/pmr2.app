@@ -1,6 +1,19 @@
 Changelog
 =========
 
+0.13.0 - Unreleased
+-------------------
+
+* Explicitly management of the removal and retraction permissions for
+  the workspace workflow, so objects managed by this workflow (i.e.
+  Workspaces) cannot be deleted when published and cannot be retracted
+  by their owners; private objects can still be removed if the user has
+  the ``Delete objects`` permission on the parent container of the
+  object to be deleted (i.e. while in their own WorkspaceContainer, or
+  have the shared one with that permission set for e.g. Member).
+* Handle the orphaned filesystem entities triggered by the removal of
+  their associated workspace by marking them as orphaned.
+
 0.12.4 - Released (2017-01-13)
 ------------------------------
 
