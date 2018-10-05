@@ -418,6 +418,10 @@ class DummyStorage(BaseStorage):
         self._lastnav = buildnav(2)
         return results
 
+    def roots(self, rev=None):
+        # there is always one root.
+        return ['0']
+
 
 class DummyWorkspace(object):
     """\

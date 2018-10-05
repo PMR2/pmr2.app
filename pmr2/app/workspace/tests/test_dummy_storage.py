@@ -61,6 +61,7 @@ class TestDummyStorage(TestCase):
         self.assertEqual(files, [
             'dir1/dir2/f1', 'dir1/dir2/f2', 'dir1/f1', 'dir1/f2', 
             'dir1/nested/file', 'file1', 'file3'])
+        self.assertEqual(storage.roots(), ['0'])
 
     def test_101_storage_checkout(self):
         storage = DummyStorage(self.workspace)
