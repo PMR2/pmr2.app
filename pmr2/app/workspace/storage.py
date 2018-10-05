@@ -206,6 +206,9 @@ class BaseStorage(object):
             data = self.fileinfo(path)
         return data
 
+    def roots(self, rev=None):
+        raise NotImplementedError
+
 
 class StorageUtility(object):
     """\
