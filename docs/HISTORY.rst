@@ -13,6 +13,10 @@ Changelog
   have the shared one with that permission set for e.g. Member).
 * Handle the orphaned filesystem entities triggered by the removal of
   their associated workspace by marking them as orphaned.
+* Provide a roots method for IStorage, which should return the
+  root identifiers for the given Storage such that different workspaces
+  that provide different storage instances can have a way to locate
+  their common sibling workspace objects.
 
 0.12.4 - Released (2017-01-13)
 ------------------------------
