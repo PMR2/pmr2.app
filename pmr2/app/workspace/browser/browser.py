@@ -907,6 +907,9 @@ class WorkspaceRelated(page.SimplePage):
     label = "Related workspaces"
     template = ViewPageTemplateFile('workspace_related.pt')
 
+    def update(self):
+        self.request['enable_border'] = True
+
     @property
     def common_roots(self):
         try:
