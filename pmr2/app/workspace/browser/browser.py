@@ -915,6 +915,14 @@ class WorkspaceRelated(page.SimplePage):
             # simply mark this as not found as no underlying storage.
             raise NotFound(self.context, self.context.title_or_id())
 
-        roots = storage.roots()
+        try:
+            roots = storage.roots()
+        except NotImplementedError:
+            # just simply return an empty list
+            # TODO consider providing some kind of indication that this
+            # feature is not supported for this particular storage
+            # backend.
+            return []
+
         catalog = getToolByName(self.context, 'portal_catalog')
         return catalog(pmr2_workspace_storage_roots=roots)
