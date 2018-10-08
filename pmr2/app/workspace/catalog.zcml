@@ -1,0 +1,9 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2">
+
+  <adapter
+      factory=".catalog.pmr2_workspace_storage_roots"
+      name="pmr2_workspace_storage_roots" />
+
+</configure>

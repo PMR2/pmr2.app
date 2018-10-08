@@ -33,6 +33,10 @@
     <indexed_attr value="pmr2_exposure_root_id"/>
   </index>
 
+  <index name="pmr2_workspace_storage_roots" meta_type="KeywordIndex">
+    <indexed_attr value="pmr2_workspace_storage_roots"/>
+  </index>
+
   <!-- PMR2 Exposure Types -->
 
   <index name="pmr2_eftype_views" meta_type="KeywordIndex">
@@ -55,6 +59,9 @@
   <column value="pmr2_exposure_root_title"/>
   <column value="pmr2_exposure_root_path"/>
   <column value="pmr2_exposure_root_id"/>
+
+  <column value="pmr2_workspace_storage_roots"/>
+
   <column value="pmr2_eftype_views"/>
   <column value="pmr2_eftype_select_view"/>
   <column value="pmr2_eftype_tags"/>

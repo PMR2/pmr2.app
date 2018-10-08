@@ -18,6 +18,13 @@ def test_suite():
         #    optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         #),
 
+        # Catalog index
+        ztc.ZopeDocFileSuite(
+            join('catalog.txt'), package='pmr2.app.workspace',
+            test_class=base.WorkspaceBrowserDocTestCase,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
+        ),
+
         # Forms and interactions.
         ztc.ZopeDocFileSuite(
             join('browser', 'browser.txt'), package='pmr2.app.workspace',

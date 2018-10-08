@@ -7,6 +7,7 @@
   <include package=".widgets" />
 
   <include file="adapter.zcml" />
+  <include file="catalog.zcml" />
 
   <!-- subscriber has priority -->
   <include file="subscriber.zcml" />

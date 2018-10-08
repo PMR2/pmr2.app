@@ -1,0 +1,29 @@
+=======================
+Workspace root indexing
+=======================
+
+To facilitate the listing of related workspaces, the underlying storage
+would need to provide unique content identifiers for each of the changes
+that it tracks.  This feature targets compatible version control systems
+that underlay the relevant storage implementation.
+
+Attempt to index a workspace to see that the root commit identifiers are
+returned.
+::
+
+    >>> from pmr2.app.workspace.catalog import pmr2_workspace_storage_roots
+    >>> pmr2_workspace_storage_roots(self.portal.workspace.test)()
+    ['0']
+
+Should not throw an exception if an incompatible object was passed::
+
+    >>> pmr2_workspace_storage_roots(object)()
+    []
+
+Also should not throw an exception if somehow the adapted storage
+object does not implement the required methods::
+
+    >>> from pmr2.app.workspace.storage import BaseStorage
+    >>> storage = BaseStorage('dummy')
+    >>> pmr2_workspace_storage_roots(storage)()
+    []
