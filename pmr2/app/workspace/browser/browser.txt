@@ -481,6 +481,31 @@ Try making a randomly named cake.
     http://nohost/plone/w/test_user_1_/...
 
 
+-----------------
+Workspace related
+-----------------
+
+The related tab should show a list of related workspace; as the storage
+backend is the dummy, they all share the same identifiers thus any
+available workspaces will be listed
+::
+
+    >>> tb.open(cakeurl + '/related')
+    >>> print(''.join(i for i in tb.contents.splitlines() if i))
+    <...
+    ...
+    <h3>The following are links to related workspaces</h3>
+    <ul>
+      <li>
+        <a href="http://nohost/plone/workspace/test">Delicious Eggs</a>
+      </li>
+      <li>
+        <a href="http://nohost/plone/workspace/cake">Delicious Cake</a>
+          (this workspace)
+      </li>
+    ...
+
+
 ---------------------
 Protocol Level Access
 ---------------------

@@ -157,6 +157,13 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="related"
+      class=".browser.WorkspaceRelated"
+      permission="zope2.View"
+      />
+
   <!--
     file renderer manager
 

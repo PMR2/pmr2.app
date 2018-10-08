@@ -1,0 +1,20 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <body>
+
+    <h3>The following are links to related workspaces</h3>
+
+    <ul>
+      <tal:loop tal:repeat="i view/common_roots">
+      <li>
+        <a tal:content="python:i.Title or i.id" tal:attributes="href i/getURL">
+          Title
+        </a>
+        <tal:if condition="python:context.UID() == i.UID">
+          (this workspace)
+        </tal:if>
+      </li>
+      </tal:loop>
+    </ul>
+
+  </body>
+</html>

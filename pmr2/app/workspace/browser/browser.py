@@ -26,6 +26,7 @@ from Products.CMFCore.utils import getToolByName
 from DateTime import DateTime
 from Acquisition import aq_parent, aq_inner
 from Products.statusmessages.interfaces import IStatusMessage
+from Products.CMFCore.utils import getToolByName
 
 from pmr2.z3cform import form
 from pmr2.z3cform import page
@@ -899,3 +900,21 @@ class WorkspaceRawfileXmlBase(WorkspaceRawfile):
         self.request.response.setHeader('Content-Length', len(data))
 
         return data
+
+
+class WorkspaceRelated(page.SimplePage):
+
+    label = "Related workspaces"
+    template = ViewPageTemplateFile('workspace_related.pt')
+
+    @property
+    def common_roots(self):
+        try:
+            storage = zope.component.getAdapter(self.context, IStorage)
+        except ValueError:
+            # simply mark this as not found as no underlying storage.
+            raise NotFound(self.context, self.context.title_or_id())
+
+        roots = storage.roots()
+        catalog = getToolByName(self.context, 'portal_catalog')
+        return catalog(pmr2_workspace_storage_roots=roots)

@@ -73,6 +73,12 @@
   <permission value="View"/>
  </action>
 
+ <action title="Related" action_id="related" category="object"
+    condition_expr="" url_expr="string:${object_url}/@@related" visible="True"
+    i18n:attributes="title">
+  <permission value="View"/>
+ </action>
+
  <action title="Synchronize" action_id="sync" 
     category="object" condition_expr="" 
     url_expr="string:${object_url}/@@sync" 
