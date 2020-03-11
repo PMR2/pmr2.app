@@ -4,8 +4,12 @@ from Products.CMFCore import utils as cmfutils
 from Products.Archetypes import atapi
 from Products.CMFCore.permissions import \
     AddPortalContent as ADD_CONTENT_PERMISSION
+from Products.CMFCore.permissions import setDefaultRoles
 from Products.PluggableAuthService.PluggableAuthService import \
     registerMultiPlugin
+
+
+setDefaultRoles('pmr2.app: Workspace Push', ('WorkspacePusher',))
 
 
 def initialize(context):

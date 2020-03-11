@@ -17,6 +17,8 @@ Changelog
   root identifiers for the given Storage such that different workspaces
   that provide different storage instances can have a way to locate
   their common sibling workspace objects.
+* Resolved workspace push security issue where push permission granted
+  via the sharing tab was not having the desired effect.
 
 0.12.4 - Released (2017-01-13)
 ------------------------------
