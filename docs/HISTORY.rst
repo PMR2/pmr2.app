@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.13.0 - Unreleased
--------------------
+0.13.0 - Released (2020-03-11)
+------------------------------
 
 * Explicitly management of the removal and retraction permissions for
   the workspace workflow, so objects managed by this workflow (i.e.
