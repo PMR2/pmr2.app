@@ -9,7 +9,7 @@ from Products.PluggableAuthService.PluggableAuthService import \
     registerMultiPlugin
 
 
-setDefaultRoles('pmr2.app: Workspace Push', ('WorkspacePusher',))
+setDefaultRoles('pmr2.app: Workspace Push', ('WorkspacePusher', 'Manager',))
 
 
 def initialize(context):
