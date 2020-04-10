@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.13.1 - Released (2020-04-10)
+------------------------------
+
+* Also apply the push permission to manager, as it may be the case that
+  this new code overrode the previous settings.
+
 0.13.0 - Released (2020-03-11)
 ------------------------------
 
