@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.13.2 - Released (2020-12-01)
+------------------------------
+
+* Correctly handle any error at the top level exposure object.
+
 0.13.1 - Released (2020-04-10)
 ------------------------------
 
