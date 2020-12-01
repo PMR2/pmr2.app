@@ -274,10 +274,13 @@ def moldExposure(exposure_context, request, exported):
                         viewgen(container)()
                     except Exception, err:
                         # XXX trap all here.
-                        qi = getToolByName(ctxobj, 'portal_quickinstaller')
+                        qi = getToolByName(
+                            exposure_context, 'portal_quickinstaller')
                         if qi.isDevelopmentMode():
                             logger.exception('Error molding exposure')
-                        raise ProcessingError(str(err))
+                        raise ProcessingError(
+                            'Error when processing "%s": %s' % (
+                                gensource, err))
 
             if IExposure.providedBy(container):
                 # only copy curation over, until this becomes an
