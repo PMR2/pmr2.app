@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.13.3 - Released (2021-06-15)
+------------------------------
+
+* Workaround API breakage introduced between z3c.form-3.2.9 -> 3.2.11.
+
 0.13.2 - Released (2020-12-01)
 ------------------------------
 
