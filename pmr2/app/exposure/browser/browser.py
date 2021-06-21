@@ -47,7 +47,7 @@ from pmr2.app.exposure.content import *
 
 from pmr2.app.exposure.browser.util import getExposureFileType, getGenerator
 from pmr2.app.exposure.browser.util import fieldvalues, moldExposure
-from pmr2.app.exposure.browser.util import viewinfo
+from pmr2.app.exposure.browser.util import viewinfo, _mold_views
 from pmr2.app.exposure.urlopen import urlopen
 
 
@@ -440,41 +440,19 @@ class BaseExposureFileTypeAnnotatorForm(
             raise ProcessingError(str(err))
 
     def _annotate(self, groups):
-        # iterate through the views that had been selected for this
-        # form, and use the data supplied by the groups parameter.
-        for name in self.context.views:
-            annotatorFactory = zope.component.queryUtility(
-                IExposureFileAnnotator,
-                name=name,
-            )
+        # delegate the function to the .util._mold_views helper; to do
+        # that, construct the expected mapping capture the hidden_views
+        # attribute and assign as expected.
 
-            if not annotatorFactory:
-                # self.context.views somehow included invalid values, we
-                # should log it and continue (something somewhere messed
-                # with it.
-                continue
-
-            # Default annotator fully generates its data, we do not need 
-            # to pass in extra arguments.
-            args = ()
-
-            # Instantiate annotator with our context.
-            annotator = annotatorFactory(self.context, self.request)
-            if IExposureFileEditAnnotator.providedBy(annotator) or \
-                    IExposureFilePostEditAnnotator.providedBy(annotator):
-                # The edited annotator will need the fields.
-                if name not in groups.keys():
-                    # well, it looks like somehow the set of views that
-                    # this form submittal was based upon is no longer
-                    # same as the set of views stored now.  We should 
-                    # raise a validation error of sort, but for now we 
-                    # ignore it.
-                    continue
-                args = (groups[name],)
-
-            # Call annotator to annotate our file.
-            annotator(*args)
-
+        # since this base form uses the views specified in the context
+        # as the basis, establish this mapping first
+        views = {view: [] for view in self.context.views}
+        views.update(groups)
+        fields = {
+            'views': [(k, dict(v) if v else {}) for k, v in views.items()]}
+        # ensure any hidden views are set at the exposure context.
+        _, self.context.hidden_views = _mold_views(
+            self.context, self.request, fields, groups)
         # The tagging should have been done in the previous form.
 
     def nextURL(self):

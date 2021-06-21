@@ -366,6 +366,9 @@ def filetype_bulk_update(context):
 
     from pmr2.app.annotation.interfaces import IExposureFileNote
     from pmr2.app.exposure.browser.util import viewinfo
+    # Need to fake a request object, since the migrate step lacks one
+    # for some unknown reason.
+    from z3c.form.testing import TestRequest
 
     try:
         from pmr2.app.exposure.browser.browser import \
@@ -415,7 +418,13 @@ def filetype_bulk_update(context):
             groups = {}
             for k, v in viewinfo(file):
                 groups[k] = v and v.items() or None
-            form = ExposureFileTypeAnnotatorForm(file, None)
+            # the fake request is needed for the annotator form to
+            # resolve the views that are truly available, such that
+            # annotations/notes that do not have a view defined are
+            # automatically hidden.
+            req = TestRequest()
+            req.environ = {}
+            form = ExposureFileTypeAnnotatorForm(file, req)
             form._annotate(groups)
             file.reindexObject()
         except:
