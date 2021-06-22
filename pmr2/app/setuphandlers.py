@@ -393,10 +393,14 @@ def filetype_bulk_update(context):
     for c, b in enumerate(files, 1):
         file_sp = transaction.savepoint()
         file = b.getObject()
+        # keep exposure file modified date for later.
+        file_modified = file.modified()
         logger.info('Rebuilding notes for `%s` (%d/%d).',
                     file.absolute_url_path(), c, t)
         ftpath = file.file_type
         if not ftpath:
+            logger.warning('`%s` has no filetype set; skipping.' % (
+                file.absolute_url_path()))
             continue
 
         if not ftpath in filetypes:
@@ -427,7 +431,10 @@ def filetype_bulk_update(context):
             form = ExposureFileTypeAnnotatorForm(file, req)
             form._annotate(groups)
             file.reindexObject()
-        except:
+            # reindexing like so apparently modifies date, so restore
+            # with the saved value.
+            file.setModificationDate(file_modified)
+        except Exception:
             file_sp.rollback()
             errors.append(file.absolute_url_path())
             logger.error('Failed to rebuild `%s`' % file.absolute_url_path())

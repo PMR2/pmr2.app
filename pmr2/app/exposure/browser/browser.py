@@ -41,7 +41,7 @@ from pmr2.app.exposure.browser.interfaces import *
 from pmr2.app.interfaces import *
 from pmr2.app.interfaces.exceptions import *
 from pmr2.app.annotation.interfaces import *
-from pmr2.app.annotation.factory import has_note, del_note
+from pmr2.app.annotation.factory import has_note
 from pmr2.app.browser.interfaces import IObjectIdMixin
 from pmr2.app.exposure.content import *
 

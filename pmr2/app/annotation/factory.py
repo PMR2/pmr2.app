@@ -26,7 +26,10 @@ def get_annotated(context):
     return items
 
 def has_note(context, key):
-    # purges ExposureFileNotes
+    """
+    Check for ExposureFileNotes by key.
+    """
+
     if not IExposureObject.providedBy(context):
         return False
     ann = IAnnotations(context)
@@ -34,7 +37,10 @@ def has_note(context, key):
     return k in ann
 
 def del_note(context, key):
-    # purges ExposureFileNotes
+    """
+    Purges ExposureFileNotes by key.
+    """
+
     ann = IAnnotations(context)
     k = PREFIX + key
     if k in ann and IExposureFileNote.providedBy(ann[k]):
