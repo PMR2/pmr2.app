@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.13.4 - Released (2021-06-23)
+------------------------------
+
+* Modified the rebuild file type annotations upgrade step to ensure that
+  the last modified date will not be updated.
+* Unify the base annotation function for the exposure file type based
+  annotation form with the common base mold view function that is used
+  by the now standard wizard, which is used by the upgrade step
+* Fix the docgen annotator error when source is missing.
+
 0.13.3 - Released (2021-06-15)
 ------------------------------
 
