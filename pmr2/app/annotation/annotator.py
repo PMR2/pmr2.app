@@ -183,7 +183,8 @@ class DocGenAnnotator(ExposureFileAnnotatorBase):
         d = dict(self.data)
         # XXX Fix the implementation of this to an adapter?
         dvgu = zope.component.queryUtility(IDocViewGen, name=d['generator'])
-        if dvgu is None:
+        if dvgu is None or d['source'] is None:
+            # no generator or source, so do nothing
             return self.data
 
         exp, workspace, p = zope.component.getAdapter(self.context, 
