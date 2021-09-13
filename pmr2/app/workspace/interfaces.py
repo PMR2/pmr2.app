@@ -106,10 +106,15 @@ class IStorage(zope.interface.Interface):
         Returns either a list of fileinfo or individual fileinfo.
         """
 
-    def roots(self, rev=None):
+    def roots(rev=None):
         """
         Return the roots of the revision specified; typically this is a
         list of commits or changesets that have no further parents.
+        """
+
+    def clonecmd():
+        """
+        Return a command to clone the storage.
         """
 
 

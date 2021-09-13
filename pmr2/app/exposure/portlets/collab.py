@@ -15,6 +15,7 @@ from Products.CMFCore.utils import getToolByName
 from pmr2.app.exposure.interfaces import IExposureObject
 from pmr2.app.exposure.interfaces import IExposureSourceAdapter
 from pmr2.app.workspace.interfaces import IStorageUtility
+from pmr2.app.workspace.interfaces import IStorage
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
 from pmr2.app.exposure.portlets.base import BaseRenderer
@@ -57,6 +58,13 @@ class Renderer(BaseRenderer):
 
     @memoize
     def clonecmd(self):
+        cmd = IStorage(self.workspace).clonecmd()
+        if cmd:
+            # TODO, if None, it may in fact mean this workspace is
+            # uncloneable.
+            return cmd
+
+        # previous inferred implementation based on utility
         workspace_uri = self.workspace.absolute_url()
         # TODO formalize on how this is derived
         result = '%s %s %s' % (

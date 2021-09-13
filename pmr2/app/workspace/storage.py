@@ -209,6 +209,12 @@ class BaseStorage(object):
     def roots(self, rev=None):
         raise NotImplementedError
 
+    def clonecmd(self):
+        # Default to an empty string to denote a default; the original
+        # implementation only has this visible via the portlet, so this
+        # tells it to use the default handler.
+        return ''
+
 
 class StorageUtility(object):
     """\
