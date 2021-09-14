@@ -58,7 +58,11 @@ class Renderer(BaseRenderer):
 
     @memoize
     def clonecmd(self):
-        cmd = IStorage(self.workspace).clonecmd()
+        exposure, workspace, path = zope.component.queryAdapter(
+            self.context, IExposureSourceAdapter).source()
+        storage = IStorage(workspace)
+        storage.checkout(exposure.commit_id)
+        cmd = storage.clonecmd()
         if cmd:
             # TODO, if None, it may in fact mean this workspace is
             # uncloneable.
