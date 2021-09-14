@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.13.5 - Released (2021-09-14)
+------------------------------
+
+* Added ``clonecmd`` API for ``Storage`` objects, for use by the
+  workspace exposure portlet, so that specific implementation may
+  provide a customised command on a per workspace basis.
+
 0.13.4 - Released (2021-06-23)
 ------------------------------
 
