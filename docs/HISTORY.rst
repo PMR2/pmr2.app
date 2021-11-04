@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.13.6 - Released (2021-11-04)
+------------------------------
+
+* Cache the vocabulary for the manifest for the current exposure or
+  workspace at the request object as an optimization for exposure wizard
+  on exposures that have a significant number of objects.
+
 0.13.5 - Released (2021-09-14)
 ------------------------------
 
