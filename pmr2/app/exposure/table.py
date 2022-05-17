@@ -38,7 +38,7 @@ class ExposureColumn(ItemKeyColumn):
         if items:
             return u'<br />\n'.join([
                 u'<a class="state-%s" href="%s">%s</a>' % (i.pmr2_review_state, 
-                i.getURL(), i.Title or i.id) for i in items
+                i.getURL(), i.Title.decode('utf8') or i.id) for i in items
             ])
         return u''
 
@@ -97,7 +97,8 @@ class ExposureRadioColumn(ExposureColumn, ItemKeyRadioColumn):
                                            selected)
             result.append(u'<label>%s <a class="state-%s" '
                            'href="%s">%s</a></label>' % (
-                radio, i.pmr2_review_state, i.getURL(), i.Title or i.id))
+                radio, i.pmr2_review_state, i.getURL(),
+                i.Title.decode('utf8') or i.id))
         return '<br />\n'.join(result)
 
 
