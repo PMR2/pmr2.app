@@ -168,7 +168,7 @@ class EFTypeBaseVocab(SimpleVocabulary):
                 portal_type='ExposureFileType',
                 review_state='published',
             )
-            terms = [self._makeTerm(brain) for brain in results]
+            terms = self.sorted([self._makeTerm(brain) for brain in results])
         super(EFTypeBaseVocab, self).__init__(terms)
 
     def _makeTerm(self, brain):
@@ -178,6 +178,10 @@ class EFTypeBaseVocab(SimpleVocabulary):
         """
 
         raise NotImplementedError
+
+    def sorted(self, terms):
+        # default unsorted
+        return terms
 
     def getTerm(self, value):
         if self.pt is None:
@@ -204,6 +208,9 @@ class EFTypeVocab(EFTypeBaseVocab):
 
     def _makeTerm(self, brain):
         return SimpleTerm(brain.getPath(), brain.Title, brain.Title)
+
+    def sorted(self, terms):
+        return sorted(terms, key=lambda term: term.title)
 
 EFTypeVocabFactory = vocab_factory(EFTypeVocab)
 
