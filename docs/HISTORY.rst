@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.13.6 - Released (2022-05-18)
+------------------------------
+
+* Ensure certain listings and vocabularies are sorted for ease of use.
+* Correct a UTF-8 display issue for rendering exposure related table
+  cells.
+
 0.13.6 - Released (2021-11-04)
 ------------------------------
 
