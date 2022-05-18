@@ -6,8 +6,12 @@ from pmr2.app.exposure.interfaces import IExposureFile
 from pmr2.app.exposure.interfaces import IExposureSourceAdapter
 
 
+class DefaultDownloadTool(object):
+    rank = 0
+
+
 @implementer(IExposureDownloadTool)
-class TgzDownloadTool(object):
+class TgzDownloadTool(DefaultDownloadTool):
     """
     Link to the target archive.
     """
@@ -15,6 +19,7 @@ class TgzDownloadTool(object):
     label = u'Complete Archive as .tgz'
     suffix = '.tgz'
     mimetype = 'application/x-tar'
+    rank = -1
 
     def get_download_link(self, exposure_object):
         try:
@@ -32,7 +37,7 @@ class TgzDownloadTool(object):
 
 
 @implementer(IExposureDownloadTool)
-class FileDownloadTool(object):
+class FileDownloadTool(DefaultDownloadTool):
     """
     Per file download.
     """
@@ -40,6 +45,7 @@ class FileDownloadTool(object):
     label = u'Download This File'
     suffix = None
     mimetype = None
+    rank = -2
 
     def get_download_link(self, exposure_object):
         if not IExposureFile.providedBy(exposure_object):
