@@ -1,3 +1,4 @@
+from logging import getLogger
 from zope import schema
 from zope.formlib import form
 from zope.interface import implements
@@ -17,6 +18,8 @@ from pmr2.app.exposure.interfaces import IExposureFileTool
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
 from pmr2.app.exposure.portlets.base import BaseRenderer
+
+logger = getLogger(__name__)
 
 
 class IToolPortlet(IPortletDataProvider):
@@ -57,12 +60,16 @@ class Renderer(BaseRenderer):
     def generate_tool_info(self):
         tools = zope.component.getUtilitiesFor(IExposureFileTool)
         results = []
-        for name, tool in sorted(tools):
-            link = tool.get_tool_link(self.context)
+        for name, tool in tools:
+            try:
+                link = tool.get_tool_link(self.context)
+            except Exception:
+                logger.exception('failed to get link from tool %r' % tool)
+                continue
             if not link:
                 continue
             results.append({'label': tool.label, 'href': link})
-        return results
+        return sorted(results, key=lambda i: i.get('label'))
 
 
 class AddForm(base.AddForm):

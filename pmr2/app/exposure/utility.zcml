@@ -8,11 +8,16 @@
       name="a_file_download"
       />
 
-
   <utility
       provides="pmr2.app.exposure.interfaces.IExposureDownloadTool"
       factory=".download.TgzDownloadTool"
       name="a_tgz_download"
+      />
+
+  <utility
+      provides="pmr2.app.exposure.interfaces.IExposureFileTool"
+      factory=".utility.GithubIssueTool"
+      name="github_issue_tool"
       />
 
 </configure>

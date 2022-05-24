@@ -33,3 +33,16 @@ class IPMR2KeywordProvider(zope.interface.Interface):
     right values which can uniquely identify the note, and the view must
     be overridden to link to the intended results.
     """
+
+
+class IRegistrySettings(zope.interface.Interface):
+    """
+    Settings to be registered to the configuration registry.
+    """
+
+    github_issue_repo = zope.schema.TextLine(
+        title=u'The uri to the Github issue repository',
+        description=u'The repository to file issues with user data on PMR',
+        default=u'',
+        required=False,
+    )

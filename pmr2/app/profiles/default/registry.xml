@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<registry>
+  <records
+      interface="pmr2.app.interfaces.IRegistrySettings"
+      prefix="pmr2.app.settings"
+    />
+</registry>

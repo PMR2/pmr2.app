@@ -19,6 +19,7 @@ import z3c.form.field
 import z3c.form.form
 import z3c.form.value
 from z3c.form import button
+from plone.registry.interfaces import IRegistry
 
 from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
@@ -36,6 +37,7 @@ from pmr2.idgen.interfaces import IIdGenerator
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from pmr2.app.interfaces.exceptions import *
+from pmr2.app.interfaces import IRegistrySettings
 
 from pmr2.app.browser.interfaces import IObjectIdMixin
 from pmr2.app.browser.page import NavPage, RssPage
@@ -47,6 +49,9 @@ from pmr2.app.workspace.content import *
 from pmr2.app.workspace.i18n import MessageFactory as _
 from pmr2.app.workspace.browser.util import *
 from pmr2.app.workspace.browser.interfaces import *
+
+# XXX magic string should be imported
+prefix = 'pmr2.app.settings'
 
 
 # Workspace Container
@@ -335,6 +340,30 @@ class WorkspacePage(page.SimplePage):
             self._owner = obfuscate(result)
 
         return self._owner
+
+    def report_link(self):
+        registry = zope.component.getUtility(IRegistry)
+        try:
+            settings = registry.forInterface(IRegistrySettings, prefix=prefix)
+        except KeyError:
+            logger.warning(
+                "settings for '%s' not found; pmr2.app may need to be "
+                "reactivated", prefix,
+            )
+            return
+        if not settings.github_issue_repo:
+            return
+
+        arguments = {
+            'labels': 'workspace',
+            'template': 'workspace.yml',
+            'title': '[Workspace]: ' + self.context.title_or_id(),
+            'workspace-url': self.context.absolute_url(),
+        }
+        target = '%s/issues/new?%s' % (
+            settings.github_issue_repo, urllib.urlencode(arguments))
+
+        return target
 
     def shortlog(self):
         if not hasattr(self, '_log'):
