@@ -1,0 +1,69 @@
+Storage Terms Cache
+===================
+
+Given how the zope widgets make use of vocabulary assumes the sources
+for producing the terms are light-weight objects, plugging a potentially
+IO heavy source (e.g. loading a list of files from a git repository)
+will inevitably cause certain performance penalties.
+
+There is a workaround - by "forcing" the vocabulary object be shared via
+the requests object, this bypasses the standard factory from going down
+the heavy path and just simply reuse the existing vocabulary as the data
+source.
+
+First create a simple vocabulary and register that as part a vocabulary
+utility along with a simple test harness that counts factory usage.
+::
+
+    >>> import zope.component
+    >>> from zope.schema.vocabulary import SimpleVocabulary
+    >>> from zope.schema.interfaces import IVocabularyFactory
+    >>> from z3c.form import widget
+    >>> from pmr2.testing.base import TestRequest
+    >>> from pmr2.app.workspace.schema import StorageFileChoice
+    >>>
+    >>> vocab = SimpleVocabulary([
+    ...     SimpleVocabulary.createTerm('file1', 'file1', u'file1'),
+    ...     SimpleVocabulary.createTerm('file2', 'file2', u'file2'),
+    ... ])
+    ...
+    >>> called = []
+    >>> def vocab_factory(context):
+    ...     called.append(context)
+    ...     return vocab
+    ...
+    >>> sm = zope.component.getSiteManager()
+    >>> sm.registerUtility(
+    ...     vocab_factory, IVocabularyFactory, name='demo_vocab')
+    >>> request = TestRequest()
+
+Create an update a new widget and see that the request now has the vocab
+set and factory called.
+
+    >>> seqWidget = widget.SequenceWidget(request)
+    >>> seqWidget.field = StorageFileChoice(vocabulary='demo_vocab')
+    >>> _ = seqWidget.updateTerms()
+    >>> request['vocab:demo_vocab'] is vocab
+    True
+    >>> len(called)
+    1
+
+Setting up a second widget with the same request should not require the
+factory to construct a new vocabulary.
+
+    >>> seqWidget2 = widget.SequenceWidget(request)
+    >>> seqWidget2.field = StorageFileChoice(vocabulary='demo_vocab')
+    >>> _ = seqWidget2.updateTerms()
+    >>> request['vocab:demo_vocab'] is vocab
+    True
+    >>> len(called)
+    1
+
+Setting up a third widget with a new request will require the factory to
+provide a new instance of the vocabulary.
+
+    >>> seqWidget3 = widget.SequenceWidget(TestRequest())
+    >>> seqWidget3.field = StorageFileChoice(vocabulary='demo_vocab')
+    >>> _ = seqWidget3.updateTerms()
+    >>> len(called)
+    2

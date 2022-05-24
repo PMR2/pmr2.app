@@ -53,6 +53,13 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
         ),
 
+        # custom terms
+        ztc.ZopeDocFileSuite(
+            'term.txt', package='pmr2.app.workspace',
+            test_class=base.WorkspaceBrowserDocTestCase,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
+        ),
+
         # Tables.
         ztc.ZopeDocFileSuite(
             'table.txt', package='pmr2.app.workspace',

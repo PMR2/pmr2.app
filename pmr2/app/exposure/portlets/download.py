@@ -18,6 +18,7 @@ from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
 from pmr2.app.exposure.portlets.base import BaseRenderer
+from pmr2.app.exposure.download import DefaultDownloadTool
 
 
 class IExposureDownloadPortlet(IPortletDataProvider):
@@ -49,12 +50,17 @@ class Renderer(BaseRenderer):
     def file_access_uris(self):
         tools = zope.component.getUtilitiesFor(IExposureDownloadTool)
         results = []
-        for name, tool in sorted(tools):
+        for name, tool in tools:
             link = tool.get_download_link(self.context)
             if not link:
                 continue
-            results.append({'label': tool.label, 'href': link})
-        return results
+            if isinstance(tool, DefaultDownloadTool):
+                results.append(
+                    {'label': tool.label, 'href': link, 'rank': tool.rank})
+            else:
+                results.append({'label': tool.label, 'href': link})
+        return sorted(
+            results, key=lambda i: (i.get('rank', 0), i.get('label')))
 
 
 class AddForm(base.AddForm):

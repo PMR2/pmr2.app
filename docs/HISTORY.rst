@@ -1,6 +1,42 @@
 Changelog
 =========
 
+0.13.6 - Released (2022-05-18)
+------------------------------
+
+* Ensure certain listings and vocabularies are sorted for ease of use.
+* Correct a UTF-8 display issue for rendering exposure related table
+  cells.
+
+0.13.6 - Released (2021-11-04)
+------------------------------
+
+* Cache the vocabulary for the manifest for the current exposure or
+  workspace at the request object as an optimization for exposure wizard
+  on exposures that have a significant number of objects.
+
+0.13.5 - Released (2021-09-14)
+------------------------------
+
+* Added ``clonecmd`` API for ``Storage`` objects, for use by the
+  workspace exposure portlet, so that specific implementation may
+  provide a customised command on a per workspace basis.
+
+0.13.4 - Released (2021-06-23)
+------------------------------
+
+* Modified the rebuild file type annotations upgrade step to ensure that
+  the last modified date will not be updated.
+* Unify the base annotation function for the exposure file type based
+  annotation form with the common base mold view function that is used
+  by the now standard wizard, which is used by the upgrade step
+* Fix the docgen annotator error when source is missing.
+
+0.13.3 - Released (2021-06-15)
+------------------------------
+
+* Workaround API breakage introduced between z3c.form-3.2.9 -> 3.2.11.
+
 0.13.2 - Released (2020-12-01)
 ------------------------------
 

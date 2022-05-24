@@ -299,7 +299,7 @@ Rendering should show a new group for the user to select the file type.
     >>> b.getControl(name='file1.widgets.filetype:list').value
     ['--NOVALUE--']
     >>> b.getControl(name='file1.widgets.filetype:list').displayOptions
-    ['No value', 'Test Type', 'Docgen Type']
+    ['No value', 'Docgen Type', 'Test Type']
 
 We now update the form.
 ::

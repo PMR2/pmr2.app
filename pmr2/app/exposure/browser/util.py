@@ -14,13 +14,18 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 from pmr2.idgen.interfaces import IIdGenerator
 from pmr2.app.interfaces.exceptions import ProcessingError
-from pmr2.app.annotation.interfaces import IExposureFileEditableNote
-from pmr2.app.annotation.interfaces import IDocViewGen, IExposureFileAnnotator
+from pmr2.app.annotation.interfaces import (
+    IDocViewGen,
+    IExposureFileAnnotator,
+    IExposureFileEditAnnotator,
+    IExposureFileEditableNote,
+    IExposureFilePostEditAnnotator,
+)
+from pmr2.app.annotation.factory import has_note, del_note
 
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from pmr2.app.exposure.interfaces import IExposure, IExposureFile
-
 
 __all__ = [
     'fieldvalues',
@@ -131,9 +136,10 @@ def getExposureFileType(form, eftype_path):
     # default answer.
     return (None, None, None, None)
 
-def _mold_views(ctxobj, request, fields):
+def _mold_views(ctxobj, request, fields, groups=None):
     # currently supplied hidden_views are IGNORED.
-
+    # groups is merged in from the BaseExposureFileTypeAnnotatorForm's
+    # _annotate method original functionality, refer to that.
     views = []
     hidden_views = []
     for view, view_fields in fields['views']:
@@ -150,6 +156,16 @@ def _mold_views(ctxobj, request, fields):
             # Annotator factory can expect request to be
             # present.  Refer to commit d5d308226767
             annotator = annotatorFactory(ctxobj, request)
+
+            # to support the _annotate method as denoted earlier.
+            if groups is not None and (
+                    IExposureFileEditAnnotator.providedBy(annotator) or
+                    IExposureFilePostEditAnnotator.providedBy(annotator)):
+                # The edited annotator will need the fields.
+                if view not in groups:
+                    continue
+                data = groups[view]
+
             annotator(data)
             views.append(view)
             renderer = zope.component.queryMultiAdapter(

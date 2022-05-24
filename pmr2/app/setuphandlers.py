@@ -366,6 +366,9 @@ def filetype_bulk_update(context):
 
     from pmr2.app.annotation.interfaces import IExposureFileNote
     from pmr2.app.exposure.browser.util import viewinfo
+    # Need to fake a request object, since the migrate step lacks one
+    # for some unknown reason.
+    from z3c.form.testing import TestRequest
 
     try:
         from pmr2.app.exposure.browser.browser import \
@@ -390,10 +393,14 @@ def filetype_bulk_update(context):
     for c, b in enumerate(files, 1):
         file_sp = transaction.savepoint()
         file = b.getObject()
+        # keep exposure file modified date for later.
+        file_modified = file.modified()
         logger.info('Rebuilding notes for `%s` (%d/%d).',
                     file.absolute_url_path(), c, t)
         ftpath = file.file_type
         if not ftpath:
+            logger.warning('`%s` has no filetype set; skipping.' % (
+                file.absolute_url_path()))
             continue
 
         if not ftpath in filetypes:
@@ -415,10 +422,19 @@ def filetype_bulk_update(context):
             groups = {}
             for k, v in viewinfo(file):
                 groups[k] = v and v.items() or None
-            form = ExposureFileTypeAnnotatorForm(file, None)
+            # the fake request is needed for the annotator form to
+            # resolve the views that are truly available, such that
+            # annotations/notes that do not have a view defined are
+            # automatically hidden.
+            req = TestRequest()
+            req.environ = {}
+            form = ExposureFileTypeAnnotatorForm(file, req)
             form._annotate(groups)
             file.reindexObject()
-        except:
+            # reindexing like so apparently modifies date, so restore
+            # with the saved value.
+            file.setModificationDate(file_modified)
+        except Exception:
             file_sp.rollback()
             errors.append(file.absolute_url_path())
             logger.error('Failed to rebuild `%s`' % file.absolute_url_path())
