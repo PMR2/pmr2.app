@@ -574,10 +574,17 @@ def setup_catalog(context):
     )
 
     _catalog = catalog._catalog
+    idxobj = catalog.Indexes
     logger = getLogger(__name__)
 
     for meta_type, field_idxs in pmr2_indexes:
         for name in field_idxs:
+            if idxobj[name].meta_type != meta_type:
+                # Remove old, non-matching index.
+                old_meta_type = idxobj[name].meta_type
+                catalog.delIndex(name)
+                logger.info(
+                    'Old catalog %s %s deleted.' % (old_meta_type, name))
             if name not in catalog.indexes():
                 catalog.addIndex(name, meta_type)
                 logger.info("Catalog %s %s created." % (meta_type, name))
