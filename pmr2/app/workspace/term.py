@@ -19,9 +19,13 @@ def StorageFileChoiceTerms(context, request, form, field, widget):
     # likely need a different terms/vocab provider anyway, so caching
     # the vocabulary on the request object by vocabularyName should be
     # fine?
-    field.vocabulary = request.get('vocab:' + field.vocabularyName)
+    if field.vocabularyName is not None:
+        field.vocabulary = request.get('vocab:' + field.vocabularyName)
     field = field.bind(form)
-    request['vocab:' + field.vocabularyName] = terms = field.vocabulary
+    if field.vocabularyName is not None:
+        request['vocab:' + field.vocabularyName] = terms = field.vocabulary
+    else:
+        terms = field.vocabulary
     return zope.component.queryMultiAdapter(
         (context, request, form, field, terms, widget),
         z3c.form.interfaces.ITerms)
