@@ -55,4 +55,11 @@
       profile="pmr2.app:default"
       />
 
+  <genericsetup:importStep
+      title="pmr2.app catalog setup"
+      name="pmr2.app-catalog"
+      handler="pmr2.app.setuphandlers.setup_catalog"
+      description="registers indices to the catalog for pmr2.app"
+      />
+
 </configure>

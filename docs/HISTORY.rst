@@ -1,7 +1,14 @@
 Changelog
 =========
 
-0.13.6 - Released (2022-05-18)
+0.14.0 - Planning (2022-??-??)
+------------------------------
+
+* Reinstallation will no longer require a forced reindexing of the
+  catalog, as the reindexing process is now somewhat coupled to the
+  underlying RDF store.
+
+0.13.7 - Released (2022-05-18)
 ------------------------------
 
 * Ensure certain listings and vocabularies are sorted for ease of use.

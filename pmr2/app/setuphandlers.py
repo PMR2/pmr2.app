@@ -4,6 +4,7 @@ from logging import getLogger
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 from Products.CMFCore.utils import getToolByName
+from Products.ZCatalog.Catalog import CatalogError
 from pmr2.app.workspace.pas.protocol import addProtocolAuthPlugin
 from pmr2.app.workspace.pas.protocol import removeProtocolAuthPlugin
 
@@ -539,3 +540,49 @@ def migrate_workspace_workflow(site):
             logger.debug('restoring %s to %s',
                 workspace.getPath(), workspace.review_state)
             wft.doActionFor(obj, action)
+
+def setup_catalog(context):
+    """
+    Setup pmr2.app's indices in the catalog.
+
+    Doing it here instead of in profiles/default/catalog.xml means we
+    do not need to reindex those indexes after every reinstall.
+
+    See:
+    - https://docs.plone.org/develop/plone/searching_and_indexing/indexing.html
+    """
+
+    portal = context.getSite()
+    catalog = getToolByName(portal, "portal_catalog")
+    pmr2_indexes = (
+        ('KeywordIndex', [
+            "pmr2_curation",
+            "pmr2_keyword",
+            "pmr2_exposure_workspace",
+            "pmr2_workspace_storage_roots",
+            "pmr2_eftype_views",
+            "pmr2_eftype_tags",
+        ]),
+        ("FieldIndex", [
+            "pmr2_review_state",
+            "pmr2_exposure_commit_id",
+            "pmr2_exposure_root_title",
+            "pmr2_exposure_root_path",
+            "pmr2_exposure_root_id",
+            "pmr2_eftype_select_view",
+        ]),
+    )
+
+    _catalog = catalog._catalog
+    logger = getLogger(__name__)
+
+    for meta_type, field_idxs in pmr2_indexes:
+        for name in field_idxs:
+            if name not in catalog.indexes():
+                catalog.addIndex(name, meta_type)
+                logger.info("Catalog %s %s created." % (meta_type, name))
+            try:
+                catalog.addColumn(name)
+                logger.info("Catalog metadata column %s created." % name)
+            except CatalogError:
+                logger.info("Catalog metadata column %s already exists." % name)
