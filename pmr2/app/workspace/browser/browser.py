@@ -51,7 +51,7 @@ from pmr2.app.workspace.i18n import MessageFactory as _
 from pmr2.app.workspace.browser.util import *
 from pmr2.app.workspace.browser.interfaces import *
 
-logger = getLogger(__name__)
+logger = logging.getLogger(__name__)
 # XXX magic string should be imported
 prefix = 'pmr2.app.settings'
 

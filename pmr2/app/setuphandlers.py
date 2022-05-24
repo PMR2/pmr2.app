@@ -579,7 +579,7 @@ def setup_catalog(context):
 
     for meta_type, field_idxs in pmr2_indexes:
         for name in field_idxs:
-            if idxobj[name].meta_type != meta_type:
+            if name in idxobj and idxobj[name].meta_type != meta_type:
                 # Remove old, non-matching index.
                 old_meta_type = idxobj[name].meta_type
                 catalog.delIndex(name)
