@@ -19,7 +19,7 @@ class GithubIssueTool(object):
     Provide a filled out template link to report an issue on Github.
     """
 
-    label = u'Report an issue with this exposure'
+    label = u'Report a problem with this resource'
 
     def get_tool_link(self, exposure_object):
         registry = zope.component.getUtility(IRegistry)
@@ -38,9 +38,9 @@ class GithubIssueTool(object):
             exposure, workspace, path = zope.component.getAdapter(
                 exposure_object, IExposureSourceAdapter).source()
         except Exception:
-            title = urlparse(exposure_object.absolute_url()).path
+            title = exposure_object.title_or_id()
         else:
-            title = urlparse(exposure.absolute_url()).path
+            title = exposure.title_or_id()
 
         arguments = {
             'labels': 'exposure',
