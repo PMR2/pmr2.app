@@ -202,6 +202,8 @@ class WorkspaceProtocol(zope.publisher.browser.BrowserPage):
             raise BadRequest('unsupported command')
         except ProtocolError:
             raise BadRequest('unsupported command')
+        else:
+            self.context.reindexObject()
 
         return results
 
@@ -565,6 +567,7 @@ class WorkspaceSyncFormBase(form.PostForm):
                 u'Successfully synced with %s.' % external_uri)
             if msg:
                 status.addStatusMessage(msg)
+            self.context.reindexObject()
             return self.request.response.redirect(self.context.absolute_url())
 
         self.status = u'Failure to sync.'

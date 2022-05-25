@@ -7,7 +7,7 @@ from DateTime import DateTime
 
 from pmr2.testing.base import TestRequest
 
-from pmr2.app.workspace.interfaces import *
+from pmr2.app.workspace.interfaces import IStorage, IStorageUtility
 
 # Objects to test
 
@@ -183,6 +183,61 @@ class WorkspaceProtocolTestCase(base.WorkspaceBrowserDocTestCase):
 
         # ensure that this is modified.
         self.assertNotEqual(dummydt, self.portal.workspace.test.modified())
+
+    def test_protocol_reindexing(self):
+        from pmr2.app.workspace.content import Workspace, WorkspaceContainer
+        self.portal.workspace['reindex_workspace'] = Workspace(
+            'reindex_workspace')
+        self.portal.workspace.reindex_workspace.storage = u'dummy_storage'
+        su = zope.component.getUtility(IStorageUtility, name=u'dummy_storage')
+        su.create(self.portal.workspace.reindex_workspace, _empty=True)
+        self.portal.workspace.reindex_workspace.reindexObject()
+
+        # empty workspace has no roots if indexed
+        b = self.portal.portal_catalog(
+            path='/plone/workspace/reindex_workspace')[0]
+        self.assertEqual(b.pmr2_workspace_storage_roots, [])
+
+        # inject a commit and trigger the protocol page
+        su._dummy_storage_data['reindex_workspace'] = [{}]
+        request = TestRequest(form={'cmd': 'update'})
+        view = browser.WorkspaceProtocol(
+            self.portal.workspace.reindex_workspace, request)
+        view._checkPermission = lambda: True
+        view()
+
+        # should return the standard result
+        b = self.portal.portal_catalog(
+            path='/plone/workspace/reindex_workspace')[0]
+        self.assertEqual(b.pmr2_workspace_storage_roots, ['0'])
+
+    def test_sync_workspace(self):
+        from pmr2.app.workspace.content import Workspace, WorkspaceContainer
+        self.portal.workspace['sync_workspace'] = Workspace(
+            'sync_workspace')
+        self.portal.workspace.sync_workspace.storage = u'dummy_storage'
+        su = zope.component.getUtility(IStorageUtility, name=u'dummy_storage')
+        su.create(self.portal.workspace.sync_workspace, _empty=True)
+        self.portal.workspace.sync_workspace.reindexObject()
+
+        # empty workspace has no roots if indexed
+        b = self.portal.portal_catalog(
+            path='/plone/workspace/sync_workspace')[0]
+        self.assertEqual(b.pmr2_workspace_storage_roots, [])
+
+        # just specify the identifier
+        request = TestRequest(form={
+            'form.widgets.external_uri': 'test',
+            'form.buttons.syncWithTarget': 1,
+        })
+        b = browser.WorkspaceSyncForm(
+            self.portal.workspace.sync_workspace, request)
+        b.update()
+
+        # should return the standard result
+        b = self.portal.portal_catalog(
+            path='/plone/workspace/sync_workspace')[0]
+        self.assertEqual(b.pmr2_workspace_storage_roots, ['0'])
 
 
 def test_suite():

@@ -122,7 +122,10 @@ class DummyStorageUtility(StorageUtility):
     title = 'Dummy Storage'
     valid_cmds = ['revcount', 'update',]
 
-    def create(self, context):
+    def create(self, context, _empty=False):
+        if _empty is True:
+            self._dummy_storage_data[context.id] = []
+            return
         # creates the datastore for a dummy storage
         if context.id in self._dummy_storage_data:
             # don't overwrite existing data
@@ -226,6 +229,8 @@ class DummyStorage(BaseStorage):
             rev = self.__rev
 
         try:
+            if not self._data():
+                return {}
             return self._data()[rev]
         except IndexError:
             raise RevisionNotFoundError()
@@ -244,6 +249,9 @@ class DummyStorage(BaseStorage):
         })
 
     def _validrev(self, rev):
+        # can be unset if empty
+        if rev is None:
+            return rev
         # valid type
         if not isinstance(rev, (int, basestring)):
             raise RevisionNotFoundError()
@@ -258,6 +266,8 @@ class DummyStorage(BaseStorage):
 
     @property
     def rev(self):
+        if self.__rev is None:
+            return None
         return str(self.__rev)
 
     def archive_dummy(self):
@@ -270,6 +280,8 @@ class DummyStorage(BaseStorage):
         # set current revision
         if rev is None:
             rev = len(self._data()) - 1
+            if rev < 0:
+                rev = None
         self.__rev = self._validrev(rev)
 
     def files(self):
@@ -419,8 +431,10 @@ class DummyStorage(BaseStorage):
         return results
 
     def roots(self, rev=None):
-        # there is always one root.
-        return ['0']
+        if self.rev:
+            # there is always one root if non-empty
+            return ['0']
+        return []
 
 
 class DummyWorkspace(object):

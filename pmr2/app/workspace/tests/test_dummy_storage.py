@@ -51,6 +51,14 @@ class TestDummyStorage(TestCase):
         storage = utility(self.workspace)
         self.assert_(isinstance(storage, DummyStorage))
 
+    def test_005_empty_storage(self):
+        # Direct instantiation of storage from workspace
+        workspace = DummyWorkspace('broken_empty')
+        DummyStorageUtility().create(workspace, _empty=True)
+        storage = DummyStorage(workspace)
+        self.assertIsNone(storage.rev)
+        self.assertEqual([], storage.roots())
+
     # the adapter test is done inside test_adapter.py
 
     def test_010_storage_base(self):
