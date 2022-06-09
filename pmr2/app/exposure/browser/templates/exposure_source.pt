@@ -10,5 +10,13 @@
   </dd>
   <dd tal:condition="view/expired">
     <span class="state-expired">This exposure was expired</span>.
+    <if tal:condition="view/latest_exposure">
+    <a tal:define="exposure view/latest_exposure"
+        tal:content="exposure/label"
+        tal:attributes="href exposure/exposure/uri"></a>,
+      or view <a tal:attributes="
+          href python:source['workspace']['href'] + '/related'"
+        >related resources</a>.
+    </if>
   </dd>
 </dl>

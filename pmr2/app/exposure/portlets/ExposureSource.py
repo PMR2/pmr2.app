@@ -19,6 +19,8 @@ from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
 from pmr2.app.exposure.portlets.base import BaseRenderer
 
+from pmr2.app.utility.interfaces import ILatestRelatedExposureTool
+
 
 class IExposureSourcePortlet(IPortletDataProvider):
     """\
@@ -70,6 +72,21 @@ class Renderer(BaseRenderer):
             },
         }
         return result
+
+    @property
+    def latest_exposure(self):
+        tool = zope.component.getUtility(ILatestRelatedExposureTool)
+        exposures = tool.related_to_context(
+            self.context)
+        if not exposures:
+            return
+        info = next(exposures.itervalues())
+        info['label'] = (
+            'A more up-to-date exposure is available'
+            if info['this'] else
+            'A more up-to-date related exposure is available'
+        )
+        return info
 
     @memoize
     def expired(self):
