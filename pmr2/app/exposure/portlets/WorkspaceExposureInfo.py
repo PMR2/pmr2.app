@@ -60,7 +60,7 @@ class Renderer(base.Renderer):
             IWorkspacePage.providedBy(self.view)
         )
 
-    @property
+    @memoize
     def latest_exposure(self):
         tool = zope.component.getUtility(ILatestRelatedExposureTool)
         exposures = tool.related_to_context(

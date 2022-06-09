@@ -21,6 +21,7 @@ import z3c.form.form
 import z3c.form.value
 from z3c.form import button
 from plone.registry.interfaces import IRegistry
+from plone.memoize.view import memoize
 
 from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
@@ -971,7 +972,7 @@ class WorkspaceRelated(page.SimplePage):
         tool = zope.component.getUtility(ILatestRelatedExposureTool)
         return tool.related_to_context(self.context)
 
-    @property
+    @memoize
     def common_workspace_data(self):
         uid = self.context.UID()
         exposures = self.exposures
