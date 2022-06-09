@@ -18,6 +18,8 @@ from pmr2.app.workspace.browser.interfaces import IWorkspacePage
 from pmr2.app.exposure.interfaces import *
 from pmr2.app.exposure.browser.browser import ViewPageTemplateFile
 
+from pmr2.app.utility.interfaces import ILatestRelatedExposureTool
+
 
 class IWorkspaceExposureInfoPortlet(IPortletDataProvider):
     """\
@@ -59,24 +61,16 @@ class Renderer(base.Renderer):
         )
 
     @property
-    def exposures(self):
-        catalog = getToolByName(self.context, 'portal_catalog')
-        query = {}
-        query['portal_type'] = 'Exposure'
-        query['review_state'] = 'published'
-        query['pmr2_exposure_workspace'] = [
-            u'/'.join(self.context.getPhysicalPath()),
-        ]
-        query['sort_on'] = 'modified'
-        query['sort_order'] = 'reverse'
-        results = catalog(**query)
-        return results
-
-    @property
     def latest_exposure(self):
-        exposures = self.exposures
-        if exposures:
-            return exposures[0]
+        tool = zope.component.getUtility(ILatestRelatedExposureTool)
+        exposures = tool.related_to_context(
+            self.context)
+        if not exposures:
+            return
+        info = next(exposures.itervalues())
+        info['label'] = (
+            'Latest Exposure' if info['this'] else 'Latest Related Exposure')
+        return info
 
     def render(self):
         return self._template()

@@ -1,28 +1,43 @@
-<tal:if tal:define="latest view/latest_exposure"
-        tal:condition="latest">
+<tal:block tal:define="latest view/latest_exposure">
+<tal:if tal:condition="latest">
   <dl class="portlet" id="pmr2_workspace_exposure_info">
     <dt class="portletHeader">Exposure Information</dt>
 
-    <dd>
-        <a class="btn"
-            tal:attributes="href latest/getURL;">Latest Exposure</a>
-        If you are a new user to the repository, you may wish to view the
-        exposure for this workspace.  An exposure will show the summarized
-        information for the content contained here.
-    </dd>
+    <tal:if tal:condition="latest/this">
+      <dd>
+        <p>
+          <a class="btn"
+              tal:attributes="href latest/exposure/uri;">Latest Exposure</a>
+          To the presentational view for the most recent revision of data
+          reviewed and published from this workspace.
+        </p>
+      </dd>
+    </tal:if>
+    <tal:if tal:condition="not:latest/this">
+      <dd>
+        <p>
+          <a class="btn"
+              tal:attributes="href latest/exposure/uri;">Latest Related Exposure</a>
+          To the presentational view for the most recent revision of data
+          reviewed and published from <a
+            tal:attributes="href latest/workspace/uri;">the workspace</a
+            > related to this one.
+        </p>
+      </dd>
+    </tal:if>
 
   </dl>
 </tal:if>
 
-<tal:if tal:define="latest view/latest_exposure"
-        tal:condition="not:latest">
+<tal:if tal:condition="not:latest">
   <dl class="portlet" id="pmr2_workspace_exposure_info">
     <dt class="portletHeader">Exposure Information</dt>
 
     <dd>
-      No simplified view available for this workspace as no related
-      exposures were found.
+      No presentational view available as no exposures have been published for
+      this workspace.
     </dd>
 
   </dl>
 </tal:if>
+</tal:block>
