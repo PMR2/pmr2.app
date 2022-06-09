@@ -491,19 +491,12 @@ available workspaces will be listed
 ::
 
     >>> tb.open(cakeurl + '/related')
-    >>> print(''.join(i for i in tb.contents.splitlines() if i))
-    <...
-    ...
-    <h3>The following are links to related workspaces</h3>
-    <ul>
-      <li>
-        <a href="http://nohost/plone/workspace/test">Delicious Eggs</a>
-      </li>
-      <li>
-        <a href="http://nohost/plone/workspace/cake">Delicious Cake</a>
-          (this workspace)
-      </li>
-    ...
+    >>> f = [j for j in (i.strip() for i in (tb.contents.splitlines())) if j]
+    >>> src = ''.join(f)
+    >>> '<h3>The following are additional resources related to this workspaces</h3>' in src
+    True
+    >>> '<tr><td><a href="http://nohost/plone/workspace/test">Delicious Eggs</a></td><td></td></tr><tr class="this"><td><a href="http://nohost/plone/workspace/cake">Delicious Cake</a></td><td></td>' in src
+    True
 
 
 ---------------------

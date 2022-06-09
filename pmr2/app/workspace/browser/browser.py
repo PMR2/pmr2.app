@@ -51,6 +51,8 @@ from pmr2.app.workspace.i18n import MessageFactory as _
 from pmr2.app.workspace.browser.util import *
 from pmr2.app.workspace.browser.interfaces import *
 
+from pmr2.app.utility.interfaces import ILatestRelatedExposureTool
+
 logger = logging.getLogger(__name__)
 # XXX magic string should be imported
 prefix = 'pmr2.app.settings'
@@ -938,14 +940,14 @@ class WorkspaceRawfileXmlBase(WorkspaceRawfile):
 
 class WorkspaceRelated(page.SimplePage):
 
-    label = "Related workspaces"
+    label = "Related resources"
     template = ViewPageTemplateFile('workspace_related.pt')
 
     def update(self):
         self.request['enable_border'] = True
 
     @property
-    def common_roots(self):
+    def common_workspaces(self):
         try:
             storage = zope.component.getAdapter(self.context, IStorage)
         except ValueError:
@@ -963,3 +965,20 @@ class WorkspaceRelated(page.SimplePage):
 
         catalog = getToolByName(self.context, 'portal_catalog')
         return catalog(pmr2_workspace_storage_roots=roots)
+
+    @property
+    def exposures(self):
+        tool = zope.component.getUtility(ILatestRelatedExposureTool)
+        return tool.related_to_context(self.context)
+
+    @property
+    def common_workspace_data(self):
+        uid = self.context.UID()
+        exposures = self.exposures
+        return [{
+            'title': wks.Title or wks.id,
+            'uri': wks.getURL(),
+            'this': wks.UID == uid,
+            'latest_exposure': exposures.get(
+                wks.getPath(), {}).get('exposure'),
+        } for wks in self.common_workspaces]

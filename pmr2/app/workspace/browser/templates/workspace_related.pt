@@ -1,20 +1,45 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <body>
 
-    <h3>The following are links to related workspaces</h3>
+    <h3>The following are additional resources related to this workspaces</h3>
+    <style type="text/css">
+    #related_workspace tbody td a {
+      display: block;
+    }
+    #related_workspace tr.this {
+      background: #ffe;
+    }
+    #related_workspace tr.this td:first-child a::before {
+      content: "(★) ";
+    }
+    </style>
 
-    <ul>
-      <tal:loop tal:repeat="i view/common_roots">
-      <li>
-        <a tal:content="python:i.Title or i.id" tal:attributes="href i/getURL">
-          Title
-        </a>
-        <tal:if condition="python:context.UID() == i.UID">
-          (this workspace)
-        </tal:if>
-      </li>
+    <table id="related_workspace" class="listing table">
+      <thead>
+        <tr>
+          <th style="cursor: pointer;">Workspace</th>
+          <th style="cursor: pointer;">Latest Published Exposure</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tal:loop tal:repeat="data view/common_workspace_data">
+        <tr tal:attributes="class python:'this' if data['this'] else None">
+          <td>
+            <a tal:content="data/title"
+              tal:attributes="href data/uri">
+              Title
+            </a>
+          </td>
+          <td>
+            <a style="display: block;"
+              tal:condition="data/latest_exposure"
+              tal:attributes="href data/latest_exposure/uri"
+              tal:content="data/latest_exposure/title">Exposure</a>
+          </td>
+        </tr>
       </tal:loop>
-    </ul>
+      </tbody>
+    </table>
 
   </body>
 </html>
