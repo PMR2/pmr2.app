@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.14.0 - Planning (2022-??-??)
+0.14.0 - Released (2022-06-10)
 ------------------------------
 
 * Reinstallation will no longer require a forced reindexing of the
