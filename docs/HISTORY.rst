@@ -1,14 +1,16 @@
 Changelog
 =========
 
-0.14.0 - Planning (2022-??-??)
+0.14.0 - Released (2022-06-10)
 ------------------------------
 
 * Reinstallation will no longer require a forced reindexing of the
-  catalog, as the reindexing process is now somewhat coupled to the
-  underlying RDF store.
+  catalog; as the reindexing process is now somewhat coupled to the
+  underlying RDF store, coupling this together may result in unintended
+  side-effects.
 * Integration with Github's issue tracker for easy reporting of issues
-  found in workspaces or exposures.
+  found in workspaces or exposures; does require registry settings to
+  enable these links.
 * Complete refactoring of related resources to include both workspaces
   and exposures into a common tool.
 * Latest exposure button from the workspace landing page reworked to
@@ -16,7 +18,7 @@ Changelog
   workspace has no exposures made for it
 * Related workspace tool now list workspaces as a table, along with its
   latest published exposures should one exists.
-* Expired exposures will have a more direct link to more recent
+* Expired exposures will have a more direct link to more recent/related
   resources.
 
 0.13.7 - Released (2022-05-18)
