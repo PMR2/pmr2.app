@@ -2,12 +2,14 @@ from unittest import TestCase, TestSuite, makeSuite
 from os.path import dirname, join
 
 import zope.component
+from plone.registry.interfaces import IRegistry
 
 import pmr2.testing
 
 from pmr2.app.workspace.interfaces import *
 from pmr2.app.workspace.exceptions import *
 
+from pmr2.app.workspace.tests import base
 from pmr2.app.workspace.tests.storage import DummyStorageUtility
 from pmr2.app.workspace.tests.storage import DummyStorage
 from pmr2.app.workspace.tests.storage import DummyWorkspace
@@ -473,6 +475,10 @@ class TestDummyStorage(TestCase):
         with self.assertRaises(PathNotFoundError):
             storage_root.file('external_test/test.txt')
 
+        # since not registered.
+        with self.assertRaises(PathNotFoundError):
+            storage_root.resolve_file('external_test/test.txt'),
+
     def test_950_loader(self):
         # Test loading from filesystem.
         target = join(dirname(pmr2.testing.__file__), 'data', 'rdfmodel')
@@ -498,8 +504,60 @@ class TestDummyStorage(TestCase):
             'component/module.cellml')), 4197)
 
 
+class TestSiteDummyStorage(base.WorkspaceBrowserDocTestCase):
+    """
+    Collection of miscellaneous tests.
+    """
+
+    def setUp(self):
+        super(TestSiteDummyStorage, self).setUp()
+        self.makeExternalWorkspace()
+
+    def test_0001_external(self):
+        storage_root = IStorage(self.portal.workspace.external_root)
+        storage_test = IStorage(self.portal.workspace.external_test)
+
+        result = storage_root.pathinfo('external_test')
+        self.assertEqual(result['external'], {
+            '': '_subrepo',
+            'path': '',
+            'rev': '0',
+            'location': 'http://nohost/plone/workspace/external_test',
+        })
+
+        result = storage_root.pathinfo('external_test/test.txt')
+        self.assertEqual(result['external'], {
+            '': '_subrepo',
+            'path': 'test.txt',
+            'rev': '0',
+            'location': 'http://nohost/plone/workspace/external_test',
+        })
+
+        # valid files don't get this perk.
+        with self.assertRaises(PathNotFoundError):
+            storage_root.file('external_test/test.txt')
+
+        # due to no registry entry for nohost
+        with self.assertRaises(SubrepoPathUnsupportedError) as exc:
+            storage_root.resolve_file('external_test/test.txt'),
+        self.assertEqual(
+            exc.exception.args[0],
+            "requested path at 'external_test/test.txt' requires subrepo at "
+            "unsupported netloc 'nohost' when trying to resolve subpath "
+            "'test.txt'"
+        )
+
+        registry = zope.component.getUtility(IRegistry)
+        registry['pmr2.app.settings.prefix_maps'] = {u'nohost': u''}
+        self.assertEqual(
+            storage_root.resolve_file('external_test/test.txt'),
+            'external test file.\n',
+        )
+
+
 def test_suite():
     suite = TestSuite()
     suite.addTest(makeSuite(TestDummyStorage))
+    suite.addTest(makeSuite(TestSiteDummyStorage))
     return suite
 
