@@ -461,16 +461,17 @@ class TestDummyStorage(TestCase):
             'location': 'http://nohost/plone/workspace/external_test',
         })
 
-        result = storage_root.pathinfo('external_test/testfile.txt')
+        result = storage_root.pathinfo('external_test/test.txt')
         self.assertEqual(result['external'], {
             '': '_subrepo',
-            'path': 'testfile.txt',
+            'path': 'test.txt',
             'rev': '0',
             'location': 'http://nohost/plone/workspace/external_test',
         })
 
         # valid files don't get this perk.
-        self.assertRaises(PathNotFoundError, storage_root.file, 'readme/test')
+        with self.assertRaises(PathNotFoundError):
+            storage_root.file('external_test/test.txt')
 
     def test_950_loader(self):
         # Test loading from filesystem.

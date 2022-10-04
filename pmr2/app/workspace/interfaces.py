@@ -81,7 +81,7 @@ class IStorage(zope.interface.Interface):
 
     def fileinfo(path):
         """\
-        Return the contents of the given path.
+        Return a structure about the contents of the given path.
         """
 
     def files():
