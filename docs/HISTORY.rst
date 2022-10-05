@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.14.1 - Released (2022-06-10)
+------------------------------
+
+* Provide a ``resolve_file`` method for ``Storage`` objects, to allow
+  easier resolution of files in subrepos that are co-hosted within the
+  same portal instance.
+* Ensure update steps don't adjust object's modification date should the
+  ``reindexObject`` call is made.
+
 0.14.0 - Released (2022-06-10)
 ------------------------------
 
