@@ -117,6 +117,11 @@ class IStorage(zope.interface.Interface):
         Return a command to clone the storage.
         """
 
+    def resolve_file(path):
+        """
+        Like file, but attempts to resolve across subrepos.
+        """
+
 
 class IStorageUtility(zope.interface.Interface):
     """\

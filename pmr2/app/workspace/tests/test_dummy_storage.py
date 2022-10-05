@@ -513,6 +513,14 @@ class TestSiteDummyStorage(base.WorkspaceBrowserDocTestCase):
         super(TestSiteDummyStorage, self).setUp()
         self.makeExternalWorkspace()
 
+    def test_0000_storage_basic(self):
+        storage = IStorage(self.portal.workspace.test)
+        storage.checkout('1')
+        self.assertEqual(
+            storage.resolve_file('file1'),
+            'file1-rev1\nThis test has changed.\n',
+        )
+
     def test_0001_external(self):
         storage_root = IStorage(self.portal.workspace.external_root)
         storage_test = IStorage(self.portal.workspace.external_test)
@@ -551,6 +559,10 @@ class TestSiteDummyStorage(base.WorkspaceBrowserDocTestCase):
         registry['pmr2.app.settings.prefix_maps'] = {u'nohost': u''}
         self.assertEqual(
             storage_root.resolve_file('external_test/test.txt'),
+            'external test file.\n',
+        )
+        self.assertEqual(
+            storage_test.resolve_file('test.txt'),
             'external test file.\n',
         )
 
