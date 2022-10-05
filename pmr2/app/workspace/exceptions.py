@@ -35,7 +35,7 @@ class PathExistsError(PathInvalidError):
 
 
 class SubrepoPathUnsupportedError(PathInvalidError):
-    """unsupported subrepo path format"""
+    """unsupported subrepo path"""
 
 
 class RevisionNotFoundError(ValueError):

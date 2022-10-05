@@ -81,7 +81,7 @@ class IStorage(zope.interface.Interface):
 
     def fileinfo(path):
         """\
-        Return the contents of the given path.
+        Return a structure about the contents of the given path.
         """
 
     def files():
@@ -115,6 +115,11 @@ class IStorage(zope.interface.Interface):
     def clonecmd():
         """
         Return a command to clone the storage.
+        """
+
+    def resolve_file(path):
+        """
+        Like file, but attempts to resolve across subrepos.
         """
 
 

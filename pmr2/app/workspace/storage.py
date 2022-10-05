@@ -1,7 +1,11 @@
 from collections import namedtuple
 import mimetypes
+import urlparse
 from magic import Magic
 import zope.interface
+import zope.component
+from zope.component.hooks import getSite
+from plone.registry.interfaces import IRegistry
 
 from pmr2.app.workspace.exceptions import *
 from pmr2.app.workspace.interfaces import IStorage, IStorageUtility
@@ -214,6 +218,46 @@ class BaseStorage(object):
         # implementation only has this visible via the portlet, so this
         # tells it to use the default handler.
         return ''
+
+    def resolve_file(self, path):
+        """
+        This default implementation relies on the underlying file() and
+        pathinfo() method in working order, and that the relevant
+        registry settings to resolve hostnames for local subrepos be
+        available, as this method will not attempt to resolve or fetch
+        any external resources hosted outside of this instance.
+        """
+
+        def external_file(location, rev, subpath):
+            p = urlparse.urlparse(location)
+            if not p.netloc in mappings:
+                raise SubrepoPathUnsupportedError(
+                    'requested path at %r requires subrepo at unsupported '
+                    'netloc %r when trying to resolve subpath %r' % (
+                        path, p.netloc, subpath))
+
+            objpath = mappings[p.netloc] + p.path
+            workspace = portal.restrictedTraverse(objpath.split('/'))
+            storage = IStorage(workspace)
+            return file(storage, subpath)
+
+        def file(storage, subpath):
+            pathinfo = storage.pathinfo(subpath)
+            if pathinfo.get('external'):
+                external = pathinfo['external']
+                return external_file(
+                    external['location'], external['rev'], external['path'])
+            # Using this instead of contents to ignore directories.
+            return storage.file(subpath)
+
+        registry = zope.component.queryUtility(IRegistry)
+        if not registry:
+            # no registry, so no resolution
+            return self.file(path)
+
+        mappings = registry.get('pmr2.app.settings.prefix_maps') or {}
+        portal = getSite()
+        return file(self, path)
 
 
 class StorageUtility(object):

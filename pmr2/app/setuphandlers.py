@@ -431,7 +431,12 @@ def filetype_bulk_update(context):
             req.environ = {}
             form = ExposureFileTypeAnnotatorForm(file, req)
             form._annotate(groups)
-            file.reindexObject()
+            # Only reindex fields related to exposure file type.
+            file.reindexObject(idxs=[
+                "pmr2_eftype_views",
+                "pmr2_eftype_tags",
+                "pmr2_eftype_select_view",
+            ])
             # reindexing like so apparently modifies date, so restore
             # with the saved value.
             file.setModificationDate(file_modified)

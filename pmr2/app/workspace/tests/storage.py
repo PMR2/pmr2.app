@@ -289,7 +289,7 @@ class DummyStorage(BaseStorage):
         result.sort()
         return result
 
-    def file(self, path):
+    def _file(self, path, with_subrepo=False):
         try:
             return self._changeset()[path]
         except KeyError:
@@ -297,13 +297,16 @@ class DummyStorage(BaseStorage):
             frags = path.split('/')
             if len(frags) > 1:
                 result = self.file(frags[0])
-                if isinstance(result, dict):
+                if with_subrepo and isinstance(result, dict):
                     # only allow "subrepos"
                     return result
             raise PathNotFoundError()
 
+    def file(self, path):
+        return self._file(path)
+
     def fileinfo(self, path):
-        result = self.file(path)
+        result = self._file(path, with_subrepo=True)
         if not isinstance(result, basestring):
             # assume dict, format external result
             keys = {'path': '/'.join(path.split('/')[1:])}
@@ -339,7 +342,7 @@ class DummyStorage(BaseStorage):
     def listdir(self, path):
         # root is '', zero length
         try:
-            self.file(path)
+            self._file(path, with_subrepo=True)
             # we have a file, not a directory
             raise PathNotDirError()
         except PathNotFoundError:
